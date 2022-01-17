@@ -1,19 +1,13 @@
 <template>
-  <v-app>
-    <v-main>
-      <router-view/>
-    </v-main>
-  </v-app>
+    <router-view class="bg-grey"></router-view>
 </template>
 
 <script>
 
 export default {
   name: 'App',
-
-  data: () => ({
-    //
-  }),
+  components: {},
+  data: () => ({}),
 };
 </script>
 
@@ -28,15 +22,8 @@ export default {
 }
 
 /* GLOBAL TYPOGRAPHY  STYLING */
-#app,
-#goal-mpp,
-#request-mpp,
-#edit-status-request,
-#setting-inputAccess,
-#setting-notification,
-#master-category,
-#master-source,
-#setting-pic {
+#app
+{
   font-family: "Nunito", sans-serif !important;
 }
 
@@ -44,4 +31,23 @@ export default {
   font-family: "Nunito", sans-serif !important;
 }
 
+.bg-grey {
+  background-color: var(--grey-bg) !important;
+}
+
+.outer-container {
+  width: 80% !important;
+  margin: 1% auto !important;
+  background-color: white;
+}
+
+.v-btn--rounded {
+  min-width: 8rem !important;
+}
+
+.v-input--is-disabled {
+  .v-input__slot {
+    background-color: var(--grey-bg) !important;
+  }
+}
 </style>

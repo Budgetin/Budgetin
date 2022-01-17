@@ -20,7 +20,7 @@
       </v-list>
       <v-divider></v-divider>
       <v-list shaped>
-        <v-list-item link :to="'/goal'" replace>
+        <v-list-item link :to="'/home'" replace>
           <v-list-item-icon>
             <v-icon>mdi-chart-scatter-plot</v-icon>
           </v-list-item-icon>
@@ -45,15 +45,15 @@
           <v-list-item-title>List Project</v-list-item-title>
         </v-list-item>
         <v-list-group
-          no-action
-        >
-          <template v-slot:activator>
+          :value="true"
+          color="white">
+         <template v-slot:activator>
               <v-list-item-icon>
                 <v-icon>mdi-view-grid</v-icon>
               </v-list-item-icon>
               <v-list-item-title>Master</v-list-item-title>
           </template>
-          <v-list-item>
+          <v-list-item link :to="'/coa'" replace>
               <v-list-item-title>COA</v-list-item-title>
           </v-list-item>
           <v-list-item>
