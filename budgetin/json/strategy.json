@@ -1,10 +1,26 @@
 [
   {
     "id": 1,
-    "created_at": "2021-11-19T13:37:53.820048+07:00",
-    "updated_at": "2021-11-19T13:37:53.820048+07:00",
-    "is_deleted": false,
-    "deleted_at": null,
-    "source_name": "Staf Tetap"
+    "Name": "BusinessOptimization"
+  },
+  {
+    "id": 2,
+    "Name": "BusinessTransformation"
+  },
+  {
+    "id": 3,
+    "Name": "GrowTheBusiness"
+  },
+  {
+    "id": 4,
+    "Name": "RiskCompliance"
+  },
+  {
+    "id": 5,
+    "Name": "RunTheBusiness"
+  },
+  {
+    "id": 6,
+    "Name": "SecurityCyberIT"
   }
 ]
