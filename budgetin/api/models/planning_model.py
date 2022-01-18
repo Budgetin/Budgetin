@@ -5,5 +5,5 @@ from .abstract_model import TimestampModel, UserTrackModel
 
 class Planning(SoftDeleteModel, TimestampModel, UserTrackModel):
     Year = models.IntegerField()
-    IsActive = models.BooleanField()
+    IsActive = models.BooleanField(default=True)
     DueDate = models.DateTimeField()
