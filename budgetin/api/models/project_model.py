@@ -5,13 +5,13 @@ from .abstract_model import TimestampModel, UserTrackModel
 
 
 class Project(SoftDeleteModel, TimestampModel, UserTrackModel):
-    ITFamId = models.CharField(max_length=200)
-    ProjectName = models.CharField(max_length=200)
-    ProjectDescription = models.CharField(max_length=500)
-    BiroId = models.BigIntegerField()
-    RCC = models.IntegerField()
-    StartYear = models.IntegerField()
-    EndYear = models.IntegerField()
-    TotalInvestmentValue = models.BigIntegerField()
-    # ProductId = models.ForeignKey('Product',on_delete=models.CASCADE)
-    isTech = models.BooleanField(default=False)
+    itfam_id = models.CharField(max_length=200)
+    project_name = models.CharField(max_length=200)
+    project_description = models.CharField(max_length=500)
+    biro_id = models.BigIntegerField()
+    rcc = models.IntegerField()
+    start_year = models.IntegerField()
+    end_year = models.IntegerField()
+    total_investment_value = models.BigIntegerField()
+    product_id = models.ForeignKey('Product',on_delete=models.CASCADE)
+    is_tech = models.BooleanField(default=False)
