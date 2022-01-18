@@ -1,6 +1,6 @@
 from django.db import models
 from django_softdelete.models import SoftDeleteModel
-from .abstract_model import TimestampModel
+from .abstract_model import TimestampModel, UserTrackModel
 
 
 class Product(SoftDeleteModel, TimestampModel, UserTrackModel):
