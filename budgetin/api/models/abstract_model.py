@@ -7,3 +7,11 @@ class TimestampModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class UserTrackModel(models.Model):
+    created_by = models.BigIntegerField(blank=True, default='')
+    updated_by = models.BigIntegerField(blank=True, default='')
+
+    class Meta:
+        abstract = True
