@@ -3,4 +3,4 @@ from api.models.strategy_model import Strategy
 class StrategySerializer(serializers.ModelSerializer):
     class Meta:
         model = Strategy
-        fields = ['id', 'name']
+        fields = '__all__'
