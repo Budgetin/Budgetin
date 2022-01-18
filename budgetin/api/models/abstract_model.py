@@ -11,7 +11,7 @@ class TimestampModel(models.Model):
 
 class UserTrackModel(models.Model):
     created_by = models.BigIntegerField(blank=True)
-    updated_by = models.BigIntegerField(blank=True)
+    updated_by = models.BigIntegerField(null=True, blank=True)
 
     class Meta:
         abstract = True
