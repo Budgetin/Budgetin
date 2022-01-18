@@ -19,9 +19,9 @@ from rest_framework import routers
 from api import views
 
 router = routers.DefaultRouter()
-router.register('strategy', views.StrategyViewSet)
-router.register('coa', views.CoaViewSet)
-router.register('budget', views.BudgetViewSet)
+router.register('api/strategy', views.StrategyViewSet)
+router.register('api/coa', views.CoaViewSet)
+router.register('api/budget', views.BudgetViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
