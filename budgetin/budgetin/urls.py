@@ -20,6 +20,7 @@ from api import views
 
 router = routers.DefaultRouter()
 router.register('strategy', views.StrategyViewSet)
+router.register('coa', views.CoaViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
