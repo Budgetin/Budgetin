@@ -19,13 +19,16 @@ from rest_framework import routers
 from api import views
 
 router = routers.DefaultRouter()
-router.register('api/strategy', views.StrategyViewSet)
-router.register('api/coa', views.CoaViewSet)
 router.register('api/budget', views.BudgetViewSet)
-router.register('api/projectDetail', views.ProjectDetailViewSet)
+router.register('api/coa', views.CoaViewSet)
+router.register('api/planning', views.PlanningViewSet)
+router.register('api/product', views.ProductViewSet)
+router.register('api/project_detail', views.ProjectDetailViewSet)
 router.register('api/project', views.ProjectDetailViewSet)
+router.register('api/strategy', views.StrategyViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
 ]
+
