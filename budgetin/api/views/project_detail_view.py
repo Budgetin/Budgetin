@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from api.models.projectDetail_model import ProjectDetail
-from api.serializers.projectDetail_serializer import ProjectDetailSerializer
+from api.models.project_detail_model import ProjectDetail
+from api.serializers.project_detail_serializer import ProjectDetailSerializer
 
 
 class ProjectDetailViewSet(viewsets.ModelViewSet):
