@@ -22,6 +22,7 @@ router = routers.DefaultRouter()
 router.register('api/strategy', views.StrategyViewSet)
 router.register('api/coa', views.CoaViewSet)
 router.register('api/budget', views.BudgetViewSet)
+router.register('api/projectDetail', views.ProjectDetailViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
