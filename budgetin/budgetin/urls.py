@@ -24,6 +24,7 @@ router.register('api/coa', views.CoaViewSet)
 router.register('api/budget', views.BudgetViewSet)
 router.register('api/projectDetail', views.ProjectDetailViewSet)
 router.register('api/project', views.ProjectDetailViewSet)
+router.register('api/user', views.UserViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -6,3 +6,4 @@ from .budget_model import Budget
 from .projectDetail_model import ProjectDetail
 from .planning_model import Planning
 from .project_model import Project
+from .user_model import User
