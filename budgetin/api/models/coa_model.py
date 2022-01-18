@@ -1,9 +1,9 @@
 from django.db import models
 from django_softdelete.models import SoftDeleteModel
-from .abstract_model import BaseModel
+from .abstract_model import TimestampModel
 
 
-class Coa(SoftDeleteModel, BaseModel):
+class Coa(SoftDeleteModel, TimestampModel):
     name = models.CharField(max_length=200, unique=True)
     definition = models.CharField(max_length=200)
     hyperion_name = models.CharField(max_length=200)
