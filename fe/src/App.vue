@@ -22,7 +22,8 @@ export default {
 }
 
 /* GLOBAL TYPOGRAPHY  STYLING */
-#app
+#app,
+#master-coa
 {
   font-family: "Nunito", sans-serif !important;
 }
@@ -36,9 +37,8 @@ export default {
 }
 
 .outer-container {
-  width: 80% !important;
+  width: 90% !important;
   margin: 1% auto !important;
-  background-color: white;
 }
 
 .v-btn--rounded {
@@ -50,4 +50,13 @@ export default {
     background-color: var(--grey-bg) !important;
   }
 }
+
+a{
+  background-color: white;
+}
+
+.rounded-card{
+    border-radius:100%;
+}
+
 </style>

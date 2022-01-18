@@ -14,7 +14,13 @@ const routes = [
         path: 'coa',
         name: 'COA',
         component: () => import("@/views/COA/ListCOA"),
-      }]
+      },  
+      {
+        path: 'home',
+        name: 'Home',
+        component: Home
+      }
+    ]
   },
   {
     path: '/home',
