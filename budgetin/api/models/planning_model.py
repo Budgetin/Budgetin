@@ -1,9 +1,9 @@
 from django.db import models
 from django_softdelete.models import SoftDeleteModel
-from .abstract_model import BaseModel
+from .abstract_model import TimestampModel, UserTrackModel
 
-class Strategy(SoftDeleteModel, BaseModel):
-    Year = models.IntegerField()
-    IsActive = models.BooleanField()
-    DueDate = models.DateTimeField()
-    LastModifiedBy = models.CharField(max_length=200)
+
+class Planning(SoftDeleteModel, TimestampModel, UserTrackModel):
+    year = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+    due_date = models.DateTimeField()
