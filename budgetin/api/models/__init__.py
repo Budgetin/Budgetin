@@ -1,6 +1,7 @@
 from .action_model import Action
 from .budget_model import Budget
 from .coa_model import Coa
+from .monitoring import Monitoring
 from .monitoring_status_model import MonitoringStatus
 from .planning_model import Planning
 from .product_model import Product

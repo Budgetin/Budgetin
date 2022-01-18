@@ -21,6 +21,7 @@ from api import views
 router = routers.DefaultRouter()
 router.register('api/budget', views.BudgetViewSet)
 router.register('api/coa', views.CoaViewSet)
+router.register('api/monitoring', views.MonitoringViewSet)
 router.register('api/planning', views.PlanningViewSet)
 router.register('api/product', views.ProductViewSet)
 router.register('api/project_detail', views.ProjectDetailViewSet)
