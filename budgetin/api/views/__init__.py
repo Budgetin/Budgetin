@@ -3,7 +3,7 @@ from .budget_view import BudgetViewSet
 from .coa_view import CoaViewSet
 from .planning_view import PlanningViewSet
 from .product_view import ProductViewSet
-from .project_view import ProjectViewSet
 from .project_detail_view import ProjectDetailViewSet
+from .project_view import ProjectViewSet
 from .strategy_view import StrategyViewSet
 from .table_view import TableViewSet

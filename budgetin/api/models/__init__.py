@@ -3,7 +3,7 @@ from .budget_model import Budget
 from .coa_model import Coa
 from .planning_model import Planning
 from .product_model import Product
-from .project_model import Project
 from .project_detail_model import ProjectDetail
+from .project_model import Project
 from .strategy_model import Strategy
 from .table_model import Table
