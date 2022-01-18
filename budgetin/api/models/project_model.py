@@ -13,5 +13,5 @@ class Project(SoftDeleteModel, TimestampModel, UserTrackModel):
     start_year = models.IntegerField()
     end_year = models.IntegerField()
     total_investment_value = models.BigIntegerField()
-    # product_id = models.ForeignKey('Product',on_delete=models.CASCADE)
+    product_id = models.ForeignKey('Product',on_delete=models.CASCADE)
     is_tech = models.BooleanField(default=False)
