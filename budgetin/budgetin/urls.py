@@ -33,5 +33,6 @@ router.register('api/auditlog', views.AuditLogViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
 ]
