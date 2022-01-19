@@ -1,26 +1,26 @@
 [
   {
     "id": 1,
-    "Name": "BusinessOptimization"
+    "name": "BusinessOptimization"
   },
   {
     "id": 2,
-    "Name": "BusinessTransformation"
+    "name": "BusinessTransformation"
   },
   {
     "id": 3,
-    "Name": "GrowTheBusiness"
+    "name": "GrowTheBusiness"
   },
   {
     "id": 4,
-    "Name": "RiskCompliance"
+    "name": "RiskCompliance"
   },
   {
     "id": 5,
-    "Name": "RunTheBusiness"
+    "name": "RunTheBusiness"
   },
   {
     "id": 6,
-    "Name": "SecurityCyberIT"
+    "name": "SecurityCyberIT"
   }
 ]
