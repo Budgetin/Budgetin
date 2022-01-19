@@ -5,4 +5,5 @@ class AuditLog(models.Model):
     action_id = models.ForeignKey('Action', on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
     modified_by = models.BigIntegerField()
+    entity_id = models.BigIntegerField()
     serialized_data = models.CharField(max_length=5000)
