@@ -5,7 +5,7 @@ import binascii
 #Encrypt Password dengan 3DES untuk Login EAI
 def encrypt_password_3des_eai(password):
     key = 'AdklienIniUnTukAD8U6371N'
-    k = pyDes.triple_des(key, pyDes.ECB)
+    k = pyDes.triple_des(key, pyDes.ECB,pad=None, padmode=pyDes.PAD_PKCS5)
     encrypted = k.encrypt(password)
     encrypted_password = binascii.hexlify(encrypted).decode('utf-8')
     
