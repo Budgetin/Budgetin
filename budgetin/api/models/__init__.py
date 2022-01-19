@@ -12,3 +12,4 @@ from .project_type_model import ProjectType
 from .strategy_model import Strategy
 from .table_model import Table
 from .user_model import User
+from .audit_log_model import AuditLog
