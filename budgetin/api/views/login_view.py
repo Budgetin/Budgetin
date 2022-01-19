@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from api.utils.jwt import *
+from api.utils.hit_api import login_eai
 
 
 class LoginView(APIView):
@@ -17,6 +18,7 @@ class LoginView(APIView):
         password = request.data['password']
 
         # Hit EAI
+        login_status = login_eai(username, password)
 
         # If EAI success
         # Get ITHC EmployeeID
@@ -26,5 +28,6 @@ class LoginView(APIView):
         jwt = generate_token(id, username)
 
         return Response({
+            'status': login_status,
             'token': jwt
         })
