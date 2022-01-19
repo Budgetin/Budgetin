@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "AuditLog"
+  },
+  {
+    "id": 2,
+    "name": "Biro"
+  },
+  {
+    "id": 3,
+    "name": "Budget"
+  },
+  {
+    "id": 4,
+    "name": "Coa"
+  },
+  {
+    "id": 5,
+    "name": "Planning"
+  },
+  {
+    "id": 6,
+    "name": "Product"
+  },
+  {
+    "id": 7,
+    "name": "Project"
+  },
+  {
+    "id": 8,
+    "name": "Project Detail"
+  }
+]
