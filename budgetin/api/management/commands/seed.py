@@ -2,7 +2,7 @@ import json
 from sre_constants import SUCCESS
 from turtle import st
 from django.core.management.base import BaseCommand
-from api.models import Action,ProjectType,Strategy,Table
+from api.models import Action, ProjectType, Strategy, Table, MonitoringStatus
 
 class Command(BaseCommand):
 
@@ -48,7 +48,7 @@ class Command(BaseCommand):
 
         for data in data_list:
             data['pk'] = data.pop('id')
-            Table.objects.get_or_create(pk=data['pk'], defaults=data)
+            MonitoringStatus.objects.get_or_create(pk=data['pk'], defaults=data)
         self.comment("Seeding Monitoring Status")
 
     def comment(self, comment):
