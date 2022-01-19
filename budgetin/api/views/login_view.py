@@ -8,4 +8,7 @@ from api.utils.jwt import *
 class LoginView(APIView):
     def post(self, request):
         data = request.data
-        print(data)
+        
+        return Response({
+            
+        })
