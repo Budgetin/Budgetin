@@ -54,9 +54,12 @@ def get_ithc_employee_id(username):
     }
     res = requests.get(url, headers=headers, verify=False)
     if res.json():
-        return {
-            'id': res.json()[0]['id'],
-        }
+        # check for user that is not deleted
+        user = [u for u in res.json() if u['is_deleted'] == False]
+        if user:
+            return {
+                'id': user[0]['id'],
+            }
 
     return {
         'err': 'username does not exists in ITHC Employee'

@@ -18,21 +18,25 @@ class LoginView(APIView):
         username = request.data['username']
         password = request.data['password']
 
+        # TODO Check if users exists in Budgetin database
+
         # Hit EAI
-        login_status = login_eai(username, password)
+        eai_login_status = login_eai(username, password)
 
         # If EAI success
         # Get ITHC EmployeeID
-        if login_status != "Berhasil":
+        if eai_login_status != "Berhasil":
             return Response({
-                "detail": "invalid username/password"
+                "message": "invalid username/password"
             })
 
+        # Get Employee ID from ITHC Employee table
         res = get_ithc_employee_id(username)
         if 'err' in res:
             return Response({
-                "detail": res['err']
+                "message": res['err']
             })
+
         id = res['id']
 
         # Generate jwt
