@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'budgetin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'budgetin',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': 'dbit',
+        'USER': 'bit',
+        'PASSWORD': 'devbit',
+        'HOST': '10.43.3.176',
+        'PORT': '5524',
     }
 }
 
