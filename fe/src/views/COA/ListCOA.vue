@@ -3,7 +3,7 @@
     <v-container class="master-coa__container outer-container">
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          <v-subheader class="master-coa__header">Master coa</v-subheader>
+          <v-subheader class="master-coa__header">Master COA</v-subheader>
         </v-col>
       </v-row>
 

@@ -45,6 +45,7 @@ export default {
 .outer-container {
   width: 90% !important;
   margin: 1% auto !important;
+  background-color: white;
 }
 
 .v-btn--rounded {
