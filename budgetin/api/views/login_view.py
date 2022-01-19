@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 
 from api.utils.jwt import *
 from api.utils.hit_api import login_eai
+from api.utils.hit_api import get_ithc_employee_id
 
 
 class LoginView(APIView):
@@ -22,12 +23,21 @@ class LoginView(APIView):
 
         # If EAI success
         # Get ITHC EmployeeID
-        id = 52
+        if login_status != "Berhasil":
+            return Response({
+                "detail": "invalid username/password"
+            })
+
+        res = get_ithc_employee_id(username)
+        if 'err' in res:
+            return Response({
+                "detail": res['err']
+            })
+        id = res['id']
 
         # Generate jwt
         jwt = generate_token(id, username)
 
         return Response({
-            'status': login_status,
-            'token': jwt
+            'token': jwt,
         })
