@@ -16,13 +16,13 @@ class LoginView(APIView):
         username = request.data['username']
         password = request.data['password']
 
-        # Hit Eai
+        # Hit EAI
 
+        # If EAI success
         # Get ITHC EmployeeID
         id = 52
-        username = 'u071182'
 
-        # generate jwt
+        # Generate jwt
         jwt = generate_token(id, username)
 
         return Response({
