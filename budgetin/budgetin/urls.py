@@ -21,14 +21,16 @@ from api import views
 router = routers.DefaultRouter()
 router.register('api/budget', views.BudgetViewSet)
 router.register('api/coa', views.CoaViewSet)
+router.register('api/monitoring', views.MonitoringViewSet)
+router.register('api/pic_budget', views.PicBudgetViewSet)
 router.register('api/planning', views.PlanningViewSet)
 router.register('api/product', views.ProductViewSet)
 router.register('api/project_detail', views.ProjectDetailViewSet)
 router.register('api/project', views.ProjectDetailViewSet)
+router.register('api/user', views.UserViewSet)
 router.register('api/strategy', views.StrategyViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
 ]
-
