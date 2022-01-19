@@ -6,11 +6,12 @@ from django.conf import settings
 from django.utils import timezone
 
 
-def generate_token():
+def generate_token(id, username):
     payload = {
-        "username": "bambang",
+        "id": id,
+        "username": username,
         "iat": datetime.now(),
-        "exp": datetime.now() - timedelta(days=7),
+        "exp": datetime.now() + timedelta(hours=8),
     }
     encoded_jwt = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
     return encoded_jwt
