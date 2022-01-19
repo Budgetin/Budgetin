@@ -12,4 +12,5 @@ from .project_type_view import ProjectTypeViewSet
 from .strategy_view import StrategyViewSet
 from .table_view import TableViewSet
 from .user_view import UserViewSet
+from .audit_log_view import AuditLogViewSet
 from .login_view import LoginView
