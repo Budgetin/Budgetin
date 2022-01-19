@@ -14,6 +14,12 @@ export default {
 <style>
 /* GLOBAL FONT IMPORT */
 @import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap");
+
+.v-dialog > .v-card > .v-card__title{
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+}
+
 </style> 
 
 <style lang="scss">
