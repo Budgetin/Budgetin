@@ -32,4 +32,5 @@ router.register('api/strategy', views.StrategyViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
+    path('api/', include('api.urls'))
 ]
