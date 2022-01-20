@@ -94,3 +94,36 @@ def get_biro_info(biro_id):
     return {
         'err': 'username does not exists in ITHC Employee'
     }
+    
+def get_employee_info(username):
+    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/biros/?include=sub_group,sub_group.group,sub_group.group.divisi&username__exact={}".format(
+        username)
+    headers = {
+        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
+    }
+    res = requests.get(url, headers=headers, verify=False)
+    if res.json():
+        #check for biro that is not deleted
+        employee = [e for e in res.json() if e['is_deleted'] == False]
+        if employee:
+            employee_id = employee[0]['id']
+            biro_id = employee[0]['biro']
+            biro_manager_id = employee[0]['manager_employee']
+            sub_group_id = employee[0]['sub_group']['id']
+            sub_group_manager_id = employee[0]['sub_group']['manager_employee']
+            group_id = employee[0]['sub_group']['group']['id']
+            group_manager_id = employee[0]['sub_group']['group']['manager_employee']
+            divisi_id = employee[0]['sub_group']['group']['divisi']['id']
+            return {
+                'employee_id' : employee_id,
+                'biro_id' : biro_id,
+                'biro_manager_id' : biro_manager_id,
+                'sub_group_id' : sub_group_id,
+                'sub_group_manager_id' : sub_group_manager_id,
+                'group_id' : group_id,
+                'group_manager_id' : group_manager_id,
+                'divisi_id' : divisi_id
+            }
+    return {
+        'err': 'employee does not exists in ITHC Employee'
+    }
