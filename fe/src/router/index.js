@@ -12,9 +12,15 @@ const routes = [
     children:[  
       {
         path: 'coa',
-        name: 'COA',
-        component: () => import("@/views/COA/ListCOA"),
-      }]
+        name: 'Coa',
+        component: () => import("@/views/COA/ListCoa"),
+      },  
+      {
+        path: 'home',
+        name: 'Home',
+        component: Home
+      }
+    ]
   },
   {
     path: '/home',

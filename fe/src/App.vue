@@ -14,6 +14,12 @@ export default {
 <style>
 /* GLOBAL FONT IMPORT */
 @import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap");
+
+.v-dialog > .v-card > .v-card__title{
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+}
+
 </style> 
 
 <style lang="scss">
@@ -22,7 +28,8 @@ export default {
 }
 
 /* GLOBAL TYPOGRAPHY  STYLING */
-#app
+#app,
+#master-coa
 {
   font-family: "Nunito", sans-serif !important;
 }
@@ -36,18 +43,27 @@ export default {
 }
 
 .outer-container {
-  width: 80% !important;
+  width: 90% !important;
   margin: 1% auto !important;
   background-color: white;
 }
 
-.v-btn--rounded {
-  min-width: 8rem !important;
-}
+// .v-btn--rounded {
+//   min-width: 8rem !important;
+// }
 
 .v-input--is-disabled {
   .v-input__slot {
     background-color: var(--grey-bg) !important;
   }
 }
+
+a{
+  background-color: white;
+}
+
+.rounded-card{
+    border-radius:100%;
+}
+
 </style>

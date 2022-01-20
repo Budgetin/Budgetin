@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <sidebar />
-    <v-main style="padding: 0 10%;">
+    <v-main>
       <router-view class="bg-grey"></router-view>
     </v-main>
   </v-app>

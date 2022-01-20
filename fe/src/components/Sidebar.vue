@@ -2,11 +2,11 @@
   <div>
     <v-navigation-drawer
       permanent
-      expand-on-hover
       dark
       class="gradient"
       app
       mini-variant-width="5rem"
+      width="13rem"
     >
       <v-list nav class="px-0 mx-0">
         <v-list-item class="px-0 mx-0">
@@ -46,14 +46,15 @@
         </v-list-item>
         <v-list-group
           :value="true"
-          color="white">
+          no-action
+          active-class= "white--text">
          <template v-slot:activator>
               <v-list-item-icon>
                 <v-icon>mdi-view-grid</v-icon>
               </v-list-item-icon>
               <v-list-item-title>Master</v-list-item-title>
           </template>
-          <v-list-item link :to="'/coa'" replace>
+          <v-list-item link :to="'/coa'" replace active-class= "white--text">
               <v-list-item-title>COA</v-list-item-title>
           </v-list-item>
           <v-list-item>
@@ -87,4 +88,9 @@ export default {
     rgba(47, 232, 253, 1) 100%
   );
 }
+
+.v-list-item__title{
+  font-size: 14px;
+}
+
 </style>
