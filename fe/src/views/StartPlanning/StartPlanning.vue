@@ -54,9 +54,9 @@
 
                 <v-row no-gutters>
                     <v-dialog v-model="dialog" persistent width="37.5rem">
-                        <form-coa
+                        <start-planning
                             @cancelClicked="onCancel">
-                        </form-coa>
+                        </start-planning>
                     </v-dialog>
                 </v-row>
             </v-card>
