@@ -48,9 +48,9 @@ export default {
   background-color: white;
 }
 
-.v-btn--rounded {
-  min-width: 8rem !important;
-}
+// .v-btn--rounded {
+//   min-width: 8rem !important;
+// }
 
 .v-input--is-disabled {
   .v-input__slot {
