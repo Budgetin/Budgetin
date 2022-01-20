@@ -17,7 +17,7 @@
             <v-text-field
               outlined
               dense
-              :disabled="isAdd"
+              :disabled="isView"
               :rules="[validation.required]"
             >
             </v-text-field>
@@ -32,7 +32,7 @@
             <v-text-field
               outlined
               dense
-              :disabled="isAdd"
+              :disabled="isView"
               :rules="[validation.required]"
             >
             </v-text-field>
@@ -47,7 +47,7 @@
             <v-text-field
               outlined
               dense
-              :disabled="isAdd"
+              :disabled="isView"
               :rules="[validation.required]"
             >
             </v-text-field>
@@ -83,7 +83,7 @@
             <v-text-field
               outlined
               dense
-              :disabled="isAdd"
+              :disabled="isView"
               suffix="IDR"
             >
             </v-text-field>
@@ -123,7 +123,7 @@
 <script>
 export default {
   name: "FormCoa",
-  props: ["isView"],
+  props: ["isView","isAdd"],
 
   data: () => ({
     checkbox: false,
@@ -148,6 +148,10 @@ export default {
 
 button {
   min-width: 8rem;
+}
+
+.v-btn--rounded {
+  min-width: 8rem !important;
 }
 </style>
 

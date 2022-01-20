@@ -42,6 +42,14 @@
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
+              <router-link
+                class="font-weight-bold"
+                style="text-decoration: none"
+                :to="{
+                  name: 'EditMasterCoa',
+                  params: { id: item.id },
+                }"
+              >
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on" color="primary" @click="onEdit(item)">
@@ -50,6 +58,7 @@
                   </template>
                   <span>View/Edit</span>
                 </v-tooltip>
+              </router-link>
             </template>
 
           </v-data-table>
@@ -175,7 +184,10 @@ export default {
     },
     onCancel() {
       this.dialog = false;
-    }
+    },
+    onEdit(item) {
+      // this.$store.commit("masterCoa/SET_EDITTED_ITEM", item);
+    },
   }
 };
 </script>
