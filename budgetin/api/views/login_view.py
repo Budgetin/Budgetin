@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from api.utils.jwt import *
 from api.utils.hit_api import login_eai
 from api.utils.hit_api import get_ithc_employee_id
+from api.models.user_model import User
 
 
 class LoginView(APIView):
@@ -18,7 +19,12 @@ class LoginView(APIView):
         username = request.data['username']
         password = request.data['password']
 
-        # TODO Check if users exists in Budgetin database
+        # Check if users exists in Budgetin database
+        user = User.objects.filter(username=username)
+        if not user:
+            return Response({
+                "message": "You don't have permission to access this site",
+            })
 
         # Hit EAI
         eai_login_status = login_eai(username, password)
