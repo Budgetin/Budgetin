@@ -53,19 +53,6 @@
             </v-text-field>
           </v-col>
         </v-row>
-        <!-- Status -->
-        <v-row no-gutters>
-          <v-col cols="6"> Status <strong class="red--text">*</strong> </v-col>
-          <v-col cols="6">
-            <v-text-field
-              outlined
-              dense
-              :disabled="isAdd"
-              :rules="[validation.required]"
-            >
-            </v-text-field>
-          </v-col>
-        </v-row>
         <!-- CAPEX -->
         <v-row no-gutters>
           <v-col cols="6" class="mb-5">
@@ -123,7 +110,7 @@
 <script>
 export default {
   name: "FormCoa",
-  props: ["isView","isView"],
+  props: ["isView"],
 
   data: () => ({
     checkbox: false,
