@@ -3,10 +3,9 @@ import pyDes
 import binascii
 
 from django.conf import settings
+from api.exceptions import NotAuthenticatedException
 
 # Encrypt Password dengan 3DES untuk Login EAI
-
-
 def encrypt_password_3des_eai(password):
     key = settings.EAI_PUBLIC_KEY
     triple_des = pyDes.triple_des(
@@ -18,8 +17,6 @@ def encrypt_password_3des_eai(password):
     return encrypted_password
 
 # Login EAI
-
-
 def login_eai(username, password):
     url_token = "https://sso-apigw-int.dti.co.id/auth/realms/3scale-dev/protocol/openid-connect/token"
     headers_token = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -45,7 +42,7 @@ def login_eai(username, password):
 
     return response_login.json()['error_schema']['error_message']['indonesian']
 
-
+#Get Employee ID from Username
 def get_ithc_employee_id(username):
     url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?username__exact={}".format(
         username)
@@ -65,6 +62,7 @@ def get_ithc_employee_id(username):
         'err': 'username does not exists in ITHC Employee'
     }
 
+#Get Biro Information
 def get_biro_info(biro_id):
     url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/biros/?include=sub_group,sub_group.group,sub_group.group.divisi&id__exact={}".format(
         biro_id)
@@ -92,5 +90,41 @@ def get_biro_info(biro_id):
                 'divisi_id' : divisi_id
             }
     return {
-        'err': 'username does not exists in ITHC Employee'
+        'err': 'biro does not exists'
     }
+    
+
+#Get Employee Information
+def get_employee_info(username):
+    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?include=biro,sub_group,sub_group.group,sub_group.group.divisi&username__exact={}".format(
+        username)
+    headers = {
+        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
+    }
+    res = requests.get(url, headers=headers, verify=False)
+    if res.json():
+        #check for employee that is not deleted
+        employee = [e for e in res.json() if e['is_deleted'] == False]
+        if employee:
+            employee_id = employee[0]['id']
+            biro_id = employee[0]['biro']
+            biro_manager_id = employee[0]['biro']['manager_employee']
+            sub_group_id = employee[0]['sub_group']['id']
+            sub_group_manager_id = employee[0]['sub_group']['manager_employee']
+            group_id = employee[0]['sub_group']['group']['id']
+            group_manager_id = employee[0]['sub_group']['group']['manager_employee']
+            divisi_id = employee[0]['sub_group']['group']['divisi']['id']
+            return {
+                'employee_id' : employee_id,
+                'biro_id' : biro_id,
+                'biro_manager_id' : biro_manager_id,
+                'sub_group_id' : sub_group_id,
+                'sub_group_manager_id' : sub_group_manager_id,
+                'group_id' : group_id,
+                'group_manager_id' : group_manager_id,
+                'divisi_id' : divisi_id
+            }
+    raise NotAuthenticatedException()
+    # return {
+    #     'err': 'employee does not exists in ITHC Employee'
+    # }
