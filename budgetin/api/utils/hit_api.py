@@ -3,7 +3,7 @@ import pyDes
 import binascii
 
 from django.conf import settings
-from api.exceptions import NotAuthenticatedException
+from api.exceptions import *
 
 # Encrypt Password dengan 3DES untuk Login EAI
 def encrypt_password_3des_eai(password):
@@ -57,10 +57,7 @@ def get_ithc_employee_id(username):
             return {
                 'id': user[0]['id'],
             }
-
-    return {
-        'err': 'username does not exists in ITHC Employee'
-    }
+    raise NotFoundException()
 
 #Get Biro Information
 def get_biro_info(biro_id):
@@ -89,9 +86,7 @@ def get_biro_info(biro_id):
                 'group_manager_id' : group_manager_id,
                 'divisi_id' : divisi_id
             }
-    return {
-        'err': 'biro does not exists'
-    }
+    raise NotFoundException()
     
 
 #Get Employee Information
@@ -124,7 +119,7 @@ def get_employee_info(username):
                 'group_manager_id' : group_manager_id,
                 'divisi_id' : divisi_id
             }
-    raise NotAuthenticatedException()
+    raise NotFoundException()
     # return {
     #     'err': 'employee does not exists in ITHC Employee'
     # }
