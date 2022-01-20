@@ -2,7 +2,8 @@ import json
 from sre_constants import SUCCESS
 from turtle import st
 from django.core.management.base import BaseCommand
-from api.models import Action, ProjectType, Strategy, Table, MonitoringStatus
+from api.models import Action, ProjectType, Strategy, Table, MonitoringStatus, Coa
+
 
 class Command(BaseCommand):
 
@@ -48,11 +49,23 @@ class Command(BaseCommand):
 
         for data in data_list:
             data['pk'] = data.pop('id')
-            MonitoringStatus.objects.get_or_create(pk=data['pk'], defaults=data)
+            MonitoringStatus.objects.get_or_create(
+                pk=data['pk'], defaults=data)
         self.comment("Seeding Monitoring Status")
 
+    def seed_coa(self):
+        with open('api/json/coa.json') as f:
+            data_list = json.load(f)
+
+        for data in data_list:
+            data['pk'] = data.pop('id')
+            Coa.objects.get_or_create(
+                pk=data['pk'], defaults=data)
+        self.comment("Seeding COA")
+
     def comment(self, comment):
-        self.stdout.write(self.style.HTTP_SUCCESS('%s... ' % comment)+self.style.SUCCESS('OK'))
+        self.stdout.write(self.style.HTTP_SUCCESS('%s... ' %
+                          comment)+self.style.SUCCESS('OK'))
 
     def handle(self, *args, **options):
         self.seed_action()
@@ -60,3 +73,4 @@ class Command(BaseCommand):
         self.seed_strategy()
         self.seed_table()
         self.seed_monitoring_status()
+        self.seed_coa()

@@ -1,0 +1,62 @@
+[
+{
+    "id": "1",
+    "name": "Consultant",
+    "hyperion_name": "XVI I.3.b HONORARIUM CONSULTANT",
+    "definition": "definition"
+},
+{
+    "id": 2,
+    "name": "Hardware",
+    "hyperion_name": "l. Computer and Machinery I",
+    "definition": "definition"
+},
+{
+    "id": 3,
+    "name": "Software",
+    "hyperion_name": "p. Software Khusus",
+    "definition": "definition"
+},
+{
+    "id": 4,
+    "name": "Maintenance Hardware",
+    "hyperion_name": "XVI A.6.5 KOMPUTER",
+    "definition": "definition"
+},
+{
+    "id": 5,
+    "name": "Maintenance Software",
+    "hyperion_name": "XVI F.7 SOFTWARE",
+    "definition": "definition"
+},
+{
+    "id": 6,
+    "name": "Gedung",
+    "hyperion_name": "h. Gedung Dalam Pembangunan",
+    "definition": "definition"
+},
+{
+    "id": 7,
+    "name": "Tanah",
+    "hyperion_name": "Tanah",
+    "definition": "definition"
+},
+{
+    "id": 8,
+    "name": "Sewa Gedung",
+    "hyperion_name": "Sewa Gedung",
+    "definition": "definition"
+},
+{
+    "id": 9,
+    "name": "Pemeliharaan Gedung & Perabotan",
+    "hyperion_name": "XVI A.6.2 GEDUNG, GUDANG",
+    "definition": "definition"
+},
+{
+    "id": 10,
+    "name": "Keperluan Kantor Lainnya",
+    "hyperion_name": "XVI A.2.1 n. LAINNYA",
+    "definition": "definition"
+}
+]
