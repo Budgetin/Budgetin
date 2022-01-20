@@ -10,6 +10,8 @@ def user_has_access(username):
     
     #Check if User S1, S2, S3
     data_check = get_employee_info(username)
+    if 'err' in data_check:
+        return False
     if data_check['biro_manager_id'] == data_check['employee_id'] or data_check['sub_group_manager_id'] == data_check['employee_id'] or data_check['group_manager_id'] == data_check['employee_id']:
         return True
     
@@ -18,4 +20,5 @@ def user_has_access(username):
     if pic_budget:
         return True
     
+    #No Access
     return False
