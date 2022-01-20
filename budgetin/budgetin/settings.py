@@ -61,6 +61,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # custom middleware
+    'api.middleware.custom_auth_middleware.CustomAuthMiddleware',
 ]
 
 ROOT_URLCONF = 'budgetin.urls'
@@ -85,7 +88,7 @@ WSGI_APPLICATION = 'budgetin.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+# https: // docs.djangoproject.com/en/4.0/ref/settings/  # databases
 
 # Server
 DATABASES = {

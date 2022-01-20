@@ -25,6 +25,7 @@ class LoginView(APIView):
             return Response({
                 "message": "You don't have permission to access this site",
             })
+        role = user.values()[0]['role']
 
         # Hit EAI
         eai_login_status = login_eai(username, password)
@@ -46,7 +47,7 @@ class LoginView(APIView):
         id = res['id']
 
         # Generate jwt
-        jwt = generate_token(id, username)
+        jwt = generate_token(id, username, role)
 
         return Response({
             'token': jwt,
