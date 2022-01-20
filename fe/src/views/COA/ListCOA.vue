@@ -43,7 +43,6 @@
 
             <template v-slot:[`item.actions`]="{ item }">
               <router-link
-                class="font-weight-bold"
                 style="text-decoration: none"
                 :to="{
                   name: 'EditMasterCoa',
@@ -78,9 +77,12 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import FormCoa from "@/components/MasterCOA/FormCoa";
 export default {
+  name: "MasterCoa",
   components: {FormCoa},
+  watch: {},
   data() {
     return {
       dialog: false,
@@ -93,89 +95,88 @@ export default {
         { text: "Status", value: "status" },
         { text: "Actions", value: "actions", align: "center", sortable: false },
       ],
-      desserts: [
-        {
-          id: 1,
-          coa: "Consultant",
-          hyperion: "XVI I.3.b HONORARIUM CONSULTANT",
-          update_by: "Phang Willy",
-          update_date: "30 November 2021",
-          status: "active",
-        },
-        {
-          id: 2,
-          coa: "Hardware",
-          hyperion: "l. Computer and Machinery I",
-          update_by: "Jeffry Setiawan",
-          update_date: "30 November 2021",
-          status: "active",
-        },
-        {
-          id: 3,
-          coa: "Software",
-          hyperion: "p. Software Khusus",
-          update_by: "Phang Willy",
-          update_date: "30 November 2021",
-          status: "active",
-        },
-        {
-          id: 4,
-          coa: "Maintenance Hardware",
-          hyperion: "XVI A.6.5 KOMPUTER",
-          update_by: "Jeffry Setiawan",
-          update_date: "30 November 2021",
-          status: "active",
-        },
-        {
-          id: 5,
-          coa: "Maintenance Software",
-          hyperion: "XVI F.7 SOFTWARE",
-          update_by: "Phang Willy",
-          update_date: "30 November 2021",
-          status: "active",
-        },
-        {
-          id: 6,
-          coa: "Gedung",
-          hyperion: "h. Gedung Dalam Pembangunan",
-          update_by: "Jeffry Setiawan",
-          update_date: "30 November 2021",
-          status: "active",
-        },
-        {
-          id: 7,
-          coa: "Tanah",
-          hyperion: "Tanah",
-          update_by: "Phang Willy",
-          update_date: "30 November 2021",
-          status: "active",
-        },
-        {
-          id: 8,
-          coa: "Sewa Gedung",
-          hyperion: "Sewa Gedung",
-          update_by: "Jeffry Setiawan",
-          update_date: "30 November 2021",
-          status: "active",
-        },
-        {
-          id: 9,
-          coa: "Pemeliharaan Gedung & Perabotan",
-          hyperion:
-            "XVI A.6.2 GEDUNG, GUDANG",
-          update_by: "Phang Willy",
-          update_date: "30 November 2021",
-          status: "active",
-        },
-        {
-          id: 10,
-          coa: "Keperluan Kantor Lainnya",
-          hyperion: "XVI A.2.1 n. LAINNYA",
-          update_by: "Jeffry Setiawan",
-          update_date: "30 November 2021",
-          status: "active",
-        },
-      ],
+      // desserts: [
+      //   {
+      //     id: 1,
+      //     coa: "Consultant",
+      //     hyperion: "XVI I.3.b HONORARIUM CONSULTANT",
+      //     update_by: "Phang Willy",
+      //     update_date: "30 November 2021",
+      //     status: "active",
+      //   },
+      //   {
+      //     id: 2,
+      //     coa: "Hardware",
+      //     hyperion: "l. Computer and Machinery I",
+      //     update_by: "Jeffry Setiawan",
+      //     update_date: "30 November 2021",
+      //     status: "active",
+      //   },
+      //   {
+      //     id: 3,
+      //     coa: "Software",
+      //     hyperion: "p. Software Khusus",
+      //     update_by: "Phang Willy",
+      //     update_date: "30 November 2021",
+      //     status: "active",
+      //   },
+      //   {
+      //     id: 4,
+      //     coa: "Maintenance Hardware",
+      //     hyperion: "XVI A.6.5 KOMPUTER",
+      //     update_by: "Jeffry Setiawan",
+      //     update_date: "30 November 2021",
+      //     status: "active",
+      //   },
+      //   {
+      //     id: 5,
+      //     coa: "Maintenance Software",
+      //     hyperion: "XVI F.7 SOFTWARE",
+      //     update_by: "Phang Willy",
+      //     update_date: "30 November 2021",
+      //     status: "active",
+      //   },
+      //   {
+      //     id: 6,
+      //     coa: "Gedung",
+      //     hyperion: "h. Gedung Dalam Pembangunan",
+      //     update_by: "Jeffry Setiawan",
+      //     update_date: "30 November 2021",
+      //     status: "active",
+      //   },
+      //   {
+      //     id: 7,
+      //     coa: "Tanah",
+      //     hyperion: "Tanah",
+      //     update_by: "Phang Willy",
+      //     update_date: "30 November 2021",
+      //     status: "active",
+      //   },
+      //   {
+      //     id: 8,
+      //     coa: "Sewa Gedung",
+      //     hyperion: "Sewa Gedung",
+      //     update_by: "Jeffry Setiawan",
+      //     update_date: "30 November 2021",
+      //     status: "active",
+      //   },
+      //   {
+      //     id: 9,
+      //     coa: "Pemeliharaan Gedung & Perabotan",
+      //     hyperion:"XVI A.6.2 GEDUNG, GUDANG",
+      //     update_by: "Phang Willy",
+      //     update_date: "30 November 2021",
+      //     status: "active",
+      //   },
+      //   {
+      //     id: 10,
+      //     coa: "Keperluan Kantor Lainnya",
+      //     hyperion: "XVI A.2.1 n. LAINNYA",
+      //     update_by: "Jeffry Setiawan",
+      //     update_date: "30 November 2021",
+      //     status: "active",
+      //   },
+      // ],
     };
   },
   methods: {

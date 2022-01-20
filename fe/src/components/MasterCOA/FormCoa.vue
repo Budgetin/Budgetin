@@ -123,7 +123,7 @@
 <script>
 export default {
   name: "FormCoa",
-  props: ["isView","isAdd"],
+  props: ["isView","isView"],
 
   data: () => ({
     checkbox: false,
@@ -139,11 +139,6 @@ export default {
 <style lang="scss">
 .v-card__text {
   color: unset !important;
-}
-
-.v-card-title {
-  font-size: 1.25rem !important;
-  font-weight: 600 !important;
 }
 
 button {

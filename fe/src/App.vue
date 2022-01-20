@@ -20,6 +20,10 @@ export default {
   font-weight: 600 !important;
 }
 
+.v-card__title{
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+}
 </style> 
 
 <style lang="scss">
@@ -47,10 +51,6 @@ export default {
   margin: 1% auto !important;
   background-color: white;
 }
-
-// .v-btn--rounded {
-//   min-width: 8rem !important;
-// }
 
 .v-input--is-disabled {
   .v-input__slot {
