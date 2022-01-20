@@ -71,7 +71,7 @@
           <v-col cols="6" class="mb-5">
             <v-checkbox
               v-model="checkbox"
-              :label="`Set This to CAPEX ??`"
+              :label="`Set This to CAPEX ?`"
             ></v-checkbox>
           </v-col>
         </v-row>
