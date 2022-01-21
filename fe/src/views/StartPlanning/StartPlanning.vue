@@ -1,77 +1,76 @@
 <template>
     <v-app id="start-planning">
         <v-container class="start-planning__container outer-container">
-            <v-card>
-                <v-card-title>
-                    <v-row no-gutters>
-                        <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                        <v-subheader class="start-planning__header">Start Planning</v-subheader>
-                        </v-col>
-                    </v-row>
-                </v-card-title>
+            <v-row no-gutters>
+                <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+                <v-subheader class="start-planning__header">Start Planning</v-subheader>
+                </v-col>
+            </v-row>
 
-                <v-row no-gutters>
-                    <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                        <v-data-table
-                            :headers="headers"
-                            :items="desserts"
-                            :search="search">
-                            <template v-slot:top>
-                                <v-toolbar-title>
-                                    <v-row class="mb-5" no-gutters>
-                                        <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
-                                            <v-text-field
-                                                class="start-planning__input"
-                                                v-model="search"
-                                                append-icon="mdi-magnify"
-                                                label="Search"
-                                                single-line
-                                                hide-details>
-                                            </v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="start-planning__btn">
-                                            <v-btn rounded color="primary" @click="onAdd">
-                                                + Start New Planning
-                                            </v-btn>
-                                        </v-col>
-                                    </v-row>
-                                </v-toolbar-title>
-                            </template>
-                                        
-                            <template v-slot:[`item.actions`]="{ item }">
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on }">
-                                        <v-icon v-on="on" color="primary" @click="onEdit(item)">
-                                            mdi-eye
-                                        </v-icon>
-                                    </template>
-                                    <span>View/Edit</span>
-                                </v-tooltip>
-                            </template>
-                        </v-data-table>
-                    </v-col>
-                </v-row>
+            <v-row no-gutters>
+                <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+                    <v-data-table
+                        :headers="headers"
+                        :items="desserts"
+                        :search="search">
+                        <template v-slot:top>
+                            <v-toolbar-title>
+                                <v-row class="mb-5" no-gutters>
+                                    <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
+                                        <v-text-field
+                                            class="start-planning__input"
+                                            v-model="search"
+                                            append-icon="mdi-magnify"
+                                            label="Search"
+                                            single-line
+                                            hide-details>
+                                        </v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="start-planning__btn">
+                                        <v-btn rounded color="primary" @click="onAdd">
+                                            + Start New Planning
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
+                            </v-toolbar-title>
+                        </template>
+                                    
+                        <template v-slot:[`item.actions`]="{ item }">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                                        mdi-eye
+                                    </v-icon>
+                                </template>
+                                <span>View/Edit</span>
+                            </v-tooltip>
+                        </template>
+                    </v-data-table>
+                </v-col>
+            </v-row>
 
-                <v-row no-gutters>
-                    <v-dialog v-model="dialog" persistent width="37.5rem">
-                        <start-planning
-                            @cancelClicked="onCancel">
-                        </start-planning>
-                    </v-dialog>
-                </v-row>
-            </v-card>
+            <v-row no-gutters>
+                <v-dialog v-model="dialog" persistent width="40rem">
+                    <form-start-planning
+                        @cancelClicked="onCancel">
+                    </form-start-planning>
+                </v-dialog>
+            </v-row>
         </v-container>
     </v-app>
 </template>
 
 <script>
-import FormStartPlanning from '@/components/StartPlanning/FormStartPlanning';
+import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
 export default {
+    name: "CompStartPlanning",
     components: {
         FormStartPlanning
     },
+    watch: {},
     data() {
         return {
+            dialog: false,
             search: "",
             headers: [
                 { text: "ID", value: "id",width: "20%"},
@@ -173,8 +172,8 @@ export default {
         },
         onCancel() {
             this.dialog = false;
-        }
-    },
+        },
+    }
 };
 </script>
 
@@ -218,8 +217,8 @@ export default {
 
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
-#master-coa {
-    .master-coa__btn {
+#start-planning {
+    .start-planning__btn {
         text-align: center;
         padding: 0px 32px;
 
@@ -228,7 +227,7 @@ export default {
         margin: 0px 0px 32px 0px;
         }
     }
-    .master-coa__card {
+    .start-planning__card {
         flex-direction: column;
         button {
         width: 16rem !important;
