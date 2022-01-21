@@ -68,13 +68,19 @@
         </v-col>
       </v-row>
 
-      <!-- <v-row no-gutters>
+      <v-row no-gutters>
         <v-dialog v-model="dialog" persistent width="37.5rem">
           <form-coa
+          :form="form"
+          :isView="false"
+          :isNew="true"
+          :dataMasterCoa="dataMasterCoa"
+          @editClicked="onEdit"
           @cancelClicked="onCancel"
+          @submitClicked="onSubmit"
           ></form-coa>
         </v-dialog>
-      </v-row> -->
+      </v-row>
 
     </v-container>
   </v-app>
@@ -93,10 +99,10 @@ export default {
     search: "",
     dataTable: {
       headers: [
-        { text: "COA", value: "coa",width: "20%"},
-        { text: "Hyperion Name", value: "hyperion" ,width: "20%"},
-        { text: "Update By", value: "update_by" },
-        { text: "Update Date", value: "update_date" },
+        { text: "COA", value: "name", align: "center"},
+        { text: "Hyperion Name", value: "hyperion_name", align: "center"},
+        { text: "Update By", value: "update_by", align: "center" },
+        { text: "Update Date", value: "update_date", align: "center" },
         { text: "Actions", value: "actions", align: "center", sortable: false },
       ]
     },
@@ -128,7 +134,7 @@ export default {
       this.dialog = false;
     },
     onSubmit(e) {
-      this.postMasterSource(e)
+      this.postMasterCoa(e)
         .then(() => {
           this.onSaveSuccess();
         })
@@ -139,6 +145,13 @@ export default {
   }
 }
 </script>
+
+<style>
+button {
+  min-width: 2rem;
+}
+</style>
+
 <style lang="scss" scoped>
 #master-coa {
   .master-coa__header {
@@ -166,11 +179,6 @@ export default {
     border-radius: 8px;
   }
 
-  .master-coa__card {
-    button {
-      width: 8rem;
-    }
-  }
 }
 
 @media only screen and (max-width: 600px) {
