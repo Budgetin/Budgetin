@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="mb-5">
-      Add COA
+      {{ cardTitle }} COA
       <v-spacer></v-spacer>
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
@@ -15,10 +15,12 @@
           <v-col cols="6"> COA <strong class="red--text">*</strong> </v-col>
           <v-col cols="6">
             <v-text-field
+              v-model="form.name"
               outlined
               dense
               :disabled="isView"
-              :rules="[validation.required]"
+              :rules="validation.required"
+              placeholder="Input Here"
             >
             </v-text-field>
           </v-col>
@@ -30,10 +32,12 @@
           </v-col>
           <v-col cols="6">
             <v-text-field
+              v-model="form.definition"
               outlined
               dense
               :disabled="isView"
-              :rules="[validation.required]"
+              :rules="validation.required"
+              placeholder="Input Here"
             >
             </v-text-field>
           </v-col>
@@ -45,10 +49,12 @@
           </v-col>
           <v-col cols="6">
             <v-text-field
+              v-model="form.hyperion_name"
               outlined
               dense
               :disabled="isView"
-              :rules="[validation.required]"
+              :rules="validation.required"
+              placeholder="Input Here"
             >
             </v-text-field>
           </v-col>
@@ -57,21 +63,24 @@
         <v-row no-gutters>
           <v-col cols="6" class="mb-5">
             <v-checkbox
-              v-model="checkbox"
+              v-model="form.is_capex"
               :label="`Set This to CAPEX ?`"
             ></v-checkbox>
           </v-col>
         </v-row>
 
         <!-- Minimum Value -->
-        <v-row no-gutters v-if="checkbox">
+        <v-row no-gutters v-if="form.is_capex">
           <v-col cols="6"> Minimum Value </v-col>
           <v-col cols="6">
             <v-text-field
+              v-model="form.minimum_item_origin"
               outlined
               dense
               :disabled="isView"
               suffix="IDR"
+              :rules="validation.targetRule"
+              placeholder="Number Only"
             >
             </v-text-field>
           </v-col>
@@ -110,20 +119,45 @@
 <script>
 export default {
   name: "FormCoa",
-  props: ["isView"],
-
+  props: ["form", "isView", "isNew"],
   data: () => ({
-    checkbox: false,
     validation: {
-      required: (v) => !!v || "This field is required",
-      // counterInitial: (v) => v.length <= 50 || "Max. 50 characters",
-      // counterName: (v) => v.length <= 50 || "Max. 50 characters",
+      required: [
+        (v) => !!v || "This field is required"
+      ],
+      targetRule: [
+        v => /^\d+$/.test(v) || "This field is numbers only",
+      ],
     },
   }),
+  computed: {
+    cardTitle() {
+      return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+    },
+    errorMsg() {
+      return this.$store.state.source.errorMsg;
+    },
+  },
+  methods: {
+    onSubmit() {
+      let validate = this.$refs.form.validate();
+      if (validate) {
+        const payload = {
+          id: this.form?.id,
+          name: this.form.name,
+          definiton : this.form.definition,
+          hyperion_name: this.form.hyperion_name,
+          is_capex: this.form.is_capex,
+          minimum_item_origin: this.form.minimum_item_origin? this.form.minimum_item_origin : 0
+        };
+        this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
+      }
+    },
+  },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scopped>
 .v-card__text {
   color: unset !important;
 }

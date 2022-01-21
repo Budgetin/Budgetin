@@ -19,51 +19,7 @@ const masterCoa = {
     edittedItemHistories: [],
   },
   getters: {
-    value: (state) => state.value,
-    // cleanHistories: (state) => {
-    //   let raw = state.edittedItemHistories;
-    //   if (raw.length === 0) return [];
-
-    //   // sort by action_time ASC
-    //   let clean = raw.sort((a, b) => (a.action_time > b.action_time ? 1 : -1));
-
-    //   let keys = [
-    //     { key: "Coa_name", label: "Coa Name" },
-    //     { key: "status", label: "Status" },
-    //   ];
-
-    //   for (let i = 0; i < clean.length; i++) {
-    //     let before = clean[i - 1];
-    //     let after = clean[i];
-
-    //     let changes = {};
-    //     for (let k of keys) {
-    //       // if no before OR has different value
-    //       if (!before) {
-    //         changes[k.label] = after.serialized_data[k.key];
-    //       } else {
-    //         if (before.serialized_data[k.key] != after.serialized_data[k.key]) {
-    //           changes[k.label] = after.serialized_data[k.key];
-    //         }
-    //       }
-    //     }
-
-    //     clean[i]["changes"] = changes;
-    //   }
-
-    //   // remove history with no changes
-    //   let filtered = clean.filter((x) => Object.keys(x.changes).length > 0);
-
-    //   // map status from id to string
-    //   filtered.forEach((f) => {
-    //     let idStatus = f.changes["Status"];
-    //     let objStatus = store.state.statusInfo.statusInfoMaster.find(
-    //       (x) => x.id == idStatus
-    //     );
-    //     f.changes["Status"] = objStatus?.label;
-    //   });
-    //   return filtered.sort((a, b) => (a.action_time < b.action_time ? 1 : -1));
-    // },
+    value: (state) => state.value
   },
   actions: {
     getMasterCoa() {
@@ -75,14 +31,7 @@ const masterCoa = {
       getAPI
         .get(ENDPOINT)
         .then((response) => {
-          const cleanData = response.data.Coa.map((data) => {
-            return {
-            //   id: data.id,
-            //   Coa_name: data.Coa_name,
-            //   status: String(data.status),
-            };
-          });
-          console.log(cleanData);
+          const cleanData = response.data
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
           );
@@ -115,43 +64,39 @@ const masterCoa = {
     //       });
     //   });
     // },
-    // postMasterCoa({ commit }, payload) {
-    //   commit("POST_PATCH_INIT");
-    //   return new Promise((resolve, reject) => {
-    //     getAPI
-    //       .post(ENDPOINT, payload)
-    //       .then((response) => {
-    //         resolve(response);
-    //         commit("POST_PATCH_SUCCESS");
-    //         store.dispatch("masterCoa/getFromAPI");
-    //         store.dispatch("masterCategory/getFromAPI");
-    //       })
-    //       .catch((error) => {
-    //         let errorMsg =
-    //           "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-    //         if (error.response) {
-    //           errorMsg = "";
-    //           switch (error.response.status) {
-    //             case 400:
-    //               if (error.response.data.hasOwnProperty("Coa_name")) {
-    //                 errorMsg += error.response.data.Coa_name;
-    //               }
-    //               if (error.response.data.hasOwnProperty("status")) {
-    //                 if (errorMsg !== "") errorMsg += " ";
-    //                 errorMsg += error.response.data.status;
-    //               }
-    //               break;
+    postMasterCoa({ commit }, payload) {
+      commit("POST_PATCH_INIT");
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(ENDPOINT, payload)
+          .then((response) => {
+            resolve(response);
+            commit("POST_PATCH_SUCCESS");
+            store.dispatch("masterCoa/getFromAPI");
+            store.dispatch("masterCategory/getFromAPI");
+          })
+          .catch((error) => {
+            let errorMsg =
+              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
+            if (error.response) {
+              errorMsg = "";
+              switch (error.response.status) {
+                case 400:
+                  if (error.response.data.hasOwnProperty("Coa_name")) {
+                    errorMsg += error.response.data.Coa_name;
+                  }
+                  break;
 
-    //             default:
-    //               errorMsg += `Please recheck your input or try again later`;
-    //               break;
-    //           }
-    //         }
-    //         commit("POST_PATCH_ERROR", errorMsg);
-    //         reject(errorMsg);
-    //       });
-    //   });
-    // },
+                default:
+                  errorMsg += `Please recheck your input or try again later`;
+                  break;
+              }
+            }
+            commit("POST_PATCH_ERROR", errorMsg);
+            reject(errorMsg);
+          });
+      });
+    },
     // patchMasterCoa({ commit }, payload) {
     //   commit("POST_PATCH_INIT");
     //   const url = `${ENDPOINT}${payload.id}/`;
