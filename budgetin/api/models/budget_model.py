@@ -4,8 +4,8 @@ from .abstract_model import TimestampModel
 from .abstract_model import UserTrackModel
 
 class Budget(SoftDeleteModel, TimestampModel, UserTrackModel):
-    project_detail_id = models.ForeignKey('ProjectDetail', on_delete=models.CASCADE)
-    coa_id = models.ForeignKey('Coa', on_delete=models.CASCADE)
+    project_detail = models.ForeignKey('ProjectDetail', on_delete=models.CASCADE)
+    coa = models.ForeignKey('Coa', on_delete=models.CASCADE)
     expense_type = models.CharField(max_length=200)
     planning_nominal = models.CharField(max_length=200)
     planning_q1 = models.BigIntegerField()
