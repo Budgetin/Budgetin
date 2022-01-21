@@ -2,7 +2,7 @@
     {
         "id" : 1,
         "username" : "u067014",
-        "role" : "user",
+        "role" : "admin",
         "created_by" : 1
     }
 ]
