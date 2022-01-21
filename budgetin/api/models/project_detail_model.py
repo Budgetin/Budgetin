@@ -6,8 +6,8 @@ from .abstract_model import UserTrackModel
 
 
 class ProjectDetail(SoftDeleteModel, TimestampModel, UserTrackModel):
-    planning_id = models.ForeignKey('Planning',on_delete=models.CASCADE)
-    project_id = models.ForeignKey('Project',on_delete=models.CASCADE)
-    project_type_id = models.ForeignKey('ProjectType',on_delete=models.CASCADE)
+    planning = models.ForeignKey('Planning',on_delete=models.CASCADE)
+    project = models.ForeignKey('Project',on_delete=models.CASCADE)
+    project_type = models.ForeignKey('ProjectType',on_delete=models.CASCADE)
     dcsp_id = models.CharField(max_length=200)
     year = models.IntegerField()
