@@ -1,9 +1,7 @@
 import jwt
-import json
 
 from datetime import datetime, timedelta
 from django.conf import settings
-from django.utils import timezone
 
 
 def generate_token(id, username, role):
@@ -19,4 +17,7 @@ def generate_token(id, username, role):
 
 
 def decode_token(encoded_jwt):
-    return jwt.decode(encoded_jwt, settings.SECRET_KEY, algorithms=["HS256"])
+    try:
+        return jwt.decode(encoded_jwt, settings.SECRET_KEY, algorithms=["HS256"])
+    except Exception:
+        return None
