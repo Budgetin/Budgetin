@@ -46,13 +46,13 @@
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
-              <!-- <router-link
+              <router-link
                 style="text-decoration: none"
                 :to="{
                   name: 'EditMasterCoa',
                   params: { id: item.id },
                 }"
-              > -->
+              >
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on" color="primary" @click="onEdit(item)">
@@ -61,7 +61,7 @@
                   </template>
                   <span>View/Edit</span>
                 </v-tooltip>
-              <!-- </router-link> -->
+              </router-link>
             </template>
 
           </v-data-table>
@@ -99,10 +99,10 @@ export default {
     search: "",
     dataTable: {
       headers: [
-        { text: "COA", value: "name", align: "center"},
-        { text: "Hyperion Name", value: "hyperion_name", align: "center"},
-        { text: "Update By", value: "update_by", align: "center" },
-        { text: "Update Date", value: "update_date", align: "center" },
+        { text: "COA", value: "name"},
+        { text: "Hyperion Name", value: "hyperion_name"},
+        { text: "Update By", value: "update_by"},
+        { text: "Update Date", value: "update_date"},
         { text: "Actions", value: "actions", align: "center", sortable: false },
       ]
     },

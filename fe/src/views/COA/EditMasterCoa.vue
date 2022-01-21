@@ -5,8 +5,12 @@
       <v-col xs="12" sm="6" md="6" lg="7">
         <v-container>
           <form-coa
+            :form="form"
             :isView="isView"
+            @editClicked="onEdit"
+            @okClicked="onOK"
             @cancelClicked="onCancel"
+            @submitClicked="onSubmit"
           ></form-coa>
         </v-container>
       </v-col>
@@ -34,27 +38,87 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapGetters } from "vuex";
 import FormCoa from "@/components/MasterCOA/FormCoa";
 export default {
   name: "EditMasterCoa",
   components: { FormCoa},
+  created() {
+    this.getEdittedItem();
+  },
   methods: {
+    ...mapActions("masterCoa", [
+      "patchMasterCoa",
+      "getMasterCoaById",
+    ]),
+    ...mapActions("masterStatus", ["getMasterStatus"]),
+    setBreadcrumbs() {
+      let param = this.isView ? "View Source" : "Edit Source";
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Master Source",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "MasterSource",
+          },
+        },
+        {
+          text: param,
+          disabled: true,
+        },
+      ]);
+    },
+    getEdittedItem() {
+      this.getMasterSourceById(this.$route.params.id).then(() => {
+        this.getEdittedItemHistories();
+        this.setForm();
+      });
+    },
+    setForm() {
+      this.form = JSON.parse(
+        JSON.stringify(this.$store.state.masterSource.edittedItem)
+      );
+    },
     onEdit() {
       this.isView = false;
-      // this.setBreadcrumbs();
+      this.setBreadcrumbs();
     },
     onOK() {
-      // this.$router.go(-1);
+      this.$router.go(-1);
     },
     onCancel() {
       this.isView = true;
-      // this.setBreadcrumbs();
-      // this.setForm();
+      this.setBreadcrumbs();
+      this.setForm();
+    },
+    onSubmit(e) {
+      this.patchMasterSource(e)
+        .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.onSaveError(error);
+        });
+    },
+    onSaveSuccess() {
+      this.alert.show = true;
+      this.alert.success = true;
+      this.alert.title = "Save Success";
+      this.alert.subtitle = "Master Source has been saved successfully";
+    },
+    onSaveError(error) {
+      this.alert.show = true;
+      this.alert.success = false;
+      this.alert.title = "Save Failed";
+      this.alert.subtitle = error;
+    },
+    onAlertOk() {
+      this.alert.show = false;
+      if (this.alert.success) this.$router.go(-1);
     },
   },
-  data: () => ({
-    isView: true,
-  }),
 };
 </script>
 

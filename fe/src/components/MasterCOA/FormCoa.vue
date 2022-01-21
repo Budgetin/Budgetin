@@ -74,7 +74,7 @@
           <v-col cols="6"> Minimum Value </v-col>
           <v-col cols="6">
             <v-text-field
-              v-model="form.minimum_item_origin"
+              v-model="nominal"
               outlined
               dense
               :disabled="isView"
@@ -126,7 +126,7 @@ export default {
         (v) => !!v || "This field is required"
       ],
       targetRule: [
-        v => /^\d+$/.test(v) || "This field is numbers only",
+        v => /^[0-9.,]+$/.test(v) ||"This field is numbers only",
       ],
     },
   }),
@@ -137,10 +137,23 @@ export default {
     errorMsg() {
       return this.$store.state.source.errorMsg;
     },
+    nominal:{
+      // getter
+      get: function() {
+        return this.form.minimum_item_origin;
+      },
+      // setter
+      set: function(newValue) {
+        console.log(newValue)
+        this.form.minimum_item_origin = newValue.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
+        this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+      }
+    }
   },
   methods: {
     onSubmit() {
       let validate = this.$refs.form.validate();
+      let nominal = parseInt(this.form.minimum_item_origin)
       if (validate) {
         const payload = {
           id: this.form?.id,
@@ -148,7 +161,7 @@ export default {
           definiton : this.form.definition,
           hyperion_name: this.form.hyperion_name,
           is_capex: this.form.is_capex,
-          minimum_item_origin: this.form.minimum_item_origin? this.form.minimum_item_origin : 0
+          minimum_item_origin: nominal ? nominal : 0
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }
