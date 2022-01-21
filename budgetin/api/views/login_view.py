@@ -7,7 +7,7 @@ from api.utils.jwt import *
 from api.utils.hit_api import login_eai
 from api.utils.hit_api import get_ithc_employee_id
 from api.models.user_model import User
-
+from api.utils.user import user_has_access
 
 class LoginView(APIView):
     def post(self, request):
@@ -19,13 +19,18 @@ class LoginView(APIView):
         username = request.data['username']
         password = request.data['password']
 
-        # Check if users exists in Budgetin database
-        user = User.objects.filter(username=username)
-        if not user:
+        # # Check if users exists in Budgetin database
+        # user = User.objects.filter(username=username)
+        # if not user:
+        #     return Response({
+        #         "message": "You don't have permission to access this site",
+        #     })
+        # role = user.values()[0]['role']
+
+        if not user_has_access(username):
             return Response({
-                "message": "You don't have permission to access this site",
+                'message' : "You don't have access"
             })
-        role = user.values()[0]['role']
 
         # Hit EAI
         eai_login_status = login_eai(username, password)
@@ -47,7 +52,7 @@ class LoginView(APIView):
         id = res['id']
 
         # Generate jwt
-        jwt = generate_token(id, username, role)
+        jwt = generate_token(id, username, 'user')
 
         return Response({
             'token': jwt,

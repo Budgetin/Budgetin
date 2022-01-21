@@ -26,7 +26,7 @@
           </v-list-item-icon>
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
-        <v-list-item link :to="'/request-mpp'" replace>
+        <v-list-item link :to="'/startPlanning'" replace>
           <v-list-item-icon>
             <v-icon>mdi-play-circle </v-icon>
           </v-list-item-icon>

@@ -14,12 +14,17 @@ const routes = [
         path: 'coa',
         name: 'Coa',
         component: () => import("@/views/COA/ListCoa"),
-      },  
+      },
       {
-        path: 'home',
-        name: 'Home',
-        component: Home
-      }
+        path: '/coa/:id/edit',
+        name: 'EditMasterCoa',
+        component: () => import("@/views/COA/EditMasterCoa"),
+      },
+      {
+        path: 'startPlanning',
+        name: 'Start Planning',
+        component: () => import("@/views/StartPlanning/StartPlanning"),
+      },  
     ]
   },
   {
