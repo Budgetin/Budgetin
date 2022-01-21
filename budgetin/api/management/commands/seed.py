@@ -59,17 +59,17 @@ class Command(BaseCommand):
             
         for data in data_list:
             data['pk'] = data.pop('id')
-            Coa.objects.get_or_create(
+            User.objects.get_or_create(
                 pk=data['pk'], defaults=data)
-        self.comment("Seeding COA")
+        self.comment("Seeding User")
 
     def seed_coa(self):
         with open('api/json/coa.json') as f:
             data_list = json.load(f)
         for data in data_list:
             data['pk'] = data.pop('id')
-            User.objects.get_or_create(pk=data['pk'], defaults=data)
-        self.comment("Seeding User")
+            Coa.objects.get_or_create(pk=data['pk'], defaults=data)
+        self.comment("Seeding COA")
 
     def comment(self, comment):
         self.stdout.write(self.style.HTTP_SUCCESS('%s... ' %

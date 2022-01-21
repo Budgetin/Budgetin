@@ -2,7 +2,10 @@ from rest_framework.views import exception_handler
 
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
-    response.data['message'] = response.data['detail']
-    response.data.pop('detail')
-    
-    return response
+    try:
+        response.data['message'] = str(response.data['detail'])
+        response.data.pop('detail')
+    except:
+        response.data['message'] = 'Unhandled error'
+    finally:
+        return response
