@@ -18,6 +18,10 @@ class CoaViewSet(viewsets.ModelViewSet):
             createdDate = each['created_at']
             date_time_obj = datetime.fromisoformat(createdDate)
             each['created_at'] = date_time_obj.strftime("%d %B %Y")
+
+            updatedDate = each['updated_at']
+            date_time_obj = datetime.fromisoformat(updatedDate)
+            each['updated_at'] = date_time_obj.strftime("%d %B %Y")
         return coa
     
     def retrieve(self, request, *args, **kwargs):
@@ -25,6 +29,10 @@ class CoaViewSet(viewsets.ModelViewSet):
         createdDate = coa.data['created_at']
         date_time_obj = datetime.fromisoformat(createdDate)
         coa.data['created_at'] = date_time_obj.strftime("%d %B %Y")
+
+        updatedDate = coa.data['updated_at']
+        date_time_obj = datetime.fromisoformat(updatedDate)
+        coa.data['updated_at'] = date_time_obj.strftime("%d %B %Y")
         return coa
 
     def create(self, request, *args, **kwargs):

@@ -8,8 +8,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
 
     def list(self, request, *args, **kwargs):
-        strategy = super().list(request, *args, **kwargs)
-        for each in strategy.data:
+        product = super().list(request, *args, **kwargs)
+        for each in product.data:
             #include strategy
             strategy_id = each['strategy']
             strategy_name = Strategy.objects.filter(id=strategy_id).first().name
@@ -18,17 +18,25 @@ class ProductViewSet(viewsets.ModelViewSet):
             createdDate = each['created_at']
             date_time_obj = datetime.fromisoformat(createdDate)
             each['created_at'] = date_time_obj.strftime("%d %B %Y")
-        return strategy
+
+            updatedDate = each['updated_at']
+            date_time_obj = datetime.fromisoformat(updatedDate)
+            each['updated_at'] = date_time_obj.strftime("%d %B %Y")
+        return product
 
     def retrieve(self, request, *args, **kwargs):
         #include strategy
-        strategy = super().retrieve(request, *args, **kwargs)
-        strategy_id = strategy.data['strategy']
+        product = super().retrieve(request, *args, **kwargs)
+        strategy_id = product.data['strategy']
         strategy_name = Strategy.objects.filter(id=strategy_id).first().name
-        strategy.data['strategy'] = {"id":strategy_id,"name":strategy_name}
+        product.data['strategy'] = {"id":strategy_id,"name":strategy_name}
 
         #reformat date
-        createdDate = strategy.data['created_at']
+        createdDate = product.data['created_at']
         date_time_obj = datetime.fromisoformat(createdDate)
-        strategy.data['created_at'] = date_time_obj.strftime("%d %B %Y")
-        return strategy
+        product.data['created_at'] = date_time_obj.strftime("%d %B %Y")
+
+        updatedDate = product.data['updated_at']
+        date_time_obj = datetime.fromisoformat(updatedDate)
+        product.data['updated_at'] = date_time_obj.strftime("%d %B %Y")
+        return product
