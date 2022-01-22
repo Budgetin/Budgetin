@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from rest_framework import viewsets
 from api.models.coa_model import Coa
 from api.serializers.coa_serializer import CoaSerializer
@@ -11,6 +11,21 @@ class CoaViewSet(viewsets.ModelViewSet):
     queryset = Coa.objects.all()
     serializer_class = CoaSerializer
     # permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        coa = super().list(request, *args, **kwargs)
+        for each in coa.data:
+            createdDate = each['created_at']
+            date_time_obj = datetime.fromisoformat(createdDate)
+            each['created_at'] = date_time_obj.strftime("%d %B %Y")
+        return coa
+    
+    def retrieve(self, request, *args, **kwargs):
+        coa = super().retrieve(request, *args, **kwargs)
+        createdDate = coa.data['created_at']
+        date_time_obj = datetime.fromisoformat(createdDate)
+        coa.data['created_at'] = date_time_obj.strftime("%d %B %Y")
+        return coa
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']

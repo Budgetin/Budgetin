@@ -102,28 +102,28 @@ WSGI_APPLICATION = 'budgetin.wsgi.application'
 # https: // docs.djangoproject.com/en/4.0/ref/settings/  # databases
 
 # Server
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dbit',
-        'USER': 'bit',
-        'PASSWORD': 'devbit',
-        'HOST': '10.43.3.176',
-        'PORT': '5524',
-    }
-}
-
-# Local
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'budgetin',
-#         'USER': 'postgres',
-#         'PASSWORD': 'postgres',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
+#         'NAME': 'dbit',
+#         'USER': 'bit',
+#         'PASSWORD': 'devbit',
+#         'HOST': '10.43.3.176',
+#         'PORT': '5524',
 #     }
 # }
+
+# Local
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'budgetin',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}
 
 
 # Password validation
