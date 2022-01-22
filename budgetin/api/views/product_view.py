@@ -1,7 +1,10 @@
-from datetime import datetime
 from rest_framework import viewsets
 from api.models import Product,Strategy
 from api.serializers.product_serializer import ProductSerializer
+from datetime import datetime
+
+#For Audit Logging
+from api.utils.auditlog import AuditLog
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
@@ -39,4 +42,23 @@ class ProductViewSet(viewsets.ModelViewSet):
         updatedDate = product.data['updated_at']
         date_time_obj = datetime.fromisoformat(updatedDate)
         product.data['updated_at'] = date_time_obj.strftime("%d %B %Y")
+        return product
+
+    def create(self, request, *args, **kwargs):
+        #request.data['created_by'] = request.custom_user['id']
+        request.data['created_by'] = 899
+        product = super().create(request, *args, **kwargs)
+        AuditLog.Save(product, request, AuditLog.Create, AuditLog.Product)
+        return product
+
+    def update(self, request, *args, **kwargs):
+        request.data['updated_by'] = 899
+        product = super().update(request, *args, **kwargs)
+        AuditLog.Save(product, request, AuditLog.Update, AuditLog.Product)
+        return product
+
+    def destroy(self, request, *args, **kwargs):
+        request.data['updated_by'] = 899                                 
+        product = super().destroy(request, *args, **kwargs)
+        AuditLog.Save(product, request, AuditLog.Delete, AuditLog.Product)
         return product

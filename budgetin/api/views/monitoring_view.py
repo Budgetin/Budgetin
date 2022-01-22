@@ -1,32 +1,53 @@
-import datetime
 from rest_framework import viewsets
 from api.models.monitoring_model import Monitoring
 from api.serializers.monitoring_serializer import MonitoringSerializer
-from api.models.audit_log_model import AuditLog
+from datetime import datetime
+
+#For Audit Logging
+from api.utils.auditlog import AuditLog
 
 class MonitoringViewSet(viewsets.ModelViewSet):
     queryset = Monitoring.objects.all()
     serializer_class = MonitoringSerializer
 
+    def list(self, request, *args, **kwargs):
+        monitoring = super().list(request, *args, **kwargs)
+        for each in monitoring.data:
+            createdDate = each['created_at']
+            date_time_obj = datetime.fromisoformat(createdDate)
+            each['created_at'] = date_time_obj.strftime("%d %B %Y")
+
+            updatedDate = each['updated_at']
+            date_time_obj = datetime.fromisoformat(updatedDate)
+            each['updated_at'] = date_time_obj.strftime("%d %B %Y")
+        return monitoring
+    
+    def retrieve(self, request, *args, **kwargs):
+        monitoring = super().retrieve(request, *args, **kwargs)
+        createdDate = monitoring.data['created_at']
+        date_time_obj = datetime.fromisoformat(createdDate)
+        monitoring.data['created_at'] = date_time_obj.strftime("%d %B %Y")
+
+        updatedDate = monitoring.data['updated_at']
+        date_time_obj = datetime.fromisoformat(updatedDate)
+        monitoring.data['updated_at'] = date_time_obj.strftime("%d %B %Y")
+        return monitoring
+
     def create(self, request, *args, **kwargs):
+        #request.data['created_by'] = request.custom_user['id']
+        request.data['created_by'] = 899
         monitoring = super().create(request, *args, **kwargs)
-        serial_data = {
-            "name": monitoring.data['name'],
-            "definition": monitoring.data['definition'],
-            "hyperion_name": monitoring.data['hyperion_name'],
-        }
-        AuditLog.objects.create(timestamp=datetime.datetime.now(
-        ), modified_by=request.custom_user['id'], entity_id=monitoring.data['id'], serialized_data=serial_data, action_id_id=1, table_id_id=4)
+        AuditLog.Save(monitoring, request, AuditLog.Create, AuditLog.Monitoring)
         return monitoring
 
     def update(self, request, *args, **kwargs):
-        monitoring_update = super().update(request, *args, **kwargs)
-        AuditLog.objects.create(timestamp=datetime.datetime.now(
-        ), modified_by=request.custom_user['id'], entity_id=kwargs['pk'], serialized_data=request.data, action_id_id=3, table_id_id=4)
-        return monitoring_update
+        request.data['updated_by'] = 899
+        monitoring = super().update(request, *args, **kwargs)
+        AuditLog.Save(monitoring, request, AuditLog.Update, AuditLog.Monitoring)
+        return monitoring
 
     def destroy(self, request, *args, **kwargs):
-        monitoring_destroy = super().destroy(request, *args, **kwargs)
-        AuditLog.objects.create(timestamp=datetime.datetime.now(), modified_by=request.custom_user['id'], entity_id=kwargs['pk'], serialized_data={
-                                "data": "destroyed"}, action_id_id=4, table_id_id=4)
-        return monitoring_destroy
+        request.data['updated_by'] = 899                                 
+        monitoring = super().destroy(request, *args, **kwargs)
+        AuditLog.Save(monitoring, request, AuditLog.Delete, AuditLog.Monitoring)
+        return monitoring
