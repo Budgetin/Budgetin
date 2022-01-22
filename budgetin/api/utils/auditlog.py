@@ -15,6 +15,8 @@ class AuditLog():
     Biro = "Biro"
     Budget = "Budget"
     Coa = "Coa"
+    Monitoring = "Monitoring"
+    PicBudget = "PicBudget"
     Planning = "Planning"
     Product = "Product"
     Project = "Project"
@@ -36,13 +38,15 @@ class AuditLog():
         AL.objects.create(timestamp=datetime.datetime.now(
             ), modified_by=899, entity_id=entity_id, serialized_data=serialized_data, action_id=actionid, table_id=tableid)
 
-        
-        # AuditLog.objects.create(timestamp=datetime.datetime.now(
-        # ), modified_by=request.custom_user['id'], entity_id=coa.data['id'], serialized_data=coa.data, action_id=1, table_id=4)
-        
-        # AuditLog.objects.create(timestamp=datetime.datetime.now(
-        # ), modified_by=request.custom_user['id'], entity_id=kwargs['pk'], serialized_data=coa_update.data, action_id=3, table_id=4)
-        
-        #AuditLog.Save(coa, request, AuditLog.Delete, AuditLog.Coa)
-        # AuditLog.objects.create(timestamp=datetime.datetime.now(), modified_by=request.custom_user['id'], entity_id=kwargs['pk'], serialized_data={
-        #                         "data": "destroyed"}, action_id=4, table_id=4)
+
+#CONTEKAN
+
+# AuditLog.objects.create(timestamp=datetime.datetime.now(
+# ), modified_by=request.custom_user['id'], entity_id=coa.data['id'], serialized_data=coa.data, action_id=1, table_id=4)
+
+# AuditLog.objects.create(timestamp=datetime.datetime.now(
+# ), modified_by=request.custom_user['id'], entity_id=kwargs['pk'], serialized_data=coa_update.data, action_id=3, table_id=4)
+
+#AuditLog.Save(coa, request, AuditLog.Delete, AuditLog.Coa)
+# AuditLog.objects.create(timestamp=datetime.datetime.now(), modified_by=request.custom_user['id'], entity_id=kwargs['pk'], serialized_data={
+#                         "data": "destroyed"}, action_id=4, table_id=4)
