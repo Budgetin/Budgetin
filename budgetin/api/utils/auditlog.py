@@ -21,8 +21,8 @@ class AuditLog():
     ProjectDetail = "Project Detail"
     
     def Save(data, request, action_name, entity_name):
-        action_id = Action.objects.filter(name=action_name).values()[0]['id']
-        table_id = Table.objects.filter(name=entity_name).values()[0]['id']
+        actionid = Action.objects.filter(name=action_name).values()[0]['id']
+        tableid = Table.objects.filter(name=entity_name).values()[0]['id']
         
         if data and action_name != AuditLog.Delete:
             entity_id = data.data['id']
@@ -31,16 +31,18 @@ class AuditLog():
             entity_id = request.parser_context['kwargs']['pk']
             serialized_data = {}
             
+        # AL.objects.create(timestamp=datetime.datetime.now(
+        #     ), modified_by=request.custom_user['id'], entity_id=entity_id, serialized_data=serialized_data, action_id=actionid, table_id=tableid)
         AL.objects.create(timestamp=datetime.datetime.now(
-            ), modified_by=request.custom_user['id'], entity_id=entity_id, serialized_data=serialized_data, action_id_id=action_id, table_id_id=table_id)
+            ), modified_by=899, entity_id=entity_id, serialized_data=serialized_data, action_id=actionid, table_id=tableid)
 
         
         # AuditLog.objects.create(timestamp=datetime.datetime.now(
-        # ), modified_by=request.custom_user['id'], entity_id=coa.data['id'], serialized_data=coa.data, action_id_id=1, table_id_id=4)
+        # ), modified_by=request.custom_user['id'], entity_id=coa.data['id'], serialized_data=coa.data, action_id=1, table_id=4)
         
         # AuditLog.objects.create(timestamp=datetime.datetime.now(
-        # ), modified_by=request.custom_user['id'], entity_id=kwargs['pk'], serialized_data=coa_update.data, action_id_id=3, table_id_id=4)
+        # ), modified_by=request.custom_user['id'], entity_id=kwargs['pk'], serialized_data=coa_update.data, action_id=3, table_id=4)
         
         #AuditLog.Save(coa, request, AuditLog.Delete, AuditLog.Coa)
         # AuditLog.objects.create(timestamp=datetime.datetime.now(), modified_by=request.custom_user['id'], entity_id=kwargs['pk'], serialized_data={
-        #                         "data": "destroyed"}, action_id_id=4, table_id_id=4)
+        #                         "data": "destroyed"}, action_id=4, table_id=4)
