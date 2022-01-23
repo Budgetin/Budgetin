@@ -17,18 +17,26 @@
   },
   {
     "id": 5,
-    "name": "Planning"
+    "name": "Monitoring"
   },
   {
     "id": 6,
-    "name": "Product"
+    "name": "PicBudget"
   },
   {
     "id": 7,
-    "name": "Project"
+    "name": "Planning"
   },
   {
     "id": 8,
+    "name": "Product"
+  },
+  {
+    "id": 9,
+    "name": "Project"
+  },
+  {
+    "id": 10,
     "name": "Project Detail"
   }
 ]
