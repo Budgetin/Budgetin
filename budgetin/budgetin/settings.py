@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-import os
 from decouple import config
 from pathlib import Path
 
@@ -29,6 +28,14 @@ EAI_PUBLIC_KEY = config('EAI_PUBLIC_KEY')
 EAI_X_SOURCE_CLIENT_ID = config('EAI_X_SOURCE_CLIENT_ID')
 EAI_CLIENT_ID = config('EAI_CLIENT_ID')
 EAI_CLIENT_SECRET = config('EAI_CLIENT_SECRET')
+
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 # ITHC
 ITHC_API_KEY = config('ITHC_API_KEY')
