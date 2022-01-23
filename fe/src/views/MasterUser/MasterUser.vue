@@ -1,17 +1,17 @@
 <template>
-  <v-app id="master-Product">
-    <v-container class="master-Product__container outer-container">
+  <v-app id="master-User">
+    <v-container class="master-User__container outer-container">
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          <v-subheader class="master-Product__header">Master Product</v-subheader>
+          <v-subheader class="master-User__header">Master User</v-subheader>
         </v-col>
       </v-row>
 
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
           <v-data-table
-            :items="dataMasterProduct"
-            :loading="loadingGetMasterProduct"
+            :items="dataMasterUser"
+            :loading="loadingGetMasterUser"
             :headers="dataTable.headers"
             :search="search"
           >
@@ -20,7 +20,7 @@
                 <v-row class="mb-5" no-gutters>
                   <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
                     <v-text-field
-                      class="master-Product__input"
+                      class="master-User__input"
                       v-model="search"
                       append-icon="mdi-magnify"
                       label="Search"
@@ -35,10 +35,10 @@
                     md="8"
                     lg="8"
                     no-gutters
-                    class="master-Product__btn"
+                    class="master-User__btn"
                   >
                     <v-btn rounded color="primary" @click="onAdd">
-                      Add Product
+                      Add User
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -49,7 +49,7 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'EditMasterProduct',
+                  name: 'EditMasterUser',
                   params: { id: item.id },
                 }"
               >
@@ -64,24 +64,28 @@
               </router-link>
             </template>
 
+            <template v-slot:[`item.is_active`]="{ item }">
+              <binary-status-chip :boolean="item.is_active"> </binary-status-chip>
+            </template>
+
           </v-data-table>
         </v-col>
       </v-row>
-
+<!-- 
       <v-row no-gutters>
         <v-dialog v-model="dialog" persistent width="37.5rem">
-          <form-Product
+          <form-User
           :form="form"
           :isView="false"
           :isNew="true"
-          :dataMasterProduct="dataMasterProduct"
+          :dataMasterUser="dataMasterUser"
           :dataMasterStrategy="dataMasterStrategy"
           @editClicked="onEdit"
           @cancelClicked="onCancel"
           @submitClicked="onSubmit"
-          ></form-Product>
+          ></form-User>
         </v-dialog>
-      </v-row>
+      </v-row> -->
     </v-container>
 
     <success-error-alert
@@ -96,11 +100,12 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import FormProduct from "@/components/MasterProduct/FormProduct";
+// import FormUser from "@/components/MasterUser/FormUser";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
 export default {
-  name: "MasterProduct",
-  components: {FormProduct,SuccessErrorAlert},
+  name: "MasterUser",
+  components: {BinaryStatusChip,SuccessErrorAlert},
   watch: {},
   data: () => ({
     dialog: false,
@@ -108,9 +113,9 @@ export default {
     search: "",
     dataTable: {
       headers: [
-        { text: "Product Code", value: "product_code"},
-        { text: "Product", value: "product_name"},
-        { text: "IT Strategy", value: "strategy.name"},
+        { text: "Username", value: "username"},
+        { text: "Role", value: "role"},
+        { text: "Status", value: "is_active", align: "center"},
         { text: "Update By", value: "update_by"},
         { text: "Update Date", value: "updated_at"},
         { text: "Actions", value: "actions", align: "center", sortable: false },
@@ -118,8 +123,8 @@ export default {
     },
     form: {
       id: "",
-      product_code: "",
-      product_name: "",
+      User_code: "",
+      User_name: "",
       strategy: "",
     },
     alert: {
@@ -130,33 +135,33 @@ export default {
     },
   }),
   created() {
-    this.getMasterProduct();
-    this.getMasterStrategy();
+    this.getMasterUser();
+    // this.getMasterStrategy();
     // this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("masterProduct", ["loadingGetMasterProduct", "dataMasterProduct"]),
-    ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
+    ...mapState("masterUser", ["loadingGetMasterUser", "dataMasterUser"]),
+    // ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
   },
   methods: {
-    ...mapActions("masterProduct", ["getMasterProduct", "postMasterProduct"]),
-    ...mapActions("masterStrategy", ["getMasterStrategy", "postMasterStrategy"]),
+    ...mapActions("masterUser", ["getMasterUser", "postMasterUser"]),
+    // ...mapActions("masterStrategy", ["getMasterStrategy", "postMasterStrategy"]),
     onAdd() {
       this.dialog = !this.dialog;
     },
     onEdit(item) {
-      this.$store.commit("masterProduct/SET_EDITTED_ITEM", item);
+      this.$store.commit("masterUser/SET_EDITTED_ITEM", item);
     },    
     onCancel() {
       this.dialog = false;
     },
     onSubmit(e) {
-      this.postMasterProduct(e)
+      this.postMasterUser(e)
         .then(() => {
-          this.onSaveSuccess();
+          // this.onSaveSuccess();
         })
         .catch((error) => {
-          this.onSaveError(error);
+          // this.onSaveError(error);
         });
     },
     onSaveSuccess() {
@@ -187,18 +192,18 @@ button {
 </style>
 
 <style lang="scss" scoped>
-#master-Product {
-  .master-Product__header {
+#master-User {
+  .master-User__header {
     padding-left: 32px;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .master-Product__input {
+  .master-User__input {
     padding: 10px 32px;
   }
 
-  .master-Product__btn {
+  .master-User__btn {
     text-align: end;
 
     button {
@@ -206,7 +211,7 @@ button {
     }
   }
 
-  .master-Product__container {
+  .master-User__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -217,8 +222,8 @@ button {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #master-Product {
-    .master-Product__btn {
+  #master-User {
+    .master-User__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -227,7 +232,7 @@ button {
         margin: 0px 0px 32px 0px;
       }
     }
-    .master-Product__card {
+    .master-User__card {
       flex-direction: column;
       button {
         width: 16rem !important;

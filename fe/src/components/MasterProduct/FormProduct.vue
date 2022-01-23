@@ -10,9 +10,9 @@
 
     <v-card-text>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
-        <!-- Product ID -->
+        <!-- Product Code -->
         <v-row no-gutters>
-          <v-col cols="6"> Product ID<strong class="red--text">*</strong> </v-col>
+          <v-col cols="6"> Product Code<strong class="red--text">*</strong> </v-col>
           <v-col cols="6">
             <v-text-field
               v-model="form.product_code"

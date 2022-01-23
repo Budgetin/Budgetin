@@ -20,7 +20,7 @@
       </v-list>
       <v-divider></v-divider>
       <v-list shaped>
-        <v-list-item link :to="'/home'" replace>
+        <v-list-item link :to="'/'" replace>
           <v-list-item-icon>
             <v-icon>mdi-chart-scatter-plot</v-icon>
           </v-list-item-icon>
@@ -32,13 +32,13 @@
           </v-list-item-icon>
           <v-list-item-title>Start Planning</v-list-item-title>
         </v-list-item>
-        <v-list-item link :to="'/setting-input-access'" replace>
+        <v-list-item link :to="'/'" replace>
           <v-list-item-icon>
             <v-icon>mdi-format-list-bulleted </v-icon>
           </v-list-item-icon>
           <v-list-item-title>List Planning</v-list-item-title>
         </v-list-item>
-        <v-list-item link :to="'/setting-notification'" replace>
+        <v-list-item link :to="'/'" replace>
           <v-list-item-icon>
             <v-icon>mdi-folder-network </v-icon>
           </v-list-item-icon>
@@ -60,7 +60,7 @@
           <v-list-item link :to="'/product'" replace active-class= "white--text">
               <v-list-item-title>Product</v-list-item-title>
           </v-list-item>
-          <v-list-item>
+          <v-list-item link :to="'/user'" replace active-class= "white--text">
               <v-list-item-title>User</v-list-item-title>
           </v-list-item>
         </v-list-group>
