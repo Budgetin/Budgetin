@@ -5,6 +5,7 @@ from datetime import datetime
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
+from api.utils.enum import ActionEnum, TableEnum
 
 class PicBudgetViewSet(viewsets.ModelViewSet):
     queryset = PicBudget.objects.all()
@@ -37,17 +38,17 @@ class PicBudgetViewSet(viewsets.ModelViewSet):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 899
         pic_budget = super().create(request, *args, **kwargs)
-        AuditLog.Save(pic_budget, request, AuditLog.Create, AuditLog.PicBudget)
+        AuditLog.Save(pic_budget, request, ActionEnum.CREATE, TableEnum.PIC_BUDGET)
         return pic_budget
 
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 899
         pic_budget = super().update(request, *args, **kwargs)
-        AuditLog.Save(pic_budget, request, AuditLog.Update, AuditLog.PicBudget)
+        AuditLog.Save(pic_budget, request, ActionEnum.UPDATE, TableEnum.PIC_BUDGET)
         return pic_budget
 
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = 899                                 
         pic_budget = super().destroy(request, *args, **kwargs)
-        AuditLog.Save(pic_budget, request, AuditLog.Delete, AuditLog.PicBudget)
+        AuditLog.Save(pic_budget, request, ActionEnum.DELETE, TableEnum.PIC_BUDGET)
         return pic_budget

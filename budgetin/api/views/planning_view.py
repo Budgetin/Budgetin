@@ -5,6 +5,7 @@ from datetime import datetime
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
+from api.utils.enum import ActionEnum, TableEnum
 
 class PlanningViewSet(viewsets.ModelViewSet):
     queryset = Planning.objects.all()
@@ -37,17 +38,17 @@ class PlanningViewSet(viewsets.ModelViewSet):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 899
         planning = super().create(request, *args, **kwargs)
-        AuditLog.Save(planning, request, AuditLog.Create, AuditLog.Planning)
+        AuditLog.Save(planning, request, ActionEnum.CREATE, TableEnum.PLANNING)
         return planning
 
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 899
         planning = super().update(request, *args, **kwargs)
-        AuditLog.Save(planning, request, AuditLog.Update, AuditLog.Planning)
+        AuditLog.Save(planning, request, ActionEnum.UPDATE, TableEnum.PLANNING)
         return planning
 
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = 899                                 
         planning = super().destroy(request, *args, **kwargs)
-        AuditLog.Save(planning, request, AuditLog.Delete, AuditLog.Planning)
+        AuditLog.Save(planning, request, ActionEnum.DELETE, TableEnum.PLANNING)
         return planning

@@ -3,6 +3,7 @@ from api.models.audit_log_model import AuditLog as AL
 from api.models.action_model import Action
 from api.models.table_model import Table
 
+from api.utils.enum import ActionEnum
 class AuditLog():
     #Action Name
     Create = "Create"
@@ -22,11 +23,11 @@ class AuditLog():
     Project = "Project"
     ProjectDetail = "Project Detail"
     
-    def Save(data, request, action_name, entity_name):
-        actionid = Action.objects.filter(name=action_name).values()[0]['id']
-        tableid = Table.objects.filter(name=entity_name).values()[0]['id']
+    def Save(data, request, action_enum, entity_enum):
+        actionid = Action.objects.filter(name=action_enum.value).values()[0]['id']
+        tableid = Table.objects.filter(name=entity_enum.value).values()[0]['id']
         
-        if data and action_name != AuditLog.Delete:
+        if data and action_enum != ActionEnum.DELETE:
             entity_id = data.data['id']
             serialized_data = data.data
         else:
