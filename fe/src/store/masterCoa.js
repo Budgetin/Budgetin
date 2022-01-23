@@ -41,29 +41,24 @@ const masterCoa = {
           commit("GET_ERROR", error);
         });
     },
-    // getMasterCoaById({ commit }, id) {
-    //   commit("SET_EDITTED_ITEM_HISTORIES", []);
-    //   commit("SET_LOADING_GET_EDITTED_ITEM", true);
+    getMasterCoaById({ commit }, id) {
+      // commit("SET_EDITTED_ITEM_HISTORIES", []);
+      commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
-    //   return new Promise((resolve, reject) => {
-    //     getAPI
-    //       .get(ENDPOINT + `${id}/`)
-    //       .then((response) => {
-    //         const data = response.data.Coa;
-    //         let formatted = {
-    //           id: data.id,
-    //           Coa_name: data.Coa_name,
-    //           status: String(data.status),
-    //         };
-    //         commit("SET_EDITTED_ITEM", formatted);
-    //         resolve(formatted);
-    //       })
-    //       .catch((error) => {
-    //         commit("GET_ERROR", error);
-    //         reject(error);
-    //       });
-    //   });
-    // },
+      return new Promise((resolve, reject) => {
+        getAPI
+          .get(ENDPOINT + `${id}/`)
+          .then((response) => {
+            const data = response.data;
+            commit("SET_EDITTED_ITEM", data);
+            resolve(data);
+          })
+          .catch((error) => {
+            commit("GET_ERROR", error);
+            reject(error);
+          });
+      });
+    },
     postMasterCoa({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
@@ -73,7 +68,6 @@ const masterCoa = {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
             store.dispatch("masterCoa/getFromAPI");
-            store.dispatch("masterCategory/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -97,44 +91,40 @@ const masterCoa = {
           });
       });
     },
-    // patchMasterCoa({ commit }, payload) {
-    //   commit("POST_PATCH_INIT");
-    //   const url = `${ENDPOINT}${payload.id}/`;
-    //   return new Promise((resolve, reject) => {
-    //     getAPI
-    //       .patch(url, payload)
-    //       .then((response) => {
-    //         resolve(response);
-    //         commit("POST_PATCH_SUCCESS");
-    //         store.dispatch("masterCoa/getFromAPI");
-    //         store.dispatch("masterCategory/getFromAPI");
-    //       })
-    //       .catch((error) => {
-    //         let errorMsg =
-    //           "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-    //         if (error.response) {
-    //           errorMsg = "";
-    //           switch (error.response.status) {
-    //             case 400:
-    //               if (error.response.data.hasOwnProperty("Coa_name")) {
-    //                 errorMsg += error.response.data.Coa_name;
-    //               }
-    //               if (error.response.data.hasOwnProperty("status")) {
-    //                 if (errorMsg !== "") errorMsg += " ";
-    //                 errorMsg += error.response.data.status;
-    //               }
-    //               break;
+    patchMasterCoa({ commit }, payload) {
+      commit("POST_PATCH_INIT");
+      const url = `${ENDPOINT}${payload.id}/`;
+      return new Promise((resolve, reject) => {
+        getAPI
+          .patch(url, payload)
+          .then((response) => {
+            resolve(response);
+            commit("POST_PATCH_SUCCESS");
+            store.dispatch("masterCoa/getFromAPI");
+            // store.dispatch("masterCategory/getFromAPI");
+          })
+          .catch((error) => {
+            let errorMsg =
+              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
+            if (error.response) {
+              errorMsg = "";
+              switch (error.response.status) {
+                case 400:
+                  if (error.response.data.hasOwnProperty("Coa_name")) {
+                    errorMsg += error.response.data.Coa_name;
+                  }
+                  break;
 
-    //             default:
-    //               errorMsg += `${error.response.statusText}: Please recheck your input or try again later`;
-    //               break;
-    //           }
-    //         }
-    //         reject(errorMsg);
-    //         commit("POST_PATCH_ERROR", error.response.data);
-    //       });
-    //   });
-    // },
+                default:
+                  errorMsg += `${error.response.statusText}: Please recheck your input or try again later`;
+                  break;
+              }
+            }
+            reject(errorMsg);
+            commit("POST_PATCH_ERROR", error.response.data);
+          });
+      });
+    },
     // getEdittedItemHistories({ commit }) {
     //   const itemID = store.state.masterCoa.edittedItem.id;
     //   if (!itemID) return;

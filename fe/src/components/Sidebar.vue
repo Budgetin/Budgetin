@@ -57,7 +57,7 @@
           <v-list-item link :to="'/coa'" replace active-class= "white--text">
               <v-list-item-title>COA</v-list-item-title>
           </v-list-item>
-          <v-list-item>
+          <v-list-item link :to="'/product'" replace active-class= "white--text">
               <v-list-item-title>Product</v-list-item-title>
           </v-list-item>
           <v-list-item>

@@ -27,22 +27,23 @@
       </v-col> -->
     </v-row>
     <!-- <pre>{{ cleanHistories }}</pre> -->
-    <!-- <success-error-alert
+    <success-error-alert
       :success="alert.success"
       :show="alert.show"
       :title="alert.title"
       :subtitle="alert.subtitle"
       @okClicked="onAlertOk"
-    /> -->
+    />
   </v-container>
 </template>
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 import FormCoa from "@/components/MasterCOA/FormCoa";
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
   name: "EditMasterCoa",
-  components: { FormCoa},
+  components: { FormCoa,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
   },
@@ -51,50 +52,28 @@ export default {
       "patchMasterCoa",
       "getMasterCoaById",
     ]),
-    ...mapActions("masterStatus", ["getMasterStatus"]),
-    setBreadcrumbs() {
-      let param = this.isView ? "View Source" : "Edit Source";
-      this.$store.commit("breadcrumbs/SET_LINKS", [
-        {
-          text: "Master Source",
-          link: true,
-          exact: true,
-          disabled: false,
-          to: {
-            name: "MasterSource",
-          },
-        },
-        {
-          text: param,
-          disabled: true,
-        },
-      ]);
-    },
     getEdittedItem() {
-      this.getMasterSourceById(this.$route.params.id).then(() => {
-        this.getEdittedItemHistories();
+      this.getMasterCoaById(this.$route.params.id).then(() => {
         this.setForm();
       });
     },
     setForm() {
       this.form = JSON.parse(
-        JSON.stringify(this.$store.state.masterSource.edittedItem)
+        JSON.stringify(this.$store.state.masterCoa.edittedItem)
       );
     },
     onEdit() {
       this.isView = false;
-      this.setBreadcrumbs();
     },
     onOK() {
       this.$router.go(-1);
     },
     onCancel() {
       this.isView = true;
-      this.setBreadcrumbs();
       this.setForm();
     },
     onSubmit(e) {
-      this.patchMasterSource(e)
+      this.patchMasterCoa(e)
         .then(() => {
           this.onSaveSuccess();
         })
@@ -106,7 +85,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "Master Source has been saved successfully";
+      this.alert.subtitle = "Master Coa has been saved successfully";
     },
     onSaveError(error) {
       this.alert.show = true;
@@ -116,9 +95,27 @@ export default {
     },
     onAlertOk() {
       this.alert.show = false;
-      if (this.alert.success) this.$router.go(-1);
+      this.isView = true;
+      this.getEdittedItem();
     },
   },
+  data: () => ({
+    isView: true,
+    form: {
+      id: "",
+      name: "",
+      definition: "",
+      hyperion_name: "",
+      is_capex: "",
+      minimum_item_origin: "",
+    },
+    alert: {
+      show: false,
+      success: null,
+      title: null,
+      subtitle: null,
+    },
+  }),
 };
 </script>
 

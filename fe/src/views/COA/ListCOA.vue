@@ -81,17 +81,25 @@
           ></form-coa>
         </v-dialog>
       </v-row>
-
     </v-container>
+
+    <success-error-alert
+      :success="alert.success"
+      :show="alert.show"
+      :title="alert.title"
+      :subtitle="alert.subtitle"
+      @okClicked="onAlertOk"
+    />
   </v-app>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
 import FormCoa from "@/components/MasterCOA/FormCoa";
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
   name: "MasterCoa",
-  components: {FormCoa},
+  components: {FormCoa,SuccessErrorAlert},
   watch: {},
   data: () => ({
     dialog: false,
@@ -102,7 +110,7 @@ export default {
         { text: "COA", value: "name"},
         { text: "Hyperion Name", value: "hyperion_name"},
         { text: "Update By", value: "update_by"},
-        { text: "Update Date", value: "update_date"},
+        { text: "Update Date", value: "updated_at"},
         { text: "Actions", value: "actions", align: "center", sortable: false },
       ]
     },
@@ -113,6 +121,12 @@ export default {
       hyperion_name: "",
       is_capex: "",
       minimum_item_origin: "",
+    },
+    alert: {
+      show: false,
+      success: null,
+      title: null,
+      subtitle: null,
     },
   }),
   created() {
@@ -141,6 +155,23 @@ export default {
         .catch((error) => {
           this.onSaveError(error);
         });
+    },
+    onSaveSuccess() {
+      this.dialog = false;
+      this.alert.show = true;
+      this.alert.success = true;
+      this.alert.title = "Save Success";
+      this.alert.subtitle = "Master Source has been saved successfully";
+    },
+    onSaveError(error) {
+      this.dialog = false;
+      this.alert.show = true;
+      this.alert.success = false;
+      this.alert.title = "Save Failed";
+      this.alert.subtitle = error;
+    },
+    onAlertOk() {
+      this.alert.show = false;
     },
   }
 }

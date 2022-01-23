@@ -3,6 +3,9 @@ import Vuex from 'vuex'
 
 // List Path Created Module
 import masterCoa from "./masterCoa"
+import masterStrategy from "./masterStrategy"
+import masterProduct from "./masterProduct"
+
 
 Vue.use(Vuex)
 
@@ -18,5 +21,8 @@ export default new Vuex.Store({
   namespaced: true,
   modules: {
     masterCoa,
+    masterStrategy,
+    masterProduct,
+
   },
 })

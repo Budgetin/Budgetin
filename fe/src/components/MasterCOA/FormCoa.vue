@@ -65,6 +65,7 @@
             <v-checkbox
               v-model="form.is_capex"
               :label="`Set This to CAPEX ?`"
+              :disabled="isView"
             ></v-checkbox>
           </v-col>
         </v-row>
@@ -140,11 +141,16 @@ export default {
     nominal:{
       // getter
       get: function() {
-        return this.form.minimum_item_origin;
+        if(this.form.minimum_item_origin){
+          this.form.minimum_item_origin = this.form.minimum_item_origin.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
+          this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        }
+          return this.form.minimum_item_origin;
       },
       // setter
       set: function(newValue) {
-        console.log(newValue)
+console.log("masuk set")
+        
         this.form.minimum_item_origin = newValue.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
         this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
       }
@@ -153,12 +159,12 @@ export default {
   methods: {
     onSubmit() {
       let validate = this.$refs.form.validate();
-      let nominal = parseInt(this.form.minimum_item_origin)
+      let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
       if (validate) {
         const payload = {
           id: this.form?.id,
           name: this.form.name,
-          definiton : this.form.definition,
+          definition : this.form.definition,
           hyperion_name: this.form.hyperion_name,
           is_capex: this.form.is_capex,
           minimum_item_origin: nominal ? nominal : 0
