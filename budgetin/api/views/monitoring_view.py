@@ -1,11 +1,12 @@
 from rest_framework import viewsets
 from api.models.monitoring_model import Monitoring
 from api.serializers.monitoring_serializer import MonitoringSerializer
-from datetime import datetime
+from api.utils.date_format import timestamp_to_dateformat
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
+
 
 class MonitoringViewSet(viewsets.ModelViewSet):
     queryset = Monitoring.objects.all()
@@ -14,24 +15,14 @@ class MonitoringViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         monitoring = super().list(request, *args, **kwargs)
         for each in monitoring.data:
-            createdDate = each['created_at']
-            date_time_obj = datetime.fromisoformat(createdDate)
-            each['created_at'] = date_time_obj.strftime("%d %B %Y")
-
-            updatedDate = each['updated_at']
-            date_time_obj = datetime.fromisoformat(updatedDate)
-            each['updated_at'] = date_time_obj.strftime("%d %B %Y")
+            each['created_at'] = timestamp_to_dateformat(each['created_at'], "%d %B %Y")
+            each['updated_at'] = timestamp_to_dateformat(each['updated_at'], "%d %B %Y")
         return monitoring
     
     def retrieve(self, request, *args, **kwargs):
         monitoring = super().retrieve(request, *args, **kwargs)
-        createdDate = monitoring.data['created_at']
-        date_time_obj = datetime.fromisoformat(createdDate)
-        monitoring.data['created_at'] = date_time_obj.strftime("%d %B %Y")
-
-        updatedDate = monitoring.data['updated_at']
-        date_time_obj = datetime.fromisoformat(updatedDate)
-        monitoring.data['updated_at'] = date_time_obj.strftime("%d %B %Y")
+        monitoring.data['created_at'] = timestamp_to_dateformat(monitoring.data['created_at'], "%d %B %Y")
+        monitoring.data['updated_at'] = timestamp_to_dateformat(monitoring.data['updated_at'], "%d %B %Y")
         return monitoring
 
     def create(self, request, *args, **kwargs):

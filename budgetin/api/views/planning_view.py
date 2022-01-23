@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from api.models.planning_model import Planning
 from api.serializers.planning_serializer import PlanningSerializer
-from datetime import datetime
+from api.utils.date_format import timestamp_to_dateformat
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -14,24 +14,14 @@ class PlanningViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         planning = super().list(request, *args, **kwargs)
         for each in planning.data:
-            createdDate = each['created_at']
-            date_time_obj = datetime.fromisoformat(createdDate)
-            each['created_at'] = date_time_obj.strftime("%d %B %Y")
-
-            updatedDate = each['updated_at']
-            date_time_obj = datetime.fromisoformat(updatedDate)
-            each['updated_at'] = date_time_obj.strftime("%d %B %Y")
+            each['created_at'] = timestamp_to_dateformat(each['created_at'], "%d %B %Y")
+            each['updated_at'] = timestamp_to_dateformat(each['updated_at'], "%d %B %Y")
         return planning
     
     def retrieve(self, request, *args, **kwargs):
         planning = super().retrieve(request, *args, **kwargs)
-        createdDate = planning.data['created_at']
-        date_time_obj = datetime.fromisoformat(createdDate)
-        planning.data['created_at'] = date_time_obj.strftime("%d %B %Y")
-
-        updatedDate = planning.data['updated_at']
-        date_time_obj = datetime.fromisoformat(updatedDate)
-        planning.data['updated_at'] = date_time_obj.strftime("%d %B %Y")
+        planning.data['created_at'] = timestamp_to_dateformat(planning.data['created_at'], "%d %B %Y")
+        planning.data['updated_at'] = timestamp_to_dateformat(planning.data['updated_at'], "%d %B %Y")
         return planning
 
     def create(self, request, *args, **kwargs):

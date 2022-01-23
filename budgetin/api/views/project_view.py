@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from api.models.project_model import Project
 from api.serializers.project_serializer import ProjectSerializer
-from datetime import datetime
+from api.utils.date_format import timestamp_to_dateformat
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -14,24 +14,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         project = super().list(request, *args, **kwargs)
         for each in project.data:
-            createdDate = each['created_at']
-            date_time_obj = datetime.fromisoformat(createdDate)
-            each['created_at'] = date_time_obj.strftime("%d %B %Y")
-
-            updatedDate = each['updated_at']
-            date_time_obj = datetime.fromisoformat(updatedDate)
-            each['updated_at'] = date_time_obj.strftime("%d %B %Y")
+            each['created_at'] = timestamp_to_dateformat(each['created_at'], "%d %B %Y")
+            each['updated_at'] = timestamp_to_dateformat(each['updated_at'], "%d %B %Y")
         return project
     
     def retrieve(self, request, *args, **kwargs):
         project = super().retrieve(request, *args, **kwargs)
-        createdDate = project.data['created_at']
-        date_time_obj = datetime.fromisoformat(createdDate)
-        project.data['created_at'] = date_time_obj.strftime("%d %B %Y")
-
-        updatedDate = project.data['updated_at']
-        date_time_obj = datetime.fromisoformat(updatedDate)
-        project.data['updated_at'] = date_time_obj.strftime("%d %B %Y")
+        project.data['created_at'] = timestamp_to_dateformat(project.data['created_at'], "%d %B %Y")
+        project.data['updated_at'] = timestamp_to_dateformat(project.data['updated_at'], "%d %B %Y")
         return project
 
     def create(self, request, *args, **kwargs):
