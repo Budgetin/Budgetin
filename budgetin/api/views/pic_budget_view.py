@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from api.models.pic_budget_model import PicBudget
 from api.serializers.pic_budget_serializer import PicBudgetSerializer
-from api.utils.date_format import timestamp_to_dateformat
+from api.utils.date_format import timestamp_to_strdateformat
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -14,14 +14,14 @@ class PicBudgetViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         pic_budget = super().list(request, *args, **kwargs)
         for each in pic_budget.data:
-            each['created_at'] = timestamp_to_dateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_dateformat(each['updated_at'], "%d %B %Y")
+            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
+            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
         return pic_budget
     
     def retrieve(self, request, *args, **kwargs):
         pic_budget = super().retrieve(request, *args, **kwargs)
-        pic_budget.data['created_at'] = timestamp_to_dateformat(pic_budget.data['created_at'], "%d %B %Y")
-        pic_budget.data['updated_at'] = timestamp_to_dateformat(pic_budget.data['updated_at'], "%d %B %Y")
+        pic_budget.data['created_at'] = timestamp_to_strdateformat(pic_budget.data['created_at'], "%d %B %Y")
+        pic_budget.data['updated_at'] = timestamp_to_strdateformat(pic_budget.data['updated_at'], "%d %B %Y")
         return pic_budget
 
     def create(self, request, *args, **kwargs):

@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from api.models.monitoring_model import Monitoring
 from api.serializers.monitoring_serializer import MonitoringSerializer
-from api.utils.date_format import timestamp_to_dateformat
+from api.utils.date_format import timestamp_to_strdateformat
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -15,14 +15,14 @@ class MonitoringViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         monitoring = super().list(request, *args, **kwargs)
         for each in monitoring.data:
-            each['created_at'] = timestamp_to_dateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_dateformat(each['updated_at'], "%d %B %Y")
+            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
+            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
         return monitoring
     
     def retrieve(self, request, *args, **kwargs):
         monitoring = super().retrieve(request, *args, **kwargs)
-        monitoring.data['created_at'] = timestamp_to_dateformat(monitoring.data['created_at'], "%d %B %Y")
-        monitoring.data['updated_at'] = timestamp_to_dateformat(monitoring.data['updated_at'], "%d %B %Y")
+        monitoring.data['created_at'] = timestamp_to_strdateformat(monitoring.data['created_at'], "%d %B %Y")
+        monitoring.data['updated_at'] = timestamp_to_strdateformat(monitoring.data['updated_at'], "%d %B %Y")
         return monitoring
 
     def create(self, request, *args, **kwargs):

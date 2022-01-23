@@ -6,7 +6,7 @@ from api.serializers.budget_serializer import BudgetSerializer
 #For Audit Logging
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.date_format import timestamp_to_dateformat
+from api.utils.date_format import timestamp_to_strdateformat
 class BudgetViewSet(viewsets.ModelViewSet):
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
@@ -14,14 +14,14 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         budget = super().list(request, *args, **kwargs)
         for each in budget.data:
-            each['created_at'] = timestamp_to_dateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_dateformat(each['updated_at'], "%d %B %Y")
+            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
+            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
         return budget
     
     def retrieve(self, request, *args, **kwargs):
         budget = super().retrieve(request, *args, **kwargs)
-        budget.data['created_at'] = timestamp_to_dateformat(budget.data['created_at'], "%d %B %Y")
-        budget.data['updated_at'] = timestamp_to_dateformat(budget.data['updated_at'], "%d %B %Y")
+        budget.data['created_at'] = timestamp_to_strdateformat(budget.data['created_at'], "%d %B %Y")
+        budget.data['updated_at'] = timestamp_to_strdateformat(budget.data['updated_at'], "%d %B %Y")
         return budget
 
     def create(self, request, *args, **kwargs):

@@ -2,8 +2,7 @@ from rest_framework import viewsets
 from api.models.coa_model import Coa
 from api.serializers.coa_serializer import CoaSerializer
 from api.permissions import IsAuthenticated, IsAdmin
-from datetime import datetime
-from api.utils.date_format import timestamp_to_dateformat
+from api.utils.date_format import timestamp_to_strdateformat
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -17,14 +16,14 @@ class CoaViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         coa = super().list(request, *args, **kwargs)
         for each in coa.data:
-            each['created_at'] = timestamp_to_dateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_dateformat(each['updated_at'], "%d %B %Y")
+            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
+            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
         return coa
     
     def retrieve(self, request, *args, **kwargs):
         coa = super().retrieve(request, *args, **kwargs)
-        coa.data['created_at'] = timestamp_to_dateformat(coa.data['created_at'], "%d %B %Y")
-        coa.data['updated_at'] = timestamp_to_dateformat(coa.data['updated_at'], "%d %B %Y")
+        coa.data['created_at'] = timestamp_to_strdateformat(coa.data['created_at'], "%d %B %Y")
+        coa.data['updated_at'] = timestamp_to_strdateformat(coa.data['updated_at'], "%d %B %Y")
         
         return coa
 

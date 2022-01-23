@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from api.models import Product,Strategy
 from api.serializers.product_serializer import ProductSerializer
-from api.utils.date_format import timestamp_to_dateformat
+from api.utils.date_format import timestamp_to_strdateformat
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -19,8 +19,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             strategy_name = Strategy.objects.filter(id=strategy_id).first().name
             each['strategy'] = {"id":strategy_id,"name":strategy_name}
             #Reformat date
-            each['created_at'] = timestamp_to_dateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_dateformat(each['updated_at'], "%d %B %Y")
+            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
+            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
         return product
 
     def retrieve(self, request, *args, **kwargs):
@@ -31,8 +31,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         product.data['strategy'] = {"id":strategy_id,"name":strategy_name}
 
         #reformat date
-        product.data['created_at'] = timestamp_to_dateformat(product.data['created_at'], "%d %B %Y")
-        product.data['updated_at'] = timestamp_to_dateformat(product.data['updated_at'], "%d %B %Y")
+        product.data['created_at'] = timestamp_to_strdateformat(product.data['created_at'], "%d %B %Y")
+        product.data['updated_at'] = timestamp_to_strdateformat(product.data['updated_at'], "%d %B %Y")
         return product
 
     def create(self, request, *args, **kwargs):
