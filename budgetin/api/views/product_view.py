@@ -3,6 +3,9 @@ from api.models import Product,Strategy
 from api.serializers.product_serializer import ProductSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 
+#For Include
+from api.utils.include import include
+
 #For Audit Logging
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
@@ -13,22 +16,31 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         product = super().list(request, *args, **kwargs)
+        #include strategy
         for each in product.data:
-            #include strategy
-            strategy_id = each['strategy']
-            strategy_name = Strategy.objects.filter(id=strategy_id).first().name
-            each['strategy'] = {"id":strategy_id,"name":strategy_name}
+            if request.query_params:
+                params = request.query_params.getlist('include')[0].split(",")
+                for param in params:
+                    param_name = param.lower()
+                    paramid = each[param_name]
+                    included_data = include(param_name, paramid)
+                    each[param_name] = included_data
             #Reformat date
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
+
         return product
 
     def retrieve(self, request, *args, **kwargs):
-        #include strategy
         product = super().retrieve(request, *args, **kwargs)
-        strategy_id = product.data['strategy']
-        strategy_name = Strategy.objects.filter(id=strategy_id).first().name
-        product.data['strategy'] = {"id":strategy_id,"name":strategy_name}
+        #include strategy
+        if request.query_params:
+                params = request.query_params.getlist('include')[0].split(",")
+                for param in params:
+                    param_name = param.lower()
+                    paramid = product.data[param_name]
+                    included_data = include(param_name, paramid)
+                    product.data[param_name] = included_data
 
         #reformat date
         product.data['created_at'] = timestamp_to_strdateformat(product.data['created_at'], "%d %B %Y")

@@ -63,7 +63,7 @@
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-icon v-on="on" color="primary" @click="onView(item)">
+                                        <v-icon v-on="on" color="primary" @click="onView()">
                                             mdi-eye
                                         </v-icon>
                                     </template>
@@ -84,6 +84,12 @@
             </v-row>
         </v-container>
     </v-app>
+
+    <!-- <template>
+        <div id="page-id">
+            {{item.id}}
+        </div>
+    </template> -->
 </template>
 
 <script>
@@ -93,6 +99,9 @@ export default {
     components: {
         FormStartPlanning
     },
+    
+    props: ['item.id'],
+    
     watch: {},
     data() {
         return {
