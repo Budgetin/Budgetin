@@ -27,19 +27,19 @@ class MonitoringViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
-        request.data['created_by'] = 899
+        request.data['created_by'] = 1
         monitoring = super().create(request, *args, **kwargs)
         AuditLog.Save(monitoring, request, ActionEnum.CREATE, TableEnum.MONITORING)
         return monitoring
 
     def update(self, request, *args, **kwargs):
-        request.data['updated_by'] = 899
+        request.data['updated_by'] = 1
         monitoring = super().update(request, *args, **kwargs)
         AuditLog.Save(monitoring, request, ActionEnum.UPDATE, TableEnum.MONITORING)
         return monitoring
 
     def destroy(self, request, *args, **kwargs):
-        request.data['updated_by'] = 899                                 
+        request.data['updated_by'] = 1                                 
         monitoring = super().destroy(request, *args, **kwargs)
         AuditLog.Save(monitoring, request, ActionEnum.DELETE, TableEnum.MONITORING)
         return monitoring
