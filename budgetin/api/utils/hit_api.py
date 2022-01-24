@@ -147,6 +147,7 @@ def get_employee_info(username):
         if employee:
             employee_id = employee[0]['id']
             biro_id = employee[0]['biro']
+            display_name = employee[0]['display_name']
             biro_manager_id = employee[0]['biro']['manager_employee']
             sub_group_id = employee[0]['sub_group']['id']
             sub_group_manager_id = employee[0]['sub_group']['manager_employee']
@@ -155,6 +156,7 @@ def get_employee_info(username):
             divisi_id = employee[0]['sub_group']['group']['divisi']['id']
             return {
                 'employee_id' : employee_id,
+                'display_name' : display_name, 
                 'biro_id' : biro_id,
                 'biro_manager_id' : biro_manager_id,
                 'sub_group_id' : sub_group_id,
@@ -163,7 +165,4 @@ def get_employee_info(username):
                 'group_manager_id' : group_manager_id,
                 'divisi_id' : divisi_id
             }
-    raise NotFoundException()
-    # return {
-    #     'err': 'employee does not exists in ITHC Employee'
-    # }
+    raise NotEligibleException()
