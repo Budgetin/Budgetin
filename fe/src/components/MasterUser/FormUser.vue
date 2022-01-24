@@ -15,7 +15,8 @@
           <v-col cols="6"> Username<strong class="red--text">*</strong> </v-col>
           <v-col cols="6">
             <v-autocomplete
-              :items="dataEmployee"
+              :items="dataMasterEmployee"
+              item-text="display_name"
               outlined
               dense
               :disabled="isView"
@@ -90,7 +91,7 @@
 <script>
 export default {
   name: "FormUser",
-  props: ["form", "dataMasterStrategy", "isView", "isNew"],
+  props: ["form", "dataMasterEmployee", "isView", "isNew"],
   data: () => ({
     type: ["Admin", "Role"],
     validation: {
