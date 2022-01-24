@@ -1,7 +1,10 @@
+import json
 from rest_framework import viewsets
 from api.models.planning_model import Planning
 from api.serializers.planning_serializer import PlanningSerializer
 from api.utils.date_format import timestamp_to_strdateformat
+from api.utils.send_email import send_email
+from rest_framework.response import Response
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -26,19 +29,41 @@ class PlanningViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
-        request.data['created_by'] = 899
+        request.data['created_by'] = 1
+        
+        #Process send notification
+        if 'send_notification' in request.data:
+            if request.data['send_notification'] == True:
+                if 'biros' and 'body' in request.data:
+                    biro_id_list = request.data['biros']
+                    subject = "[Budgetin] Akses Input Budget"
+                    body = request.data['body']
+                    if len(biro_id_list) > 0 and body != "":
+                        send_email(biro_id_list, subject, body)
+        
         planning = super().create(request, *args, **kwargs)
         AuditLog.Save(planning, request, ActionEnum.CREATE, TableEnum.PLANNING)
         return planning
 
     def update(self, request, *args, **kwargs):
-        request.data['updated_by'] = 899
+        request.data['updated_by'] = 1
+        
+        #Process send notification
+        if 'send_notification' in request.data:
+            if request.data['send_notification'] == True:
+                if 'biros' and 'body' in request.data:
+                    biro_id_list = request.data['biros']
+                    subject = "[Budgetin] Akses Input Budget"
+                    body = request.data['body']
+                    if len(biro_id_list) > 0 and body != "":
+                        send_email(biro_id_list, subject, body)
+        
         planning = super().update(request, *args, **kwargs)
         AuditLog.Save(planning, request, ActionEnum.UPDATE, TableEnum.PLANNING)
         return planning
 
     def destroy(self, request, *args, **kwargs):
-        request.data['updated_by'] = 899                                 
+        request.data['updated_by'] = 1                                 
         planning = super().destroy(request, *args, **kwargs)
         AuditLog.Save(planning, request, ActionEnum.DELETE, TableEnum.PLANNING)
         return planning

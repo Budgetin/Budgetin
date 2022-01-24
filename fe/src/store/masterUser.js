@@ -41,6 +41,21 @@ const masterUser = {
           commit("GET_ERROR", error);
         });
     },
+    getEmployee({ commit }) {
+      commit("GET_DROPDOWN");
+      getAPI
+        .get(ENDPOINT+'imo/')
+        .then((response) => {
+          const cleanData = response.data
+          const sorted = cleanData.sort((a, b) =>
+            a.display_name > b.update_at ? 1 : -1
+          );
+          commit("GET_SUCCESS", sorted);
+        })
+        .catch((error) => {
+          commit("GET_ERROR", error);
+        });
+    },
     getMasterUserById({ commit }, id) {
       // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_GET_EDITTED_ITEM", true);

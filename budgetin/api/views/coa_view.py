@@ -29,19 +29,19 @@ class CoaViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
-        request.data['created_by'] = 899
+        request.data['created_by'] = 1
         coa = super().create(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.CREATE, TableEnum.COA)
         return coa
 
     def update(self, request, *args, **kwargs):
-        request.data['updated_by'] = 899
+        request.data['updated_by'] = 1
         coa = super().update(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.UPDATE, TableEnum.COA)
         return coa
 
     def destroy(self, request, *args, **kwargs):
-        request.data['updated_by'] = 899
+        request.data['updated_by'] = 1
         coa = super().destroy(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.DELETE, TableEnum.COA)
         return coa

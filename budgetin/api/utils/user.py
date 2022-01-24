@@ -1,24 +1,17 @@
 from api.utils.hit_api import get_employee_info
-from api.models.pic_budget_model import PicBudget
 from api.models.user_model import User
+from api.exceptions import NotEligibleException
 
-def user_has_access(username):
-    #Check if Admin
-    user = User.objects.filter(username=username)
-    if user and user.values()[0]['role'] == 'admin':
-        return True
+def get_user_info(username):
+    #Check if user exists in Budgetin DB
+    users = User.objects.filter(username=username).values()
+    if users:
+        user = users[0]
+        return user['employee_id'], user['display_name'],user['role']
     
     #Check if User S1, S2, S3
-    data_check = get_employee_info(username)
-    if 'err' in data_check:
-        return False
-    if data_check['biro_manager_id'] == data_check['employee_id'] or data_check['sub_group_manager_id'] == data_check['employee_id'] or data_check['group_manager_id'] == data_check['employee_id']:
-        return True
+    user = get_employee_info(username)
+    if user['biro_manager_id'] == user['employee_id'] or user['sub_group_manager_id'] == user['employee_id'] or user['group_manager_id'] == user['employee_id']:
+        return user['employee_id'], user['display_name'], 'user'
     
-    #Check if User is PIC
-    pic_budget = PicBudget.objects.filter(employee_id=data_check['employee_id'])
-    if pic_budget:
-        return True
-    
-    #No Access
-    return False
+    raise NotEligibleException()
