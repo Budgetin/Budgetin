@@ -1,9 +1,9 @@
 <template>
-  <v-app id="master-User">
-    <v-container class="master-User__container outer-container">
+  <v-app id="master-user">
+    <v-container class="master-user__container outer-container">
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          <v-subheader class="master-User__header">Master User</v-subheader>
+          <v-subheader class="master-user__header">Master User</v-subheader>
         </v-col>
       </v-row>
 
@@ -20,7 +20,7 @@
                 <v-row class="mb-5" no-gutters>
                   <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
                     <v-text-field
-                      class="master-User__input"
+                      class="master-user__input"
                       v-model="search"
                       append-icon="mdi-magnify"
                       label="Search"
@@ -35,7 +35,7 @@
                     md="8"
                     lg="8"
                     no-gutters
-                    class="master-User__btn"
+                    class="master-user__btn"
                   >
                     <v-btn rounded color="primary" @click="onAdd">
                       Add User
@@ -122,9 +122,9 @@ export default {
     },
     form: {
       id: "",
-      User_code: "",
-      User_name: "",
-      strategy: "",
+      username: "",
+      role: "",
+      is_active: "",
     },
     alert: {
       show: false,
@@ -191,18 +191,18 @@ button {
 </style>
 
 <style lang="scss" scoped>
-#master-User {
-  .master-User__header {
+#master-user {
+  .master-user__header {
     padding-left: 32px;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .master-User__input {
+  .master-user__input {
     padding: 10px 32px;
   }
 
-  .master-User__btn {
+  .master-user__btn {
     text-align: end;
 
     button {

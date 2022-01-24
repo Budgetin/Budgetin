@@ -7,6 +7,7 @@ import masterStrategy from "./masterStrategy"
 import masterProduct from "./masterProduct"
 import statusInfo from "./statusInfo"
 import masterUser from "./masterUser"
+import login from "./login"
 
 
 Vue.use(Vuex)
@@ -26,7 +27,7 @@ export default new Vuex.Store({
     masterStrategy,
     masterProduct,
     statusInfo,
-    masterUser
-
+    masterUser,
+    login
   },
 })

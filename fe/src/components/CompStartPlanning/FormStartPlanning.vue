@@ -65,7 +65,7 @@
                   <div class="dueDate">
                     <v-text-field
                       v-model="date"
-                      prepend-icon="mdi-calendar"
+                      outlined
                       readonly
                       v-bind="attrs"
                       v-on="on">
@@ -103,7 +103,7 @@
 
         <!-- SEND TO -->
         <v-row no-gutters v-if="notifValue(returnValue)=='Yes'">
-          <v-col cols="6"> Send to <strong class="red--text">*</strong>
+          <v-col> Send to <strong class="red--text">*</strong>
             <v-col no-gutters>
               <v-select
                 class="StartPlanning__select"
@@ -141,8 +141,8 @@
 
         <!-- E-MAIL BODY -->
         <v-row no-gutters v-if="notifValue(returnValue)=='Yes'">
-          <v-col cols="6"> E-mail Body
-            <v-col cols="6">
+          <v-col> E-mail Body
+            <v-col>
               <div class="emailBody">
                 <v-textarea
                   outlined
@@ -222,7 +222,7 @@ export default {
       {activeInactive: 'Active'},
       {activeInactive: 'Inactive'}
     ],
-    status: 'Active',
+    status: null,
 
     notifOptions: [
       {option: 'Yes'},
@@ -305,10 +305,10 @@ export default {
     min-width: 165px;
   }
   .sendTo {
-    min-width: 700px;
+    min-width: 90%;
   }
   .emailBody {
-    min-width: 500px;
+    min-width: 90%;
   }
 
   .cancelBtn {
