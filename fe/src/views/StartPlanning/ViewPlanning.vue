@@ -11,7 +11,8 @@
                                     <v-btn
                                         icon
                                         color="primary"
-                                        class="mt-3">
+                                        class="mt-3 mr-8"
+                                        link :to="'/startPlanning/edit'">
                                         <v-icon>mdi-pencil-outline</v-icon>
                                     </v-btn>
                                 </v-col>
@@ -83,7 +84,7 @@
                         </v-form>
 
                         <v-col no-gutters class="view-planning__btn">
-                            <v-btn rounded color="primary" @click="onBack" style="width: 8rem; margin-top: 96px">
+                            <v-btn rounded color="primary" @click="onOK" style="width: 8rem; margin-top: 96px">
                                 OK
                             </v-btn>
                         </v-col>
@@ -92,7 +93,7 @@
 
                 <v-card class="view-planning__logHistory">
                     <v-row no-gutters>
-                        <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+                        <v-col no-gutters>
                             <v-subheader class="view-planning__header">Log History</v-subheader>
                         </v-col>
                         <v-card-text class="view-planning__cardText">
@@ -192,6 +193,14 @@
             </v-row>
         </v-container>
     </v-app>
+
+    <!-- <div>
+        <page-id :pageId="item.id" />
+    </div> -->
+    <!-- <div>
+        <start-planning :id="item.id"
+        @onView="item.id" />
+    </div> -->
 </template>
 
 <script>
@@ -199,7 +208,7 @@ export default {
     watch: {},
     data() {
         return {
-            
+
         };
     },
 
@@ -210,6 +219,9 @@ export default {
         onCancel() {
             this.dialog = false;
         },
+        onOK() {
+            return this.$router.go(-1);
+        }
     }
 };
 </script>

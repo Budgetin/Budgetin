@@ -49,6 +49,11 @@ const routes = [
         path: '/startPlanning/:id/view',
         name: 'ViewPlanning',
         component: () => import("@/views/StartPlanning/ViewPlanning")
+      },
+      {
+        path: '/startPlanning/edit',
+        name: 'EditPlanning',
+        component: () => import("@/views/StartPlanning/EditPlanning")
       },   
     ]
   },
