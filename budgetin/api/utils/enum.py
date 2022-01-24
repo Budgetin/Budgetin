@@ -1,11 +1,13 @@
 from enum import Enum
 
+
 class ActionEnum(Enum):
     CREATE = "Create"
     READ = "Read"
     UPDATE = "Update"
     DELETE = "Delete"
-    
+
+
 class TableEnum(Enum):
     AUDIT_LOG = "Audit Log"
     BIRO = "Biro"
@@ -17,3 +19,9 @@ class TableEnum(Enum):
     PRODUCT = "Product"
     PROJECT = "Project"
     PROJECT_DETAIL = "Project Detail"
+
+
+class RoleEnum(Enum):
+    ADMIN = "admin"
+    USER = "user"
+    PIC = "pic"
