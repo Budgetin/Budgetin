@@ -67,18 +67,19 @@ def get_imo_d_employee():
     }
     res = requests.get(url, headers=headers, verify=False)
     if res.json():
-        temp = []
+        data = []
         for each in res.json():
-            user_id = each['id']
-            display_name = each['display_name']
-            username = each['username']
-            employee_json = {
-                'id' : user_id,
-                'name' : display_name,
-                'username' : username
-            }
-            temp.append(employee_json)
-        return temp
+            if each['status_employee'] == 1:
+                user_id = each['id']
+                display_name = each['display_name']
+                username = each['username']
+                employee_json = {
+                    'id' : user_id,
+                    'name' : display_name,
+                    'username' : username
+                }
+                data.append(employee_json)
+        return data
     raise NotFoundException()
 
 #Get S4
