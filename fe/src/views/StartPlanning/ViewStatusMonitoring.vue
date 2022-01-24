@@ -1,18 +1,18 @@
 <template>
-    <v-app id="view-planning">
+    <v-app id="view-status-monitoring">
         <v-container>
             <v-row no-gutters>
-                <v-card class="view-planning__detail">
+                <v-card class="view-status-monitoring__detail">
                     <v-row no-gutters>
                         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                             <v-row no-gutters>
-                                <v-subheader class="view-planning__header">View Planning</v-subheader>
-                                <v-col no-gutters class="view-planning__btn">
+                                <v-subheader class="view-status-monitoring__header">View Status Monitoring</v-subheader>
+                                <v-col no-gutters class="view-status-monitoring__btn">
                                     <v-btn
                                         icon
                                         color="primary"
                                         class="mt-3 mr-8"
-                                        link :to="'/startPlanning/edit'">
+                                        link :to="'/startPlanning/editStatusMonitor'">
                                         <v-icon>mdi-pencil-outline</v-icon>
                                     </v-btn>
                                 </v-col>
@@ -23,29 +23,29 @@
                     <v-card-text>
                         <v-form class="px-3">
                             <v-row no-gutters>
-                                <!-- PLANNING FOR -->
-                                <v-col cols="6"> Planning For <strong class="red--text">*</strong>
+                                <!-- GROUP -->
+                                <v-col cols="6"> Group <strong class="red--text">*</strong>
                                     <v-col cols="6">
-                                        <div class="view-planning__field">
+                                        <div class="view-status-monitoring__field">
                                             <v-text-field
                                             outlined
                                             dense
                                             disabled
-                                            label="2023">
+                                            label="GAQ">
                                             </v-text-field>
                                         </div>
                                     </v-col>
                                 </v-col>
 
-                                <!-- STATUS -->
-                                <v-col cols="6"> Status <strong class="red--text">*</strong>
+                                <!-- SUBGROUP -->
+                                <v-col cols="6"> Sub-Group <strong class="red--text">*</strong>
                                     <v-col cols="6">
-                                        <div class="view-planning__field">
+                                        <div class="view-status-monitoring__field">
                                             <v-text-field
                                             outlined
                                             dense
                                             disabled
-                                            label="Active">
+                                            label="ARC">
                                             </v-text-field>
                                         </div>
                                     </v-col>
@@ -53,10 +53,40 @@
                             </v-row>
 
                             <v-row no-gutters>
-                                <!-- DUE DATE -->
-                                <v-col cols="6"> Due Date <strong class="red--text">*</strong>
+                                <!-- BIRO -->
+                                <v-col cols="6"> Biro <strong class="red--text">*</strong>
                                     <v-col cols="6">
-                                        <div class="view-planning__field">
+                                        <div class="view-status-monitoring__field">
+                                            <v-text-field
+                                            outlined
+                                            dense
+                                            disabled
+                                            label="ARC A">
+                                            </v-text-field>
+                                        </div>
+                                    </v-col>
+                                </v-col>
+
+                                <!-- PIC -->
+                                <v-col cols="6"> PIC <strong class="red--text">*</strong>
+                                    <v-col cols="6">
+                                        <div class="view-status-monitoring__field">
+                                            <v-text-field
+                                            outlined
+                                            dense
+                                            disabled
+                                            label="Jumas Ranope">
+                                            </v-text-field>
+                                        </div>
+                                    </v-col>
+                                </v-col>
+                            </v-row>
+
+                            <v-row no-gutters>
+                                <!-- UPDATE DATE -->
+                                <v-col cols="6"> Update Date <strong class="red--text">*</strong>
+                                    <v-col cols="6">
+                                        <div class="view-status-monitoring__field">
                                             <v-text-field
                                             outlined
                                             dense
@@ -67,15 +97,15 @@
                                     </v-col>
                                 </v-col>
 
-                                <!-- SEND NOTIFICATION -->
-                                <v-col cols="6"> Send Notification <strong class="red--text">*</strong>
+                                <!-- STATUS -->
+                                <v-col cols="6"> Status <strong class="red--text">*</strong>
                                     <v-col cols="6">
-                                        <div class="view-planning__field">
+                                        <div class="view-status-monitoring__field">
                                             <v-text-field
                                             outlined
                                             dense
                                             disabled
-                                            label="Yes">
+                                            label="Submitted">
                                             </v-text-field>
                                         </div>
                                     </v-col>
@@ -83,7 +113,7 @@
                             </v-row>
                         </v-form>
 
-                        <v-col no-gutters class="view-planning__btn">
+                        <v-col no-gutters class="view-status-monitoring__btn">
                             <v-btn rounded color="primary" @click="onOK" style="width: 8rem; margin-top: 96px">
                                 OK
                             </v-btn>
@@ -91,12 +121,12 @@
                     </v-card-text>
                 </v-card>
 
-                <v-card class="view-planning__logHistory">
+                <v-card class="view-status-monitoring__logHistory">
                     <v-row no-gutters>
                         <v-col no-gutters>
-                            <v-subheader class="view-planning__header">Log History</v-subheader>
+                            <v-subheader class="view-status-monitoring__header">Log History</v-subheader>
                         </v-col>
-                        <v-card-text class="view-planning__cardText">
+                        <v-card-text class="view-status-monitoring__cardText">
                             <v-timeline
                                 align-top
                                 dense>
@@ -114,13 +144,10 @@
                                             </v-row>
                                         </v-col>
                                         <v-col>
-                                            <strong>Update Planning</strong>
+                                            <strong>Update ARC</strong>
                                             <div class="text-caption">
-                                                Due Date: 2022-11-30
+                                                Status: Submitted
                                                 </div>
-                                            <div class="text-caption">
-                                                Send Notification: Yes
-                                            </div>
                                         </v-col>
                                     </v-row>
                                 </v-timeline-item>
@@ -135,53 +162,13 @@
                                             </v-row>
 
                                             <v-row no-gutters>
-                                                <strong>5 Jan 2022</strong>
+                                                <strong>2 Jan 2022</strong>
                                             </v-row>
                                         </v-col>
                                         <v-col>
                                             <strong>Update ARC</strong>
                                             <div class="text-caption">
-                                                Due Date: 2022-11-25
-                                            </div>
-                                            <div class="text-caption">
-                                                Send Notification: Yes
-                                            </div>
-                                        </v-col>
-                                    </v-row>
-                                </v-timeline-item>
-
-                                <v-timeline-item
-                                color="primary"
-                                small>
-                                    <v-row class="pt-1">
-                                        <v-col cols="4">
-                                            <v-row no-gutters>
-                                                <strong>Phang Willy</strong>
-                                            </v-row>
-
-                                            <v-row no-gutters>
-                                                <strong>5 Jan 2022</strong>
-                                            </v-row>
-                                        </v-col>
-                                        <v-col>
-                                            <strong>Create Planning</strong>
-                                            <div class="text-caption">
-                                                Planning For: 2023
-                                            </div>
-                                            <div class="text-caption">
-                                                Status: Active
-                                            </div>
-                                            <div class="text-caption">
-                                                Due Date: 2022-10-20
-                                            </div>
-                                            <div class="text-caption">
-                                                Send Notification: Yes
-                                            </div>
-                                            <div class="text-caption">
-                                                Send to: GSIT ARC A, GSIT CTS A, GSIT CTS B, ...
-                                            </div>
-                                            <div class="text-caption">
-                                                Content: Dear All, Terkait adanya kebutuhan planning budget tahun 2023, kami mengajak Bapak/Ibu sekalian untuk mengisi perencanaan budget pada aplikasi budget (www.budgetgsitbca.co.id). Pengisian planning budget ini akan berakhir pada 31 Desember 2022. Atas perhatiannya saya ucapkan terima kasih. Best Regards, ITFAM
+                                                Status: Draft
                                             </div>
                                         </v-col>
                                     </v-row>
@@ -219,13 +206,6 @@ export default {
 </script>
 
 <style scoped>
-.sendTo {
-    width: 500px;
-}
-.emailBody {
-    width: 500px;
-}
-
 .cancelBtn {
     width: 200px;
 }
@@ -245,8 +225,8 @@ export default {
     margin: 40px;
 }
 
-#view-planning {
-    .view-planning__header {
+#view-status-monitoring {
+    .view-status-monitoring__header {
         padding-top: 32px;
         padding-bottom: 32px;
         padding-left: 32px;
@@ -254,44 +234,44 @@ export default {
         font-weight: 600;
         min-width: 80%;
     }
-    .view-planning__detail {
+    .view-status-monitoring__detail {
         border-radius: 8px;
         margin: 1% auto !important;
         width: 50%;
     }
-    .view-planning__input {
+    .view-status-monitoring__input {
         padding: 10px 32px;
     }
-    .view-planning__btn {
+    .view-status-monitoring__btn {
         text-align: end;
         button {
             margin: 10px 32px;
         }
     }
-    .view-planning__container {
+    .view-status-monitoring__container {
         padding: 24px 0px;
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         border-radius: 8px;
     }
-    .view-planning__cardText {
+    .view-status-monitoring__cardText {
         flex-grow: 4;
         max-height: 470px;
         overflow-y: scroll;
     }
-    .view-planning__logHistory {
+    .view-status-monitoring__logHistory {
         border-radius: 8px;
         margin: 1% auto !important;
         width: 40%;
     }
-    .view-planning__field {
-        min-width: 150px;
+    .view-status-monitoring__field {
+        min-width: 150px;   
     }
 }
 
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
-#view-planning {
-    .view-planning__btn {
+#view-status-monitoring {
+    .view-status-monitoring__btn {
         text-align: center;
         padding: 0px 32px;
 
@@ -300,7 +280,7 @@ export default {
         margin: 0px 0px 32px 0px;
         }
     }
-    .view-planning__card {
+    .view-status-monitoring__card {
         flex-direction: column;
         button {
         width: 16rem !important;
