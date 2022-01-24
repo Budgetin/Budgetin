@@ -39,7 +39,17 @@ const routes = [
         path: 'startPlanning',
         name: 'Start Planning',
         component: () => import("@/views/StartPlanning/StartPlanning"),
-      },  
+      }, 
+      {
+        path: '/startPlanning/:id/monitor',
+        name: 'MonitorPlanning',
+        component: () => import("@/views/StartPlanning/MonitorPlanning")
+      },
+      {
+        path: '/startPlanning/:id/view',
+        name: 'ViewPlanning',
+        component: () => import("@/views/StartPlanning/ViewPlanning")
+      },   
     ]
   },
   {

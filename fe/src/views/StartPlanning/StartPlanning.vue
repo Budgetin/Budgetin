@@ -3,7 +3,7 @@
         <v-container class="start-planning__container outer-container">
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                <v-subheader class="start-planning__header">Start Planning</v-subheader>
+                <v-subheader class="start-planning__header">List of Created Planning</v-subheader>
                 </v-col>
             </v-row>
 
@@ -12,7 +12,8 @@
                     <v-data-table
                         :headers="headers"
                         :items="desserts"
-                        :search="search">
+                        :search="search"
+                        class="data-table">
                         <template v-slot:top>
                             <v-toolbar-title>
                                 <v-row class="mb-5" no-gutters>
@@ -36,14 +37,39 @@
                         </template>
                                     
                         <template v-slot:[`item.actions`]="{ item }">
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on }">
-                                    <v-icon v-on="on" color="primary" @click="onEdit(item)">
-                                        mdi-eye
-                                    </v-icon>
-                                </template>
-                                <span>View/Edit</span>
-                            </v-tooltip>
+                            <!-- MONITOR PLANNING -->
+                            <router-link
+                                style="text-decoration: none"
+                                :to="{
+                                name: 'MonitorPlanning',
+                                params: { id: item.id },
+                                }">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-icon  class="ma-3" v-on="on" color="primary" @click="onMonitor(item)">
+                                            mdi-monitor
+                                        </v-icon>
+                                    </template>
+                                    <span>Monitor</span>
+                                </v-tooltip>
+                            </router-link>
+
+                            <!-- VIEW/EDIT PLANNING -->
+                            <router-link
+                                style="text-decoration: none"
+                                :to="{
+                                name: 'ViewPlanning',
+                                params: { id: item.id },
+                                }">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-icon v-on="on" color="primary" @click="onView(item)">
+                                            mdi-eye
+                                        </v-icon>
+                                    </template>
+                                    <span>View/Edit</span>
+                                </v-tooltip>
+                            </router-link>
                         </template>
                     </v-data-table>
                 </v-col>
@@ -70,16 +96,19 @@ export default {
     watch: {},
     data() {
         return {
+            // planningFor: this.$route.params.planningFor,
+            // monitor: {},
+
             dialog: false,
             search: "",
             headers: [
-                { text: "ID", value: "id",width: "20%"},
-                { text: "Planning For", value: "planningFor" ,width: "20%"},
-                { text: "Status", value: "status" },
-                { text: "Notification", value: "notification" },
-                { text: "Updated By", value: "updatedBy" },
-                { text: "Updated Date", value: "updatedDate" },
-                { text: "Actions", value: "actions", align: "center", sortable: false },
+                { text: "ID", value: "id", width: "5%" },
+                { text: "Planning For", value: "planningFor", width: "10%" },
+                { text: "Status", value: "status", width: "8%" },
+                { text: "Notification", value: "notification", width: "8%" },
+                { text: "Updated By", value: "updatedBy", width: "20%" },
+                { text: "Updated Date", value: "updatedDate", width: "15%" },
+                { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
             ],
             desserts: [
                 {
@@ -92,75 +121,27 @@ export default {
                 },
                 {
                     id: 2,
-                    planningFor: "2023",
-                    status: "Active",
+                    planningFor: "2022",
+                    status: "Inactive",
                     notification: "Yes",
                     updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
+                    updatedDate: "30 November 2021",
                 },
                 {
                     id: 3,
-                    planningFor: "2023",
-                    status: "Active",
+                    planningFor: "2021",
+                    status: "Inactive",
                     notification: "Yes",
                     updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
+                    updatedDate: "30 November 2020",
                 },
                 {
                     id: 4,
-                    planningFor: "2023",
-                    status: "Active",
+                    planningFor: "2020",
+                    status: "Inactive",
                     notification: "Yes",
                     updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
-                },
-                {
-                    id: 5,
-                    planningFor: "2023",
-                    status: "Active",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
-                },
-                {
-                    id: 6,
-                    planningFor: "2023",
-                    status: "Active",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
-                },
-                {
-                    id: 7,
-                    planningFor: "2023",
-                    status: "Active",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
-                },
-                {
-                    id: 8,
-                    planningFor: "2023",
-                    status: "Active",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
-                },
-                {
-                    id: 9,
-                    planningFor: "2023",
-                    status: "Active",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
-                },
-                {
-                    id: 10,
-                    planningFor: "2023",
-                    status: "Active",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
+                    updatedDate: "30 November 2019",
                 },
             ],
         };
@@ -173,6 +154,12 @@ export default {
         onCancel() {
             this.dialog = false;
         },
+        // onMonitor(item) {
+        //     console.log(item+"monitor");
+        // },
+        // onView(item) {
+        //     console.log(item);
+        // }
     }
 };
 </script>
@@ -180,6 +167,9 @@ export default {
 <style lang="scss" scoped>
 .searchBar {
     width: 400px;
+}
+.data-table {
+    margin: 40px;
 }
 
 #start-planning {
@@ -214,6 +204,12 @@ export default {
         }
     }
 }
+
+// style {
+//     button {
+//         min-width: 3rem !important;
+//     }
+// }
 
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
