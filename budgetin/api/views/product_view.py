@@ -16,14 +16,15 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         product = super().list(request, *args, **kwargs)
-        #include strategy
         for each in product.data:
+            #include strategy
             if request.query_params:
                 params = request.query_params.getlist('include')[0].split(",")
                 for param in params:
-                    param_name = param.lower()
+                    paramSplitted = param.split(".")[0]
+                    param_name = paramSplitted.lower()
                     paramid = each[param_name]
-                    included_data = include(param_name, paramid)
+                    included_data = include(param, paramid)
                     each[param_name] = included_data
             #Reformat date
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
@@ -35,12 +36,15 @@ class ProductViewSet(viewsets.ModelViewSet):
         product = super().retrieve(request, *args, **kwargs)
         #include strategy
         if request.query_params:
-                params = request.query_params.getlist('include')[0].split(",")
-                for param in params:
-                    param_name = param.lower()
-                    paramid = product.data[param_name]
-                    included_data = include(param_name, paramid)
-                    product.data[param_name] = included_data
+                #include strategy
+                if request.query_params:
+                    params = request.query_params.getlist('include')[0].split(",")
+                    for param in params:
+                        paramSplitted = param.split(".")[0]
+                        param_name = paramSplitted.lower()
+                        paramid = product.data[param_name]
+                        included_data = include(param, paramid)
+                        product.data[param_name] = included_data
 
         #reformat date
         product.data['created_at'] = timestamp_to_strdateformat(product.data['created_at'], "%d %B %Y")
@@ -49,19 +53,19 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
-        request.data['created_by'] = 899
+        request.data['created_by'] = 1
         product = super().create(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.CREATE, TableEnum.PRODUCT)
         return product
 
     def update(self, request, *args, **kwargs):
-        request.data['updated_by'] = 899
+        request.data['updated_by'] = 1
         product = super().update(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.UPDATE, TableEnum.PRODUCT)
         return product
 
     def destroy(self, request, *args, **kwargs):
-        request.data['updated_by'] = 899                                 
+        request.data['updated_by'] = 1                                 
         product = super().destroy(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.DELETE, TableEnum.PRODUCT)
         return product

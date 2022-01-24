@@ -17,7 +17,7 @@
               class="d-flex"
               cols="12"
               sm="6">
-              <div class="planningFor">
+              <div class="StartPlanning__field">
                 <v-select
                   v-model="year"
                   :items="yearOptions"
@@ -36,7 +36,7 @@
               class="d-flex"
               cols="12"
               sm="6">
-              <div class="status">
+              <div class="StartPlanning__field">
                 <v-select
                   v-model="status"
                   :items="statusOptions"
@@ -62,7 +62,7 @@
                 offset-y
                 min-width="auto">
                 <template v-slot:activator="{ on, attrs }">
-                  <div class="dueDate">
+                  <div class="StartPlanning__field">
                     <v-text-field
                       v-model="date"
                       outlined
@@ -86,7 +86,7 @@
               class="d-flex"
               cols="12"
               sm="6">
-              <div class="sendNotif">
+              <div class="StartPlanning__field">
                 <v-select
                   v-model="notif"
                   :items="notifOptions"
@@ -94,7 +94,7 @@
                   label="Yes/No"
                   outlined
                   return-object
-                  @click="notifValue(returnValue)">
+                  @click="notifValue()">
                 </v-select>
               </div>
             </v-col>
@@ -102,12 +102,11 @@
         </v-row>
 
         <!-- SEND TO -->
-        <v-row no-gutters v-if="notifValue(returnValue)=='Yes'">
+        <v-row no-gutters v-if="notifValue()=='Yes'">
           <v-col> Send to <strong class="red--text">*</strong>
             <v-col no-gutters>
               <v-select
                 class="StartPlanning__select"
-                v-model="sendToEmail"
                 :items="biroGsit"
                 item-text="biroGsitName"
                 item-value="biroGsitEmail"
@@ -116,31 +115,12 @@
                 chips
                 outlined>
               </v-select>
-            </v-col>
-            
-            <!-- <v-col
-              class="d-flex"
-              cols="12"
-              sm="6">
-              <div class="sendTo">
-                <v-select
-                  v-model="sendToEmail"
-                  :items="biroGsit"
-                  item-text="biroGsitName"
-                  item-value="biroGsitEmail"
-                  label="Send to"
-                  outlined
-                  multiple
-                  chips
-                  return-object>
-                </v-select>
-              </div>
-            </v-col> -->
+            </v-col>            
           </v-col>
         </v-row>
 
         <!-- E-MAIL BODY -->
-        <v-row no-gutters v-if="notifValue(returnValue)=='Yes'">
+        <v-row no-gutters v-if="notifValue()=='Yes'">
           <v-col> E-mail Body
             <v-col>
               <div class="emailBody">
@@ -157,19 +137,17 @@
         <!-- BUTTONS -->
         <v-row no-gutters>
           <v-col cols="11" align="right">
-            <!-- <div class="cancelBtn"> -->
-              <v-btn
-                rounded
-                outlined
-                class="primary--text"
-                @click="$emit('cancelClicked')"
-                v-if="!isView">
-                Cancel
-              </v-btn>
-              <v-btn rounded class="primary ml-3" type="submit" v-if="!isView">
-                Submit
-              </v-btn>
-            <!-- </div> -->
+            <v-btn
+              rounded
+              outlined
+              class="primary--text"
+              @click="$emit('cancelClicked')"
+              v-if="!isView">
+              Cancel
+            </v-btn>
+            <v-btn rounded class="primary ml-3" @click="onSubmit" v-if="!isView">
+              Submit
+            </v-btn>
           </v-col>
         </v-row>
       </v-form>      
@@ -184,12 +162,11 @@ export default {
 
   data() {
     return {
-      // dialog: false,
       planningFor: '',
       status: '',
       sendNotif: '',
       date: null,
-      sendToEmail: [],
+      // sendToEmail: null,
     }
   },
   data: () => ({
@@ -199,8 +176,6 @@ export default {
     checkbox: false,
     validation: {
       required: (v) => !!v || "This field is required",
-      // counterInitial: (v) => v.length <= 50 || "Max. 50 characters",
-      // counterName: (v) => v.length <= 50 || "Max. 50 characters",
     },
 
     yearOptions: [
@@ -281,10 +256,10 @@ export default {
   }),
 
   methods: {
-    submit() {
+    onSubmit() {
       console.log(this.planningFor, this.status, this.date, this.sendNotif)
     },
-    notifValue(returnValue) {
+    notifValue() {
       return this.notif.option
     },
   },
@@ -292,18 +267,6 @@ export default {
 </script>
 
 <style scoped>
-  .planningFor {
-    min-width: 165px;
-  }
-  .status {
-    min-width: 165px;
-  }
-  .dueDate {
-    min-width: 165px;
-  }
-  .sendNotif {
-    min-width: 165px;
-  }
   .sendTo {
     min-width: 90%;
   }
@@ -335,6 +298,9 @@ export default {
   }
   .StartPlanning__select{
     min-width: 500px;
+  }
+  .StartPlanning__field {
+    min-width: 165px;
   }
 </style>
     

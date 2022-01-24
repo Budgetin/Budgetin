@@ -33,14 +33,21 @@
                                     
                         <template v-slot:[`item.actions`]="{ item }">
                             <!-- VIEW/EDIT PLANNING -->
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on }">
-                                    <v-icon v-on="on" color="primary" @click="onEdit(item)">
-                                        mdi-eye
-                                    </v-icon>
-                                </template>
-                                <span>View/Edit</span>
-                            </v-tooltip>
+                            <router-link
+                                style="text-decoration: none"
+                                :to="{
+                                name: 'ViewStatusMonitoring',
+                                params: { id: item.id },
+                                }">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-icon v-on="on" color="primary" @click="onView()">
+                                            mdi-eye
+                                        </v-icon>
+                                    </template>
+                                    <span>View/Edit</span>
+                                </v-tooltip>
+                            </router-link>
                         </template>
                     </v-data-table>
                 </v-col>
@@ -50,12 +57,7 @@
 </template>
 
 <script>
-//import FormMonitorPlanning from '@/components/CompStartPlanning/FormMonitorPlanning';
 export default {
-    // name: "CompStartPlanning",
-    // components: {
-    //     FormMonitorPlanning
-    // },
     watch: {},
     data() {
         return {
@@ -185,12 +187,12 @@ export default {
     },
 
     methods: {
-        onAdd() {
-            this.dialog = !this.dialog;
-        },
         onCancel() {
             this.dialog = false;
         },
+        onView() {
+            
+        }
     }
 };
 </script>

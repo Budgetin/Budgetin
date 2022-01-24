@@ -26,19 +26,19 @@ class PicBudgetViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
-        request.data['created_by'] = 899
+        request.data['created_by'] = 1
         pic_budget = super().create(request, *args, **kwargs)
         AuditLog.Save(pic_budget, request, ActionEnum.CREATE, TableEnum.PIC_BUDGET)
         return pic_budget
 
     def update(self, request, *args, **kwargs):
-        request.data['updated_by'] = 899
+        request.data['updated_by'] = 1
         pic_budget = super().update(request, *args, **kwargs)
         AuditLog.Save(pic_budget, request, ActionEnum.UPDATE, TableEnum.PIC_BUDGET)
         return pic_budget
 
     def destroy(self, request, *args, **kwargs):
-        request.data['updated_by'] = 899                                 
+        request.data['updated_by'] = 1                                 
         pic_budget = super().destroy(request, *args, **kwargs)
         AuditLog.Save(pic_budget, request, ActionEnum.DELETE, TableEnum.PIC_BUDGET)
         return pic_budget

@@ -4,69 +4,69 @@
     "name": "Consultant",
     "hyperion_name": "XVI I.3.b HONORARIUM CONSULTANT",
     "definition": "definition",
-    "created_by": "899"
+    "created_by": 1
 },
 {
     "id": 2,
     "name": "Hardware",
     "hyperion_name": "l. Computer and Machinery I",
     "definition": "definition",
-    "created_by": "899"
+    "created_by": 1
 },
 {
     "id": 3,
     "name": "Software",
     "hyperion_name": "p. Software Khusus",
     "definition": "definition",
-    "created_by": "899"
+    "created_by": 1
 },
 {
     "id": 4,
     "name": "Maintenance Hardware",
     "hyperion_name": "XVI A.6.5 KOMPUTER",
     "definition": "definition",
-    "created_by": "899"
+    "created_by": 1
 },
 {
     "id": 5,
     "name": "Maintenance Software",
     "hyperion_name": "XVI F.7 SOFTWARE",
     "definition": "definition",
-    "created_by": "899"
+    "created_by": 1
 },
 {
     "id": 6,
     "name": "Gedung",
     "hyperion_name": "h. Gedung Dalam Pembangunan",
     "definition": "definition",
-    "created_by": "899"
+    "created_by": 1
 },
 {
     "id": 7,
     "name": "Tanah",
     "hyperion_name": "Tanah",
     "definition": "definition",
-    "created_by": "899"
+    "created_by": 1
 },
 {
     "id": 8,
     "name": "Sewa Gedung",
     "hyperion_name": "Sewa Gedung",
     "definition": "definition",
-    "created_by": "899"
+    "created_by": 1
 },
 {
     "id": 9,
     "name": "Pemeliharaan Gedung & Perabotan",
     "hyperion_name": "XVI A.6.2 GEDUNG, GUDANG",
     "definition": "definition",
-    "created_by": "899"
+    "created_by": 1
 },
 {
     "id": 10,
     "name": "Keperluan Kantor Lainnya",
     "hyperion_name": "XVI A.2.1 n. LAINNYA",
     "definition": "definition",
-    "created_by": "899"
+    "created_by": 1
 }
 ]
