@@ -7,7 +7,8 @@ from api.utils.jwt import *
 from api.utils.hit_api import login_eai
 from api.utils.hit_api import get_ithc_employee_id
 from api.models.user_model import User
-from api.utils.user import user_has_access
+from api.utils.user import get_user_info
+from api.exceptions import InvalidCredentialException
 
 
 class LoginView(APIView):
@@ -21,40 +22,26 @@ class LoginView(APIView):
         password = request.data['password']
 
         # # Check if users exists in Budgetin database
-        # user = User.objects.filter(username=username)
-        # if not user:
-        #     return Response({
-        #         "message": "You don't have permission to access this site",
-        #     })
-        # role = user.values()[0]['role']
-
-        if not user_has_access(username):
-            return Response({
-                'message': "You don't have access"
-            })
+        id, display_name, role = get_user_info(username)
 
         # Hit EAI
         eai_login_status = login_eai(username, password)
 
-        # If EAI success
-        # Get ITHC EmployeeID
+        # If EAI success, Get ITHC EmployeeID
         if eai_login_status != "Berhasil":
-            return Response({
-                "message": "invalid username/password"
-            })
-
-        # Get Employee ID from ITHC Employee table
-        res = get_ithc_employee_id(username)
-        if 'err' in res:
-            return Response({
-                "message": res['err']
-            })
-
-        id = res['id']
+            raise InvalidCredentialException()
 
         # Generate jwt
-        jwt = generate_token(id, username, 'user')
-
-        return Response({
-            'token': jwt,
+        jwt = generate_token(id, username, role)
+        response = Response({
+            'username': username,
+            'display_name': display_name,
+            'role': role,
         })
+        response.set_cookie(
+            key='token',
+            value=jwt,
+            httponly=True    
+        )
+                
+        return response

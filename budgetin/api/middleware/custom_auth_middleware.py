@@ -1,5 +1,6 @@
 from api.utils.jwt import decode_token
 from api.models.user_model import User
+from rest_framework.request import Request
 
 
 class CustomAuthMiddleware(object):
@@ -11,13 +12,19 @@ class CustomAuthMiddleware(object):
         return self.get_response(request)
 
     def process_request(self, request):
-        authorization_headers = request.META.get('HTTP_AUTHORIZATION')
-        if authorization_headers:
-            authorization_headers = authorization_headers.split()
-            bearer = authorization_headers[0]
-            token = authorization_headers[1]
-            user = decode_token(token)
+        # authorization_headers = request.META.get('HTTP_AUTHORIZATION')
+        # if authorization_headers:
+        #     authorization_headers = authorization_headers.split()
+        #     bearer = authorization_headers[0]
+        #     token = authorization_headers[1]
+        #     user = decode_token(token)
 
-            if bearer == "Bearer" and user:
+        #     if bearer == "Bearer" and user:
+        #         request.custom_user = user
+        token = request.COOKIES.get('token')
+        if token:
+            user = decode_token(token)
+            if user:
                 request.custom_user = user
+        
         return None
