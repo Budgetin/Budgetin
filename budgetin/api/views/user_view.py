@@ -13,6 +13,10 @@ class UserViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         user = super().list(request, *args, **kwargs)
         for each in user.data:
+            if each['updated_by'] is not None:
+                each['updated_by'] = User.objects.filter(id=each['updated_by']).values()[0]['display_name']
+            else:
+                each['updated_by'] = ''
             #Reformat date
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
@@ -20,6 +24,10 @@ class UserViewSet(viewsets.ModelViewSet):
     
     def retrieve(self, request, *args, **kwargs):
         user = super().retrieve(request, *args, **kwargs)
+        if user.data['updated_by'] is not None:
+                user.data['updated_by'] = User.objects.filter(id=user.data['updated_by']).values()[0]['display_name']
+        else:
+            user.data['updated_by'] = ''
         user.data['created_at'] = timestamp_to_strdateformat(user.data['created_at'], "%d %B %Y")
         user.data['updated_at'] = timestamp_to_strdateformat(user.data['updated_at'], "%d %B %Y")
         return user
