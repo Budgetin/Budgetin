@@ -4,6 +4,7 @@ import Config from "./Config";
 const getAPI = axios.create({
   baseURL: Config.BASE_URL,
   timeout: 170000,
+  withCredentials: true
 });
 
 const employeeAPI = axios.create({

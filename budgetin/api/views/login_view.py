@@ -41,7 +41,9 @@ class LoginView(APIView):
         response.set_cookie(
             key='token',
             value=jwt,
-            httponly=True    
+            httponly=True,
+            samesite='None',
+            secure=True   
         )
                 
         return response

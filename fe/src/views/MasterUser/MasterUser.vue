@@ -9,6 +9,7 @@
 
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+          <v-icon>mdi-trash</v-icon>
           <v-data-table
             :items="dataMasterUser"
             :loading="loadingGetMasterUser"
@@ -37,8 +38,8 @@
                     no-gutters
                     class="master-user__btn"
                   >
-                    <v-btn rounded color="primary" @click="onAdd">
-                      Add User
+                    <v-btn rounded color="primary" @click="logout">
+                      logOut
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -140,11 +141,18 @@ export default {
   },
   computed: {
     ...mapState("masterUser", ["loadingGetMasterUser", "dataMasterUser"]),
+    
     // ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
   },
   methods: {
     ...mapActions("masterUser", ["getMasterUser", "postMasterUser"]),
+    ...mapActions("login", ["logOut"]),
+
     // ...mapActions("masterStrategy", ["getMasterStrategy", "postMasterStrategy"]),
+    logout(){
+      // console.log("logout");
+      this.logOut();
+    },
     onAdd() {
       this.dialog = !this.dialog;
     },

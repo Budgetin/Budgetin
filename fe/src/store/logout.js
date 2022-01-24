@@ -1,7 +1,7 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/login/";
+const ENDPOINT = "/api/logout/";
 
 const login = {
   namespaced: true,
@@ -99,4 +99,4 @@ const login = {
   },
 };
 
-export default login;
+export default logout;
