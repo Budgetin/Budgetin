@@ -17,7 +17,7 @@
                                 <!-- PLANNING FOR -->
                                 <v-col cols="6"> Planning For <strong class="red--text">*</strong>
                                     <v-col cols="6">
-                                        <div class="planningFor">
+                                        <div class="edit-planning__field">
                                             <v-text-field
                                             outlined
                                             dense
@@ -31,7 +31,7 @@
                                 <!-- STATUS -->
                                 <v-col cols="6"> Status <strong class="red--text">*</strong>
                                     <v-col cols="6">
-                                        <div class="status">
+                                        <div class="edit-planning__field">
                                             <v-select
                                             v-model="status"
                                             :items="statusOptions"
@@ -57,7 +57,7 @@
                                         offset-y
                                         min-width="auto">
                                             <template v-slot:activator="{ on, attrs }">
-                                                <div class="dueDate">
+                                                <div class="edit-planning__field">
                                                     <v-text-field
                                                     v-model="date"
                                                     outlined
@@ -78,7 +78,7 @@
                                 <!-- SEND NOTIFICATION -->
                                 <v-col cols="6"> Send Notification <strong class="red--text">*</strong>
                                     <v-col cols="6">
-                                        <div class="status">
+                                        <div class="edit-planning__field">
                                             <v-select
                                             v-model="notif"
                                             :items="notifOptions"
@@ -152,12 +152,6 @@
                                 </v-col>
                             </v-row>
                         </v-form>
-
-                        <!-- <v-col no-gutters class="edit-planning__btn">
-                            <v-btn rounded color="primary" @click="onBack" style="width: 8rem; margin-top: 96px">
-                                OK
-                            </v-btn>
-                        </v-col> -->
                     </v-card-text>
                 </v-card>
 
@@ -282,9 +276,7 @@ export default {
 
         checkbox: false,
         validation: {
-        required: (v) => !!v || "This field is required",
-            // counterInitial: (v) => v.length <= 50 || "Max. 50 characters",
-            // counterName: (v) => v.length <= 50 || "Max. 50 characters",
+            required: (v) => !!v || "This field is required",
         },
         
         statusOptions: [
@@ -367,18 +359,6 @@ export default {
 </script>
 
 <style scoped>
-.planningFor {
-    min-width: 150px;
-}
-.status {
-    min-width: 150px;
-}
-.dueDate {
-    min-width: 150px;
-}
-.sendNotif {
-    min-width: 150px;
-}
 .sendTo {
     min-width: 90%;
 }
@@ -442,6 +422,9 @@ export default {
         border-radius: 8px;
         margin: 1% auto !important;
         width: 40%;
+    }
+    .edit-planning__field {
+        min-width: 150px;
     }
 }
 

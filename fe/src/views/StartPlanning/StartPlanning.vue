@@ -46,7 +46,7 @@
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-icon  class="ma-3" v-on="on" color="primary" @click="onMonitor(item)">
+                                        <v-icon  class="ma-3" v-on="on" color="primary" @click="onMonitor()">
                                             mdi-monitor
                                         </v-icon>
                                     </template>
@@ -84,12 +84,6 @@
             </v-row>
         </v-container>
     </v-app>
-
-    <!-- <template>
-        <div id="page-id">
-            {{item.id}}
-        </div>
-    </template> -->
 </template>
 
 <script>
@@ -100,21 +94,16 @@ export default {
         FormStartPlanning
     },
     
-    props: ['item.id'],
-    
     watch: {},
     data() {
         return {
-            // planningFor: this.$route.params.planningFor,
-            // monitor: {},
-
             dialog: false,
             search: "",
             headers: [
-                { text: "ID", value: "id", width: "5%" },
-                { text: "Planning For", value: "planningFor", width: "10%" },
+                { text: "ID", value: "id", width: "10%" },
+                { text: "Planning For", value: "planningFor", width: "15%" },
                 { text: "Status", value: "status", width: "8%" },
-                { text: "Notification", value: "notification", width: "8%" },
+                { text: "Notification", value: "notification", width: "15%" },
                 { text: "Updated By", value: "updatedBy", width: "20%" },
                 { text: "Updated Date", value: "updatedDate", width: "15%" },
                 { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
@@ -163,12 +152,12 @@ export default {
         onCancel() {
             this.dialog = false;
         },
-        // onMonitor(item) {
-        //     console.log(item+"monitor");
-        // },
-        // onView(item) {
-        //     console.log(item);
-        // }
+        onMonitor() {
+            console.log(item+"monitor");
+        },
+        onView() {
+            console.log(item);
+        }
     }
 };
 </script>
@@ -213,12 +202,6 @@ export default {
         }
     }
 }
-
-// style {
-//     button {
-//         min-width: 3rem !important;
-//     }
-// }
 
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
