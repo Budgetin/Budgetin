@@ -38,8 +38,8 @@
                     no-gutters
                     class="master-user__btn"
                   >
-                    <v-btn rounded color="primary" @click="logout">
-                      logOut
+                    <v-btn rounded color="primary" @click="onAdd">
+                      Add User
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -80,6 +80,7 @@
           :isView="false"
           :isNew="true"
           :dataMasterUser="dataMasterUser"
+          :dataMasterEmployee ="dataMasterEmployee"
           @editClicked="onEdit"
           @cancelClicked="onCancel"
           @submitClicked="onSubmit"
@@ -135,22 +136,21 @@ export default {
     },
   }),
   created() {
+    console.log(document.cookie)
     this.getMasterUser();
     // this.getMasterStrategy();
     // this.setBreadcrumbs();
   },
   computed: {
     ...mapState("masterUser", ["loadingGetMasterUser", "dataMasterUser"]),
-    
-    // ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
+    ...mapState("masterEmployee", ["loadingGetMasterEmployee", "dataMasterEmployee"]),
   },
   methods: {
     ...mapActions("masterUser", ["getMasterUser", "postMasterUser"]),
-    ...mapActions("login", ["logOut"]),
+    ...mapActions("masterEmployee", ["getMasterEmployee"]),
+    // ...mapActions("login", ["logOut"]),
 
-    // ...mapActions("masterStrategy", ["getMasterStrategy", "postMasterStrategy"]),
     logout(){
-      // console.log("logout");
       this.logOut();
     },
     onAdd() {

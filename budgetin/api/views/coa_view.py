@@ -12,7 +12,7 @@ from api.utils.enum import ActionEnum,TableEnum
 class CoaViewSet(viewsets.ModelViewSet):
     queryset = Coa.objects.all()
     serializer_class = CoaSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         coa = super().list(request, *args, **kwargs)

@@ -2,21 +2,17 @@ import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
 const ENDPOINT = "/api/login/";
+const SECONDENDPOINT = "/api/logout/"
 
 const login = {
   namespaced: true,
   state: {
     loadingGetLogin: false, // for loading table
-    loadingGetEdittedItem: false,
     loadingPostPatchLogin: false, // for loading post/patch
     dataLogin: [], // for v-data-table
-    dataActiveLogin: [], //for dropdown
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
-    edittedItem: null,
-    edittedItemHistories: [],
   },
   getters: {
     value: (state) => state.value
@@ -30,10 +26,10 @@ const login = {
       console.log("logout")
       commit("GET_INIT");
       getAPI
-        .get("/api/logout")
+        .get(SECONDENDPOINT)
         .then((response) => {
           console.log(response);
-          commit("GET_SUCCESS", sorted);
+          commit("GET_SUCCESS");
         })
         .catch((error) => {
           commit("GET_ERROR", error);
@@ -82,6 +78,12 @@ const login = {
       state.requestStatus = "SUCCESS";
       state.loadingGetLogin = false;
     },
+    GET_ERROR(state, error) {
+      state.requestStatus = "ERROR";
+      state.loadingGetLogin = false;
+      state.errorMsg = error;
+    },
+
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";
