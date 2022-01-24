@@ -65,8 +65,12 @@ export default {
                 };
                 console.log(payload)
                 this.postLogin(JSON.parse(JSON.stringify(payload)))
-                    .then(() => {})
-                    .catch((error) => {});
+                    .then(() => {
+                        console.log("berhasil")
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    });
             }
         }
     }
