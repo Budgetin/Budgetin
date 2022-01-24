@@ -1,7 +1,10 @@
+from rest_framework.response import Response
 from rest_framework import viewsets
 from api.models.user_model import User
 from api.serializers.user_serializer import UserSerializer
 from api.utils.date_format import timestamp_to_strdateformat
+from rest_framework.decorators import action
+from api.utils.hit_api import get_imo_d_employee, get_s4
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -20,3 +23,9 @@ class UserViewSet(viewsets.ModelViewSet):
         user.data['created_at'] = timestamp_to_strdateformat(user.data['created_at'], "%d %B %Y")
         user.data['updated_at'] = timestamp_to_strdateformat(user.data['updated_at'], "%d %B %Y")
         return user
+
+    @action(detail=False, methods=['get'])
+    def imo(self, request, pk=None):
+        imod = get_imo_d_employee()
+        # s4 = get_s4()
+        return Response(imod)
