@@ -71,7 +71,7 @@
           </v-data-table>
         </v-col>
       </v-row>
-<!-- 
+
       <v-row no-gutters>
         <v-dialog v-model="dialog" persistent width="37.5rem">
           <form-User
@@ -79,13 +79,12 @@
           :isView="false"
           :isNew="true"
           :dataMasterUser="dataMasterUser"
-          :dataMasterStrategy="dataMasterStrategy"
           @editClicked="onEdit"
           @cancelClicked="onCancel"
           @submitClicked="onSubmit"
           ></form-User>
         </v-dialog>
-      </v-row> -->
+      </v-row>
     </v-container>
 
     <success-error-alert
@@ -100,12 +99,12 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-// import FormUser from "@/components/MasterUser/FormUser";
+import FormUser from "@/components/MasterUser/FormUser";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
 export default {
   name: "MasterUser",
-  components: {BinaryStatusChip,SuccessErrorAlert},
+  components: {FormUser,BinaryStatusChip,SuccessErrorAlert},
   watch: {},
   data: () => ({
     dialog: false,

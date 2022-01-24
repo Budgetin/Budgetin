@@ -149,8 +149,6 @@ export default {
       },
       // setter
       set: function(newValue) {
-console.log("masuk set")
-        
         this.form.minimum_item_origin = newValue.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
         this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
       }
