@@ -121,7 +121,6 @@ export default {
           product_name : this.form.product_name,
           strategy : this.form.strategy,
         };
-        console.log("strategy" + this.form.strategy)
         // console.log(payload)
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }

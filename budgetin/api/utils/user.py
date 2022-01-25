@@ -1,4 +1,4 @@
-from api.utils.hit_api import get_employee_info
+from api.utils.hit_api import get_ithc_employee_info
 from api.models.user_model import User
 from api.exceptions import NotEligibleException
 
@@ -11,7 +11,7 @@ def get_user_info(username):
             return user['employee_id'], user['display_name'],user['role']
     
     #Check if User S1, S2, S3
-    user = get_employee_info(username)
+    user = get_ithc_employee_info(username)
     if user['biro_manager_id'] == user['employee_id'] or user['sub_group_manager_id'] == user['employee_id'] or user['group_manager_id'] == user['employee_id']:
         return user['employee_id'], user['display_name'], 'user'
     

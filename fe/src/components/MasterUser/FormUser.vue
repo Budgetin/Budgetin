@@ -15,12 +15,14 @@
           <v-col cols="6"> Username<strong class="red--text">*</strong> </v-col>
           <v-col cols="6">
             <v-autocomplete
+              v-model="form.username"
               :items="dataMasterEmployee"
-              item-text="display_name"
+              item-text="option"
+              item-value="username"
               outlined
               dense
               :disabled="isView"
-              :rules="[validation.required]"
+              :rules="validation.required"
               placeholder="Select Employee"
             ></v-autocomplete>
           </v-col>
@@ -46,7 +48,7 @@
           <v-col cols="6">
             <v-select
               placeholder="Select status"
-              :items="statusInfoSetting"
+              :items="statusInfoMaster"
               v-model="form.status"
               item-text="label"
               item-value="id"
@@ -89,6 +91,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "FormUser",
   props: ["form", "dataMasterEmployee", "isView", "isNew"],
@@ -97,8 +100,10 @@ export default {
     validation: {
       required: [(v) => !!v || "This field is required"],
     },
+
   }),
   computed: {
+    ...mapState("statusInfo", ["statusInfoMaster"]),
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
@@ -112,11 +117,11 @@ export default {
       if (validate) {
         const payload = {
           id: this.form?.id,
-          User_code: this.form.User_code,
-          User_name: this.form.User_name,
-          strategy: this.form.strategy,
+          username : this.form.username,
+          role: this.form.role,
+          is_active: this.form.status==1 ? true:false,
         };
-        console.log("strategy" + this.form.strategy);
+        console.log("payload" + payload);
         // console.log(payload)
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }
