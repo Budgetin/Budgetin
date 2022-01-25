@@ -15,7 +15,7 @@ class LogoutView(APIView):
         })
         response.set_cookie(
             key='token',
-            value='f',
+            value='',
             max_age=1,
             httponly=True,
             samesite='None',
