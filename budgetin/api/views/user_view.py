@@ -21,10 +21,7 @@ class UserViewSet(viewsets.ModelViewSet):
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
 
-            if each['is_active'] == True:
-                each['is_active'] = 1
-            else:
-                each['is_active'] = 0
+            user.data['is_active'] = 1 if user.data['is_active'] else 0 
         return user
     
     def retrieve(self, request, *args, **kwargs):
@@ -35,10 +32,8 @@ class UserViewSet(viewsets.ModelViewSet):
             user.data['updated_by'] = ''
         user.data['created_at'] = timestamp_to_strdateformat(user.data['created_at'], "%d %B %Y")
         user.data['updated_at'] = timestamp_to_strdateformat(user.data['updated_at'], "%d %B %Y")
-        if user.data['is_active'] == True:
-            user.data['is_active'] = 1
-        else:
-            user.data['is_active'] = 0
+
+        user.data['is_active'] = 1 if user.data['is_active'] else 0 
         return user
 
     def create(self, request, *args, **kwargs):
