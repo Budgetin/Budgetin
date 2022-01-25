@@ -4,11 +4,12 @@ from datetime import datetime, timedelta
 from django.conf import settings
 
 
-def generate_token(id, username, role):
+def generate_token(id, username, role, eselon):
     payload = {
         "id": id,
         "username": username,
         "role": role,
+        "eselon": eselon,
         "iat": datetime.now(),
         "exp": datetime.now() + timedelta(hours=8),
     }

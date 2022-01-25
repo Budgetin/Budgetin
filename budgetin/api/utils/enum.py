@@ -22,6 +22,5 @@ class TableEnum(Enum):
 
 
 class RoleEnum(Enum):
-    ADMIN = "admin"
-    USER = "user"
-    PIC = "pic"
+    ADMIN = "Admin"
+    USER = "User"
