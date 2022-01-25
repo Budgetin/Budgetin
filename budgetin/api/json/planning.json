@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "year": "2023",
+        "is_active": "True",
+        "created_by": 1,
+        "updated_by": 1,
+        "updated_at": "2022-11-30",
+        "due_date": "2022-12-31"
+    },
+    {
+        "id": 2,
+        "year": "2022",
+        "is_active": "False",
+        "created_by": 1,
+        "updated_by": 1,
+        "updated_at": "2021-11-30",
+        "due_date": "2021-12-31"
+    },
+    {
+        "id": 3,
+        "year": "2021",
+        "is_active": "False",
+        "created_by": 1,
+        "updated_by": 1,
+        "updated_at": "2020-11-30",
+        "due_date": "2020-12-31"
+    },
+    {
+        "id": 4,
+        "year": "2020",
+        "is_active": "False",
+        "created_by": 1,
+        "updated_by": 1,
+        "updated_at": "2019-11-30",
+        "due_date": "2019-12-31"
+    }
+]

@@ -17,42 +17,22 @@ class CoaViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         coa = super().list(request, *args, **kwargs)
         for each in coa.data:
-            #include strategy
-            # if request.query_params:
-            #     params = request.query_params.getlist('include')[0].split(",")
-            #     for param in params:
-            #         paramSplitted = param.split(".")[0]
-            #         param_name = paramSplitted.lower()
-            #         paramid = each[param_name]
-            #         included_data = include(param, paramid)
-            #         each[param_name] = included_data
             if each['updated_by'] is not None:
-                each['updated_by'] = User.objects.filter(id=each['updated_by']).values()[0]['display_name']
+                each['updated_by'] = User.objects.get(pk=each['updated_by']).display_name
             else:
                 each['updated_by'] = ''
-            each['created_by'] = User.objects.filter(id=each['created_by']).values()[0]['display_name']
+            each['created_by'] = User.objects.get(pk=each['created_by']).display_name
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
         return coa
     
     def retrieve(self, request, *args, **kwargs):
         coa = super().retrieve(request, *args, **kwargs)
-         #include strategy
-        # if request.query_params:
-        #         #include strategy
-        #         if request.query_params:
-        #             params = request.query_params.getlist('include')[0].split(",")
-        #             for param in params:
-        #                 paramSplitted = param.split(".")[0]
-        #                 param_name = paramSplitted.lower()
-        #                 paramid = coa.data[param_name]
-        #                 included_data = include(param, paramid)
-        #                 coa.data[param_name] = included_data
         if coa.data['updated_by'] is not None:
-                coa.data['updated_by'] = User.objects.filter(id=coa.data['updated_by']).values()[0]['display_name']
+                coa.data['updated_by'] = User.objects.get(pk=coa.data['updated_by']).display_name
         else:
             coa.data['updated_by'] = ''
-        coa.data['created_by'] = User.objects.filter(id=coa.data['created_by']).values()[0]['display_name']
+        coa.data['created_by'] = User.objects.get(pk=coa.data['created_by']).display_name
         coa.data['created_at'] = timestamp_to_strdateformat(coa.data['created_at'], "%d %B %Y")
         coa.data['updated_at'] = timestamp_to_strdateformat(coa.data['updated_at'], "%d %B %Y")
         
