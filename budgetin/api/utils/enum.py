@@ -22,5 +22,10 @@ class TableEnum(Enum):
 
 
 class RoleEnum(Enum):
-    ADMIN = "Admin"
-    USER = "User"
+    ADMIN = "admin"
+    USER = "user"
+
+class MonitoringStatusEnum(Enum):
+    TODO = "To Do"
+    DRAFT = "Draft"
+    SUBMITTED = "Submitted"

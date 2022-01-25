@@ -38,7 +38,7 @@
           </v-list-item-icon>
           <v-list-item-title>List Planning</v-list-item-title>
         </v-list-item>
-        <v-list-item link :to="'/'" replace>
+        <v-list-item link :to="'/listProject'" replace>
           <v-list-item-icon>
             <v-icon>mdi-folder-network </v-icon>
           </v-list-item-icon>
