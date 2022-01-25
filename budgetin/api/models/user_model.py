@@ -11,3 +11,5 @@ class User(TimestampModel, UserTrackModel, SoftDeleteModel):
     role = models.CharField(max_length=100, default='user')
     is_active = models.BooleanField(default=True)
     created_by = models.BigIntegerField(null=True, blank=True)
+
+    all_objects = models.Manager()
