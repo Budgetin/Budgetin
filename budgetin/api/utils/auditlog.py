@@ -37,7 +37,7 @@ class AuditLog():
         # AL.objects.create(timestamp=datetime.datetime.now(
         #     ), modified_by=request.custom_user['id'], entity_id=entity_id, serialized_data=serialized_data, action_id=actionid, table_id=tableid)
         AL.objects.create(timestamp=datetime.datetime.now(
-            ), modified_by=899, entity_id=entity_id, serialized_data=serialized_data, action_id=actionid, table_id=tableid)
+            ), modified_by=1, entity_id=entity_id, serialized_data=serialized_data, action_id=actionid, table_id=tableid)
 
 
 #CONTEKAN

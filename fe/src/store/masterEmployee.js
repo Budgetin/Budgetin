@@ -3,14 +3,14 @@ import { getAPI } from "@/plugins/axios-api.js";
 
 const ENDPOINT = "/api/user/imo/";
 
-const masterImo = {
+const masterEmployee = {
   namespaced: true,
   state: {
-    loadingGetMasterImo: false, // for loading table
+    loadingGetMasterEmployee: false, // for loading table
     loadingGetEdittedItem: false,
-    loadingPostPatchMasterImo: false, // for loading post/patch
-    dataMasterImo: [], // for v-data-table
-    dataActiveMasterImo: [], //for dropdown
+    loadingPostPatchMasterEmployee: false, // for loading post/patch
+    dataMasterEmployee: [], // for v-data-table
+    dataActiveMasterEmployee: [], //for dropdown
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
@@ -22,19 +22,27 @@ const masterImo = {
     value: (state) => state.value
   },
   actions: {
-    getMasterImo() {
-      if (store.state.masterImo.requestStatus !== "SUCCESS")
-        store.dispatch("masterImo/getFromAPI");
+    getMasterEmployee() {
+      if (store.state.masterEmployee.requestStatus !== "SUCCESS")
+        store.dispatch("masterEmployee/getFromAPI");
     },
     getFromAPI({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)
         .then((response) => {
-          const cleanData = response.data
+          const cleanData = response.data.map((data) => {
+            return {
+              id: data.id,
+              name: data.name,
+              username: data.username,
+              option: String(data.name+" - " +data.username),
+            };
+          });
           const sorted = cleanData.sort((a, b) =>
-            a.update_at > b.update_at ? 1 : -1
+            a.name > b.name ? 1 : -1
           );
+
           commit("GET_SUCCESS", sorted);
         })
         .catch((error) => {
@@ -46,25 +54,25 @@ const masterImo = {
     // get related
     GET_INIT(state) {
       state.requestStatus = "PENDING";
-      state.loadingGetMasterImo = true;
+      state.loadingGetMasterEmployee = true;
     },
-    GET_SUCCESS(state, dataMasterImo) {
+    GET_SUCCESS(state, dataMasterEmployee) {
       state.requestStatus = "SUCCESS";
-      state.loadingGetMasterImo = false;
-      state.dataMasterImo = dataMasterImo;
+      state.loadingGetMasterEmployee = false;
+      state.dataMasterEmployee = dataMasterEmployee;
     },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveMasterImo) {
+    GET_ACTIVE_DATA_UPDATE(state, dataActiveMasterEmployee) {
       state.requestActiveStatus = "IDLE";
-      state.dataActiveMasterImo = dataActiveMasterImo;
+      state.dataActiveMasterEmployee = dataActiveMasterEmployee;
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingGetMasterImo = false;
+      state.loadingGetMasterEmployee = false;
       state.errorMsg = error;
-      state.dataMasterImo = [];
-      state.dataActiveMasterImo = [];
+      state.dataMasterEmployee = [];
+      state.dataActiveMasterEmployee = [];
     },
   },
 };
 
-export default masterImo;
+export default masterEmployee;

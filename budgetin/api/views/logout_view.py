@@ -17,6 +17,9 @@ class LogoutView(APIView):
             key='token',
             value='',
             max_age=1,
+            httponly=True,
+            samesite='None',
+            secure=True
         )
         
         return response

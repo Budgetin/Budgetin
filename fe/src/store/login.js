@@ -2,11 +2,14 @@ import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
 const ENDPOINT = "/api/login/";
+const SECONDENDPOINT = "/api/logout/"
 
 const login = {
   namespaced: true,
   state: {
-    loadingPostPatchMasterlogin: false, // for loading post/patch
+    loadingGetLogin: false, // for loading table
+    loadingPostPatchLogin: false, // for loading post/patch
+    dataLogin: [], // for v-data-table
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
@@ -15,15 +18,35 @@ const login = {
     value: (state) => state.value
   },
   actions: {
-    postMasterlogin({ commit }, payload) {
+    logOut() {
+      if (store.state.login.requestStatus !== "SUCCESS")
+        store.dispatch("login/setLogout");
+    },
+    setLogout({ commit }) {
+      console.log("logout")
+      commit("GET_INIT");
+      getAPI
+        .get(SECONDENDPOINT)
+        .then((response) => {
+          console.log(response);
+          commit("GET_SUCCESS");
+        })
+        .catch((error) => {
+          commit("GET_ERROR", error);
+        });
+    },
+
+    postLogin({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
           .post(ENDPOINT, payload)
           .then((response) => {
+            console.log(response)
             resolve(response);
           })
           .catch((error) => {
+            console.log(error)
             let errorMsg =
               "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
             if (error.response) {
@@ -47,6 +70,20 @@ const login = {
     },
   },
   mutations: {
+    GET_INIT(state) {
+      state.requestStatus = "PENDING";
+      state.loadingGetLogin = true;
+    },
+    GET_SUCCESS(state) {
+      state.requestStatus = "SUCCESS";
+      state.loadingGetLogin = false;
+    },
+    GET_ERROR(state, error) {
+      state.requestStatus = "ERROR";
+      state.loadingGetLogin = false;
+      state.errorMsg = error;
+    },
+
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";

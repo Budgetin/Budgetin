@@ -3,3 +3,4 @@ from .not_authorized_exception import NotAuthorizedException
 from .not_found_exception import NotFoundException
 from .not_eligible_exception import NotEligibleException
 from .invalid_credential_exception import InvalidCredentialException
+from .employee_not_found_exception import EmployeeNotFoundException

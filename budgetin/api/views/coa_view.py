@@ -1,8 +1,9 @@
 from rest_framework import viewsets
-from api.models.coa_model import Coa
+from api.models import Coa, User
 from api.serializers.coa_serializer import CoaSerializer
 from api.permissions import IsAuthenticated, IsAdmin
 from api.utils.date_format import timestamp_to_strdateformat
+from api.utils.include import include
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -16,12 +17,22 @@ class CoaViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         coa = super().list(request, *args, **kwargs)
         for each in coa.data:
+            if each['updated_by'] is not None:
+                each['updated_by'] = User.objects.get(pk=each['updated_by']).display_name
+            else:
+                each['updated_by'] = ''
+            each['created_by'] = User.objects.get(pk=each['created_by']).display_name
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
         return coa
     
     def retrieve(self, request, *args, **kwargs):
         coa = super().retrieve(request, *args, **kwargs)
+        if coa.data['updated_by'] is not None:
+                coa.data['updated_by'] = User.objects.get(pk=coa.data['updated_by']).display_name
+        else:
+            coa.data['updated_by'] = ''
+        coa.data['created_by'] = User.objects.get(pk=coa.data['created_by']).display_name
         coa.data['created_at'] = timestamp_to_strdateformat(coa.data['created_at'], "%d %B %Y")
         coa.data['updated_at'] = timestamp_to_strdateformat(coa.data['updated_at'], "%d %B %Y")
         

@@ -42,22 +42,6 @@ def login_eai(username, password):
 
     return response_login.json()['error_schema']['error_message']['indonesian']
 
-#Get Employee ID from Username
-def get_ithc_employee_id(username):
-    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?username__exact={}".format(
-        username)
-    headers = {
-        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
-    }
-    res = requests.get(url, headers=headers, verify=False)
-    if res.json():
-        # check for user that is not deleted
-        user = [u for u in res.json() if u['is_deleted'] == False]
-        if user:
-            return {
-                'id': user[0]['id'],
-            }
-    raise NotFoundException()
 
 #Get IMO D Employee
 def get_imo_d_employee():
@@ -104,6 +88,34 @@ def get_s4():
         return temp
     raise NotFoundException()
 
+#Get All Biro
+def get_all_biro():
+    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/biros/"
+    headers = {
+        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
+    }
+    res = requests.get(url, headers=headers, verify=False)
+    if res.json():
+        #check for biro that is not deleted
+        biro = [b for b in res.json() if b['is_deleted'] == False]
+        if biro:
+            return biro
+    raise NotFoundException()
+
+#Get Biro Name
+def get_biro_name(biro_id):
+    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/biros/?id__exact={}".format(biro_id)
+    headers = {
+        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
+    }
+    res = requests.get(url, headers=headers, verify=False)
+    if res.json():
+        #check for biro that is not deleted
+        biro = [b for b in res.json() if b['is_deleted'] == False]
+        if biro:
+            return biro[0]['code']
+    raise NotFoundException()
+
 #Get Biro Information
 def get_biro_info(biro_id):
     url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/biros/?include=manager_employee,sub_group,sub_group.manager_employee,sub_group.group,sub_group.group.manager_employee,sub_group.group.divisi&id__exact={}".format(
@@ -147,7 +159,7 @@ def get_biro_info(biro_id):
     
 
 #Get Employee Information
-def get_employee_info(username):
+def get_ithc_employee_info(username):
     url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?include=biro,sub_group,sub_group.group,sub_group.group.divisi&username__exact={}".format(
         username)
     headers = {
@@ -178,4 +190,4 @@ def get_employee_info(username):
                 'group_manager_id' : group_manager_id,
                 'divisi_id' : divisi_id
             }
-    raise NotEligibleException()
+    raise EmployeeNotFoundException()

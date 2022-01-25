@@ -4,15 +4,14 @@
       <!-- edit form -->
       <v-col xs="12" sm="6" md="6" lg="7">
         <v-container>
-          <form-Product
+          <form-coa
             :form="form"
             :isView="isView"
-            :dataMasterStrategy="dataMasterStrategy"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-Product>
+          ></form-coa>
         </v-container>
       </v-col>
 
@@ -40,29 +39,27 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormProduct from "@/components/MasterProduct/FormProduct";
+import FormCoa from "@/components/MasterCOA/FormCoa";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "EditMasterProduct",
-  components: { FormProduct,SuccessErrorAlert},
+  name: "EditMasterCoa",
+  components: { FormCoa,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
-    this.getMasterStrategy();
-  },
-  computed: {
-    ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
   },
   methods: {
-    ...mapActions("masterProduct", ["patchMasterProduct","getMasterProductById"]),
-    ...mapActions("masterStrategy", ["getMasterStrategy"]),
+    ...mapActions("masterCoa", [
+      "patchMasterCoa",
+      "getMasterCoaById",
+    ]),
     getEdittedItem() {
-      this.getMasterProductById(this.$route.params.id).then(() => {
+      this.getMasterCoaById(this.$route.params.id).then(() => {
         this.setForm();
       });
     },
     setForm() {
       this.form = JSON.parse(
-        JSON.stringify(this.$store.state.masterProduct.edittedItem)
+        JSON.stringify(this.$store.state.masterCoa.edittedItem)
       );
     },
     onEdit() {
@@ -76,7 +73,7 @@ export default {
       this.setForm();
     },
     onSubmit(e) {
-      this.patchMasterProduct(e)
+      this.patchMasterCoa(e)
         .then(() => {
           this.onSaveSuccess();
         })
@@ -88,7 +85,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "Master Product has been saved successfully";
+      this.alert.subtitle = "Master Coa has been saved successfully";
     },
     onSaveError(error) {
       this.alert.show = true;
@@ -106,9 +103,11 @@ export default {
     isView: true,
     form: {
       id: "",
-      product_code: "",
-      product_name: "",
-      strategy: "",
+      name: "",
+      definition: "",
+      hyperion_name: "",
+      is_capex: "",
+      minimum_item_origin: "",
     },
     alert: {
       show: false,
@@ -121,21 +120,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#master-Product {
+#master-coa {
   width: 80%;
   margin: 0px auto;
 
-  .master-Product__header {
+  .master-coa__header {
     padding-left: 32px;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .master-Product__input {
+  .master-coa__input {
     padding: 10px 32px;
   }
 
-  .master-Product__btn {
+  .master-coa__btn {
     text-align: end;
 
     button {
@@ -143,14 +142,14 @@ export default {
     }
   }
 
-  .master-Product__container {
+  .master-coa__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 8px;
   }
 
-  .master-Product__card {
+  .master-coa__card {
     button {
       width: 8rem;
     }
@@ -159,8 +158,8 @@ export default {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #master-Product {
-    .master-Product__btn {
+  #master-coa {
+    .master-coa__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -169,7 +168,7 @@ export default {
         margin: 0px 0px 32px 0px;
       }
     }
-    .master-Product__card {
+    .master-coa__card {
       flex-direction: column;
       button {
         width: 16rem !important;

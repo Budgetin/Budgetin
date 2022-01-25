@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from api.models.monitoring_model import Monitoring
 from api.serializers.monitoring_serializer import MonitoringSerializer
 from api.utils.date_format import timestamp_to_strdateformat
+from api.utils.hit_api import get_biro_name
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -15,6 +16,7 @@ class MonitoringViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         monitoring = super().list(request, *args, **kwargs)
         for each in monitoring.data:
+            #each['biro_name'] = get_biro_name(each['biro_id'])
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
         return monitoring
