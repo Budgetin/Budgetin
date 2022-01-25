@@ -88,6 +88,34 @@ def get_s4():
         return temp
     raise NotFoundException()
 
+#Get All Biro
+def get_all_biro():
+    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/biros/"
+    headers = {
+        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
+    }
+    res = requests.get(url, headers=headers, verify=False)
+    if res.json():
+        #check for biro that is not deleted
+        biro = [b for b in res.json() if b['is_deleted'] == False]
+        if biro:
+            return biro
+    raise NotFoundException()
+
+#Get Biro Name
+def get_biro_name(biro_id):
+    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/biros/?id__exact={}".format(biro_id)
+    headers = {
+        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
+    }
+    res = requests.get(url, headers=headers, verify=False)
+    if res.json():
+        #check for biro that is not deleted
+        biro = [b for b in res.json() if b['is_deleted'] == False]
+        if biro:
+            return biro[0]['code']
+    raise NotFoundException()
+
 #Get Biro Information
 def get_biro_info(biro_id):
     url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/biros/?include=manager_employee,sub_group,sub_group.manager_employee,sub_group.group,sub_group.group.manager_employee,sub_group.group.divisi&id__exact={}".format(
