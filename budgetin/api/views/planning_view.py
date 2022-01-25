@@ -1,6 +1,6 @@
 import json
 from rest_framework import viewsets
-from api.models.planning_model import Planning
+from api.models import Planning, User
 from api.serializers.planning_serializer import PlanningSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.send_email import send_email
@@ -17,12 +17,18 @@ class PlanningViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         planning = super().list(request, *args, **kwargs)
         for each in planning.data:
+            each['due_date'] = timestamp_to_strdateformat(each['due_date'], "%d %B %Y")
+            each['updated_by'] = User.objects.filter(id=each['updated_by']).values()[0]['display_name']
+            each['created_by'] = User.objects.filter(id=each['created_by']).values()[0]['display_name']
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
         return planning
     
     def retrieve(self, request, *args, **kwargs):
         planning = super().retrieve(request, *args, **kwargs)
+        planning.data['due_date'] = timestamp_to_strdateformat(planning.data['due_date'], "%d %B %Y")
+        planning.data['updated_by'] = User.objects.filter(id=planning.data['updated_by']).values()[0]['display_name']
+        planning.data['created_by'] = User.objects.filter(id=planning.data['created_by']).values()[0]['display_name']
         planning.data['created_at'] = timestamp_to_strdateformat(planning.data['created_at'], "%d %B %Y")
         planning.data['updated_at'] = timestamp_to_strdateformat(planning.data['updated_at'], "%d %B %Y")
         return planning

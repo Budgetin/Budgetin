@@ -1,0 +1,34 @@
+[
+    {
+        "id": 1,
+        "planningFor": "2023",
+        "status": "True",
+        "notification": "Yes",
+        "updatedBy": "Phang Willy",
+        "updatedDate": "30 November 2022"
+    },
+    {
+        "id": 2,
+        "planningFor": "2022",
+        "status": "False",
+        "notification": "Yes",
+        "updatedBy": "Phang Willy",
+        "updatedDate": "30 November 2021"
+    },
+    {
+        "id": 3,
+        "planningFor": "2021",
+        "status": "False",
+        "notification": "Yes",
+        "updatedBy": "Phang Willy",
+        "updatedDate": "30 November 2020"
+    },
+    {
+        "id": 4,
+        "planningFor": "2020",
+        "status": "False",
+        "notification": "Yes",
+        "updatedBy": "Phang Willy",
+        "updatedDate": "30 November 2019"
+    }
+]

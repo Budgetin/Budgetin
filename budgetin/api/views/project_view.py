@@ -17,30 +17,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         project = super().list(request, *args, **kwargs)
         for each in project.data:
-            #include strategy
-            if request.query_params:
-                params = request.query_params.getlist('include')[0].split(",")
-                for param in params:
-                    paramSplitted = param.split(".")[0]
-                    param_name = paramSplitted.lower()
-                    paramid = each[param_name]
-                    included_data = include(param, paramid)
-                    each[param_name] = included_data
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
         return project
     
     def retrieve(self, request, *args, **kwargs):
         project = super().retrieve(request, *args, **kwargs)
-        #include strategy
-        if request.query_params:
-            params = request.query_params.getlist('include')[0].split(",")
-            for param in params:
-                paramSplitted = param.split(".")[0]
-                param_name = paramSplitted.lower()
-                paramid = project.data[param_name]
-                included_data = include(param, paramid)
-                project.data[param_name] = included_data
         project.data['created_at'] = timestamp_to_strdateformat(project.data['created_at'], "%d %B %Y")
         project.data['updated_at'] = timestamp_to_strdateformat(project.data['updated_at'], "%d %B %Y")
         return project
