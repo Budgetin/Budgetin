@@ -6,9 +6,11 @@ from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.send_email import send_email
 from rest_framework.response import Response
 from api.models.monitoring_model import Monitoring
+from api.models.biro_model import Biro
 from api.models.monitoring_status_model import MonitoringStatus
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import MonitoringStatusEnum
+from api.utils.biro import create_update_all_biro
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -58,6 +60,9 @@ class PlanningViewSet(viewsets.ModelViewSet):
         for biro in biros:
             monitoring_status_id = MonitoringStatus.objects.filter(name=MonitoringStatusEnum.TODO.value).values()[0]['id']
             Monitoring.objects.create(biro_id=biro['id'], planning_id=planning.data['id'], monitoring_status_id=monitoring_status_id)
+        
+        #Re-seed biro data
+        create_update_all_biro()
         
         return planning
     
