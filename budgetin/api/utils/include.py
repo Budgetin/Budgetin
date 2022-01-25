@@ -2,6 +2,29 @@ from api.models.user_model import User
 from api.models import Strategy, Product
 
 
+            # #include strategy in list
+            # if request.query_params:
+            #     params = request.query_params.getlist('include')[0].split(",")
+            #     for param in params:
+            #         paramSplitted = param.split(".")[0]
+            #         param_name = paramSplitted.lower()
+            #         paramid = each[param_name]
+            #         included_data = include(param, paramid)
+            #         each[param_name] = included_data
+
+
+                    #include strategy in retrieve
+        # if request.query_params:
+        #         #include strategy
+        #         if request.query_params:
+        #             params = request.query_params.getlist('include')[0].split(",")
+        #             for param in params:
+        #                 paramSplitted = param.split(".")[0]
+        #                 param_name = paramSplitted.lower()
+        #                 paramid = product.data[param_name]
+        #                 included_data = include(param, paramid)
+        #                 product.data[param_name] = included_data
+
 def include(param, paramid):
     arrParam = param.split(".")
     if arrParam[0] == "strategy":

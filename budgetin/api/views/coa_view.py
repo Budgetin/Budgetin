@@ -17,15 +17,6 @@ class CoaViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         coa = super().list(request, *args, **kwargs)
         for each in coa.data:
-            #include strategy
-            # if request.query_params:
-            #     params = request.query_params.getlist('include')[0].split(",")
-            #     for param in params:
-            #         paramSplitted = param.split(".")[0]
-            #         param_name = paramSplitted.lower()
-            #         paramid = each[param_name]
-            #         included_data = include(param, paramid)
-            #         each[param_name] = included_data
             if each['updated_by'] is not None:
                 each['updated_by'] = User.objects.filter(id=each['updated_by']).values()[0]['display_name']
             else:
@@ -37,17 +28,6 @@ class CoaViewSet(viewsets.ModelViewSet):
     
     def retrieve(self, request, *args, **kwargs):
         coa = super().retrieve(request, *args, **kwargs)
-         #include strategy
-        # if request.query_params:
-        #         #include strategy
-        #         if request.query_params:
-        #             params = request.query_params.getlist('include')[0].split(",")
-        #             for param in params:
-        #                 paramSplitted = param.split(".")[0]
-        #                 param_name = paramSplitted.lower()
-        #                 paramid = coa.data[param_name]
-        #                 included_data = include(param, paramid)
-        #                 coa.data[param_name] = included_data
         if coa.data['updated_by'] is not None:
                 coa.data['updated_by'] = User.objects.filter(id=coa.data['updated_by']).values()[0]['display_name']
         else:
