@@ -7,7 +7,8 @@
           <form-User
             :form="form"
             :isView="isView"
-            :dataMasterStrategy="dataMasterStrategy"
+            :dataMasterUser="dataMasterUser"
+            :dataMasterEmployee ="dataMasterEmployee"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
@@ -46,15 +47,16 @@ export default {
   name: "EditMasterUser",
   components: { FormUser,SuccessErrorAlert},
   created() {
-    this.getEdittedItem();
-    this.getMasterStrategy();
+    this.getMasterUserById();
+    this.getMasterEmployee();
   },
   computed: {
-    ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
+    ...mapState("masterUser", ["loadingGetMasterUser", "dataMasterUser"]),
+    ...mapState("masterEmployee", ["loadingGetMasterEmployee", "dataMasterEmployee"]),
   },
   methods: {
     ...mapActions("masterUser", ["patchMasterUser","getMasterUserById"]),
-    ...mapActions("masterStrategy", ["getMasterStrategy"]),
+    ...mapActions("masterEmployee", ["getMasterEmployee"]),
     getEdittedItem() {
       this.getMasterUserById(this.$route.params.id).then(() => {
         this.setForm();
@@ -106,11 +108,9 @@ export default {
     isView: true,
     form: {
       id: "",
-      User_code: "",
-      User_name: "",
-      strategy: {
-        name: "",
-      },
+      username: "",
+      role: "",
+      is_active: "",
     },
     alert: {
       show: false,
