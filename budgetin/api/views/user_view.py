@@ -21,7 +21,7 @@ class UserViewSet(viewsets.ModelViewSet):
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
 
-            user.data['is_active'] = 1 if user.data['is_active'] else 0 
+            each['is_active'] = 1 if each['is_active'] else 0 
         return user
     
     def retrieve(self, request, *args, **kwargs):
