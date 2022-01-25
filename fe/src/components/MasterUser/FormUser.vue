@@ -15,8 +15,8 @@
           <v-col cols="6"> Username<strong class="red--text">*</strong> </v-col>
           <v-col cols="6">
             <v-autocomplete
-              v-model="form.username"
               :items="dataMasterEmployee"
+              v-model="form.username"
               item-text="option"
               item-value="username"
               outlined
@@ -96,7 +96,7 @@ export default {
   name: "FormUser",
   props: ["form", "dataMasterEmployee", "isView", "isNew"],
   data: () => ({
-    type: ["Admin", "User"],
+    type: ["Admin"],
     validation: {
       required: [(v) => !!v || "This field is required"],
     },
@@ -104,7 +104,10 @@ export default {
   }),
   computed: {
     ...mapState("statusInfo", ["statusInfoMaster"]),
+    ...mapState("masterEmployee", ["getMasterEmployee"]),
+
     cardTitle() {
+      console.log(this.dataMasterEmployee)
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
     errorMsg() {

@@ -6,8 +6,8 @@ const statusInfo = {
       { id: "1", label: "User" },
     ],
     statusInfoMaster: [
-      { id: "1", label: "Active" },
-      { id: "0", label: "Inactive" },
+      { id: 1, label: "Active" },
+      { id: 0, label: "Inactive" },
     ]
   },
 };
