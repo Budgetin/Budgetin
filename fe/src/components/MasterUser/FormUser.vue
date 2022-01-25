@@ -96,7 +96,7 @@ export default {
   name: "FormUser",
   props: ["form", "dataMasterEmployee", "isView", "isNew"],
   data: () => ({
-    type: ["Admin", "Role"],
+    type: ["Admin", "User"],
     validation: {
       required: [(v) => !!v || "This field is required"],
     },
@@ -119,7 +119,7 @@ export default {
           id: this.form?.id,
           username : this.form.username,
           role: this.form.role,
-          is_active: this.form.status==1 ? true:false,
+          is_active: this.form.status,
         };
         console.log("payload" + payload);
         // console.log(payload)

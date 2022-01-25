@@ -1,18 +1,17 @@
 <template>
-  <v-app id="master-user">
-    <v-container class="master-user__container outer-container">
+  <v-app id="master-coa">
+    <v-container class="master-coa__container outer-container">
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          <v-subheader class="master-user__header">Master User</v-subheader>
+          <v-subheader class="master-coa__header">Master COA</v-subheader>
         </v-col>
       </v-row>
 
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          <v-icon>mdi-trash</v-icon>
           <v-data-table
-            :items="dataMasterUser"
-            :loading="loadingGetMasterUser"
+            :items="dataMasterCoa"
+            :loading="loadingGetMasterCoa"
             :headers="dataTable.headers"
             :search="search"
           >
@@ -21,7 +20,7 @@
                 <v-row class="mb-5" no-gutters>
                   <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
                     <v-text-field
-                      class="master-user__input"
+                      class="master-coa__input"
                       v-model="search"
                       append-icon="mdi-magnify"
                       label="Search"
@@ -36,10 +35,10 @@
                     md="8"
                     lg="8"
                     no-gutters
-                    class="master-user__btn"
+                    class="master-coa__btn"
                   >
                     <v-btn rounded color="primary" @click="onAdd">
-                      Add User
+                      Add COA
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -50,7 +49,7 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'EditMasterUser',
+                  name: 'EditMasterCoa',
                   params: { id: item.id },
                 }"
               >
@@ -65,26 +64,21 @@
               </router-link>
             </template>
 
-            <template v-slot:[`item.is_active`]="{ item }">
-              <binary-status-chip :boolean="item.is_active"> </binary-status-chip>
-            </template>
-
           </v-data-table>
         </v-col>
       </v-row>
 
       <v-row no-gutters>
         <v-dialog v-model="dialog" persistent width="37.5rem">
-          <form-User
+          <form-coa
           :form="form"
           :isView="false"
           :isNew="true"
-          :dataMasterUser="dataMasterUser"
-          :dataMasterEmployee ="dataMasterEmployee"
+          :dataMasterCoa="dataMasterCoa"
           @editClicked="onEdit"
           @cancelClicked="onCancel"
           @submitClicked="onSubmit"
-          ></form-User>
+          ></form-coa>
         </v-dialog>
       </v-row>
     </v-container>
@@ -101,12 +95,11 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import FormUser from "@/components/MasterUser/FormUser";
+import FormCoa from "@/components/MasterCOA/FormCoa";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
-import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
 export default {
-  name: "MasterUser",
-  components: {FormUser,BinaryStatusChip,SuccessErrorAlert},
+  name: "MasterCoa",
+  components: {FormCoa,SuccessErrorAlert},
   watch: {},
   data: () => ({
     dialog: false,
@@ -114,10 +107,8 @@ export default {
     search: "",
     dataTable: {
       headers: [
-        { text: "Username", value: "username"},
-        { text: "Name", value: "display_name"},
-        { text: "Role", value: "role"},
-        { text: "Status", value: "is_active", align: "center"},
+        { text: "COA", value: "name"},
+        { text: "Hyperion Name", value: "hyperion_name"},
         { text: "Update By", value: "update_by"},
         { text: "Update Date", value: "updated_at"},
         { text: "Actions", value: "actions", align: "center", sortable: false },
@@ -125,9 +116,11 @@ export default {
     },
     form: {
       id: "",
-      username: "",
-      role: "",
-      is_active: "",
+      name: "",
+      definition: "",
+      hyperion_name: "",
+      is_capex: "",
+      minimum_item_origin: "",
     },
     alert: {
       show: false,
@@ -137,34 +130,25 @@ export default {
     },
   }),
   created() {
-    this.getMasterUser();
-    this.getMasterEmployee();
-    // this.getMasterStrategy();
+    this.getMasterCoa();
     // this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("masterUser", ["loadingGetMasterUser", "dataMasterUser"]),
-    ...mapState("masterEmployee", ["loadingGetMasterEmployee", "dataMasterEmployee"]),
+    ...mapState("masterCoa", ["loadingGetMasterCoa", "dataMasterCoa"]),
   },
   methods: {
-    ...mapActions("masterUser", ["getMasterUser", "postMasterUser"]),
-    ...mapActions("masterEmployee", ["getMasterEmployee"]),
-    // ...mapActions("login", ["logOut"]),
-
-    logout(){
-      this.logOut();
-    },
+    ...mapActions("masterCoa", ["getMasterCoa", "postMasterCoa"]),
     onAdd() {
       this.dialog = !this.dialog;
     },
     onEdit(item) {
-      this.$store.commit("masterUser/SET_EDITTED_ITEM", item);
+      this.$store.commit("masterCoa/SET_EDITTED_ITEM", item);
     },    
     onCancel() {
       this.dialog = false;
     },
     onSubmit(e) {
-      this.postMasterUser(e)
+      this.postMasterCoa(e)
         .then(() => {
           this.onSaveSuccess();
         })
@@ -200,18 +184,18 @@ button {
 </style>
 
 <style lang="scss" scoped>
-#master-user {
-  .master-user__header {
+#master-coa {
+  .master-coa__header {
     padding-left: 32px;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .master-user__input {
+  .master-coa__input {
     padding: 10px 32px;
   }
 
-  .master-user__btn {
+  .master-coa__btn {
     text-align: end;
 
     button {
@@ -219,7 +203,7 @@ button {
     }
   }
 
-  .master-User__container {
+  .master-coa__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -230,8 +214,8 @@ button {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #master-User {
-    .master-User__btn {
+  #master-coa {
+    .master-coa__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -240,7 +224,7 @@ button {
         margin: 0px 0px 32px 0px;
       }
     }
-    .master-User__card {
+    .master-coa__card {
       flex-direction: column;
       button {
         width: 16rem !important;
