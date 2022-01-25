@@ -4,16 +4,14 @@
       <!-- edit form -->
       <v-col xs="12" sm="6" md="6" lg="7">
         <v-container>
-          <form-User
+          <form-coa
             :form="form"
             :isView="isView"
-            :dataMasterUser="dataMasterUser"
-            :dataMasterEmployee ="dataMasterEmployee"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-User>
+          ></form-coa>
         </v-container>
       </v-col>
 
@@ -41,31 +39,27 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormUser from "@/components/MasterUser/FormUser";
+import FormCoa from "@/components/MasterCOA/FormCoa";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "EditMasterUser",
-  components: { FormUser,SuccessErrorAlert},
+  name: "EditMasterCoa",
+  components: { FormCoa,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
-    this.getMasterEmployee();
-  },
-  computed: {
-    ...mapState("masterUser", ["loadingGetMasterUser", "dataMasterUser"]),
-    ...mapState("masterEmployee", ["loadingGetMasterEmployee", "dataMasterEmployee"]),
   },
   methods: {
-    ...mapActions("masterUser", ["patchMasterUser","getMasterUserById"]),
-    ...mapActions("masterEmployee", ["getMasterEmployee"]),
-
+    ...mapActions("masterCoa", [
+      "patchMasterCoa",
+      "getMasterCoaById",
+    ]),
     getEdittedItem() {
-      this.getMasterUserById(this.$route.params.id).then(() => {
+      this.getMasterCoaById(this.$route.params.id).then(() => {
         this.setForm();
       });
     },
     setForm() {
       this.form = JSON.parse(
-        JSON.stringify(this.$store.state.masterUser.edittedItem)
+        JSON.stringify(this.$store.state.masterCoa.edittedItem)
       );
     },
     onEdit() {
@@ -79,7 +73,7 @@ export default {
       this.setForm();
     },
     onSubmit(e) {
-      this.patchMasterUser(e)
+      this.patchMasterCoa(e)
         .then(() => {
           this.onSaveSuccess();
         })
@@ -91,7 +85,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "Master User has been saved successfully";
+      this.alert.subtitle = "Master Coa has been saved successfully";
     },
     onSaveError(error) {
       this.alert.show = true;
@@ -109,9 +103,11 @@ export default {
     isView: true,
     form: {
       id: "",
-      username: "",
-      role: "",
-      is_active: "",
+      name: "",
+      definition: "",
+      hyperion_name: "",
+      is_capex: "",
+      minimum_item_origin: "",
     },
     alert: {
       show: false,
@@ -124,21 +120,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#master-User {
+#master-coa {
   width: 80%;
   margin: 0px auto;
 
-  .master-User__header {
+  .master-coa__header {
     padding-left: 32px;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .master-User__input {
+  .master-coa__input {
     padding: 10px 32px;
   }
 
-  .master-User__btn {
+  .master-coa__btn {
     text-align: end;
 
     button {
@@ -146,14 +142,14 @@ export default {
     }
   }
 
-  .master-User__container {
+  .master-coa__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 8px;
   }
 
-  .master-User__card {
+  .master-coa__card {
     button {
       width: 8rem;
     }
@@ -162,8 +158,8 @@ export default {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #master-User {
-    .master-User__btn {
+  #master-coa {
+    .master-coa__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -172,7 +168,7 @@ export default {
         margin: 0px 0px 32px 0px;
       }
     }
-    .master-User__card {
+    .master-coa__card {
       flex-direction: column;
       button {
         width: 16rem !important;
