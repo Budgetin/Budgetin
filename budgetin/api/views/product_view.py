@@ -21,7 +21,11 @@ class ProductViewSet(viewsets.ModelViewSet):
                 each['updated_by'] = User.objects.get(pk=each['updated_by']).display_name
             else:
                 each['updated_by'] = ''
-            each['strategy'] = Strategy.objects.get(pk=each['strategy']).name
+            strategy = Strategy.objects.get(pk=each['strategy'])
+            each['strategy'] = {
+                "id" : strategy.id,
+                "name" : strategy.name
+            }
             each['created_by'] = User.objects.get(pk=each['created_by']).display_name
             #Reformat date
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")

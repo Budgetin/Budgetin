@@ -7,8 +7,7 @@
           <form-User
             :form="form"
             :isView="isView"
-            :dataMasterUser="dataMasterUser"
-            :dataMasterEmployee ="dataMasterEmployee"
+            :dataMasterEmployee="dataMasterEmployee"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
@@ -51,13 +50,11 @@ export default {
     this.getMasterEmployee();
   },
   computed: {
-    ...mapState("masterUser", ["loadingGetMasterUser", "dataMasterUser"]),
     ...mapState("masterEmployee", ["loadingGetMasterEmployee", "dataMasterEmployee"]),
   },
   methods: {
     ...mapActions("masterUser", ["patchMasterUser","getMasterUserById"]),
     ...mapActions("masterEmployee", ["getMasterEmployee"]),
-
     getEdittedItem() {
       this.getMasterUserById(this.$route.params.id).then(() => {
         this.setForm();
