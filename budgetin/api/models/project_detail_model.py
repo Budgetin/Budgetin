@@ -10,4 +10,3 @@ class ProjectDetail(SoftDeleteModel, TimestampModel, UserTrackModel):
     project = models.ForeignKey('Project',on_delete=models.CASCADE)
     project_type = models.ForeignKey('ProjectType',on_delete=models.CASCADE)
     dcsp_id = models.CharField(max_length=200)
-    year = models.IntegerField()
