@@ -110,7 +110,7 @@ export default {
       headers: [
         { text: "Product Code", value: "product_code"},
         { text: "Product", value: "product_name"},
-        { text: "IT Strategy", value: "strategy"},
+        { text: "IT Strategy", value: "strategy.name"},
         { text: "Update By", value: "update_by"},
         { text: "Update Date", value: "updated_at"},
         { text: "Actions", value: "actions", align: "center", sortable: false },
@@ -120,7 +120,10 @@ export default {
       id: "",
       product_code: "",
       product_name: "",
-      strategy: "",
+      strategy:{
+        id:"",
+        name:""
+      },
     },
     alert: {
       show: false,

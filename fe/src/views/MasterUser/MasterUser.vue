@@ -65,8 +65,8 @@
               </router-link>
             </template>
 
-            <template v-slot:[`item.is_active`]="{ item }">
-              <binary-status-chip :boolean="item.is_active"> </binary-status-chip>
+            <template v-slot:[`item.status.id`]="{ item }">
+              <binary-status-chip :boolean="item.status.id"> </binary-status-chip>
             </template>
 
           </v-data-table>
@@ -114,10 +114,10 @@ export default {
     search: "",
     dataTable: {
       headers: [
-        { text: "Username", value: "username"},
-        { text: "Name", value: "display_name"},
+        { text: "Username", value: "name.username"},
+        { text: "Name", value: "name.display_name"},
         { text: "Role", value: "role"},
-        { text: "Status", value: "is_active", align: "center"},
+        { text: "Status", value: "status.id", align: "center"},
         { text: "Update By", value: "update_by"},
         { text: "Update Date", value: "updated_at"},
         { text: "Actions", value: "actions", align: "center", sortable: false },
@@ -125,9 +125,15 @@ export default {
     },
     form: {
       id: "",
-      username: "",
+      username: {
+        username:"",
+        option:""
+      },
       role: "",
-      is_active: "",
+      status:{
+        id:"",
+        label:""
+      },
     },
     alert: {
       show: false,

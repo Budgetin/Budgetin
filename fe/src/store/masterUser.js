@@ -31,7 +31,22 @@ const masterUser = {
       getAPI
         .get(ENDPOINT)
         .then((response) => {
-          const cleanData = response.data
+          const cleanData = response.data.map((data) => {
+              return {
+                id: data.id,
+                name: {
+                  id: data.employee_id,
+                  display_name: data.display_name,
+                  username: data.username,
+                  option: String(data.display_name+" - "+data.username),                  
+                },
+                role: data.role,
+                status: {
+                  id: data.is_active,
+                  label: data.is_active?"Active":"Inactive"
+                }
+            }
+          });
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
           );
@@ -64,9 +79,25 @@ const masterUser = {
         getAPI
           .get(ENDPOINT + `${id}/`)
           .then((response) => {
+            console.log(response.data);
             const data = response.data;
-            commit("SET_EDITTED_ITEM", data);
-            resolve(data);
+            let getData = {
+                id: data.id,
+                name: {
+                  id: data.employee_id,
+                  display_name: data.display_name,
+                  username: data.username,
+                  option: String(data.display_name+" - "+data.username),                  
+                },
+                role: data.role,
+                status: {
+                  id: data.is_active,
+                  label: data.is_active?"Active":"Inactive"
+                }
+            }
+            console.log(getData)
+            commit("SET_EDITTED_ITEM", getData);
+            resolve(getData);
           })
           .catch((error) => {
             commit("GET_ERROR", error);

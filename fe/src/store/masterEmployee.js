@@ -36,7 +36,7 @@ const masterEmployee = {
               id: data.id,
               name: data.name,
               username: data.username,
-              option: String(data.name+" - " +data.username),
+              option: String(data.name+" - "+data.username),
             };
           });
           const sorted = cleanData.sort((a, b) =>

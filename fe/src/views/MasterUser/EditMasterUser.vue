@@ -106,9 +106,15 @@ export default {
     isView: true,
     form: {
       id: "",
-      username: "",
+      username: {
+        username:"",
+        option:""
+      },
       role: "",
-      is_active: "",
+      status:{
+        id:"",
+        label:""
+      },
     },
     alert: {
       show: false,

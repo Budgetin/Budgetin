@@ -105,6 +105,7 @@ export default {
   }),
   computed: {
     cardTitle() {
+      console.log(this.form)
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
     errorMsg() {
@@ -121,7 +122,7 @@ export default {
           product_name : this.form.product_name,
           strategy : this.form.strategy,
         };
-        // console.log(payload)
+        console.log(payload)
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }
     },

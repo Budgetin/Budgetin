@@ -13,10 +13,11 @@
         <!-- User Code -->
         <v-row no-gutters>
           <v-col cols="6"> Username<strong class="red--text">*</strong> </v-col>
+          
           <v-col cols="6">
             <v-autocomplete
               :items="dataMasterEmployee"
-              v-model="form.username"
+              v-model="form.name"
               item-text="option"
               item-value="username"
               outlined
@@ -107,7 +108,7 @@ export default {
     ...mapState("masterEmployee", ["getMasterEmployee"]),
 
     cardTitle() {
-      console.log(this.dataMasterEmployee)
+      console.log(this.form)
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
     errorMsg() {
@@ -120,7 +121,7 @@ export default {
       if (validate) {
         const payload = {
           id: this.form?.id,
-          username : this.form.username,
+          username : this.form.name,
           role: this.form.role,
           is_active: this.form.status,
         };

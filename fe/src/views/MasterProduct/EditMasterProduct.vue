@@ -108,7 +108,10 @@ export default {
       id: "",
       product_code: "",
       product_name: "",
-      strategy: "",
+      strategy:{
+        id:"",
+        name:""
+      },
     },
     alert: {
       show: false,
