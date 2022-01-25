@@ -42,22 +42,6 @@ def login_eai(username, password):
 
     return response_login.json()['error_schema']['error_message']['indonesian']
 
-#Get Employee ID from Username
-def get_ithc_employee_id(username):
-    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?username__exact={}".format(
-        username)
-    headers = {
-        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
-    }
-    res = requests.get(url, headers=headers, verify=False)
-    if res.json():
-        # check for user that is not deleted
-        user = [u for u in res.json() if u['is_deleted'] == False]
-        if user:
-            return {
-                'id': user[0]['id'],
-            }
-    raise NotFoundException()
 
 #Get IMO D Employee
 def get_imo_d_employee():
