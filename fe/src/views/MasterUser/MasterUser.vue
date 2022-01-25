@@ -136,8 +136,8 @@ export default {
     },
   }),
   created() {
-    console.log(document.cookie)
     this.getMasterUser();
+    this.getMasterEmployee();
     // this.getMasterStrategy();
     // this.setBreadcrumbs();
   },

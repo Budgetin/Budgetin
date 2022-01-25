@@ -31,10 +31,18 @@ const masterEmployee = {
       getAPI
         .get(ENDPOINT)
         .then((response) => {
-          const cleanData = response.data
+          const cleanData = response.data.map((data) => {
+            return {
+              id: data.id,
+              name: data.name,
+              username: data.username,
+              option: String(data.name+" - " +data.username),
+            };
+          });
           const sorted = cleanData.sort((a, b) =>
-            a.display_name > b.display_name ? 1 : -1
+            a.name > b.name ? 1 : -1
           );
+
           commit("GET_SUCCESS", sorted);
         })
         .catch((error) => {
