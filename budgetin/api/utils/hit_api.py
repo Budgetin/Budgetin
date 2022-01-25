@@ -162,4 +162,4 @@ def get_ithc_employee_info(username):
                 'group_manager_id' : group_manager_id,
                 'divisi_id' : divisi_id
             }
-    raise NotEligibleException()
+    raise EmployeeNotFoundException()
