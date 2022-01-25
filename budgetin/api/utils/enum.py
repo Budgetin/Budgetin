@@ -25,3 +25,8 @@ class RoleEnum(Enum):
     ADMIN = "admin"
     USER = "user"
     PIC = "pic"
+
+class MonitoringStatusEnum(Enum):
+    TODO = "To Do"
+    DRAFT = "Draft"
+    SUBMITTED = "Submitted"
