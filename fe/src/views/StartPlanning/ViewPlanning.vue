@@ -1,202 +1,39 @@
 <template>
     <v-app id="view-planning">
         <v-container>
-            <v-row no-gutters>
-                <v-card class="view-planning__detail">
-                    <v-row no-gutters>
-                        <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                            <v-row no-gutters>
-                                <v-subheader class="view-planning__header">View Planning</v-subheader>
-                                <v-col no-gutters class="view-planning__btn">
-                                    <v-btn
-                                        icon
-                                        color="primary"
-                                        class="mt-3 mr-8"
-                                        link :to="'/startPlanning/edit'">
-                                        <v-icon>mdi-pencil-outline</v-icon>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-                        </v-col>
-                    </v-row>
+            <v-row no-gutters style="max-height: 90%;">
+                <!-- START PLANNING -->
+                <form-start-planning
+                    :form="form"
+                    :isView="true"
+                    :isNew="false"
+                    @editClicked="onEdit"
+                    @cancelClicked="onCancel"
+                    @submitClicked="onSubmit"
+                    class="view-planning__detail">
+                </form-start-planning>
 
-                    <v-card-text>
-                        <v-form class="px-3">
-                            <v-row no-gutters>
-                                <!-- PLANNING FOR -->
-                                <v-col cols="6"> Planning For <strong class="red--text">*</strong>
-                                    <v-col cols="6">
-                                        <div class="view-planning__field">
-                                            <v-text-field
-                                            outlined
-                                            dense
-                                            disabled
-                                            label="2023">
-                                            </v-text-field>
-                                        </div>
-                                    </v-col>
-                                </v-col>
-
-                                <!-- STATUS -->
-                                <v-col cols="6"> Status <strong class="red--text">*</strong>
-                                    <v-col cols="6">
-                                        <div class="view-planning__field">
-                                            <v-text-field
-                                            outlined
-                                            dense
-                                            disabled
-                                            label="Active">
-                                            </v-text-field>
-                                        </div>
-                                    </v-col>
-                                </v-col>
-                            </v-row>
-
-                            <v-row no-gutters>
-                                <!-- DUE DATE -->
-                                <v-col cols="6"> Due Date <strong class="red--text">*</strong>
-                                    <v-col cols="6">
-                                        <div class="view-planning__field">
-                                            <v-text-field
-                                            outlined
-                                            dense
-                                            disabled
-                                            label="2022-11-30">
-                                            </v-text-field>
-                                        </div>
-                                    </v-col>
-                                </v-col>
-
-                                <!-- SEND NOTIFICATION -->
-                                <v-col cols="6"> Send Notification <strong class="red--text">*</strong>
-                                    <v-col cols="6">
-                                        <div class="view-planning__field">
-                                            <v-text-field
-                                            outlined
-                                            dense
-                                            disabled
-                                            label="Yes">
-                                            </v-text-field>
-                                        </div>
-                                    </v-col>
-                                </v-col>
-                            </v-row>
-                        </v-form>
-
-                        <v-col no-gutters class="view-planning__btn">
-                            <v-btn rounded color="primary" @click="onOK" style="width: 8rem; margin-top: 96px">
-                                OK
-                            </v-btn>
-                        </v-col>
-                    </v-card-text>
-                </v-card>
-
-                <v-card class="view-planning__logHistory">
-                    <v-row no-gutters>
-                        <v-col no-gutters>
-                            <v-subheader class="view-planning__header">Log History</v-subheader>
-                        </v-col>
-                        <v-card-text class="view-planning__cardText">
-                            <v-timeline
-                                align-top
-                                dense>
-                                <v-timeline-item
-                                color="primary"
-                                small>
-                                    <v-row class="pt-1">
-                                        <v-col cols="4">
-                                            <v-row no-gutters>
-                                                <strong>Phang Willy</strong>
-                                            </v-row>
-
-                                            <v-row no-gutters>
-                                                <strong>5 Jan 2022</strong>
-                                            </v-row>
-                                        </v-col>
-                                        <v-col>
-                                            <strong>Update Planning</strong>
-                                            <div class="text-caption">
-                                                Due Date: 2022-11-30
-                                                </div>
-                                            <div class="text-caption">
-                                                Send Notification: Yes
-                                            </div>
-                                        </v-col>
-                                    </v-row>
-                                </v-timeline-item>
-
-                                <v-timeline-item
-                                color="primary"
-                                small>
-                                    <v-row class="pt-1">
-                                        <v-col cols="4">
-                                            <v-row no-gutters>
-                                                <strong>Jeffry Setiawan</strong>
-                                            </v-row>
-
-                                            <v-row no-gutters>
-                                                <strong>5 Jan 2022</strong>
-                                            </v-row>
-                                        </v-col>
-                                        <v-col>
-                                            <strong>Update ARC</strong>
-                                            <div class="text-caption">
-                                                Due Date: 2022-11-25
-                                            </div>
-                                            <div class="text-caption">
-                                                Send Notification: Yes
-                                            </div>
-                                        </v-col>
-                                    </v-row>
-                                </v-timeline-item>
-
-                                <v-timeline-item
-                                color="primary"
-                                small>
-                                    <v-row class="pt-1">
-                                        <v-col cols="4">
-                                            <v-row no-gutters>
-                                                <strong>Phang Willy</strong>
-                                            </v-row>
-
-                                            <v-row no-gutters>
-                                                <strong>5 Jan 2022</strong>
-                                            </v-row>
-                                        </v-col>
-                                        <v-col>
-                                            <strong>Create Planning</strong>
-                                            <div class="text-caption">
-                                                Planning For: 2023
-                                            </div>
-                                            <div class="text-caption">
-                                                Status: Active
-                                            </div>
-                                            <div class="text-caption">
-                                                Due Date: 2022-10-20
-                                            </div>
-                                            <div class="text-caption">
-                                                Send Notification: Yes
-                                            </div>
-                                            <div class="text-caption">
-                                                Send to: GSIT ARC A, GSIT CTS A, GSIT CTS B, ...
-                                            </div>
-                                            <div class="text-caption">
-                                                Content: Dear All, Terkait adanya kebutuhan planning budget tahun 2023, kami mengajak Bapak/Ibu sekalian untuk mengisi perencanaan budget pada aplikasi budget (www.budgetgsitbca.co.id). Pengisian planning budget ini akan berakhir pada 31 Desember 2022. Atas perhatiannya saya ucapkan terima kasih. Best Regards, ITFAM
-                                            </div>
-                                        </v-col>
-                                    </v-row>
-                                </v-timeline-item>
-                            </v-timeline>
-                        </v-card-text>
-                    </v-row>
-                </v-card>
+                <!-- LOG HISTORY -->
+                <form-log-history
+                    :form="form"
+                    @editClicked="onEdit"
+                    @cancelClicked="onCancel"
+                    @submitClicked="onSubmit"
+                    class="view-planning__logHistory">
+                </form-log-history>
             </v-row>
         </v-container>
     </v-app>
 </template>
 
 <script>
+import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
+import FormLogHistory from '@/components/CompStartPlanning/FormLogHistory';
 export default {
+    name: "CompStartPlanning",
+    components: {
+        FormStartPlanning, FormLogHistory
+    },
     watch: {},
     data() {
         return {
@@ -208,34 +45,50 @@ export default {
         onAdd() {
             this.dialog = !this.dialog;
         },
+        // onEdit(item) {
+        //     this.$store.commit("masterCoa/SET_EDITTED_ITEM", item);
+        // },    
         onCancel() {
+            return this.$router.go(-1);
+        },
+        onSubmit(e) {
+            this.postStartPlanning(e)
+            .then(() => {
+                this.onSaveSuccess();
+            })
+            .catch((error) => {
+                this.onSaveError(error);
+            });
+        },
+        onSaveSuccess() {
             this.dialog = false;
+            this.alert.show = true;
+            this.alert.success = true;
+            this.alert.title = "Save Success";
+            this.alert.subtitle = "Start Planning Data has been saved successfully";
+        },
+        onSaveError(error) {
+            this.dialog = false;
+            this.alert.show = true;
+            this.alert.success = false;
+            this.alert.title = "Save Failed";
+            this.alert.subtitle = error;
+        },
+        onAlertOk() {
+            this.alert.show = false;
         },
         onOK() {
             return this.$router.go(-1);
         }
-    }
+    },
+    
+    computed: {
+        cardTitle() {
+            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+        },
+    },
 };
 </script>
-
-<style scoped>
-.sendTo {
-    width: 500px;
-}
-.emailBody {
-    width: 500px;
-}
-
-.cancelBtn {
-    width: 200px;
-}
-.saveBtn {
-    width: 200px;
-}
-.saveBtn--text /deep/ label {
-    color: white;
-}
-</style>
 
 <style lang="scss" scoped>
 .searchBar {
@@ -258,6 +111,7 @@ export default {
         border-radius: 8px;
         margin: 1% auto !important;
         width: 50%;
+        height: 90%;
     }
     .view-planning__input {
         padding: 10px 32px;
@@ -272,16 +126,19 @@ export default {
         padding: 24px 0px;
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         border-radius: 8px;
+        max-height: 90%;
     }
     .view-planning__cardText {
         flex-grow: 4;
-        max-height: 470px;
+        max-height: 90%;
         overflow-y: scroll;
     }
     .view-planning__logHistory {
         border-radius: 8px;
         margin: 1% auto !important;
         width: 40%;
+        max-height: 600px;
+        overflow-y: scroll;
     }
     .view-planning__field {
         min-width: 150px;

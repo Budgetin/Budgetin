@@ -1,43 +1,107 @@
 <template>
   <v-card>
-    <v-card-title class="text-h5" style="margin-bottom: 32px">
-      {{ cardTitle }} a Planning
+    <v-card-title class="text-h5">
+      {{ cardTitle }} a Monitoring Status
       <v-spacer></v-spacer>
       <!-- <v-btn v-if="isView" icon small @click="$emit('editClicked')"> -->
-      <v-btn v-if="isView" icon small link :to="'/startPlanning/edit'">
+      <v-btn v-if="isView" icon small link :to="'/startPlanning/editStatusMonitor'">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
     </v-card-title>
 
     <v-card-text>
-      <v-form class="StartPlanning__form" lazy-validation @submit.prevent="onSubmit">
+      <v-form class="monitor-planning__form" lazy-validation @submit.prevent="onSubmit">
         <v-row no-gutters>
-          <!-- PLANNING FOR -->
-          <v-col cols="6"> Planning For <strong class="red--text">*</strong>
+          <!-- GROUP -->
+          <v-col cols="6"> Group <strong class="red--text">*</strong>
             <v-col
               class="d-flex"
               cols="12"
               sm="6">
-              <div class="StartPlanning__field">
-                <v-select
-                  v-if="isView"
-                  v-model="year"
-                  :items="yearOptions"
-                  item-text="yearValue"
-                  label="2023"
-                  outlined
-                  return-object
-                  disabled>
-                </v-select>
-                <v-select
-                  v-if="!isView"
-                  v-model="year"
-                  :items="yearOptions"
-                  item-text="yearValue"
-                  label="Pick a Year"
-                  outlined
-                  return-object>
-                </v-select>
+              <div class="monitor-planning__field">
+                <v-text-field
+                    v-if="isView || (!isView && !isNew)"
+                    outlined
+                    dense
+                    disabled
+                    label="GAQ">
+                </v-text-field>
+              </div>
+            </v-col>
+          </v-col>
+
+          <!-- SUBGROUP -->
+          <v-col cols="6"> Sub-Group <strong class="red--text">*</strong>
+            <v-col
+              class="d-flex"
+              cols="12"
+              sm="6">
+              <div class="monitor-planning__field">
+                <v-text-field
+                    v-if="isView || (!isView && !isNew)"
+                    outlined
+                    dense
+                    disabled
+                    label="ARC">
+                </v-text-field>
+              </div>
+            </v-col>
+          </v-col>
+        </v-row>
+
+        <!-- BIRO -->  
+        <v-row no-gutters>
+          <v-col cols="6"> Biro <strong class="red--text">*</strong>
+            <v-col
+              class="d-flex"
+              cols="12"
+              sm="6">
+              <div class="monitor-planning__field">
+                <v-text-field
+                    v-if="isView || (!isView && !isNew)"
+                    outlined
+                    dense
+                    disabled
+                    label="ARC A">
+                </v-text-field>
+              </div>
+            </v-col>
+          </v-col>
+
+          <!-- PIC -->
+          <v-col cols="6"> PIC <strong class="red--text">*</strong>
+            <v-col
+              class="d-flex"
+              cols="12"
+              sm="6">
+              <div class="monitor-planning__field">
+                <v-text-field
+                    v-if="isView || (!isView && !isNew)"
+                    outlined
+                    dense
+                    disabled
+                    label="Jumas Ranope">
+                </v-text-field>
+              </div>
+            </v-col>
+          </v-col>
+        </v-row>
+
+        <!-- UPDATED DATE -->
+        <v-row no-gutters>
+          <v-col cols="6"> Updated Date <strong class="red--text">*</strong>
+            <v-col
+              class="d-flex"
+              cols="12"
+              sm="6">
+              <div class="monitor-planning__field">
+                <v-text-field
+                    v-if="isView || (!isView && !isNew)"
+                    outlined
+                    dense
+                    disabled
+                    label="2022-11-25">
+                </v-text-field>
               </div>
             </v-col>
           </v-col>
@@ -48,7 +112,7 @@
               class="d-flex"
               cols="12"
               sm="6">
-              <div class="StartPlanning__field">
+              <div class="monitor-planning__field">
                 <v-select
                   v-if="isView"
                   v-model="status"
@@ -73,136 +137,20 @@
           </v-col>
         </v-row>
 
-        <!-- DUE DATE -->  
-        <v-row no-gutters>
-          <v-col cols="6"> Due Date <strong class="red--text">*</strong>
-            <v-col cols="12" sm="6" md="4">
-              <v-menu
-                v-model="menu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto">
-                <template v-slot:activator="{ on, attrs }">
-                  <div class="StartPlanning__field">
-                    <v-text-field
-                      v-if="isView"
-                      v-model="date"
-                      outlined
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                      disabled>
-                    </v-text-field>
-                    <v-text-field
-                      v-if="!isView"
-                      v-model="date"
-                      outlined
-                      readonly
-                      v-bind="attrs"
-                      v-on="on">
-                    </v-text-field>
-                  </div>
-                </template>
-                <v-date-picker
-                  v-model="date"
-                  @input="menu = false">
-                </v-date-picker>
-              </v-menu>
-            </v-col>
-          </v-col>
-
-          <!-- SEND NOTIFICATION -->
-          <v-col cols="6"> Send Notification <strong class="red--text">*</strong>
-            <v-col
-              class="d-flex"
-              cols="12"
-              sm="6">
-              <div class="StartPlanning__field">
-                <v-select
-                  v-if="isView"
-                  v-model="notif"
-                  :items="notifOptions"
-                  item-text="option"
-                  label="Yes"
-                  outlined
-                  return-object
-                  disabled>
-                </v-select>
-                <v-select
-                  v-if="!isView"
-                  v-model="notif"
-                  :items="notifOptions"
-                  item-text="option"
-                  label="Yes/No"
-                  outlined
-                  return-object
-                  @click="notifValue()">
-                </v-select>
-              </div>
-            </v-col>
-          </v-col>
-        </v-row>
-
-        <!-- SEND TO -->
-        <v-row no-gutters v-if="notifValue()=='Yes'">
-          <v-col> Send to <strong class="red--text">*</strong>
-            <v-col no-gutters>
-              <v-select
-                class="StartPlanning__select"
-                :items="biroGsit"
-                item-text="biroGsitName"
-                item-value="biroGsitEmail"
-                label="Select Biro"
-                multiple
-                chips
-                outlined>
-              </v-select>
-            </v-col>            
-          </v-col>
-        </v-row>
-
-        <!-- E-MAIL BODY -->
-        <v-row no-gutters v-if="notifValue()=='Yes'">
-          <v-col> E-mail Body
-            <v-col>
-              <div class="emailBody">
-                <v-textarea
-                  outlined
-                  dense
-                  :disabled="isView">
-                </v-textarea>
-              </div>
-            </v-col>
-          </v-col>
-        </v-row>
-
         <!-- BUTTONS -->
         <v-row no-gutters>
-          <v-col no-gutters class="StartPlanning__btn">
-            <v-btn rounded outlined class="primary--text" @click="$emit('okClicked')" v-if="!isView && !isNew" style="width: 8rem; margin-top: 212px; margin-left: 212px">
+          <v-col no-gutters class="monitor-planning__btn">
+            <v-btn rounded outlined class="primary--text" @click="onCancel" v-if="!isView" style="width: 8rem; margin-top: 120px; margin-left: 212px">
               Cancel
             </v-btn>
           </v-col>
           <v-col no-gutters>
-            <v-btn rounded class="primary" @click="$emit('submitClicked')" v-if="!isView && !isNew" style="width: 8rem; margin-top: 212px">
+            <v-btn rounded class="primary" @click="onSubmit" v-if="!isView" style="width: 8rem; margin-top: 120px">
               Submit
             </v-btn>
           </v-col>
-
-          <v-col no-gutters class="StartPlanning__btn">
-            <v-btn rounded outlined class="primary--text" @click="$emit('cancelClicked')" v-if="isNew" style="width: 8rem; margin-top: 64px; margin-left: 212px">
-              Cancel
-            </v-btn>
-          </v-col>
-          <v-col no-gutters>
-            <v-btn rounded class="primary" @click="$emit('submitClicked')" v-if="isNew" style="width: 8rem; margin-top: 64px">
-              Submit
-            </v-btn>
-          </v-col>
-          <v-col no-gutters class="StartPlanning__btn">
-            <v-btn v-if="isView" rounded class="primary" @click="$emit('okClicked')" style="width: 8rem; margin-top: 212px">
+          <v-col no-gutters class="monitor-planning__btn">
+            <v-btn v-if="isView" rounded class="primary" @click="onOK" style="width: 8rem; margin-top: 120px">
               OK
             </v-btn>
           </v-col>
@@ -214,24 +162,13 @@
 
 <script>
 export default {
-  name: "FormStartPlanning",
+  name: "FormMonitorPlanning",
   props: ["isNew", "isView"],
-
-  data() {
-    return {
-      planningFor: '',
-      status: '',
-      sendNotif: '',
-      date: null,
-      // sendToEmail: null,
-    }
-  },
   
   data: () => ({
     date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
     menu: false,
 
-    checkbox: false,
     validation: {
       required: (v) => !!v || "This field is required",
     },
@@ -323,19 +260,8 @@ export default {
     onSubmit() {
       console.log(this.planningFor, this.status, this.date, this.sendNotif)
     },
-    notifValue() {
-      return this.notif.option
-    },
     onCancel() {
-      // this.isView
-      // .then(() => {
-      //     this.$router.go(-1);
-      // })
-      // this.isNew
-      // .then(() => {
-          this.dialog = false;
-      // });
-      // return this.isView ? "this.$router.go(-1)" : "this.dialog = false";
+        return this.$router.go(-1);
     },
     onOK() {
         return this.$router.go(-1);
@@ -367,24 +293,23 @@ export default {
   .v-card__text {
     color: unset !important;
   }
-  .StartPlanning__checkbox{
+  .monitor-planning__checkbox{
     align-content:flex-start
   }
-  .StartPlanning__form{
+  .monitor-planning__form{
     width: auto;
     margin-left: 2% !important;
   }
-  .StartPlanning__select{
+  .monitor-planning__select{
     min-width: 500px;
   }
-  .StartPlanning__field {
+  .monitor-planning__field {
     min-width: 165px;
   }
-  .StartPlanning__btn {
+  .monitor-planning__btn {
         text-align: end;
         button {
             margin: 10px 32px;
         }
     }
 </style>
-    

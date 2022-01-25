@@ -1,9 +1,23 @@
 <template>
-    <v-app id="start-planning">
-        <v-container class="start-planning__container outer-container">
+    <v-app id="list-project">
+        <v-container class="list-project__container outer-container">
+            <v-toolbar background-color="transparent" flat>
+                <template v-slot:extension>
+                    <v-tabs v-model="tab" color="primary" align-with-title>
+                        <v-tabs-slider color="grey"></v-tabs-slider>
+
+                        <v-tab
+                            v-for="item in items"
+                            :key="item">
+                            {{ item }}
+                        </v-tab>
+                    </v-tabs>
+                </template>
+            </v-toolbar>
+
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                <v-subheader class="start-planning__header">List of Created Plannings</v-subheader>
+                <v-subheader class="list-project__header">List of Projects</v-subheader>
                 </v-col>
             </v-row>
 
@@ -18,18 +32,30 @@
                             <v-toolbar-title>
                                 <v-row class="mb-5" no-gutters>
                                     <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
+                                        <v-row>
                                         <v-text-field
-                                            class="start-planning__input"
+                                            class="list-project__input"
                                             v-model="search"
                                             append-icon="mdi-magnify"
                                             label="Search"
                                             single-line
                                             hide-details>
                                         </v-text-field>
+
+                                        <v-btn color="primary" @click="onFilter" class="mt-4">
+                                            <v-icon>
+                                                mdi-filter-outline
+                                            </v-icon>
+                                        </v-btn>
+                                        </v-row>
                                     </v-col>
-                                    <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="start-planning__btn">
-                                        <v-btn rounded color="primary" @click="onAdd">
-                                            + Start New Planning
+                                    
+                                    <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="list-project__btn">
+                                        <v-btn rounded color="primary" @click="onExport">
+                                            <v-icon left>
+                                                mdi-export-variant
+                                            </v-icon>
+                                            Export Data
                                         </v-btn>
                                     </v-col>
                                 </v-row>
@@ -46,7 +72,7 @@
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-icon  class="ma-3" v-on="on" color="primary" @click="onMonitor()">
+                                        <v-icon  class="ma-3" v-on="on" color="primary" @click="onMonitor">
                                             mdi-monitor
                                         </v-icon>
                                     </template>
@@ -63,7 +89,7 @@
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-icon v-on="on" color="primary" @click="onView()">
+                                        <v-icon v-on="on" color="primary" @click="onView">
                                             mdi-eye
                                         </v-icon>
                                     </template>
@@ -77,15 +103,9 @@
 
             <v-row no-gutters>
                 <v-dialog v-model="dialog" persistent width="40rem">
-                    <form-start-planning
-                        :form="form"
-                        :isNew="true"
-                        :isView="false"
-                        @editClicked="onEdit"
-                        @cancelClicked="onCancel"
-                        @submitClicked="onSubmit"
-                        @okClicked="onOK">
-                    </form-start-planning>
+                    <form-list-project
+                        @cancelClicked="onCancel">
+                    </form-list-project>
                 </v-dialog>
             </v-row>
         </v-container>
@@ -93,19 +113,19 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
 import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
-import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
     name: "CompStartPlanning",
     components: {
-        FormStartPlanning, SuccessErrorAlert
+        FormStartPlanning
     },
     
     watch: {},
     data() {
         return {
-            dialog: false,
+            tab: null,
+            items: ['Active', 'Inactive'],
+
             search: "",
             headers: [
                 { text: "ID", value: "id", width: "10%" },
@@ -150,84 +170,22 @@ export default {
                     updatedDate: "30 November 2019",
                 },
             ],
-            form: {
-                year: "",
-                is_active: "",
-                created_by: "",
-                updated_by: "",
-                updated_at: "",
-                due_date: "",
-            },
-            alert: {
-                show: false,
-                success: null,
-                title: null,
-                subtitle: null,
-            },
         };
     },
 
-    created() {
-        this.getStartPlanning();
-    },
-
-    computed: {
-        ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
-    },
-
     methods: {
-        ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
-        onAdd() {
-            this.dialog = !this.dialog;
+        onExport() {
         },
-        onEdit(item) {
-            this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
-        },    
         onCancel() {
             this.dialog = false;
-        },
-        onSubmit(e) {
-            this.postStartPlanning(e)
-            .then(() => {
-                this.onSaveSuccess();
-            })
-            .catch((error) => {
-                this.onSaveError(error);
-            });
-        },
-        onSaveSuccess() {
-            this.dialog = false;
-            this.alert.show = true;
-            this.alert.success = true;
-            this.alert.title = "Save Success";
-            this.alert.subtitle = "Master Source has been saved successfully";
-        },
-        onSaveError(error) {
-            this.dialog = false;
-            this.alert.show = true;
-            this.alert.success = false;
-            this.alert.title = "Save Failed";
-            this.alert.subtitle = error;
-        },
-        onAlertOk() {
-            this.alert.show = false;
         },
         onMonitor() {
             console.log(item+"monitor");
         },
         onView() {
             console.log(item);
-        },
-        onOK() {
-            return this.$router.go(-1);
         }
-    },
-
-    computed: {
-        cardTitle() {
-            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
-        },
-    },
+    }
 };
 </script>
 
@@ -239,18 +197,18 @@ export default {
     margin: 40px;
 }
 
-#start-planning {
-    .start-planning__header {
+#list-project {
+    .list-project__header {
         padding-left: 32px;
         font-size: 1.25rem;
         font-weight: 600;
     }
 
-    .start-planning__input {
+    .list-project__input {
         padding: 10px 32px;
     }
 
-    .start-planning__btn {
+    .list-project__btn {
         text-align: end;
 
         button {
@@ -258,14 +216,14 @@ export default {
         }
     }
 
-    .start-planning__container {
+    .list-project__container {
         padding: 24px 0px;
         // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         border-radius: 8px;
     }
 
-    .start-planning__card {
+    .list-project__card {
         button {
         width: 8rem;
         }
@@ -274,8 +232,8 @@ export default {
 
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
-#start-planning {
-    .start-planning__btn {
+#list-project {
+    .list-project__btn {
         text-align: center;
         padding: 0px 32px;
 
@@ -284,7 +242,7 @@ export default {
         margin: 0px 0px 32px 0px;
         }
     }
-    .start-planning__card {
+    .list-project__card {
         flex-direction: column;
         button {
         width: 16rem !important;

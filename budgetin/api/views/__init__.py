@@ -15,3 +15,4 @@ from .user_view import UserViewSet
 from .audit_log_view import AuditLogViewSet
 from .login_view import LoginView
 from .logout_view import LogoutView
+from .test_view import TestView
