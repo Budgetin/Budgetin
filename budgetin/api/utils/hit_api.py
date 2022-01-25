@@ -131,7 +131,7 @@ def get_biro_info(biro_id):
     
 
 #Get Employee Information
-def get_employee_info(username):
+def get_ithc_employee_info(username):
     url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?include=biro,sub_group,sub_group.group,sub_group.group.divisi&username__exact={}".format(
         username)
     headers = {
