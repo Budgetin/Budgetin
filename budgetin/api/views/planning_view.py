@@ -24,7 +24,10 @@ class PlanningViewSet(viewsets.ModelViewSet):
         planning = super().list(request, *args, **kwargs)
         for each in planning.data:
             each['due_date'] = timestamp_to_strdateformat(each['due_date'], "%d %B %Y")
-            each['updated_by'] = User.objects.get(pk=each['updated_by']).display_name
+            if each['updated_by'] is not None:
+                each['updated_by'] = User.objects.get(pk=each['updated_by']).display_name
+            else:
+                each['updated_by'] = ""
             each['created_by'] = User.objects.get(pk=each['created_by']).display_name
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
@@ -33,7 +36,10 @@ class PlanningViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         planning = super().retrieve(request, *args, **kwargs)
         planning.data['due_date'] = timestamp_to_strdateformat(planning.data['due_date'], "%d %B %Y")
-        planning.data['updated_by'] = User.objects.get(pk=planning.data['updated_by']).display_name
+        if planning.data['updated_by'] is not None:
+            planning.data['updated_by'] = User.objects.get(pk=planning.data['updated_by']).display_name
+        else:
+            planning.data['updated_by'] = ""
         planning.data['created_by'] = User.objects.get(pk=planning.data['created_by']).display_name
         planning.data['created_at'] = timestamp_to_strdateformat(planning.data['created_at'], "%d %B %Y")
         planning.data['updated_at'] = timestamp_to_strdateformat(planning.data['updated_at'], "%d %B %Y")
