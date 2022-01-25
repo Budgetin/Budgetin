@@ -1,5 +1,6 @@
 from .action_model import Action
 from .budget_model import Budget
+from .biro_model import Biro
 from .coa_model import Coa
 from .monitoring_model import Monitoring
 from .monitoring_status_model import MonitoringStatus

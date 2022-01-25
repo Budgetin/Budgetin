@@ -7,7 +7,6 @@ from api.models.user_model import User
 from api.utils.user import get_user_info
 from api.exceptions import InvalidCredentialException
 
-
 class LoginView(APIView):
     def post(self, request):
         if "username" not in request.data:
@@ -19,7 +18,7 @@ class LoginView(APIView):
         password = request.data['password']
 
         # # Check if users exists in Budgetin database
-        employee_id, display_name, role = get_user_info(username)
+        employee_id, display_name, role, eselon = get_user_info(username)
 
         # Hit EAI
         eai_login_status = login_eai(username, password)
@@ -35,9 +34,9 @@ class LoginView(APIView):
             employee_id=employee_id,
             defaults={'display_name': display_name}
         )
-        
+
         # Generate jwt
-        jwt = generate_token(user.id, username, role)
+        jwt = generate_token(user.id, username, role, eselon)
         response = Response({
             'username': username,
             'display_name': display_name,

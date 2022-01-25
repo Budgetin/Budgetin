@@ -160,7 +160,7 @@ def get_biro_info(biro_id):
 
 #Get Employee Information
 def get_ithc_employee_info(username):
-    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?include=biro,sub_group,sub_group.group,sub_group.group.divisi&username__exact={}".format(
+    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?include=biro,sub_group,sub_group.group,sub_group.group.divisi,eselon&username__exact={}".format(
         username)
     headers = {
         "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
@@ -169,18 +169,25 @@ def get_ithc_employee_info(username):
     if res.json():
         #check for employee that is not deleted
         employee = [e for e in res.json() if e['is_deleted'] == False]
+        eselon = ''
         if employee:
             employee_id = employee[0]['id']
-            biro_id = employee[0]['biro']
             display_name = employee[0]['display_name']
-            biro_manager_id = employee[0]['biro']['manager_employee']
+            if employee[0]['eselon']:
+                eselon = employee[0]['eselon']['code']
+            biro_id = employee[0]['biro']
+            if biro_id:
+                biro_manager_id = employee[0]['biro']['manager_employee']
             sub_group_id = employee[0]['sub_group']['id']
-            sub_group_manager_id = employee[0]['sub_group']['manager_employee']
+            if sub_group_id:            
+                sub_group_manager_id = employee[0]['sub_group']['manager_employee']
             group_id = employee[0]['sub_group']['group']['id']
-            group_manager_id = employee[0]['sub_group']['group']['manager_employee']
+            if group_id:
+                group_manager_id = employee[0]['sub_group']['group']['manager_employee']
             divisi_id = employee[0]['sub_group']['group']['divisi']['id']
             return {
                 'employee_id' : employee_id,
+                'eselon': eselon,
                 'display_name' : display_name, 
                 'biro_id' : biro_id,
                 'biro_manager_id' : biro_manager_id,
@@ -188,6 +195,18 @@ def get_ithc_employee_info(username):
                 'sub_group_manager_id' : sub_group_manager_id,
                 'group_id' : group_id,
                 'group_manager_id' : group_manager_id,
-                'divisi_id' : divisi_id
+                'divisi_id' : divisi_id,
             }
     raise EmployeeNotFoundException()
+
+def get_eselon(username):
+    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?include=eselon&username__exact={}".format(
+        username)
+    headers = {
+        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
+    }
+    res = requests.get(url, headers=headers, verify=False)
+    if res.json():
+        employee = [e for e in res.json() if e['is_deleted'] == False]
+        if employee:
+            return employee[0]['eselon']['code']
