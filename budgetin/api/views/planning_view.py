@@ -70,13 +70,12 @@ class PlanningViewSet(viewsets.ModelViewSet):
         
         #Re-seed biro data
         create_update_all_biro()
-        
+
         return planning
-    
 
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
-        
+
         #Process send notification
         if 'send_notification' in request.data:
             if request.data['send_notification'] == True:
