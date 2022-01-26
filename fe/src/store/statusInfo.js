@@ -8,6 +8,10 @@ const statusInfo = {
     statusInfoMaster: [
       { id: 1, label: "Active" },
       { id: 0, label: "Inactive" },
+    ],
+    statusnOTIFICATION: [
+      { id: 1, label: "Yes" },
+      { id: 0, label: "No" },
     ]
   },
 };

@@ -60,6 +60,9 @@
           <v-list-item link :to="'/product'" replace active-class= "white--text">
               <v-list-item-title>Product</v-list-item-title>
           </v-list-item>
+          <v-list-item link :to="'/strategy'" replace active-class= "white--text">
+              <v-list-item-title>Strategy</v-list-item-title>
+          </v-list-item>
           <v-list-item link :to="'/user'" replace active-class= "white--text">
               <v-list-item-title>User</v-list-item-title>
           </v-list-item>
