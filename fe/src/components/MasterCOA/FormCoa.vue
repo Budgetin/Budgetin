@@ -6,6 +6,9 @@
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
+      <v-btn v-if="!isNew" icon small @click="$emit('deleteClicked')">
+        <v-icon color="error"> mdi-delete </v-icon>
+      </v-btn>
     </v-card-title>
 
     <v-card-text>

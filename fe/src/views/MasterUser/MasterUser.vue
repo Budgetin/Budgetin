@@ -164,6 +164,7 @@ export default {
       this.dialog = !this.dialog;
     },
     onEdit(item) {
+      console.log(item)
       this.$store.commit("masterUser/SET_EDITTED_ITEM", item);
     },    
     onCancel() {

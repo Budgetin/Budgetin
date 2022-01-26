@@ -108,7 +108,6 @@ export default {
     ...mapState("masterEmployee", ["getMasterEmployee"]),
 
     cardTitle() {
-      console.log(this.form)
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
     errorMsg() {
