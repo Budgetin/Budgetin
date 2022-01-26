@@ -2,10 +2,25 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from api.utils.jwt import *
-from api.utils.hit_api import login_eai
+from api.utils.hit_api import login_eai, get_ithc_employee_info, get_eselon
 from api.models.user_model import User
-from api.utils.user import get_user_info
-from api.exceptions import InvalidCredentialException
+from api.exceptions import InvalidCredentialException, NotEligibleException
+
+def get_user_info(username):
+    #Check if user exists in Budgetin DB
+    users = User.objects.filter(username=username).values()
+    if users:
+        user = users[0]
+        if user["is_deleted"] == False:
+            eselon = get_eselon(username)
+            return user['employee_id'], user['display_name'], user['role'], eselon
+    
+    #Check if User S1, S2, S3
+    user = get_ithc_employee_info(username)
+    if user['biro_manager_id'] == user['employee_id'] or user['sub_group_manager_id'] == user['employee_id'] or user['group_manager_id'] == user['employee_id']:
+        return user['employee_id'], user['display_name'], 'user', user['eselon']
+    
+    raise NotEligibleException()
 
 class LoginView(APIView):
     def post(self, request):
@@ -17,7 +32,7 @@ class LoginView(APIView):
         username = request.data['username']
         password = request.data['password']
 
-        # # Check if users exists in Budgetin database
+        # # Check if users exists in Budgetin/ITHC database
         employee_id, display_name, role, eselon = get_user_info(username)
 
         # Hit EAI
