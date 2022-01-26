@@ -10,7 +10,7 @@
     </v-card-title>
 
     <v-card-text>
-      <v-form class="StartPlanning__form" lazy-validation @submit.prevent="onSubmit">
+      <v-form ref="form" class="StartPlanning__form" lazy-validation @submit.prevent="onSubmit">
         <v-row no-gutters>
           <!-- PLANNING FOR -->
           <v-col cols="6"> Planning For <strong class="red--text">*</strong>
@@ -21,7 +21,7 @@
               <div class="StartPlanning__field">
                 <v-select
                   v-if="isView"
-                  v-model="year"
+                  v-model="form.year"
                   :items="yearOptions"
                   item-text="yearValue"
                   label="2023"
@@ -31,12 +31,13 @@
                 </v-select>
                 <v-select
                   v-if="!isView"
-                  v-model="year"
+                  v-model="form.year"
                   :items="yearOptions"
                   item-text="yearValue"
                   label="Pick a Year"
                   outlined
-                  return-object>
+                  return-object
+                  :rules="validation.required">
                 </v-select>
               </div>
             </v-col>
@@ -51,7 +52,7 @@
               <div class="StartPlanning__field">
                 <v-select
                   v-if="isView"
-                  v-model="status"
+                  v-model="form.is_active"
                   :items="statusOptions"
                   item-text="activeInactive"
                   label="Active"
@@ -61,12 +62,13 @@
                 </v-select>
                 <v-select
                   v-if="!isView"
-                  v-model="status"
+                  v-model="form.is_active"
                   :items="statusOptions"
                   item-text="activeInactive"
                   label="Active/Inactive"
                   outlined
-                  return-object>
+                  return-object
+                  :rules="validation.required">
                 </v-select>
               </div>
             </v-col>
@@ -88,7 +90,7 @@
                   <div class="StartPlanning__field">
                     <v-text-field
                       v-if="isView"
-                      v-model="date"
+                      v-model="localDate"
                       outlined
                       readonly
                       v-bind="attrs"
@@ -97,16 +99,18 @@
                     </v-text-field>
                     <v-text-field
                       v-if="!isView"
-                      v-model="date"
+                      v-model="localDate"
                       outlined
                       readonly
                       v-bind="attrs"
-                      v-on="on">
+                      v-on="on"
+                      :rules="validation.required">
                     </v-text-field>
                   </div>
                 </template>
                 <v-date-picker
-                  v-model="date"
+                  ref="form"
+                  v-model="localDate"
                   @input="menu = false">
                 </v-date-picker>
               </v-menu>
@@ -138,7 +142,8 @@
                   label="Yes/No"
                   outlined
                   return-object
-                  @click="notifValue()">
+                  @click="notifValue()"
+                  :rules="validation.required">
                 </v-select>
               </div>
             </v-col>
@@ -201,6 +206,7 @@
               Submit
             </v-btn>
           </v-col>
+
           <v-col no-gutters class="StartPlanning__btn">
             <v-btn v-if="isView" rounded class="primary" @click="$emit('okClicked')" style="width: 8rem; margin-top: 212px">
               OK
@@ -215,25 +221,34 @@
 <script>
 export default {
   name: "FormStartPlanning",
-  props: ["isNew", "isView"],
+  props: ["form", "isNew", "isView"],
 
   data() {
     return {
-      planningFor: '',
-      status: '',
-      sendNotif: '',
-      date: null,
+      // planningFor: '',
+      // status: '',
+      // sendNotif: '',
+      // localDate: '',
+      // localDate: this.form.due_date,
       // sendToEmail: null,
     }
   },
+  // watch: {
+  //   localDate(){ 
+  //     this.$emit('submitClicked', this.localDate)
+  //   }
+  // }
   
   data: () => ({
-    date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+    localDate: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
     menu: false,
-
-    checkbox: false,
     validation: {
-      required: (v) => !!v || "This field is required",
+      required: [
+        (v) => !!v || "This field is required"
+      ],
+      targetRule: [
+        v => /^[0-9.,]+$/.test(v) || "This field is numbers only",
+      ],
     },
 
     yearOptions: [
@@ -317,25 +332,29 @@ export default {
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
+    errorMsg() {
+      return this.$store.state.source.errorMsg;
+    },
   },
 
   methods: {
     onSubmit() {
-      console.log(this.planningFor, this.status, this.date, this.sendNotif)
+      let validate = this.$refs.form.validate();
+      // let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
+      if (validate) {
+        const payload = {
+          year: this.form.year,
+          is_active: this.form.is_active,
+          due_date: this.$refs.form.due_date
+        };
+        this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
+      }
     },
     notifValue() {
       return this.notif.option
     },
     onCancel() {
-      // this.isView
-      // .then(() => {
-      //     this.$router.go(-1);
-      // })
-      // this.isNew
-      // .then(() => {
-          this.dialog = false;
-      // });
-      // return this.isView ? "this.$router.go(-1)" : "this.dialog = false";
+      this.dialog = false;
     },
     onOK() {
         return this.$router.go(-1);
