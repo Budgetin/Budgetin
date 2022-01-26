@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from api.utils.biro import get_all_biro
+from api.utils.hit_api import get_all_biro
 
 class BiroView(APIView):
     def get(self, request):
