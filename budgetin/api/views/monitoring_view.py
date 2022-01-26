@@ -2,7 +2,6 @@ from rest_framework import viewsets
 from api.models import Monitoring, Biro
 from api.serializers.monitoring_serializer import MonitoringSerializer
 from api.utils.date_format import timestamp_to_strdateformat
-from api.utils.hit_api import get_biro_name
 from rest_framework.response import Response
 from django.forms.models import model_to_dict
 
