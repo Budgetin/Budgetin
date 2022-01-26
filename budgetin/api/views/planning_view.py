@@ -17,25 +17,31 @@ from django.db import transaction
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
-def create_update_all_biro(biros):
-    for biro in biros:
-        Biro.objects.update_or_create(
-            ithc_biro=biro['id'],
-            defaults={'code': biro['code'], 
-                      'name': biro['name'],
-                      'sub_group_code': biro['sub_group']['code'],
-                      'group_code': biro['sub_group']['group']['code'],
-                      }
-            )
+def create_update_all_biro_and_create_monitoring(biros, planning_id):
+    monitoring_status_id = MonitoringStatus.objects.filter(name=MonitoringStatusEnum.TODO.value).values()[0]['id']
+    for ithc_biro in biros:
+        biro, created = create_update_biro(ithc_biro)
+        if ithc_biro["manager_employee"] is not None:
+            create_monitoring(ithc_biro, biro, planning_id, monitoring_status_id)
+
+def create_update_biro(biro):
+    return Biro.objects.update_or_create(
+        ithc_biro=biro['id'],
+        defaults={'code': biro['code'], 
+                    'name': biro['name'],
+                    'sub_group_code': biro['sub_group']['code'],
+                    'group_code': biro['sub_group']['group']['code'],
+                    }
+        )
         
-def create_monitoring(planning_id, monitoring_status_id, biro):
+def create_monitoring(ithc_biro, biro, planning_id, monitoring_status_id):
     Monitoring.objects.create(
-        biro_id=biro['id'], 
+        biro_id=biro.id, 
         planning_id=planning_id, 
         monitoring_status_id=monitoring_status_id,
-        pic_employee_id=biro['manager_employee']['id'],
-        pic_initial=biro['manager_employee']['initial'],
-        pic_display_name=biro['manager_employee']['display_name'],
+        pic_employee_id=ithc_biro['manager_employee']['id'],
+        pic_initial=ithc_biro['manager_employee']['initial'],
+        pic_display_name=ithc_biro['manager_employee']['display_name'],
     )
 
 class PlanningViewSet(viewsets.ModelViewSet):
@@ -86,14 +92,9 @@ class PlanningViewSet(viewsets.ModelViewSet):
         AuditLog.Save(planning, request, ActionEnum.CREATE, TableEnum.PLANNING)
         
         planning_id = planning.data['id']
-        monitoring_status_id = MonitoringStatus.objects.filter(name=MonitoringStatusEnum.TODO.value).values()[0]['id']
         biros = get_all_biro('manager_employee,sub_group,sub_group.group')
-        for biro in biros:
-            create_monitoring(planning_id, monitoring_status_id, biro)
-            
-        #Re-seed biro data
-        create_update_all_biro(biros)
-
+        create_update_all_biro_and_create_monitoring(biros, planning_id)
+        
         return planning
 
     @transaction.atomic
