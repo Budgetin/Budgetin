@@ -153,6 +153,9 @@ export default {
     },
 
     computed: {
+        cardTitle() {
+            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+        },
         ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
 
         cardTitle() {

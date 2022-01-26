@@ -1,5 +1,6 @@
 import json
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from api.models import Planning, User
 from api.serializers.planning_serializer import PlanningSerializer
 from api.utils.date_format import timestamp_to_strdateformat
@@ -69,13 +70,12 @@ class PlanningViewSet(viewsets.ModelViewSet):
         
         #Re-seed biro data
         create_update_all_biro()
-        
+
         return planning
-    
 
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
-        
+
         #Process send notification
         if 'send_notification' in request.data:
             if request.data['send_notification'] == True:
@@ -95,3 +95,9 @@ class PlanningViewSet(viewsets.ModelViewSet):
         planning = super().destroy(request, *args, **kwargs)
         AuditLog.Save(planning, request, ActionEnum.DELETE, TableEnum.PLANNING)
         return planning
+    
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        active_planning = Planning.objects.filter(is_active=True).values()
+        
+        return Response(active_planning)
