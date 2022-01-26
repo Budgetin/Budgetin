@@ -23,6 +23,14 @@
                 </form-log-history>
             </v-row>
         </v-container>
+
+        <success-error-alert
+        :success="alert.success"
+        :show="alert.show"
+        :title="alert.title"
+        :subtitle="alert.subtitle"
+        @okClicked="onAlertOk"
+        />
     </v-app>
 </template>
 
@@ -40,7 +48,6 @@ export default {
         this.getEdittedItem();
     },
     watch: {},
-
     data: () => ({
         isView: true,
 
@@ -48,15 +55,15 @@ export default {
             biro: {
                 ithc_biro: "",
                 code: "",
-
+                subgroup: "",
+                group: "",
+                pic: "",
             },
             monitoring_status_id: "",
             is_deleted: "",
             planning_id: "",
             updated_by: "",
             updated_at: "",
-            due_date: "",
-            notification: "",
         },
         alert: {
             show: false,
@@ -67,17 +74,32 @@ export default {
     }),
 
     methods: {
+        ...mapActions("monitorPlanning", [
+            "patchMonitorPlanning",
+            "getMonitorPlanningById",
+        ]),
+        getEdittedItem() {
+            this.getMonitorPlanningById(this.$route.params.id).then(() => {
+                this.setForm();
+            });
+        },
+        setForm() {
+            this.form = JSON.parse(
+                JSON.stringify(this.$store.state.monitorPlanning.edittedItem)
+            );
+        },
         onAdd() {
             this.dialog = !this.dialog;
         },
-        // onEdit(item) {
-        //     this.$store.commit("masterCoa/SET_EDITTED_ITEM", item);
-        // },    
+        onEdit() {
+            this.isView = false;
+            this.isNew = false;
+        }, 
         onCancel() {
             this.dialog = false;
         },
         onSubmit(e) {
-            this.postStartPlanning(e)
+            this.postMonitorPlanning(e)
             .then(() => {
                 this.onSaveSuccess();
             })
@@ -105,12 +127,6 @@ export default {
         onOK() {
             return this.$router.go(-1);
         }
-    },
-
-    computed: {
-        cardTitle() {
-            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
-        },
     },
 };
 </script>
