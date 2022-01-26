@@ -103,7 +103,6 @@ export default {
   watch: {},
   data: () => ({
     dialog: false,
-    isEdit: false,
     search: "",
     dataTable: {
       headers: [

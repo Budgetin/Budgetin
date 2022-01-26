@@ -184,6 +184,9 @@ export default {
     },
 
     computed: {
+        cardTitle() {
+            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+        },
         ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
     },
 
@@ -234,12 +237,6 @@ export default {
         onOK() {
             return this.$router.go(-1);
         }
-    },
-
-    computed: {
-        cardTitle() {
-            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
-        },
     },
 };
 </script>
