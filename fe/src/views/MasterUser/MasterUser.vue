@@ -226,7 +226,7 @@ button {
     }
   }
 
-  .master-User__container {
+  .master-user__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -237,8 +237,8 @@ button {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #master-User {
-    .master-User__btn {
+  #master-user {
+    .master-user__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -247,7 +247,7 @@ button {
         margin: 0px 0px 32px 0px;
       }
     }
-    .master-User__card {
+    .master-user__card {
       flex-direction: column;
       button {
         width: 16rem !important;
