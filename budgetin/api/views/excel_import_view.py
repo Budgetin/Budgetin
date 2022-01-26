@@ -12,6 +12,5 @@ class ImportExcelView(APIView):
         file_obj = request.FILES['file'].read()
         file_data = request.data
         read_excel(file_obj)
-        #print(file_obj)
         
         return Response(status=204)
