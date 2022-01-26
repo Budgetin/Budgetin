@@ -31,6 +31,16 @@ const routes = [
         component: () => import("@/views/MasterProduct/EditMasterProduct"),
       },
       {
+        path: 'strategy',
+        name: 'MasterStrategy',
+        component: () => import("@/views/MasterStrategy/MasterStrategy"),
+      },
+      {
+        path: '/strategy/:id/edit',
+        name: 'EditMasterStrategy',
+        component: () => import("@/views/MasterStrategy/EditMasterStrategy"),
+      },
+      {
         path: '/user/:id/edit',
         name: 'EditMasterUser',
         component: () => import("@/views/MasterUser/EditMasterUser"),

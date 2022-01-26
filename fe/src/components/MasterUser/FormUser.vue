@@ -120,11 +120,11 @@ export default {
       if (validate) {
         const payload = {
           id: this.form?.id,
-          username : this.form.name.username,
+          username : this.form.name.username?this.form.name.username:this.form.name,
           role: this.form.role,
           is_active: this.form.status,
         };
-        console.log("payload" + payload);
+        // console.log(this.form.name.username);
         // console.log(payload)
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }
