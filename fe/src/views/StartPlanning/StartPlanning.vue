@@ -72,6 +72,10 @@
                                 </v-tooltip>
                             </router-link>
                         </template>
+
+                        <template v-slot:[`item.is_active`]="{ item }">
+                            <binary-status-chip :boolean="item.is_active"> </binary-status-chip>
+                        </template>
                     </v-data-table>
                 </v-col>
             </v-row>
@@ -106,10 +110,11 @@
 import { mapState, mapActions } from "vuex";
 import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
 export default {
     name: "StartPlanning",
     components: {
-        FormStartPlanning, SuccessErrorAlert
+        FormStartPlanning, SuccessErrorAlert, BinaryStatusChip
     },
     
     watch: {},
