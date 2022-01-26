@@ -6,6 +6,14 @@
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
+      <a-popconfirm
+        title="Are you sure delete this ?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="$emit('deleteClicked')"
+      >
+        <v-icon color="error" v-if="!isNew"> mdi-delete </v-icon>
+      </a-popconfirm>
     </v-card-title>
 
     <v-card-text>
@@ -69,7 +77,6 @@ export default {
   }),
   computed: {
     cardTitle() {
-      console.log(this.form)
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
     errorMsg() {
@@ -84,7 +91,6 @@ export default {
           id: this.form?.id,
           name : this.form.name,
         };
-        console.log(payload)
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }
     },

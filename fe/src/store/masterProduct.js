@@ -128,7 +128,7 @@ const masterProduct = {
           });
       });
     },
-    deleteMasterCoaById({ commit }, id) {
+    deleteMasterProductById({ commit }, id) {
       // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_DELETE_ITEM", true);
       return new Promise((resolve, reject) => {
