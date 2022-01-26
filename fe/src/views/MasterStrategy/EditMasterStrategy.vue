@@ -8,6 +8,7 @@
             :form="form"
             :isView="isView"
             @editClicked="onEdit"
+            @deleteClicked="onDelete"
             @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
@@ -34,6 +35,13 @@
       :subtitle="alert.subtitle"
       @okClicked="onAlertOk"
     />
+    <success-error-alert
+      :success="delete_alert.success"
+      :show="delete_alert.show"
+      :title="delete_alert.title"
+      :subtitle="delete_alert.subtitle"
+      @okClicked="onAlertDeleteOk"
+    />
   </v-container>
 </template>
 
@@ -46,13 +54,12 @@ export default {
   components: { FormStrategy,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
-    this.getMasterStrategy();
   },
   computed: {
     ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
   },
   methods: {
-    ...mapActions("masterStrategy", ["patchMasterStrategy","getMasterStrategyById"]),
+    ...mapActions("masterStrategy", ["patchMasterStrategy","getMasterStrategyById","deleteMasterStrategyById"]),
     getEdittedItem() {
       this.getMasterStrategyById(this.$route.params.id).then(() => {
         this.setForm();
@@ -65,6 +72,15 @@ export default {
     },
     onEdit() {
       this.isView = false;
+    },
+    onDelete(){
+      this.deleteMasterStrategyById(this.$route.params.id)
+        .then(() => {
+          this.onDeleteSuccess();
+        })
+        .catch((error) => {
+          this.onDeleteError(error);
+        });
     },
     onOK() {
       this.$router.go(-1);
@@ -99,6 +115,22 @@ export default {
       this.isView = true;
       this.getEdittedItem();
     },
+    onAlertDeleteOk() {
+      this.delete_alert.show = false;
+      this.$router.go(-1);
+    },
+    onDeleteSuccess() {
+      this.delete_alert.show = true;
+      this.delete_alert.success = true;
+      this.delete_alert.title = "Save Success";
+      this.delete_alert.subtitle = "Master Coa has been saved deleted";
+    },
+    onDeleteError(error) {
+      this.delete_alert.show = true;
+      this.delete_alert.success = false;
+      this.delete_alert.title = "Failed to Delete";
+      this.delete_alert.subtitle = error;
+    },
   },
   data: () => ({
     isView: true,
@@ -107,6 +139,12 @@ export default {
       name:""
     },
     alert: {
+      show: false,
+      success: null,
+      title: null,
+      subtitle: null,
+    },
+    delete_alert: {
       show: false,
       success: null,
       title: null,
