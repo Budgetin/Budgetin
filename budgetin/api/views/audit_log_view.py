@@ -19,17 +19,18 @@ class AuditLogViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.C
         else:
             return Response({"message":"table and / or entity not found"})
         
+        list_data = []
         for each in log:
-            each['timestamp'] = timestamp_to_strdateformat(str(each['timestamp']), "%d %B %Y")
-            each['modified_by'] = User.all_objects.get(pk=each['modified_by']).display_name
-            #Process serialized data to JSON
             data_json = json.loads(each['serialized_data'])
-            if data_json['created_at']:
-                data_json['created_at'] = timestamp_to_strdateformat(str(data_json['created_at']), "%d %B %Y")
+            data_json['is_deleted'] = 1 if data_json['is_deleted']==True else 0
+            data_json['is_capex'] = 1 if data_json['is_capex']==True else 0
+            data_json['created_at'] = timestamp_to_strdateformat(str(data_json['created_at']), "%d %B %Y")
+            data_json['created_by'] = User.all_objects.get(pk=data_json['created_by']).display_name
             if data_json['updated_at']:
                 data_json['updated_at'] = timestamp_to_strdateformat(str(data_json['updated_at']), "%d %B %Y")
-            each['serialized_data'] = data_json
-        return Response(log)
+                data_json['updated_by'] = User.all_objects.get(pk=data_json['updated_by']).display_name
+            list_data.append(data_json)
+        return Response(list_data)
     
     def map_table(self, table_name):
         if str.lower(table_name) == "coa":
