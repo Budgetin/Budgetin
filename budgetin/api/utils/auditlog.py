@@ -1,4 +1,5 @@
 import datetime
+import json
 from api.models.audit_log_model import AuditLog as AL
 from api.models.action_model import Action
 from api.models.table_model import Table
@@ -29,10 +30,10 @@ class AuditLog():
         
         if data and action_enum != ActionEnum.DELETE:
             entity_id = data.data['id']
-            serialized_data = data.data
+            serialized_data = json.dumps(data.data)
         else:
             entity_id = request.parser_context['kwargs']['pk']
-            serialized_data = {}
+            serialized_data = {"data":"deleted"}
             
         # AL.objects.create(timestamp=datetime.datetime.now(
         #     ), modified_by=request.custom_user['id'], entity_id=entity_id, serialized_data=serialized_data, action_id=actionid, table_id=tableid)

@@ -38,5 +38,9 @@
   {
     "id": 10,
     "name": "Project Detail"
+  },
+  {
+    "id": 11,
+    "name": "Strategy"
   }
 ]
