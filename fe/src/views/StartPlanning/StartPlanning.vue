@@ -64,7 +64,7 @@
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-icon v-on="on" color="primary" @click="onView(item)">
+                                        <v-icon v-on="on" color="primary" @click="onEdit(item)">
                                             mdi-eye
                                         </v-icon>
                                     </template>
@@ -125,7 +125,7 @@ export default {
             headers: [
                 { text: "ID", value: "id", width: "10%" },
                 { text: "Planning For", value: "year", width: "15%" },
-                { text: "Status", value: "is_active", width: "8%" },
+                { text: "Status", value: "is_active.id", width: "8%" },
                 { text: "Notification", value: "notification", width: "15%" },
                 { text: "Updated By", value: "updated_by", width: "20%" },
                 { text: "Updated Date", value: "updated_at", width: "15%" },
@@ -134,11 +134,16 @@ export default {
         },
         form: {
             year: "",
-            is_active: "",
+            is_active:{
+                id:"",
+                label:""
+            },
+            // is_active: "",
             created_by: "",
             updated_by: "",
             updated_at: "",
             due_date: "",
+            notification: "",
         },
         alert: {
             show: false,
@@ -165,13 +170,9 @@ export default {
 
     methods: {
         ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
-
         onAdd() {
             this.dialog = !this.dialog;
         },
-        onEdit(item) {
-            this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
-        },    
         onCancel() {
             this.dialog = false;
         },
@@ -204,7 +205,7 @@ export default {
         onMonitor() {
             console.log(item+"monitor");
         },
-        onView(item) {
+        onEdit(item) {
             this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
         },
         onOK() {

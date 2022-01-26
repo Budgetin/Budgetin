@@ -10,6 +10,8 @@ import masterUser from "./masterUser"
 import masterEmployee from "./masterEmployee"
 import login from "./login"
 import startPlanning from "./startPlanning"
+import monitorPlanning from "./monitorPlanning"
+import allBiro from "./allBiro"
 
 
 Vue.use(Vuex)
@@ -32,6 +34,8 @@ export default new Vuex.Store({
     masterUser,
     masterEmployee,
     login,
-    startPlanning
+    startPlanning,
+    monitorPlanning,
+    allBiro
   },
 })
