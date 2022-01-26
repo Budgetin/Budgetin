@@ -44,7 +44,8 @@ const masterUser = {
                 status: {
                   id: data.is_active,
                   label: data.is_active?"Active":"Inactive"
-                }
+                },
+                updated_at: data.updated_at
             }
           });
           const sorted = cleanData.sort((a, b) =>
@@ -79,7 +80,6 @@ const masterUser = {
         getAPI
           .get(ENDPOINT + `${id}/`)
           .then((response) => {
-            console.log(response.data);
             const data = response.data;
             let getData = {
                 id: data.id,
@@ -95,7 +95,6 @@ const masterUser = {
                   label: data.is_active?"Active":"Inactive"
                 }
             }
-            console.log(getData)
             commit("SET_EDITTED_ITEM", getData);
             resolve(getData);
           })
