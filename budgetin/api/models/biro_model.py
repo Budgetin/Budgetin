@@ -6,3 +6,5 @@ class Biro(SoftDeleteModel, TimestampModel):
     ithc_biro = models.BigIntegerField()
     code = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
+
+    all_object = models.Manager()
