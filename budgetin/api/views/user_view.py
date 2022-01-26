@@ -4,7 +4,7 @@ from api.models.user_model import User
 from api.serializers.user_serializer import UserSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 from rest_framework.decorators import action
-from api.utils.hit_api import get_imo_d_employee, get_s4, get_ithc_employee_info
+from api.utils.hit_api import get_imo_d_employee, get_ithc_employee_info
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
