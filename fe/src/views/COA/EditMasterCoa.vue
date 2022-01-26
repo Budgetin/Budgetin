@@ -17,15 +17,13 @@
       </v-col>
 
       <!-- log timeline -->
-      <!-- <v-col xs="12" sm="6" md="6" lg="5">
+      <v-col xs="12" sm="6" md="6" lg="5">
         <v-container>
           <timeline-log
-            v-if="cleanHistories"
-            :items="cleanHistories"
-            topic="Category"
+
           ></timeline-log>
         </v-container>
-      </v-col> -->
+      </v-col>
     </v-row>
     <!-- <pre>{{ cleanHistories }}</pre> -->
     <success-error-alert
@@ -49,9 +47,11 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import FormCoa from "@/components/MasterCOA/FormCoa";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import TimelineLog from "@/components/TimelineLog";
+
 export default {
   name: "EditMasterCoa",
-  components: { FormCoa,SuccessErrorAlert},
+  components: {TimelineLog,FormCoa,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
   },

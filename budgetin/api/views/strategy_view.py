@@ -38,17 +38,17 @@ class StrategyViewSet(viewsets.ModelViewSet):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
         strategy = super().create(request, *args, **kwargs)
-        AuditLog.Save(strategy, request, ActionEnum.CREATE, TableEnum.COA)
+        AuditLog.Save(strategy, request, ActionEnum.CREATE, TableEnum.STRATEGY)
         return strategy
 
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
         strategy = super().update(request, *args, **kwargs)
-        AuditLog.Save(strategy, request, ActionEnum.UPDATE, TableEnum.COA)
+        AuditLog.Save(strategy, request, ActionEnum.UPDATE, TableEnum.STRATEGY)
         return strategy
 
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
         strategy = super().destroy(request, *args, **kwargs)
-        AuditLog.Save(strategy, request, ActionEnum.DELETE, TableEnum.COA)
+        AuditLog.Save(strategy, request, ActionEnum.DELETE, TableEnum.STRATEGY)
         return strategy
