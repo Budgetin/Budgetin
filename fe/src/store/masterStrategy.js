@@ -17,6 +17,9 @@ const masterStrategy = {
     errorMsg: null,
     edittedItem: null,
     edittedItemHistories: [],
+    loadingDeleteItem:false,
+    deleteStatus: "IDLE",
+    deleteItem: []
   },
   getters: {
     value: (state) => state.value
@@ -125,6 +128,26 @@ const masterStrategy = {
           });
       });
     },
+
+    deleteMasterStrategyById({ commit }, id) {
+      // commit("SET_EDITTED_ITEM_HISTORIES", []);
+      commit("SET_LOADING_DELETE_ITEM", true);
+      return new Promise((resolve, reject) => {
+        getAPI
+          .delete(ENDPOINT + `${id}/`)
+          .then((response) => {
+            const data = response.data;
+            commit("SET_DELETE_ITEM", data);
+            resolve(data);
+            store.dispatch("masterStrategy/getFromAPI");
+          })
+          .catch((error) => {
+            commit("DELETE_ERROR", error);
+            reject(error);
+          });
+      });
+    },
+
     // getEdittedItemHistories({ commit }) {
     //   const itemID = store.state.masterStrategy.edittedItem.id;
     //   if (!itemID) return;
@@ -197,6 +220,19 @@ const masterStrategy = {
     },
     ON_CHANGE_PAGING(state, payload) {
       state.current = payload;
+    },
+
+    // delete item
+    SET_DELETE_ITEM(state, payload) {
+      state.deleteItem = payload;
+    },
+    SET_LOADING_DELETE_ITEM(state, payload) {
+      state.loadingDeleteItem = payload;
+    },
+    DELETE_ERROR(state, error) {
+      state.deleteStatus = "ERROR";
+      state.loadingDeleteItem = false;
+      state.errorMsg = error;
     },
   },
 };

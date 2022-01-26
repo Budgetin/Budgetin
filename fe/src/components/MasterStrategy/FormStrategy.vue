@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="mb-5">
-      {{ cardTitle }} Product
+      {{ cardTitle }} Strategy
       <v-spacer></v-spacer>
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
@@ -18,12 +18,12 @@
 
     <v-card-text>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
-        <!-- Product Code -->
+        <!-- Strategy Name -->
         <v-row no-gutters>
-          <v-col cols="6"> Product Code<strong class="red--text">*</strong> </v-col>
+          <v-col cols="6">Strategy Name<strong class="red--text">*</strong> </v-col>
           <v-col cols="6">
             <v-text-field
-              v-model="form.product_code"
+              v-model="form.name"
               outlined
               dense
               :disabled="isView"
@@ -31,42 +31,6 @@
               placeholder="Input Here"
             >
             </v-text-field>
-          </v-col>
-        </v-row>
-        <!-- Product Name  -->
-        <v-row no-gutters>
-          <v-col cols="6">
-            Product Name <strong class="red--text">*</strong>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="form.product_name"
-              outlined
-              dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
-            >
-            </v-text-field>
-          </v-col>
-        </v-row>
-        <!-- IT Strategy -->
-        <v-row no-gutters>
-          <v-col cols="6">
-            IT Strategy <strong class="red--text">*</strong>
-          </v-col>
-          <v-col cols="6">
-            <v-select
-              :items="dataMasterStrategy"
-              v-model="form.strategy"
-              item-text="name"
-              item-value="id"
-              outlined
-              dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Select Strategy"
-            ></v-select>
           </v-col>
         </v-row>
         <!-- BUTTONS -->
@@ -102,7 +66,7 @@
 
 <script>
 export default {
-  name: "FormProduct",
+  name: "FormStrategy",
   props: ["form","dataMasterStrategy", "isView", "isNew"],
   data: () => ({
     validation: {
@@ -125,11 +89,8 @@ export default {
       if (validate) {
         const payload = {
           id: this.form?.id,
-          product_code : this.form.product_code,
-          product_name : this.form.product_name,
-          strategy : this.form.strategy,
+          name : this.form.name,
         };
-        console.log(payload)
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }
     },

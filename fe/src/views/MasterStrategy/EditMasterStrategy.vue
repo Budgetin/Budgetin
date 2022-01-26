@@ -4,7 +4,7 @@
       <!-- edit form -->
       <v-col xs="12" sm="6" md="6" lg="7">
         <v-container>
-          <form-coa
+          <form-Strategy
             :form="form"
             :isView="isView"
             @editClicked="onEdit"
@@ -12,7 +12,7 @@
             @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-coa>
+          ></form-Strategy>
         </v-container>
       </v-col>
 
@@ -47,34 +47,34 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormCoa from "@/components/MasterCOA/FormCoa";
+import FormStrategy from "@/components/MasterStrategy/FormStrategy";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "EditMasterCoa",
-  components: { FormCoa,SuccessErrorAlert},
+  name: "EditMasterStrategy",
+  components: { FormStrategy,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
   },
+  computed: {
+    ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
+  },
   methods: {
-    ...mapActions("masterCoa", [
-      "patchMasterCoa",
-      "getMasterCoaById","deleteMasterCoaById"
-    ]),
+    ...mapActions("masterStrategy", ["patchMasterStrategy","getMasterStrategyById","deleteMasterStrategyById"]),
     getEdittedItem() {
-      this.getMasterCoaById(this.$route.params.id).then(() => {
+      this.getMasterStrategyById(this.$route.params.id).then(() => {
         this.setForm();
       });
     },
     setForm() {
       this.form = JSON.parse(
-        JSON.stringify(this.$store.state.masterCoa.edittedItem)
+        JSON.stringify(this.$store.state.masterStrategy.edittedItem)
       );
     },
     onEdit() {
       this.isView = false;
     },
     onDelete(){
-      this.deleteMasterCoaById(this.$route.params.id)
+      this.deleteMasterStrategyById(this.$route.params.id)
         .then(() => {
           this.onDeleteSuccess();
         })
@@ -90,7 +90,7 @@ export default {
       this.setForm();
     },
     onSubmit(e) {
-      this.patchMasterCoa(e)
+      this.patchMasterStrategy(e)
         .then(() => {
           this.onSaveSuccess();
         })
@@ -102,7 +102,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "Master Coa has been saved successfully";
+      this.alert.subtitle = "Master Strategy has been saved successfully";
     },
     onSaveError(error) {
       this.alert.show = true;
@@ -136,11 +136,7 @@ export default {
     isView: true,
     form: {
       id: "",
-      name: "",
-      definition: "",
-      hyperion_name: "",
-      is_capex: "",
-      minimum_item_origin: "",
+      name:""
     },
     alert: {
       show: false,
@@ -159,21 +155,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#master-coa {
+#master-Strategy {
   width: 80%;
   margin: 0px auto;
 
-  .master-coa__header {
+  .master-Strategy__header {
     padding-left: 32px;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .master-coa__input {
+  .master-Strategy__input {
     padding: 10px 32px;
   }
 
-  .master-coa__btn {
+  .master-Strategy__btn {
     text-align: end;
 
     button {
@@ -181,14 +177,14 @@ export default {
     }
   }
 
-  .master-coa__container {
+  .master-Strategy__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 8px;
   }
 
-  .master-coa__card {
+  .master-Strategy__card {
     button {
       width: 8rem;
     }
@@ -197,8 +193,8 @@ export default {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #master-coa {
-    .master-coa__btn {
+  #master-Strategy {
+    .master-Strategy__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -207,7 +203,7 @@ export default {
         margin: 0px 0px 32px 0px;
       }
     }
-    .master-coa__card {
+    .master-Strategy__card {
       flex-direction: column;
       button {
         width: 16rem !important;

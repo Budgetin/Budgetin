@@ -46,5 +46,4 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def imo(self, request, pk=None):
         imod = get_imo_d_employee()
-        # s4 = get_s4()
         return Response(imod)
