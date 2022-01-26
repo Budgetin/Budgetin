@@ -56,11 +56,6 @@ const routes = [
         component: () => import("@/views/StartPlanning/ViewPlanning")
       },
       {
-        path: '/startPlanning/edit',
-        name: 'EditPlanning',
-        component: () => import("@/views/StartPlanning/EditPlanning")
-      },
-      {
         path: '/startPlanning/viewStatusMonitor',
         name: 'ViewStatusMonitoring',
         component: () => import("@/views/StartPlanning/ViewStatusMonitoring")

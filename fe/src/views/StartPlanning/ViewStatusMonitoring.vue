@@ -5,11 +5,11 @@
                 <!-- MONITOR PLANNING -->
                 <form-monitor-planning
                     :form="form"
-                    :isView="true"
-                    :isNew="false"
+                    :isView="isView"
                     @editClicked="onEdit"
                     @cancelClicked="onCancel"
                     @submitClicked="onSubmit"
+                    @okClicked="onOK"
                     class="view-status-monitoring__detail">
                 </form-monitor-planning>
 
@@ -27,19 +27,44 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapGetters } from "vuex";
 import FormMonitorPlanning from '@/components/CompStartPlanning/FormMonitorPlanning';
 import FormLogHistory from '@/components/CompStartPlanning/FormLogHistory';
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-    name: "CompStartPlanning",
+    name: "ViewStatusMonitoring",
     components: {
-        FormMonitorPlanning, FormLogHistory
+        FormMonitorPlanning, FormLogHistory, SuccessErrorAlert
+    },
+    created() {
+        this.getEdittedItem();
     },
     watch: {},
-    data() {
-        return {
 
-        };
-    },
+    data: () => ({
+        isView: true,
+
+        form: {
+            biro: {
+                ithc_biro: "",
+                code: "",
+
+            },
+            monitoring_status_id: "",
+            is_deleted: "",
+            planning_id: "",
+            updated_by: "",
+            updated_at: "",
+            due_date: "",
+            notification: "",
+        },
+        alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
+    }),
 
     methods: {
         onAdd() {

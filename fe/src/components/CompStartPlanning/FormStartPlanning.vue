@@ -3,8 +3,7 @@
     <v-card-title class="text-h5" style="margin-bottom: 32px">
       {{ cardTitle }} a Planning
       <v-spacer></v-spacer>
-      <!-- <v-btn v-if="isView" icon small @click="$emit('editClicked')"> -->
-      <v-btn v-if="isView" icon small link :to="'/startPlanning/edit'">
+      <v-btn v-if="isView" icon small @click="$emit('editClicked')">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
     </v-card-title>
@@ -20,23 +19,12 @@
               sm="6">
               <div class="StartPlanning__field">
                 <v-select
-                  v-if="isView"
                   v-model="form.year"
                   :items="yearOptions"
                   item-text="yearValue"
-                  label="2023"
                   outlined
                   return-object
-                  disabled>
-                </v-select>
-                <v-select
-                  v-if="!isView"
-                  v-model="form.year"
-                  :items="yearOptions"
-                  item-text="yearValue"
-                  label="Pick a Year"
-                  outlined
-                  return-object
+                  :disabled="isView"
                   :rules="validation.required">
                 </v-select>
               </div>
@@ -51,23 +39,13 @@
               sm="6">
               <div class="StartPlanning__field">
                 <v-select
-                  v-if="isView"
                   v-model="form.is_active"
                   :items="statusOptions"
                   item-text="activeInactive"
                   label="Active"
                   outlined
                   return-object
-                  disabled>
-                </v-select>
-                <v-select
-                  v-if="!isView"
-                  v-model="form.is_active"
-                  :items="statusOptions"
-                  item-text="activeInactive"
-                  label="Active/Inactive"
-                  outlined
-                  return-object
+                  :disabled="isView"
                   :rules="validation.required">
                 </v-select>
               </div>
@@ -89,21 +67,12 @@
                 <template v-slot:activator="{ on, attrs }">
                   <div class="StartPlanning__field">
                     <v-text-field
-                      v-if="isView"
                       v-model="localDate"
                       outlined
                       readonly
                       v-bind="attrs"
                       v-on="on"
-                      disabled>
-                    </v-text-field>
-                    <v-text-field
-                      v-if="!isView"
-                      v-model="localDate"
-                      outlined
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
+                      :disabled="isView"
                       :rules="validation.required">
                     </v-text-field>
                   </div>
@@ -126,24 +95,14 @@
               sm="6">
               <div class="StartPlanning__field">
                 <v-select
-                  v-if="isView"
                   v-model="notif"
                   :items="notifOptions"
                   item-text="option"
                   label="Yes"
                   outlined
                   return-object
-                  disabled>
-                </v-select>
-                <v-select
-                  v-if="!isView"
-                  v-model="notif"
-                  :items="notifOptions"
-                  item-text="option"
-                  label="Yes/No"
-                  outlined
-                  return-object
                   @click="notifValue()"
+                  :disabled="isView"
                   :rules="validation.required">
                 </v-select>
               </div>
@@ -223,12 +182,6 @@
 export default {
   name: "FormStartPlanning",
   props: ["form", "isNew", "isView"],
-
-  data() {
-    return {
-      
-    }
-  },
   
   data: () => ({
     localDate: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
@@ -348,7 +301,7 @@ export default {
       this.dialog = false;
     },
     onOK() {
-        return this.$router.go(-1);
+      return this.$router.go(-1);
     },
   },
 }
