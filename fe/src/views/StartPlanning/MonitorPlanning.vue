@@ -10,8 +10,9 @@
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-data-table
-                        :headers="headers"
-                        :items="desserts"
+                        :headers="dataTable.headers"
+                        :loading="loadingGetMonitorPlanning"
+                        :items="dataMonitorPlanning"
                         :search="search"
                         class="data-table">
                         <template v-slot:top>
@@ -41,13 +42,17 @@
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-icon v-on="on" color="primary" @click="onView()">
+                                        <v-icon v-on="on" color="primary" @click="onEdit(item)">
                                             mdi-eye
                                         </v-icon>
                                     </template>
                                     <span>View/Edit</span>
                                 </v-tooltip>
                             </router-link>
+                        </template>
+
+                        <template v-slot:[`item.is_deleted`]="{ item }">
+                            <binary-status-chip :boolean="item.is_deleted"> </binary-status-chip>
                         </template>
                     </v-data-table>
                 </v-col>
@@ -57,141 +62,109 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
+import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
 export default {
+    name: "MonitorPlanning",
+    components: {
+        BinaryStatusChip
+    },
     watch: {},
-    data() {
-        return {
-            dialog: false,
-            search: "",
+    data: () => ({
+        dialog: false,
+        search: "",
+        dataTable: {
             headers: [
                 { text: "No", value: "no", width: "5%" },
                 { text: "Group", value: "group", width: "15%" },
-                { text: "Sub-Group", value: "subGroup", width: "15%" },
-                { text: "Biro", value: "biro", width: "15%" },
+                { text: "Sub-Group", value: "subgroup", width: "15%" },
+                { text: "Biro", value: "code", width: "15%" },
                 { text: "PIC", value: "pic", width: "15%" },
-                { text: "Updated Date", value: "updatedDate", width: "20%" },
-                { text: "Status", value: "status", width: "17%" },
+                { text: "Updated Date", value: "updated_at", width: "20%" },
+                { text: "Status", value: "monitoring_status_id", width: "17%" },
                 { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
             ],
-            desserts: [
-                {
-                    no: 1,
-                    group: "GAQ",
-                    subGroup: "ARC",
-                    biro: "ARC A",
-                    pic: "JRE",
-                    updatedDate: "5 January 2022",
-                    status: "Submitted",
-                },
-                {
-                    no: 2,
-                    group: "APT",
-                    subGroup: "CTS",
-                    biro: "CTS A",
-                    pic: "PLN",
-                    updatedDate: "2 January 2022",
-                    status: "Draft",
-                },
-                {
-                    no: 3,
-                    group: "DIS",
-                    subGroup: "DIS *",
-                    biro: "DIS A",
-                    pic: "YOH",
-                    updatedDate: "15 January 2022",
-                    status: "Submitted",
-                },
-                {
-                    no: 4,
-                    group: "GAQ",
-                    subGroup: "SAQ",
-                    biro: "SAQ B",
-                    pic: "WAN",
-                    updatedDate: "",
-                    status: "To-Do",
-                },
-                {
-                    no: 5,
-                    group: "APT",
-                    subGroup: "CTS",
-                    biro: "CTS B",
-                    pic: "LCD",
-                    updatedDate: "5 January 2022",
-                    status: "Draft",
-                },
-                {
-                    no: 6,
-                    group: "APT",
-                    subGroup: "CTS",
-                    biro: "CTS C",
-                    pic: "DVD",
-                    updatedDate: "3 January 2022",
-                    status: "Submitted",
-                },
-                {
-                    no: 7,
-                    group: "GAQ",
-                    subGroup: "SAQ",
-                    biro: "SAQ A",
-                    pic: "WAN",
-                    updatedDate: "4 January 2022",
-                    status: "Submitted",
-                },
-                {
-                    no: 8,
-                    group: "DIS",
-                    subGroup: "DIS B",
-                    biro: "DIS B *",
-                    pic: "APE",
-                    updatedDate: "",
-                    status: "To-Do",
-                },
-                {
-                    no: 9,
-                    group: "APT",
-                    subGroup: "ITX",
-                    biro: "ITX A",
-                    pic: "IWA",
-                    updatedDate: "8 January 2022",
-                    status: "Draft",
-                },
-                {
-                    no: 10,
-                    group: "IIO",
-                    subGroup: "SIS",
-                    biro: "SIS B",
-                    pic: "WIB",
-                    updatedDate: "",
-                    status: "To-Do",
-                },
-                {
-                    no: 11,
-                    group: "DMO",
-                    subGroup: "IMO",
-                    biro: "IMO A",
-                    pic: "HND",
-                    updatedDate: "5 January 2022",
-                    status: "Submitted",
-                },
-                {
-                    no: 12,
-                    group: "IIO",
-                    subGroup: "SIS",
-                    biro: "SIS C",
-                    pic: "ANT",
-                    updatedDate: "5 January 2022",
-                    status: "Draft",
-                },
-            ],
-        };
+        },
+        form: {
+            biro: {
+                ithc_biro: "",
+                code: "",
+                subgroup: "",
+                group: "",
+                pic: "",
+            },
+            monitoring_status_id: "",
+            is_deleted: "",
+            planning_id: "",
+            updated_by: "",
+            updated_at: "",
+        },
+        alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
+    }),
+
+    created() {
+        this.getMonitorPlanning();
+    },
+    
+    computed: {
+        cardTitle() {
+            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+        },
+        ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning"]),
+
+        cardTitle() {
+            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+        },
     },
 
     methods: {
+        ...mapActions("monitorPlanning", ["getMonitorPlanning", "postMonitorPlanning"]),
+
+        onAdd() {
+            this.dialog = !this.dialog;
+        },
         onCancel() {
             this.dialog = false;
         },
-        onView() {
-            
+        onSubmit(e) {
+            this.postMonitorPlanning(e)
+            .then(() => {
+                this.onSaveSuccess();
+            })
+            .catch((error) => {
+                this.onSaveError(error);
+            });
+        },
+        onSaveSuccess() {
+            this.dialog = false;
+            this.alert.show = true;
+            this.alert.success = true;
+            this.alert.title = "Save Success";
+            this.alert.subtitle = "Monitoring Status has been saved successfully";
+        },
+        onSaveError(error) {
+            this.dialog = false;
+            this.alert.show = true;
+            this.alert.success = false;
+            this.alert.title = "Save Failed";
+            this.alert.subtitle = error;
+        },
+        onAlertOk() {
+            this.alert.show = false;
+        },
+        onMonitor() {
+            console.log(item+"monitor");
+        },
+        onEdit(item) {
+            this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
+        },
+        onOK() {
+            return this.$router.go(-1);
         }
     }
 };

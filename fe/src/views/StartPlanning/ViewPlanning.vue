@@ -1,7 +1,7 @@
 <template>
     <v-app id="view-planning">
         <v-container>
-            <v-row no-gutters style="max-height: 90%;">
+            <v-row no-gutters>
                 <!-- START PLANNING -->
                 <form-start-planning
                     :form="form"
@@ -138,7 +138,6 @@ export default {
 }
 
 #view-planning {
-
     .view-planning__header {
         padding-top: 32px;
         padding-bottom: 32px;
