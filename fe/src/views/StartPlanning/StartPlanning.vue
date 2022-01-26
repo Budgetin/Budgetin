@@ -64,7 +64,7 @@
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-icon v-on="on" color="primary" @click="onView()">
+                                        <v-icon v-on="on" color="primary" @click="onView(item)">
                                             mdi-eye
                                         </v-icon>
                                     </template>
@@ -204,8 +204,8 @@ export default {
         onMonitor() {
             console.log(item+"monitor");
         },
-        onView() {
-            console.log(item);
+        onView(item) {
+            this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
         },
         onOK() {
             return this.$router.go(-1);
