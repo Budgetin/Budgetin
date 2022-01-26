@@ -33,9 +33,10 @@ export default {
 
 /* GLOBAL TYPOGRAPHY  STYLING */
 #app,
-#master-coa
+#master-coa,
 #master-product,
-#master-user
+#master-user,
+#master-strategy
 {
   font-family: "Nunito", sans-serif !important;
 }
