@@ -5,11 +5,11 @@
                 <!-- START PLANNING -->
                 <form-start-planning
                     :form="form"
-                    :isView="true"
-                    :isNew="false"
+                    :isView="isView"
                     @editClicked="onEdit"
                     @cancelClicked="onCancel"
                     @submitClicked="onSubmit"
+                    @okClicked="onOK"
                     class="view-planning__detail">
                 </form-start-planning>
 
@@ -22,37 +22,80 @@
                     class="view-planning__logHistory">
                 </form-log-history>
             </v-row>
+
+            <success-error-alert
+            :success="alert.success"
+            :show="alert.show"
+            :title="alert.title"
+            :subtitle="alert.subtitle"
+            @okClicked="onAlertOk"
+            />
         </v-container>
     </v-app>
 </template>
 
 <script>
+import { mapState, mapActions, mapGetters } from "vuex";
 import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
 import FormLogHistory from '@/components/CompStartPlanning/FormLogHistory';
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-    name: "CompStartPlanning",
+    name: "ViewPlanning",
     components: {
-        FormStartPlanning, FormLogHistory
+        FormStartPlanning, FormLogHistory, SuccessErrorAlert
+    },
+    created() {
+        this.getEdittedItem();
     },
     watch: {},
-    data() {
-        return {
+    data: () => ({
+        isView: true,
 
-        };
-    },
+        form: {
+            year: "",
+            is_active: "",
+            created_by: "",
+            updated_by: "",
+            updated_at: "",
+            due_date: "",
+            notification: "",
+        },
+        alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
+    }),
 
     methods: {
+        ...mapActions("startPlanning", [
+            "patchStartPlanning",
+            "getStartPlanningById",
+        ]),
+        getEdittedItem() {
+            this.getStartPlanningById(this.$route.params.id).then(() => {
+                this.setForm();
+            });
+        },
+        setForm() {
+            this.form = JSON.parse(
+                JSON.stringify(this.$store.state.startPlanning.edittedItem)
+            );
+        },
+        onEdit() {
+            this.isView = false;
+            this.isNew = false;
+        },
         onAdd() {
             this.dialog = !this.dialog;
-        },
-        // onEdit(item) {
-        //     this.$store.commit("masterCoa/SET_EDITTED_ITEM", item);
-        // },    
+        }, 
         onCancel() {
-            return this.$router.go(-1);
+            this.isView = true;
+            this.setForm();
         },
         onSubmit(e) {
-            this.postStartPlanning(e)
+            this.patchStartPlanning(e)
             .then(() => {
                 this.onSaveSuccess();
             })
@@ -76,16 +119,12 @@ export default {
         },
         onAlertOk() {
             this.alert.show = false;
+            this.isView = true;
+            this.getEdittedItem();
         },
         onOK() {
             return this.$router.go(-1);
         }
-    },
-    
-    computed: {
-        cardTitle() {
-            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
-        },
     },
 };
 </script>
@@ -99,6 +138,7 @@ export default {
 }
 
 #view-planning {
+
     .view-planning__header {
         padding-top: 32px;
         padding-bottom: 32px;

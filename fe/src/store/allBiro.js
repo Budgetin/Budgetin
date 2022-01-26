@@ -1,33 +1,30 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/product/";
+const ENDPOINT = "/api/biro/";
 
-const masterProduct = {
+const allBiro = {
   namespaced: true,
   state: {
-    loadingGetMasterProduct: false, // for loading table
+    loadingGetAllBiro: false, // for loading table
     loadingGetEdittedItem: false,
-    loadingPostPatchMasterProduct: false, // for loading post/patch
-    dataMasterProduct: [], // for v-data-table
-    dataActiveMasterProduct: [], //for dropdown
+    loadingPostPatchAllBiro: false, // for loading post/patch
+    dataAllBiro: [], // for v-data-table
+    dataActiveAllBiro: [], //for dropdown
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
     edittedItem: null,
     edittedItemHistories: [],
-    loadingDeleteItem:false,
-    deleteStatus: "IDLE",
-    deleteItem: []
   },
   getters: {
     value: (state) => state.value
   },
   actions: {
-    getMasterProduct() {
-      if (store.state.masterProduct.requestStatus !== "SUCCESS")
-        store.dispatch("masterProduct/getFromAPI");
+    getAllBiro() {
+      if (store.state.allBiro.requestStatus !== "SUCCESS")
+        store.dispatch("allBiro/getFromAPI");
     },
     getFromAPI({ commit }) {
       commit("GET_INIT");
@@ -44,7 +41,7 @@ const masterProduct = {
           commit("GET_ERROR", error);
         });
     },
-    getMasterProductById({ commit }, id) {
+    getAllBiroById({ commit }, id) {
       // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
@@ -62,7 +59,7 @@ const masterProduct = {
           });
       });
     },
-    postMasterProduct({ commit }, payload) {
+    postAllBiro({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
@@ -70,7 +67,7 @@ const masterProduct = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterProduct/getFromAPI");
+            store.dispatch("allBiro/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -79,8 +76,8 @@ const masterProduct = {
               errorMsg = "";
               switch (error.response.status) {
                 case 400:
-                  if (error.response.data.hasOwnProperty("Product_name")) {
-                    errorMsg += error.response.data.Product_name;
+                  if (error.response.data.hasOwnProperty("year")) {
+                    errorMsg += error.response.data.year;
                   }
                   break;
 
@@ -94,7 +91,7 @@ const masterProduct = {
           });
       });
     },
-    patchMasterProduct({ commit }, payload) {
+    patchAllBiro({ commit }, payload) {
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
       return new Promise((resolve, reject) => {
@@ -103,8 +100,7 @@ const masterProduct = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterProduct/getFromAPI");
-            // store.dispatch("masterCategory/getFromAPI");
+            store.dispatch("allBiro/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -113,8 +109,8 @@ const masterProduct = {
               errorMsg = "";
               switch (error.response.status) {
                 case 400:
-                  if (error.response.data.hasOwnProperty("Product_name")) {
-                    errorMsg += error.response.data.Product_name;
+                  if (error.response.data.hasOwnProperty("year")) {
+                    errorMsg += error.response.data.year;
                   }
                   break;
 
@@ -128,26 +124,8 @@ const masterProduct = {
           });
       });
     },
-    deleteMasterCoaById({ commit }, id) {
-      // commit("SET_EDITTED_ITEM_HISTORIES", []);
-      commit("SET_LOADING_DELETE_ITEM", true);
-      return new Promise((resolve, reject) => {
-        getAPI
-          .delete(ENDPOINT + `${id}/`)
-          .then((response) => {
-            const data = response.data;
-            commit("SET_DELETE_ITEM", data);
-            resolve(data);
-            store.dispatch("masterProduct/getFromAPI");
-          })
-          .catch((error) => {
-            commit("DELETE_ERROR", error);
-            reject(error);
-          });
-      });
-    },
     // getEdittedItemHistories({ commit }) {
-    //   const itemID = store.state.masterProduct.edittedItem.id;
+    //   const itemID = store.state.allBiro.edittedItem.id;
     //   if (!itemID) return;
     //   getAPI
     //     .get(ENDPOINT + `${itemID}/histories/`)
@@ -159,15 +137,15 @@ const masterProduct = {
     //       commit("GET_ERROR", error.response.data);
     //     });
     // },
-    // getActiveMasterProduct({ commit }) {
-    //   if (store.state.masterProduct.requestActiveStatus !== "SUCCESS")
+    // getActiveallBiro({ commit }) {
+    //   if (store.state.allBiro.requestActiveStatus !== "SUCCESS")
     //     getAPI
     //       .get(ENDPOINT + "?filter{status}=1")
     //       .then((response) => {
-    //         const cleanData = response.data.Products.map((data) => {
+    //         const cleanData = response.data.Coas.map((data) => {
     //           return {
     //             id: data.id,
-    //             Product_name: data.Product_name,
+    //             Coa_name: data.Coa_name,
     //             status: String(data.status),
     //           };
     //         });
@@ -182,37 +160,37 @@ const masterProduct = {
     // get related
     GET_INIT(state) {
       state.requestStatus = "PENDING";
-      state.loadingGetMasterProduct = true;
+      state.loadingGetAllBiro = true;
     },
-    GET_SUCCESS(state, dataMasterProduct) {
+    GET_SUCCESS(state, dataAllBiro) {
       state.requestStatus = "SUCCESS";
-      state.loadingGetMasterProduct = false;
-      state.dataMasterProduct = dataMasterProduct;
+      state.loadingGetAllBiro = false;
+      state.dataAllBiro = dataAllBiro;
     },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveMasterProduct) {
+    GET_ACTIVE_DATA_UPDATE(state, dataActiveAllBiro) {
       state.requestActiveStatus = "IDLE";
-      state.dataActiveMasterProduct = dataActiveMasterProduct;
+      state.dataActiveAllBiro = dataActiveAllBiro;
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingGetMasterProduct = false;
+      state.loadingGetAllBiro = false;
       state.errorMsg = error;
-      state.dataMasterProduct = [];
-      state.dataActiveMasterProduct = [];
+      state.dataAllBiro = [];
+      state.dataActiveAllBiro = [];
     },
 
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";
-      state.loadingPostPatchMasterProduct = true;
+      state.loadingPostPatchAllBiro = true;
     },
     POST_PATCH_SUCCESS(state) {
       state.requestStatus = "SUCCESS";
-      state.loadingPostPatchMasterProduct = false;
+      state.loadingPostPatchAllBiro = false;
     },
     POST_PATCH_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingPostPatchMasterProduct = false;
+      state.loadingPostPatchAllBiro = false;
       state.errorMsg = error;
     },
     SET_EDITTED_ITEM(state, payload) {
@@ -226,29 +204,18 @@ const masterProduct = {
     SET_EDITTED_ITEM_HISTORIES(state, payload) {
       state.edittedItemHistories = payload;
     },
+
     SET_REQUEST_STATUS(state, payload) {
       state.requestStatus = payload;
     },
+
     ON_CHANGE(state, payload) {
       state.value = payload;
     },
     ON_CHANGE_PAGING(state, payload) {
       state.current = payload;
     },
-
-    // delete item
-    SET_DELETE_ITEM(state, payload) {
-      state.deleteItem = payload;
-    },
-    SET_LOADING_DELETE_ITEM(state, payload) {
-      state.loadingDeleteItem = payload;
-    },
-    DELETE_ERROR(state, error) {
-      state.deleteStatus = "ERROR";
-      state.loadingDeleteItem = false;
-      state.errorMsg = error;
-    },
   },
 };
 
-export default masterProduct;
+export default allBiro

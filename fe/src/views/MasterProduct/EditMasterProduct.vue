@@ -35,6 +35,13 @@
       :subtitle="alert.subtitle"
       @okClicked="onAlertOk"
     />
+    <success-error-alert
+      :success="delete_alert.success"
+      :show="delete_alert.show"
+      :title="delete_alert.title"
+      :subtitle="delete_alert.subtitle"
+      @okClicked="onAlertDeleteOk"
+    />
   </v-container>
 </template>
 
@@ -53,7 +60,7 @@ export default {
     ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
   },
   methods: {
-    ...mapActions("masterProduct", ["patchMasterProduct","getMasterProductById"]),
+    ...mapActions("masterProduct", ["patchMasterProduct","getMasterProductById","deleteMasterCoaById"]),
     ...mapActions("masterStrategy", ["getMasterStrategy"]),
     getEdittedItem() {
       this.getMasterProductById(this.$route.params.id).then(() => {
@@ -67,6 +74,15 @@ export default {
     },
     onEdit() {
       this.isView = false;
+    },
+    onDelete(){
+      this.deleteMasterCoaById(this.$route.params.id)
+        .then(() => {
+          this.onDeleteSuccess();
+        })
+        .catch((error) => {
+          this.onDeleteError(error);
+        });
     },
     onOK() {
       this.$router.go(-1);
