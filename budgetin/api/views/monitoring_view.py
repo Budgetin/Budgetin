@@ -23,8 +23,8 @@ class MonitoringViewSet(viewsets.ModelViewSet):
             monitoring = Monitoring.objects.all().values()
 
         for each in monitoring:
-            each.pop('biro_id')
             each['biro'] = model_to_dict(Biro.all_object.get(pk=each['biro_id']))
+            each.pop('biro_id')
             each['created_at'] = each['created_at'].strftime("%d %B %Y")
             each['updated_at'] = each['updated_at'].strftime("%d %B %Y")
         return Response(monitoring)
