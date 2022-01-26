@@ -28,11 +28,11 @@
                                             hide-details>
                                         </v-text-field>
                                     </v-col>
-                                    <!-- <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="start-planning__btn">
+                                    <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="start-planning__btn">
                                         <v-btn rounded color="primary" @click="onAdd">
                                             + Start New Planning
                                         </v-btn>
-                                    </v-col> -->
+                                    </v-col>
                                 </v-row>
                             </v-toolbar-title>
                         </template>
@@ -72,12 +72,16 @@
                                 </v-tooltip>
                             </router-link>
                         </template>
+
+                        <template v-slot:[`item.is_active`]="{ item }">
+                            <binary-status-chip :boolean="item.is_active"> </binary-status-chip>
+                        </template>
                     </v-data-table>
                 </v-col>
             </v-row>
 
             <v-row no-gutters>
-                <!-- <v-dialog v-model="dialog" persistent width="40rem">
+                <v-dialog v-model="dialog" persistent width="40rem">
                     <form-start-planning
                         :form="form"
                         :isNew="true"
@@ -88,7 +92,7 @@
                         @submitClicked="onSubmit"
                         @okClicked="onOK">
                     </form-start-planning>
-                </v-dialog> -->
+                </v-dialog>
             </v-row>
         </v-container>
 
@@ -106,78 +110,43 @@
 import { mapState, mapActions } from "vuex";
 import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
 export default {
     name: "StartPlanning",
     components: {
-        FormStartPlanning, SuccessErrorAlert
+        FormStartPlanning, SuccessErrorAlert, BinaryStatusChip
     },
     
     watch: {},
-    data() {
-        return {
-            dialog: false,
-            search: "",
-            dataTable: {
-                headers: [
-                    { text: "ID", value: "id", width: "10%" },
-                    { text: "Planning For", value: "year", width: "15%" },
-                    { text: "Status", value: "is_active", width: "8%" },
-                    { text: "Notification", value: "notification", width: "15%" },
-                    { text: "Updated By", value: "updated_by", width: "20%" },
-                    { text: "Updated Date", value: "updated_at", width: "15%" },
-                    { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
-                ],
-            },
-            form: {
-                year: "",
-                is_active: "",
-                created_by: "",
-                updated_by: "",
-                updated_at: "",
-                due_date: "",
-            },
-            alert: {
-                show: false,
-                success: null,
-                title: null,
-                subtitle: null,
-            },
-            // desserts: [
-            //     {
-            //         id: 1,
-            //         planningFor: "2023",
-            //         status: "Active",
-            //         notification: "Yes",
-            //         updatedBy: "Phang Willy",
-            //         updatedDate: "30 November 2022",
-            //     },
-            //     {
-            //         id: 2,
-            //         planningFor: "2022",
-            //         status: "Inactive",
-            //         notification: "Yes",
-            //         updatedBy: "Phang Willy",
-            //         updatedDate: "30 November 2021",
-            //     },
-            //     {
-            //         id: 3,
-            //         planningFor: "2021",
-            //         status: "Inactive",
-            //         notification: "Yes",
-            //         updatedBy: "Phang Willy",
-            //         updatedDate: "30 November 2020",
-            //     },
-            //     {
-            //         id: 4,
-            //         planningFor: "2020",
-            //         status: "Inactive",
-            //         notification: "Yes",
-            //         updatedBy: "Phang Willy",
-            //         updatedDate: "30 November 2019",
-            //     },
-            // ],
-        };
-    },
+    data: () => ({
+        dialog: false,
+        search: "",
+        dataTable: {
+            headers: [
+                { text: "ID", value: "id", width: "10%" },
+                { text: "Planning For", value: "year", width: "15%" },
+                { text: "Status", value: "is_active", width: "8%" },
+                { text: "Notification", value: "notification", width: "15%" },
+                { text: "Updated By", value: "updated_by", width: "20%" },
+                { text: "Updated Date", value: "updated_at", width: "15%" },
+                { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
+            ],
+        },
+        form: {
+            year: "",
+            is_active: "",
+            created_by: "",
+            updated_by: "",
+            updated_at: "",
+            due_date: "",
+        },
+        alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
+    }),
 
     created() {
         this.getStartPlanning();
@@ -188,6 +157,10 @@ export default {
             return this.isNew ? "Add" : this.isView ? "View" : "Edit";
         },
         ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
+
+        cardTitle() {
+            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+        },
     },
 
     methods: {

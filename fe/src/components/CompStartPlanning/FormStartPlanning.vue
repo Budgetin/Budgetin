@@ -111,7 +111,8 @@
                 <v-date-picker
                   ref="form"
                   v-model="localDate"
-                  @input="menu = false">
+                  @input="menu = false"
+                  :min="new Date().toISOString().substr(0, 10)">
                 </v-date-picker>
               </v-menu>
             </v-col>
@@ -225,19 +226,9 @@ export default {
 
   data() {
     return {
-      // planningFor: '',
-      // status: '',
-      // sendNotif: '',
-      // localDate: '',
-      // localDate: this.form.due_date,
-      // sendToEmail: null,
+      
     }
   },
-  // watch: {
-  //   localDate(){ 
-  //     this.$emit('submitClicked', this.localDate)
-  //   }
-  // }
   
   data: () => ({
     localDate: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
