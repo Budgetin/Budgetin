@@ -97,7 +97,7 @@ def get_all_biro():
     res = requests.get(url, headers=headers, verify=False)
     if res.json():
         #check for biro that is not deleted
-        biro = [b for b in res.json() if b['is_deleted'] == False]
+        biro = [b for b in res.json() if b['is_deleted'] == False and b['manager_employee'] is not None]
         if biro:
             return biro
     raise NotFoundException()
