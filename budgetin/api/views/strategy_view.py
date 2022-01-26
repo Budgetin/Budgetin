@@ -5,6 +5,7 @@ from api.utils.date_format import timestamp_to_strdateformat
 from api.models import User
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
+from api.utils.auditlog import AuditLog
 class StrategyViewSet(viewsets.ModelViewSet):
     queryset = Strategy.objects.all()
     serializer_class = StrategySerializer

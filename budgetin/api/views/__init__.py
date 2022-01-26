@@ -16,3 +16,6 @@ from .audit_log_view import AuditLogViewSet
 from .login_view import LoginView
 from .logout_view import LogoutView
 from .test_view import TestView
+from .excel_import_view import ImportExcelView
+from .excel_export_view import ExportExcelView
+from .biro_view import BiroView
