@@ -42,7 +42,7 @@ const routes = [
       },
       {
         path: 'startPlanning',
-        name: 'Start Planning',
+        name: 'StartPlanning',
         component: () => import("@/views/StartPlanning/StartPlanning"),
       }, 
       {

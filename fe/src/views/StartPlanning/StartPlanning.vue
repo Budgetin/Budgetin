@@ -10,8 +10,9 @@
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-data-table
-                        :headers="headers"
-                        :items="desserts"
+                        :headers="dataTable.headers"
+                        :loading="loadingGetStartPlanning"
+                        :items="dataStartPlanning"
                         :search="search"
                         class="data-table">
                         <template v-slot:top>
@@ -27,11 +28,11 @@
                                             hide-details>
                                         </v-text-field>
                                     </v-col>
-                                    <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="start-planning__btn">
+                                    <!-- <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="start-planning__btn">
                                         <v-btn rounded color="primary" @click="onAdd">
                                             + Start New Planning
                                         </v-btn>
-                                    </v-col>
+                                    </v-col> -->
                                 </v-row>
                             </v-toolbar-title>
                         </template>
@@ -76,19 +77,28 @@
             </v-row>
 
             <v-row no-gutters>
-                <v-dialog v-model="dialog" persistent width="40rem">
+                <!-- <v-dialog v-model="dialog" persistent width="40rem">
                     <form-start-planning
                         :form="form"
                         :isNew="true"
                         :isView="false"
+                        :dataStartPlanning="dataStartPlanning"
                         @editClicked="onEdit"
                         @cancelClicked="onCancel"
                         @submitClicked="onSubmit"
                         @okClicked="onOK">
                     </form-start-planning>
-                </v-dialog>
+                </v-dialog> -->
             </v-row>
         </v-container>
+
+        <success-error-alert
+        :success="alert.success"
+        :show="alert.show"
+        :title="alert.title"
+        :subtitle="alert.subtitle"
+        @okClicked="onAlertOk"
+        />
     </v-app>
 </template>
 
@@ -97,7 +107,7 @@ import { mapState, mapActions } from "vuex";
 import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-    name: "CompStartPlanning",
+    name: "StartPlanning",
     components: {
         FormStartPlanning, SuccessErrorAlert
     },
@@ -107,49 +117,17 @@ export default {
         return {
             dialog: false,
             search: "",
-            headers: [
-                { text: "ID", value: "id", width: "10%" },
-                { text: "Planning For", value: "planningFor", width: "15%" },
-                { text: "Status", value: "status", width: "8%" },
-                { text: "Notification", value: "notification", width: "15%" },
-                { text: "Updated By", value: "updatedBy", width: "20%" },
-                { text: "Updated Date", value: "updatedDate", width: "15%" },
-                { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
-            ],
-            desserts: [
-                {
-                    id: 1,
-                    planningFor: "2023",
-                    status: "Active",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
-                },
-                {
-                    id: 2,
-                    planningFor: "2022",
-                    status: "Inactive",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2021",
-                },
-                {
-                    id: 3,
-                    planningFor: "2021",
-                    status: "Inactive",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2020",
-                },
-                {
-                    id: 4,
-                    planningFor: "2020",
-                    status: "Inactive",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2019",
-                },
-            ],
+            dataTable: {
+                headers: [
+                    { text: "ID", value: "id", width: "10%" },
+                    { text: "Planning For", value: "year", width: "15%" },
+                    { text: "Status", value: "is_active", width: "8%" },
+                    { text: "Notification", value: "notification", width: "15%" },
+                    { text: "Updated By", value: "updated_by", width: "20%" },
+                    { text: "Updated Date", value: "updated_at", width: "15%" },
+                    { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
+                ],
+            },
             form: {
                 year: "",
                 is_active: "",
@@ -164,6 +142,40 @@ export default {
                 title: null,
                 subtitle: null,
             },
+            // desserts: [
+            //     {
+            //         id: 1,
+            //         planningFor: "2023",
+            //         status: "Active",
+            //         notification: "Yes",
+            //         updatedBy: "Phang Willy",
+            //         updatedDate: "30 November 2022",
+            //     },
+            //     {
+            //         id: 2,
+            //         planningFor: "2022",
+            //         status: "Inactive",
+            //         notification: "Yes",
+            //         updatedBy: "Phang Willy",
+            //         updatedDate: "30 November 2021",
+            //     },
+            //     {
+            //         id: 3,
+            //         planningFor: "2021",
+            //         status: "Inactive",
+            //         notification: "Yes",
+            //         updatedBy: "Phang Willy",
+            //         updatedDate: "30 November 2020",
+            //     },
+            //     {
+            //         id: 4,
+            //         planningFor: "2020",
+            //         status: "Inactive",
+            //         notification: "Yes",
+            //         updatedBy: "Phang Willy",
+            //         updatedDate: "30 November 2019",
+            //     },
+            // ],
         };
     },
 
@@ -172,11 +184,15 @@ export default {
     },
 
     computed: {
+        cardTitle() {
+            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+        },
         ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
     },
 
     methods: {
         ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
+
         onAdd() {
             this.dialog = !this.dialog;
         },
@@ -200,7 +216,7 @@ export default {
             this.alert.show = true;
             this.alert.success = true;
             this.alert.title = "Save Success";
-            this.alert.subtitle = "Master Source has been saved successfully";
+            this.alert.subtitle = "Planning Data has been saved successfully";
         },
         onSaveError(error) {
             this.dialog = false;
@@ -221,12 +237,6 @@ export default {
         onOK() {
             return this.$router.go(-1);
         }
-    },
-
-    computed: {
-        cardTitle() {
-            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
-        },
     },
 };
 </script>

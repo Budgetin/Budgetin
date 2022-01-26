@@ -76,8 +76,8 @@ const startPlanning = {
               errorMsg = "";
               switch (error.response.status) {
                 case 400:
-                  if (error.response.data.hasOwnProperty("Coa_name")) {
-                    errorMsg += error.response.data.Coa_name;
+                  if (error.response.data.hasOwnProperty("year")) {
+                    errorMsg += error.response.data.year;
                   }
                   break;
 
@@ -109,8 +109,8 @@ const startPlanning = {
               errorMsg = "";
               switch (error.response.status) {
                 case 400:
-                  if (error.response.data.hasOwnProperty("Coa_name")) {
-                    errorMsg += error.response.data.Coa_name;
+                  if (error.response.data.hasOwnProperty("year")) {
+                    errorMsg += error.response.data.year;
                   }
                   break;
 
@@ -218,4 +218,4 @@ const startPlanning = {
   },
 };
 
-export default startPlanning;
+export default startPlanning

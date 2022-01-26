@@ -1,5 +1,6 @@
 import json
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from api.models import Planning, User
 from api.serializers.planning_serializer import PlanningSerializer
 from api.utils.date_format import timestamp_to_strdateformat
@@ -95,3 +96,9 @@ class PlanningViewSet(viewsets.ModelViewSet):
         planning = super().destroy(request, *args, **kwargs)
         AuditLog.Save(planning, request, ActionEnum.DELETE, TableEnum.PLANNING)
         return planning
+    
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        active_planning = Planning.objects.filter(is_active=True).values()
+        
+        return Response(active_planning)

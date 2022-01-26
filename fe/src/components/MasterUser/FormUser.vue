@@ -22,7 +22,7 @@
               item-value="username"
               outlined
               dense
-              :disabled="isView"
+              :disabled="!isNew"
               :rules="validation.required"
               placeholder="Select Employee"
             ></v-autocomplete>
@@ -108,7 +108,6 @@ export default {
     ...mapState("masterEmployee", ["getMasterEmployee"]),
 
     cardTitle() {
-      console.log(this.form)
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
     errorMsg() {
@@ -121,7 +120,7 @@ export default {
       if (validate) {
         const payload = {
           id: this.form?.id,
-          username : this.form.name,
+          username : this.form.name.username,
           role: this.form.role,
           is_active: this.form.status,
         };
