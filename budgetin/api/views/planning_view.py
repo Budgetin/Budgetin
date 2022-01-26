@@ -12,6 +12,7 @@ from api.models.monitoring_status_model import MonitoringStatus
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import MonitoringStatusEnum
 from api.utils.biro import create_update_all_biro
+from django.db import transaction
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -46,6 +47,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         planning.data['updated_at'] = timestamp_to_strdateformat(planning.data['updated_at'], "%d %B %Y")
         return planning
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
@@ -73,6 +75,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
 
         return planning
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
 
