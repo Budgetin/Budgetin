@@ -66,27 +66,6 @@ def get_imo_d_employee():
         return data
     raise NotFoundException()
 
-#Get S4
-def get_s4():
-    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?eselon__exact=5"
-    headers = {
-        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
-    }
-    res = requests.get(url, headers=headers, verify=False)
-    if res.json():
-        temp = []
-        for each in res.json():
-            user_id = each['id']
-            display_name = each['display_name']
-            username = each['username']
-            employee_json = {
-                'id' : user_id,
-                'name' : display_name,
-                'username' : username
-            }
-            temp.append(employee_json)
-        return temp
-    raise NotFoundException()
 
 #Get All Biro
 def get_all_biro():
