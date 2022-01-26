@@ -17,16 +17,20 @@ class MonitoringViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         parameter  = request.GET.get('planning')
         if parameter:
-            monitoring = Monitoring.objects.filter(planning=parameter).select_related('biro').values()
+            monitoring = Monitoring.objects.select_related('biro').filter(planning=parameter)
         else:
-            monitoring = Monitoring.objects.all().select_related('biro').values()
+            monitoring = Monitoring.objects.select_related('biro').all()
 
+        result = []
         for each in monitoring:
-            # each['biro'] = model_to_dict(Biro.all_object.get(pk=each['biro_id']))
-            # each.pop('biro_id')
-            each['created_at'] = each['created_at'].strftime("%d %B %Y")
-            each['updated_at'] = each['updated_at'].strftime("%d %B %Y")
-        return Response(monitoring)
+            each_dict = model_to_dict(each)
+            each_dict['biro_name'] = each.biro.name
+            each_dict['biro_code'] = each.biro.code
+            each_dict['sub_group_code'] = each.biro.sub_group_code
+            each_dict['group_code'] = each.biro.group_code
+            each_dict['created_at'] = each.created_at.strftime("%d %B %Y")
+            each_dict['updated_at'] = each.updated_at.strftime("%d %B %Y")
+        return Response(result)
     
     def retrieve(self, request, *args, **kwargs):
         monitoring = super().retrieve(request, *args, **kwargs)
