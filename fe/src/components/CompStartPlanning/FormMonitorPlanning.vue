@@ -1,16 +1,15 @@
 <template>
   <v-card>
-    <v-card-title class="text-h5">
+    <v-card-title class="text-h5" style="margin-bottom: 32px">
       {{ cardTitle }} a Monitoring Status
       <v-spacer></v-spacer>
-      <!-- <v-btn v-if="isView" icon small @click="$emit('editClicked')"> -->
-      <v-btn v-if="isView" icon small link :to="'/startPlanning/editStatusMonitor'">
+      <v-btn v-if="isView" icon small @click="$emit('editClicked')">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
     </v-card-title>
 
     <v-card-text>
-      <v-form class="monitor-planning__form" lazy-validation @submit.prevent="onSubmit">
+      <v-form ref="form" class="monitor-planning__form" lazy-validation @submit.prevent="onSubmit">
         <v-row no-gutters>
           <!-- GROUP -->
           <v-col cols="6"> Group <strong class="red--text">*</strong>
@@ -20,11 +19,11 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-text-field
-                    v-if="isView || (!isView && !isNew)"
-                    outlined
-                    dense
-                    disabled
-                    label="GAQ">
+                  v-model="form.biro.group"
+                  outlined
+                  dense
+                  disabled
+                  :rules="validation.required">
                 </v-text-field>
               </div>
             </v-col>
@@ -38,11 +37,11 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-text-field
-                    v-if="isView || (!isView && !isNew)"
-                    outlined
-                    dense
-                    disabled
-                    label="ARC">
+                  v-model="form.biro.subgroup"
+                  outlined
+                  dense
+                  disabled
+                  :rules="validation.required">
                 </v-text-field>
               </div>
             </v-col>
@@ -58,11 +57,11 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-text-field
-                    v-if="isView || (!isView && !isNew)"
-                    outlined
-                    dense
-                    disabled
-                    label="ARC A">
+                  v-model="form.biro.code"
+                  outlined
+                  dense
+                  disabled
+                  :rules="validation.required">
                 </v-text-field>
               </div>
             </v-col>
@@ -76,11 +75,11 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-text-field
-                    v-if="isView || (!isView && !isNew)"
-                    outlined
-                    dense
-                    disabled
-                    label="Jumas Ranope">
+                  v-model="form.biro.pic"
+                  outlined
+                  dense
+                  disabled
+                  :rules="validation.required">
                 </v-text-field>
               </div>
             </v-col>
@@ -96,11 +95,11 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-text-field
-                    v-if="isView || (!isView && !isNew)"
-                    outlined
-                    dense
-                    disabled
-                    label="2022-11-25">
+                  v-model="form.biro.pic"
+                  outlined
+                  dense
+                  disabled
+                  :rules="validation.required">
                 </v-text-field>
               </div>
             </v-col>
@@ -114,23 +113,14 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-select
-                  v-if="isView"
-                  v-model="status"
+                  v-model="form.is_deleted"
                   :items="statusOptions"
                   item-text="activeInactive"
                   label="Active"
                   outlined
                   return-object
-                  disabled>
-                </v-select>
-                <v-select
-                  v-if="!isView"
-                  v-model="status"
-                  :items="statusOptions"
-                  item-text="activeInactive"
-                  label="Active/Inactive"
-                  outlined
-                  return-object>
+                  :disabled="isView"
+                  :rules="validation.required">
                 </v-select>
               </div>
             </v-col>
@@ -163,89 +153,23 @@
 <script>
 export default {
   name: "FormMonitorPlanning",
-  props: ["isNew", "isView"],
+  props: ["form", "isNew", "isView"],
   
   data: () => ({
-    date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-    menu: false,
-
     validation: {
-      required: (v) => !!v || "This field is required",
+      required: [
+        (v) => !!v || "This field is required"
+      ],
+      targetRule: [
+        v => /^[0-9.,]+$/.test(v) || "This field is numbers only",
+      ],
     },
-
-    yearOptions: [
-      {yearValue: '2023'},
-      {yearValue: '2024'},
-      {yearValue: '2025'},
-      {yearValue: '2026'},
-      {yearValue: '2027'},
-      {yearValue: '2028'},
-      {yearValue: '2029'},
-      {yearValue: '2030'},
-      {yearValue: '2031'},
-      {yearValue: '2032'},
-      {yearValue: '2033'}
-    ],
-    year: null,
 
     statusOptions: [
       {activeInactive: 'Active'},
       {activeInactive: 'Inactive'}
     ],
     status: null,
-
-    notifOptions: [
-      {option: 'Yes'},
-      {option: 'No'}
-    ],
-    notif: false,
-
-    biroGsit: [
-      {biroGsitName: 'GSIT ARC A', biroGsitEmail: 'gsit_arc_a_00@intra.bca'},
-      {biroGsitName: 'GSIT CTS A', biroGsitEmail: 'gsit_cts_a_00@intra.bca'},
-      {biroGsitName: 'GSIT CTS B', biroGsitEmail: 'gsit_cts_b_00@intra.bca'},
-      {biroGsitName: 'GSIT CTS C', biroGsitEmail: 'gsit_cts_c_00@intra.bca'},
-      {biroGsitName: 'GSIT CTS D', biroGsitEmail: 'gsit_cts_d_00@intra.bca'},
-      {biroGsitName: 'GSIT CTS E', biroGsitEmail: 'gsit_cts_e_00@intra.bca'},
-      {biroGsitName: 'GSIT DIS A', biroGsitEmail: 'gsit_dis_a_00@intra.bca'},
-      {biroGsitName: 'GSIT DIS B', biroGsitEmail: 'gsit_dis_b_00@intra.bca'},
-      {biroGsitName: 'GSIT DTM A', biroGsitEmail: 'gsit_dtm_a_00@intra.bca'},
-      {biroGsitName: 'GSIT DTM B', biroGsitEmail: 'gsit_dtm_b_00@intra.bca'},
-      {biroGsitName: 'GSIT DTM C', biroGsitEmail: 'gsit_dtm_c_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO A', biroGsitEmail: 'gsit_ibo_a_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO B', biroGsitEmail: 'gsit_ibo_b_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO C', biroGsitEmail: 'gsit_ibo_c_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO D', biroGsitEmail: 'gsit_ibo_d_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO E', biroGsitEmail: 'gsit_ibo_e_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO F', biroGsitEmail: 'gsit_ibo_f_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO G', biroGsitEmail: 'gsit_ibo_g_00@intra.bca'},
-      {biroGsitName: 'GSIT IMO A', biroGsitEmail: 'gsit_imo_a_00@intra.bca'},
-      {biroGsitName: 'GSIT IMO B', biroGsitEmail: 'gsit_imo_b_00@intra.bca'},
-      {biroGsitName: 'GSIT IMO C', biroGsitEmail: 'gsit_imo_c_00@intra.bca'},
-      {biroGsitName: 'GSIT IMO D', biroGsitEmail: 'gsit_imo_d_00@intra.bca'},
-      {biroGsitName: 'GSIT ISO A', biroGsitEmail: 'gsit_iso_a_00@intra.bca'},
-      {biroGsitName: 'GSIT ISO B', biroGsitEmail: 'gsit_iso_b_00@intra.bca'},
-      {biroGsitName: 'GSIT ISO C', biroGsitEmail: 'gsit_iso_c_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX A', biroGsitEmail: 'gsit_itx_a_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX B', biroGsitEmail: 'gsit_itx_b_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX C', biroGsitEmail: 'gsit_itx_c_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX D', biroGsitEmail: 'gsit_itx_d_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX E', biroGsitEmail: 'gsit_itx_e_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX F', biroGsitEmail: 'gsit_itx_f_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX G', biroGsitEmail: 'gsit_itx_g_00@intra.bca'},
-      {biroGsitName: 'GSIT NIS A', biroGsitEmail: 'gsit_nis_a_00@intra.bca'},
-      {biroGsitName: 'GSIT NIS B', biroGsitEmail: 'gsit_nis_b_00@intra.bca'},
-      {biroGsitName: 'GSIT NIS C', biroGsitEmail: 'gsit_nis_c_00@intra.bca'},
-      {biroGsitName: 'GSIT NIS D', biroGsitEmail: 'gsit_nis_d_00@intra.bca'},
-      {biroGsitName: 'GSIT NIS E', biroGsitEmail: 'gsit_nis_e_00@intra.bca'},
-      {biroGsitName: 'GSIT SAQ A', biroGsitEmail: 'gsit_saq_a_00@intra.bca'},
-      {biroGsitName: 'GSIT SAQ B', biroGsitEmail: 'gsit_saq_b_00@intra.bca'},
-      {biroGsitName: 'GSIT SAQ C', biroGsitEmail: 'gsit_saq_c_00@intra.bca'},
-      {biroGsitName: 'GSIT SIS A', biroGsitEmail: 'gsit_sis_a_00@intra.bca'},
-      {biroGsitName: 'GSIT SIS B', biroGsitEmail: 'gsit_sis_b_00@intra.bca'},
-      {biroGsitName: 'GSIT SIS C', biroGsitEmail: 'gsit_sis_c_00@intra.bca'},
-      {biroGsitName: 'GSIT SIS D', biroGsitEmail: 'gsit_sis_d_00@intra.bca'}
-    ],
     
     closeOnContentClick: true,
   }),
@@ -254,11 +178,25 @@ export default {
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
+    errorMsg() {
+      return this.$store.state.source.errorMsg;
+    },
   },
 
   methods: {
     onSubmit() {
-      console.log(this.planningFor, this.status, this.date, this.sendNotif)
+      let validate = this.$refs.form.validate();
+      // let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
+      if (validate) {
+        const payload = {
+          group: this.form.biro.group,
+          subgroup: this.form.biro.subgroup,
+          code: this.$refs.form.biro.code,
+          pic: this.$refs.form.biro.pic,
+          monitoring_status_id: this.$refs.form.monitoring_status_id,
+        };
+        this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
+      }
     },
     onCancel() {
         return this.$router.go(-1);

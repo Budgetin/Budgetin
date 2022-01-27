@@ -8,7 +8,7 @@ class Project(SoftDeleteModel, TimestampModel, UserTrackModel):
     itfam_id = models.CharField(max_length=200)
     project_name = models.CharField(max_length=200)
     project_description = models.CharField(max_length=500)
-    biro_id = models.BigIntegerField()
+    biro = models.ForeignKey('Biro', on_delete=models.CASCADE)
     rcc = models.IntegerField()
     start_year = models.IntegerField()
     end_year = models.IntegerField()

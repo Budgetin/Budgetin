@@ -1,21 +1,18 @@
 <template>
     <v-app id="list-project">
         <v-container class="list-project__container outer-container">
-            <v-toolbar background-color="transparent" flat>
-                <template v-slot:extension>
-                    <v-tabs v-model="tab" color="primary" align-with-title>
-                        <v-tabs-slider color="grey"></v-tabs-slider>
-
-                        <v-tab
-                            v-for="item in items"
-                            :key="item">
-                            {{ item }}
-                        </v-tab>
-                    </v-tabs>
-                </template>
-            </v-toolbar>
-
             <v-row no-gutters>
+                <v-tabs v-model="tab" color="primary" align-with-title>
+                    <v-tabs-slider color="grey"></v-tabs-slider>
+                    <v-tab
+                        v-for="item in items"
+                        :key="item">
+                        {{ item }}
+                    </v-tab>
+                </v-tabs>
+            </v-row>
+            <v-divider></v-divider>
+            <v-row no-gutters style="margin-top: 16px">
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                 <v-subheader class="list-project__header">List of Projects</v-subheader>
                 </v-col>
@@ -24,62 +21,62 @@
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-data-table
-                        :headers="headers"
-                        :items="desserts"
-                        :search="search"
-                        class="data-table">
+                    :headers="dessertHeaders"
+                    :items="desserts"
+                    :single-expand="singleExpand"
+                    :expanded.sync="expanded"
+                    item-key="id_itfam"
+                    show-expand
+                    :search="search">
                         <template v-slot:top>
                             <v-toolbar-title>
                                 <v-row class="mb-5" no-gutters>
                                     <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
-                                        <v-row>
-                                        <v-text-field
-                                            class="list-project__input"
-                                            v-model="search"
-                                            append-icon="mdi-magnify"
-                                            label="Search"
-                                            single-line
-                                            hide-details>
-                                        </v-text-field>
+                                        <v-row class="mb-5" no-gutters>
+                                            <v-text-field
+                                                class="list-project__input"
+                                                v-model="search"
+                                                append-icon="mdi-magnify"
+                                                label="Search"
+                                                single-line
+                                                hide-details>
+                                            </v-text-field>
 
-                                        <v-btn color="primary" @click="onFilter" class="mt-4">
-                                            <v-icon>
-                                                mdi-filter-outline
-                                            </v-icon>
-                                        </v-btn>
+                                            <v-btn color="primary" @click="onFilter" class="mt-4">
+                                                <v-icon> mdi-filter-outline </v-icon>
+                                            </v-btn>
                                         </v-row>
                                     </v-col>
                                     
                                     <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="list-project__btn">
                                         <v-btn rounded color="primary" @click="onExport">
-                                            <v-icon left>
-                                                mdi-export-variant
-                                            </v-icon>
+                                            <v-icon left> mdi-export-variant </v-icon>
                                             Export Data
                                         </v-btn>
                                     </v-col>
                                 </v-row>
                             </v-toolbar-title>
-                        </template>
-                                    
-                        <template v-slot:[`item.actions`]="{ item }">
-                            <!-- MONITOR PLANNING -->
-                            <router-link
-                                style="text-decoration: none"
-                                :to="{
-                                name: 'MonitorPlanning',
-                                params: { id: item.id },
-                                }">
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on }">
-                                        <v-icon  class="ma-3" v-on="on" color="primary" @click="onMonitor">
-                                            mdi-monitor
-                                        </v-icon>
-                                    </template>
-                                    <span>Monitor</span>
-                                </v-tooltip>
-                            </router-link>
 
+                            <v-toolbar-title>
+                                <v-row class="mb-5" no-gutters>
+                                   <v-flex xs14 offset-xs10>
+                                        <v-switch
+                                        v-model="singleExpand"
+                                        label="Single expand"
+                                        class="mt-2">
+                                        </v-switch>
+                                    </v-flex>
+                                </v-row>
+                            </v-toolbar-title>
+                        </template>
+                        
+                        <template v-slot:expanded-item="{ headers, item }">
+                            <td :colspan="headers.length">
+                                More info about {{ item.name }}
+                            </td>
+                        </template>
+
+                        <template v-slot:[`item.actions`]="{ item }">
                             <!-- VIEW/EDIT PLANNING -->
                             <router-link
                                 style="text-decoration: none"
@@ -101,73 +98,70 @@
                 </v-col>
             </v-row>
 
-            <v-row no-gutters>
+            <!-- <v-row no-gutters>
                 <v-dialog v-model="dialog" persistent width="40rem">
                     <form-list-project
                         @cancelClicked="onCancel">
                     </form-list-project>
                 </v-dialog>
-            </v-row>
+            </v-row> -->
         </v-container>
     </v-app>
 </template>
 
 <script>
-import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
 export default {
-    name: "CompStartPlanning",
-    components: {
-        FormStartPlanning
-    },
-    
     watch: {},
     data() {
         return {
+            expanded: [],
+            singleExpand: false,
             tab: null,
             items: ['Active', 'Inactive'],
 
             search: "",
-            headers: [
+            dessertHeaders: [
+                // { text: "Action", value: "actions", align: "center", sortable: false, width: "7%"},
                 { text: "ID", value: "id", width: "10%" },
-                { text: "Planning For", value: "planningFor", width: "15%" },
-                { text: "Status", value: "status", width: "8%" },
-                { text: "Notification", value: "notification", width: "15%" },
-                { text: "Updated By", value: "updatedBy", width: "20%" },
-                { text: "Updated Date", value: "updatedDate", width: "15%" },
-                { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
+                { text: "ID ITFAM", value: "id_itfam", width: "10%", align: "start" },
+                { text: "Project Name", value: "project_name", width: "15%" },
+                { text: "Project Description", value: "project_desc", width: "20%" },
+                { text: "RCC", value: "rcc", width: "10%" },
+                { text: "Biro", value: "code", width: "10%" },
+                { text: '', value: 'data-table-expand', width: "5%" },
             ],
             desserts: [
                 {
                     id: 1,
-                    planningFor: "2023",
-                    status: "Active",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2022",
+                    id_itfam: "202300011",
+                    project_name: "Prototype Re-design LAN ATM Pertokoan",
+                    project_desc: "Merapikan LAN ATM EBC",
+                    rcc: "093",
+                    code: "NIS B",
                 },
                 {
                     id: 2,
-                    planningFor: "2022",
-                    status: "Inactive",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2021",
+                    id_itfam: "202300012",
+                    project_name: "Wi-fi Cabang",
+                    project_desc: "Access point untuk Future Branch",
+                    rcc: "093",
+                    code: "NIS B",
                 },
                 {
                     id: 3,
-                    planningFor: "2021",
-                    status: "Inactive",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2020",
+                    id_itfam: "202300013",
+                    project_name: "Tool Fiber Optic",
+                    project_desc: "Fiber Optic Tester",
+                    rcc: "093",
+                    code: "NIS A",
                 },
                 {
                     id: 4,
-                    planningFor: "2020",
-                    status: "Inactive",
-                    notification: "Yes",
-                    updatedBy: "Phang Willy",
-                    updatedDate: "30 November 2019",
+                    id_itfam: "202300014",
+                    project_name: "Subduck BNDC Cibitung",
+                    project_desc: "Zone fiber optic MM2100",
+                    rcc: "093",
+                    code: "NIS C",
                 },
             ],
         };
@@ -204,16 +198,23 @@ export default {
         font-weight: 600;
     }
 
+    .list-project__tab {
+        margin-bottom: 32px;
+    }
+
     .list-project__input {
         padding: 10px 32px;
     }
 
     .list-project__btn {
         text-align: end;
-
         button {
-        margin: 10px 32px;
+            margin: 10px 32px;
         }
+    }
+
+    .list-project__switch {
+        margin-left: 600px;
     }
 
     .list-project__container {
@@ -225,7 +226,7 @@ export default {
 
     .list-project__card {
         button {
-        width: 8rem;
+            width: 8rem;
         }
     }
 }
