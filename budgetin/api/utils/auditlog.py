@@ -11,7 +11,7 @@ class AuditLog():
             serialized_data = json.dumps(data.data)
         else:
             entity_id = request.parser_context['kwargs']['pk']
-            serialized_data = {"data":"deleted"}
+            serialized_data = json.dumps({"data":"deleted"})
             
         # AL.objects.create(timestamp=datetime.datetime.now(
         #     ), modified_by=request.custom_user['id'], entity_id=entity_id, serialized_data=serialized_data, action_id=actionid, table_id=tableid)

@@ -19,6 +19,7 @@ class TableEnum(Enum):
     PROJECT = "project"
     PROJECT_DETAIL = "project_detail"
     STRATEGY = "strategy"
+    USER = "user"
 
 
 class RoleEnum(Enum):
