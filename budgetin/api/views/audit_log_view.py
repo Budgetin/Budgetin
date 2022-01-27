@@ -1,6 +1,6 @@
 import json
 from rest_framework import viewsets, mixins
-from api.models import AuditLog, User, Table
+from api.models import AuditLog, User, Table, Action
 from api.serializers.audit_log_serializer import AuditLogSerializer
 from rest_framework.response import Response
 from api.utils.date_format import timestamp_to_strdateformat
@@ -21,6 +21,10 @@ class AuditLogViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.C
         
         for each in log:
             each['timestamp'] = timestamp_to_strdateformat(str(each['timestamp']), "%d %B %Y")
+            each['table'] = str.lower(Table.objects.get(pk=each['table_id']).name)
+            each.pop('table_id')
+            each['action'] = str.lower(Action.objects.get(pk=each['action_id']).name)
+            each.pop('action_id')
             data_as_json = json.loads(each['serialized_data'])
             data_as_json['is_deleted'] = 1 if data_as_json['is_deleted']==True else 0
             data_as_json['is_capex'] = 1 if data_as_json['is_capex']==True else 0
