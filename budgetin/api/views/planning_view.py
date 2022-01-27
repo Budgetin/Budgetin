@@ -12,6 +12,7 @@ from api.models.monitoring_status_model import MonitoringStatus
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import MonitoringStatusEnum
 from django.db import transaction
+from api.utils.manager_email import get_managers_email
 
 #For Audit Logging
 from api.utils.auditlog import AuditLog
@@ -43,6 +44,34 @@ def create_monitoring(ithc_biro, biro, planning_id, monitoring_status_id):
         pic_initial=ithc_biro['manager_employee']['initial'],
         pic_display_name=ithc_biro['manager_employee']['display_name'],
     )
+    
+def is_send_notification(request):
+    field_exists = 'send_notification' and 'biros' and 'body' in request.data 
+    if not field_exists:
+        return False
+    
+    field_valid = request.data['send_notification'] == True and request.data['body'] != '' and len(request.data['biros']) > 0
+    return field_valid
+    
+def send_notification(request, biros):
+    biro_id_list = request.data['biros']
+    subject = "[noreply] budgetin"
+    body = request.data['body']
+    receiver_email_list = get_receiver_email_list(biros, biro_id_list)
+    
+    send_email(subject, body, receiver_email_list)
+    return receiver_email_list
+        
+def get_receiver_email_list(biros, biro_id_list):
+    receiver_email_list = []
+    for biro_id in biro_id_list:
+        email_list = get_managers_email(biro_id, biros)
+        receiver_email_list.extend(email_list)
+
+    # remove duplicate email
+    receiver_email_list = list(dict.fromkeys(receiver_email_list))
+    
+    return receiver_email_list
 
 class PlanningViewSet(viewsets.ModelViewSet):
     queryset = Planning.objects.all()
@@ -78,23 +107,16 @@ class PlanningViewSet(viewsets.ModelViewSet):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
         
-        #Process send notification
-        if 'send_notification' in request.data:
-            if request.data['send_notification'] == True:
-                if 'biros' and 'body' in request.data:
-                    biro_id_list = request.data['biros']
-                    subject = "[Budgetin] Akses Input Budget"
-                    body = request.data['body']
-                    if len(biro_id_list) > 0 and body != "":
-                        send_email(biro_id_list, subject, body)
-        
         planning = super().create(request, *args, **kwargs)
         AuditLog.Save(planning, request, ActionEnum.CREATE, TableEnum.PLANNING)
         
         planning_id = planning.data['id']
-        biros = get_all_biro('manager_employee,sub_group,sub_group.group')
+        biros = get_all_biro('manager_employee,sub_group,sub_group.group,manager_employee,sub_group.manager_employee,sub_group.group.manager_employee')
         create_update_all_biro_and_create_monitoring(biros, planning_id)
         
+        #Process send notification
+        if is_send_notification(request):
+            send_notification(request, biros)
         return planning
 
     @transaction.atomic
