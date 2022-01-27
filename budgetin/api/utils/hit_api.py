@@ -1,20 +1,9 @@
 import requests
-import pyDes
-import binascii
 
 from django.conf import settings
 from api.exceptions import *
+from api.utils.triple_des import encrypt_3des
 
-# Encrypt Password dengan 3DES untuk Login EAI
-def encrypt_password_3des_eai(password):
-    key = settings.EAI_PUBLIC_KEY
-    triple_des = pyDes.triple_des(
-        key, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5)
-
-    encrypted = triple_des.encrypt(password)
-    encrypted_password = binascii.hexlify(encrypted).decode('utf-8')
-
-    return encrypted_password
 
 # Login EAI
 def login_eai(username, password):
@@ -34,7 +23,7 @@ def login_eai(username, password):
     body_login = '''{
     "application_id": "Budgetin",
     "user_id": "''' + username + '''",
-    "password": "''' + encrypt_password_3des_eai(password) + '''"
+    "password": "''' + encrypt_3des(password, settings.EAI_PUBLIC_KEY) + '''"
     }'''
 
     response_login = requests.post(
