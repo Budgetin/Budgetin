@@ -16,10 +16,12 @@ const masterCoa = {
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
     edittedItem: null,
-    edittedItemHistories: [],
     loadingDeleteItem:false,
     deleteStatus: "IDLE",
-    deleteItem: []
+    deleteItem: [],
+    requestHistoriesStatus:"IDLE",
+    loadingGetEdittedItemHistories: false,
+    edittedItemHistories: [],
   },
   getters: {
     value: (state) => state.value
@@ -103,7 +105,6 @@ const masterCoa = {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
             store.dispatch("masterCoa/getFromAPI");
-            store.dispatch("masterCoa/getHistory");
             // store.dispatch("masterCategory/getFromAPI");
           })
           .catch((error) => {
@@ -147,19 +148,22 @@ const masterCoa = {
       });
     },
 
+      //harus return promise
     getHistory({ commit }, id) {
-      commit("SET_EDITTED_ITEM_HISTORIES", []); 
+      commit("SET_REQUEST_STATUS"); 
+      return new Promise((resolve, reject) => {
       getAPI
         .get("/api/auditlog?table=coa&entity=" + `${id}`)
         .then((response) => {
           const data = response.data;
-          console.log(data)
           commit("SET_EDITTED_ITEM_HISTORIES", data); 
-          // resolve(data);
+          resolve(data);
         })
         .catch((error) => {
           commit("GET_ERROR", error);
+          reject(error);
         });
+      });
     },
 
   },
@@ -207,12 +211,16 @@ const masterCoa = {
       state.loadingGetEdittedItem = payload;
     },
 
-    // history related
-    SET_EDITTED_ITEM_HISTORIES(state, payload) {
-      state.edittedItemHistories = payload;
+    // history relate
+    SET_EDITTED_ITEM_HISTORIES(state, edittedItemHistories) {
+      state.requestHistoriesStatus = "SUCCESS";
+      state.loadingGetEdittedItemHistories = false;
+      state.edittedItemHistories = edittedItemHistories;
     },
-    SET_REQUEST_STATUS(state, payload) {
-      state.requestStatus = "SUCCESS";
+    SET_REQUEST_STATUS(state) {
+      state.requestHistoriesStatus = "PENDING";
+      state.loadingGetEdittedItemHistories = true;
+      state.edittedItemHistories = [];
     },
 
     ON_CHANGE(state, payload) {
