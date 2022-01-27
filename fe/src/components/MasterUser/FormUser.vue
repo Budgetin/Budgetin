@@ -127,6 +127,7 @@ export default {
         // console.log(this.form.name.username);
         // console.log(payload)
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
+        this.$refs.form.reset()
       }
     },
   },

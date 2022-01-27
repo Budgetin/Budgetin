@@ -12,7 +12,7 @@
         <v-timeline-item
           v-for="item in items"
           :key="item.id"
-          :color="getActionColor(item.action)"
+          :color="getColor(item.action)"
           small
           fill-dot
           class="mr-3"
@@ -29,10 +29,24 @@
               </div>
             </v-row>
             <template v-if="item.table == 'coa'">
-              <item-log-master-coa>
-                :item = "{{item}}"
+              <item-log-master-coa
+                :data="item"
+              >
               </item-log-master-coa>
             </template>
+            <template v-if="item.table == 'product'">
+              <item-log-master-product
+                :data="item"
+              >
+              </item-log-master-product>
+            </template>
+            <v-row class="mt-1">
+              <div>
+                <strong>
+                  {{item.serialized_data.updated_by}}
+                </strong>
+              </div>
+            </v-row>
           </v-container>
         </v-timeline-item>
       </v-timeline>
@@ -42,6 +56,8 @@
 
 <script>
 import ItemLogMasterCoa from "@/components/MasterCOA/ItemLogMasterCoa"
+import ItemLogMasterProduct from "@/components/MasterProduct/ItemLogMasterProduct"
+
 // import formatting from "@/mixins/formatting";
 export default {
   name: "TimelineLog",
@@ -55,25 +71,24 @@ export default {
       default: false,
     },
   },
-  components: { ItemLogMasterCoa },
+  components: { ItemLogMasterCoa,ItemLogMasterProduct },
   created() {
     // console.log(items)
   },
   methods: {
-    getActionColor(action) {
-      console.log(action);
+    getColor(action) {
       switch (action) {
         case 1:
-          return "blue";
+          return "#18ffb4de";
         case 2:
           return "yellow";
         case 3:
           return "#40a9ff";
-        case "create":
-          return "#blue";
-        case "read":
-          return "#yellow";
-        case "update":
+        case "Create":
+          return "#18ffb4de";
+        case "Read":
+          return "yellow";
+        case "Update":
           return "#40a9ff";
         default:
           return "grey";

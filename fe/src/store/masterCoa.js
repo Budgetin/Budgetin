@@ -156,8 +156,11 @@ const masterCoa = {
         .get("/api/auditlog?table=coa&entity=" + `${id}`)
         .then((response) => {
           const data = response.data;
-          commit("SET_EDITTED_ITEM_HISTORIES", data); 
-          resolve(data);
+          const sorted = data.sort((a, b) =>
+          a.id < b.id ? 1 : -1
+        );
+          commit("SET_EDITTED_ITEM_HISTORIES", sorted); 
+          resolve(sorted);
         })
         .catch((error) => {
           commit("GET_ERROR", error);

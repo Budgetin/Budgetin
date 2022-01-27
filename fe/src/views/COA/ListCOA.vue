@@ -172,7 +172,7 @@ export default {
     },
     onAlertOk() {
       this.alert.show = false;
-    },
+    }
   }
 }
 </script>

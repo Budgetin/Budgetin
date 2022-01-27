@@ -175,6 +175,7 @@ export default {
           minimum_item_origin: this.nominal ? parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) : 0
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
+        this.$refs.form.reset()
       }
     },
   },

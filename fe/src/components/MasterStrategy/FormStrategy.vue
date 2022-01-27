@@ -92,6 +92,7 @@ export default {
           name : this.form.name,
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
+        this.$refs.form.reset()
       }
     },
   },

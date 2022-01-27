@@ -130,6 +130,7 @@ export default {
           strategy : this.form.strategy.id ? this.form.strategy.id : this.form.strategy,
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
+        this.$refs.form.reset()
       }
     },
   },

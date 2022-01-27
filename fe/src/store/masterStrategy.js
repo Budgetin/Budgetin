@@ -19,7 +19,10 @@ const masterStrategy = {
     edittedItemHistories: [],
     loadingDeleteItem:false,
     deleteStatus: "IDLE",
-    deleteItem: []
+    deleteItem: [],
+    requestHistoriesStatus:"IDLE",
+    loadingGetEdittedItemHistories: false,
+    edittedItemHistories: [],
   },
   getters: {
     value: (state) => state.value
@@ -148,19 +151,25 @@ const masterStrategy = {
       });
     },
 
-    // getEdittedItemHistories({ commit }) {
-    //   const itemID = store.state.masterStrategy.edittedItem.id;
-    //   if (!itemID) return;
-    //   getAPI
-    //     .get(ENDPOINT + `${itemID}/histories/`)
-    //     .then((response) => {
-    //       commit("SET_LOADING_GET_EDITTED_ITEM", false);
-    //       commit("SET_EDITTED_ITEM_HISTORIES", response.data);
-    //     })
-    //     .catch((error) => {
-    //       commit("GET_ERROR", error.response.data);
-    //     });
-    // },
+    getHistory({ commit }, id) {
+      commit("SET_REQUEST_STATUS"); 
+      return new Promise((resolve, reject) => {
+      getAPI
+        .get("/api/auditlog?table=strategy&entity=" + `${id}`)
+        .then((response) => {
+          const data = response.data;
+          const sorted = data.sort((a, b) =>
+          a.id < b.id ? 1 : -1
+        );
+          commit("SET_EDITTED_ITEM_HISTORIES", sorted); 
+          resolve(sorted);
+        })
+        .catch((error) => {
+          commit("GET_ERROR", error);
+          reject(error);
+        });
+      });
+    },
   },
   mutations: {
     // get related
@@ -206,13 +215,16 @@ const masterStrategy = {
       state.loadingGetEdittedItem = payload;
     },
 
-    // history related
-    SET_EDITTED_ITEM_HISTORIES(state, payload) {
-      state.edittedItemHistories = payload;
+    // history relate
+    SET_EDITTED_ITEM_HISTORIES(state, edittedItemHistories) {
+      state.requestHistoriesStatus = "SUCCESS";
+      state.loadingGetEdittedItemHistories = false;
+      state.edittedItemHistories = edittedItemHistories;
     },
-
-    SET_REQUEST_STATUS(state, payload) {
-      state.requestStatus = payload;
+    SET_REQUEST_STATUS(state) {
+      state.requestHistoriesStatus = "PENDING";
+      state.loadingGetEdittedItemHistories = true;
+      state.edittedItemHistories = [];
     },
 
     ON_CHANGE(state, payload) {
