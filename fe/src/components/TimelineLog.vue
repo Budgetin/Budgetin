@@ -12,7 +12,7 @@
         <v-timeline-item
           v-for="item in items"
           :key="item.id"
-          :color="getActionColor(item.action_id)"
+          :color="getActionColor(item.action)"
           small
           fill-dot
           class="mr-3"
@@ -21,13 +21,18 @@
             <v-row justify="space-between">
               <div>
                 <strong>
-                  {{item.action_id}}
+                  {{item.action}}
                 </strong>
               </div>
               <div class="mr-3">
                 {{ item.timestamp }}
               </div>
             </v-row>
+            <template v-if="item.table == 'coa'">
+              <item-log-master-coa>
+                :item = "{{item}}"
+              </item-log-master-coa>
+            </template>
           </v-container>
         </v-timeline-item>
       </v-timeline>
@@ -36,6 +41,7 @@
 </template>
 
 <script>
+import ItemLogMasterCoa from "@/components/MasterCOA/ItemLogMasterCoa"
 // import formatting from "@/mixins/formatting";
 export default {
   name: "TimelineLog",
@@ -49,6 +55,7 @@ export default {
       default: false,
     },
   },
+  components: { ItemLogMasterCoa },
   created() {
     // console.log(items)
   },
