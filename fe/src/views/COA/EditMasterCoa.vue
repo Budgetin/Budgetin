@@ -20,8 +20,8 @@
       <v-col xs="12" sm="6" md="6" lg="5">
         <v-container>
           <timeline-log
-            :items="edittedItemHistories"
-            v-if="edittedItemHistories"
+            :items="items"
+            v-if="items"
           ></timeline-log>
         </v-container>
       </v-col>
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
 import FormCoa from "@/components/MasterCOA/FormCoa";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 import TimelineLog from "@/components/TimelineLog";
@@ -57,9 +57,6 @@ export default {
     this.getEdittedItem();
     this.getHistoryItem();
 
-  },
-  computed: {
-    ...mapState("masterCoa", [ "edittedItemHistories"]),
   },
   methods: {
     ...mapActions("masterCoa", [
@@ -73,10 +70,8 @@ export default {
     },
     getHistoryItem() {
       this.getHistory(this.$route.params.id).then(() => {
-        console.log(this.edittedItemHistories)
-        this.edittedItemHistories = JSON.parse(
-        JSON.stringify(this.$store.state.masterCoa.edittedItemHistories)
-      );
+        this.items = JSON.parse(
+        JSON.stringify(this.$store.state.masterCoa.edittedItemHistories))
       });
     },
     setForm() {
@@ -128,6 +123,7 @@ export default {
       this.alert.show = false;
       this.isView = true;
       this.getEdittedItem();
+      this.getHistoryItem();
     },
     onAlertDeleteOk() {
       this.delete_alert.show = false;
@@ -148,6 +144,7 @@ export default {
   },
   data: () => ({
     isView: true,
+    items:null,
     form: {
       id: "",
       name: "",
