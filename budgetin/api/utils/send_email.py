@@ -1,12 +1,14 @@
 from django.core.mail import send_mail
 from django.conf import settings
 from api.utils.hit_api import get_biro_info
+from api.models.biro_model import Biro
 
 def send_email(biro_id_list, subject, body):
     email_array = []
     
     for biro_id in biro_id_list:
-        biro_info = get_biro_info(biro_id['biro_id'])
+        curr_biro = Biro.objects.filter(id=biro_id['biro_id']).values()
+        biro_info = get_biro_info(curr_biro['ithc_biro'])
         if 'err' in biro_info:
             return False
         if biro_info['biro_manager_email'] != "":
