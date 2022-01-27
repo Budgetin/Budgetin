@@ -1,15 +1,13 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from api.models.project_detail_model import ProjectDetail
-from api.serializers.project_detail_serializer import ProjectDetailSerializer
-from api.utils.date_format import timestamp_to_strdateformat
 from rest_framework.decorators import action
-from api.utils.listplanning import get_all_list_planning
 
-#For Audit Logging
+from api.models import ProjectDetail
+from api.serializers import ProjectDetailSerializer
+from api.utils.date_format import timestamp_to_strdateformat
+from api.utils.listplanning import get_all_list_planning
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-
 
 class ProjectDetailViewSet(viewsets.ModelViewSet):
     queryset = ProjectDetail.objects.all()

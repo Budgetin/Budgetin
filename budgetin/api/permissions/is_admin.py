@@ -1,4 +1,5 @@
 from rest_framework import permissions
+
 from api.exceptions import NotAuthorizedException
 from api.utils.enum import RoleEnum
 

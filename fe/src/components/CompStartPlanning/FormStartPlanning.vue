@@ -38,7 +38,7 @@
               sm="6">
               <div class="StartPlanning__field">
                 <v-select
-                  v-model="form.is_active.id"
+                  v-model="form.is_active"
                   :items="statusInfoPlanning"
                   item-text="label"
                   item-value="id"
@@ -67,11 +67,11 @@
                 <template v-slot:activator="{ on, attrs }">
                   <div class="StartPlanning__field">
                     <v-text-field
-                      v-model="localDate"
+                      v-model="form.due_date"
                       outlined
-                      readonly
                       v-bind="attrs"
                       v-on="on"
+                      placeholder="Pick a Date"
                       :disabled="isView"
                       :rules="validation.required">
                     </v-text-field>
@@ -79,7 +79,7 @@
                 </template>
                 <v-date-picker
                   ref="form"
-                  v-model="localDate"
+                  v-model="form.due_date"
                   @input="menu = false"
                   :min="new Date().toISOString().substr(0, 10)">
                 </v-date-picker>
@@ -116,9 +116,10 @@
             <v-col no-gutters>
               <v-select
                 class="StartPlanning__select"
-                :items="biroGsit"
-                item-text="biroGsitName"
-                item-value="biroGsitEmail"
+                :items="dataAllBiro"
+                v-model="form.biros"
+                item-text="code"
+                item-value="id"
                 placeholder="Choose Biro"
                 multiple
                 chips
@@ -135,9 +136,10 @@
             <v-col>
               <div class="emailBody">
                 <v-textarea
-                  outlined
-                  dense
-                  :disabled="isView">
+                v-model="form.body"
+                outlined
+                dense
+                :disabled="isView">
                 </v-textarea>
               </div>
             </v-col>
@@ -163,7 +165,7 @@
             </v-btn>
           </v-col>
           <v-col no-gutters>
-            <v-btn rounded class="primary" @click="$emit('submitClicked')" v-if="isNew" style="width: 8rem; margin-top: 64px">
+            <v-btn rounded class="primary" type="submit" v-if="isNew" style="width: 8rem; margin-top: 64px">
               Submit
             </v-btn>
           </v-col>
@@ -181,14 +183,15 @@
 
 <script>
 import { mapState } from "vuex";
+// import format from 'date-fns/format'
 export default {
   name: "FormStartPlanning",
   props: ["form", "isNew", "isView", "dataAllBiro"],
   
   data: () => ({
     //yearSubstring: new Date().getFullYear(),
-    localDate: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-    menu: false,
+    //localDate: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+    menu: null,
     validation: {
       required: [
         (v) => !!v || "This field is required"
@@ -202,55 +205,8 @@ export default {
         return 'Year has to be integer and contains 4 digits';
       },
     },
-
-    biroGsit: [
-      {biroGsitName: 'GSIT ARC A', biroGsitEmail: 'gsit_arc_a_00@intra.bca'},
-      {biroGsitName: 'GSIT CTS A', biroGsitEmail: 'gsit_cts_a_00@intra.bca'},
-      {biroGsitName: 'GSIT CTS B', biroGsitEmail: 'gsit_cts_b_00@intra.bca'},
-      {biroGsitName: 'GSIT CTS C', biroGsitEmail: 'gsit_cts_c_00@intra.bca'},
-      {biroGsitName: 'GSIT CTS D', biroGsitEmail: 'gsit_cts_d_00@intra.bca'},
-      {biroGsitName: 'GSIT CTS E', biroGsitEmail: 'gsit_cts_e_00@intra.bca'},
-      {biroGsitName: 'GSIT DIS A', biroGsitEmail: 'gsit_dis_a_00@intra.bca'},
-      {biroGsitName: 'GSIT DIS B', biroGsitEmail: 'gsit_dis_b_00@intra.bca'},
-      {biroGsitName: 'GSIT DTM A', biroGsitEmail: 'gsit_dtm_a_00@intra.bca'},
-      {biroGsitName: 'GSIT DTM B', biroGsitEmail: 'gsit_dtm_b_00@intra.bca'},
-      {biroGsitName: 'GSIT DTM C', biroGsitEmail: 'gsit_dtm_c_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO A', biroGsitEmail: 'gsit_ibo_a_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO B', biroGsitEmail: 'gsit_ibo_b_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO C', biroGsitEmail: 'gsit_ibo_c_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO D', biroGsitEmail: 'gsit_ibo_d_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO E', biroGsitEmail: 'gsit_ibo_e_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO F', biroGsitEmail: 'gsit_ibo_f_00@intra.bca'},
-      {biroGsitName: 'GSIT IBO G', biroGsitEmail: 'gsit_ibo_g_00@intra.bca'},
-      {biroGsitName: 'GSIT IMO A', biroGsitEmail: 'gsit_imo_a_00@intra.bca'},
-      {biroGsitName: 'GSIT IMO B', biroGsitEmail: 'gsit_imo_b_00@intra.bca'},
-      {biroGsitName: 'GSIT IMO C', biroGsitEmail: 'gsit_imo_c_00@intra.bca'},
-      {biroGsitName: 'GSIT IMO D', biroGsitEmail: 'gsit_imo_d_00@intra.bca'},
-      {biroGsitName: 'GSIT ISO A', biroGsitEmail: 'gsit_iso_a_00@intra.bca'},
-      {biroGsitName: 'GSIT ISO B', biroGsitEmail: 'gsit_iso_b_00@intra.bca'},
-      {biroGsitName: 'GSIT ISO C', biroGsitEmail: 'gsit_iso_c_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX A', biroGsitEmail: 'gsit_itx_a_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX B', biroGsitEmail: 'gsit_itx_b_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX C', biroGsitEmail: 'gsit_itx_c_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX D', biroGsitEmail: 'gsit_itx_d_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX E', biroGsitEmail: 'gsit_itx_e_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX F', biroGsitEmail: 'gsit_itx_f_00@intra.bca'},
-      {biroGsitName: 'GSIT ITX G', biroGsitEmail: 'gsit_itx_g_00@intra.bca'},
-      {biroGsitName: 'GSIT NIS A', biroGsitEmail: 'gsit_nis_a_00@intra.bca'},
-      {biroGsitName: 'GSIT NIS B', biroGsitEmail: 'gsit_nis_b_00@intra.bca'},
-      {biroGsitName: 'GSIT NIS C', biroGsitEmail: 'gsit_nis_c_00@intra.bca'},
-      {biroGsitName: 'GSIT NIS D', biroGsitEmail: 'gsit_nis_d_00@intra.bca'},
-      {biroGsitName: 'GSIT NIS E', biroGsitEmail: 'gsit_nis_e_00@intra.bca'},
-      {biroGsitName: 'GSIT SAQ A', biroGsitEmail: 'gsit_saq_a_00@intra.bca'},
-      {biroGsitName: 'GSIT SAQ B', biroGsitEmail: 'gsit_saq_b_00@intra.bca'},
-      {biroGsitName: 'GSIT SAQ C', biroGsitEmail: 'gsit_saq_c_00@intra.bca'},
-      {biroGsitName: 'GSIT SIS A', biroGsitEmail: 'gsit_sis_a_00@intra.bca'},
-      {biroGsitName: 'GSIT SIS B', biroGsitEmail: 'gsit_sis_b_00@intra.bca'},
-      {biroGsitName: 'GSIT SIS C', biroGsitEmail: 'gsit_sis_c_00@intra.bca'},
-      {biroGsitName: 'GSIT SIS D', biroGsitEmail: 'gsit_sis_d_00@intra.bca'}
-    ],
     
-    closeOnContentClick: true,
+    //closeOnContentClick: true,
   }),
   
   computed: {
@@ -264,19 +220,35 @@ export default {
     errorMsg() {
       return this.$store.state.source.errorMsg;
     },
+    // formattedDate() {
+    //   return this.form.due_date ? format(this.form.due_date, 'YYYY-MM-DDT23:59') : ' '
+    // }
   },
 
   methods: {
     onSubmit() {
+      console.log("Masuk Sini");
       let validate = this.$refs.form.validate();
-      // let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
+      //let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
+      console.log("Masuk Sini Lagi");
       if (validate) {
         const payload = {
+          id: this.form?.id,
           year: this.form.year,
-          is_active: this.form.is_active,
-          due_date: this.$refs.form.due_date
+          is_active: this.form.is_active.id,
+          due_date: this.form.due_date + "T23:59",
+          send_notification: this.form.notification.id ? 1 : 0,
+          biros: [this.form.biros] ? [this.form.biros] : 0,
+          body: this.form.body ? this.form.body : 0,
         };
+        console.log("Year"+this.form.year);
+        console.log("DueDate"+this.form.due_date);
+        console.log("is_active"+this.form.is_active.id);
+        console.log("sendNotif"+this.form.notification.id);
+        console.log(this.form.biros);
+        console.log("body"+this.form.body);
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
+        this.$refs.form.reset()
       }
     },
     onCancel() {

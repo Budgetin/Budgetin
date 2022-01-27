@@ -1,7 +1,7 @@
 from django.db import models
 from django_softdelete.models import SoftDeleteModel
-from .abstract_model import TimestampModel
-from .abstract_model import UserTrackModel
+
+from api.models.abstract_model import TimestampModel, UserTrackModel
 
 class Budget(SoftDeleteModel, TimestampModel, UserTrackModel):
     project_detail = models.ForeignKey('ProjectDetail', on_delete=models.CASCADE)

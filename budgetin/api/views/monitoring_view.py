@@ -1,11 +1,11 @@
-from rest_framework import viewsets
-from api.models import Monitoring, Biro
-from api.serializers.monitoring_serializer import MonitoringSerializer
-from api.utils.date_format import timestamp_to_strdateformat
-from rest_framework.response import Response
 from django.forms.models import model_to_dict
+from rest_framework import viewsets
+from rest_framework.response import Response
 
-#For Audit Logging
+
+from api.models import Monitoring
+from api.serializers import MonitoringSerializer
+from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 

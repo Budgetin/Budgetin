@@ -1,7 +1,7 @@
 import datetime
 import json
-from api.models.audit_log_model import AuditLog as AL
 
+from api.models import AuditLog as AL
 from api.utils.enum import ActionEnum
 class AuditLog():    
     def Save(data, request, action_enum, table_enum):

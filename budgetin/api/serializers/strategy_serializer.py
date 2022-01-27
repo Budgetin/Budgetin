@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from api.models.strategy_model import Strategy
+
+from api.models import Strategy
 class StrategySerializer(serializers.ModelSerializer):
     class Meta:
         model = Strategy

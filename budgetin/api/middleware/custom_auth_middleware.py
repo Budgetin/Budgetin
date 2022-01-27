@@ -1,6 +1,4 @@
 from api.utils.jwt import decode_token
-from api.models.user_model import User
-from rest_framework.request import Request
 
 
 class CustomAuthMiddleware(object):

@@ -14,6 +14,8 @@
                     :loading="loadingGetStartPlanning"
                     :items="dataStartPlanning"
                     :search="search"
+                    :sort-by.sync="sortBy"
+                    :sort-desc.sync="sortDesc"
                     class="data-table">
                         <template v-slot:top>
                             <v-toolbar-title>
@@ -76,6 +78,10 @@
                         <template v-slot:[`item.is_active`]="{ item }">
                             <binary-status-chip :boolean="item.is_active"> </binary-status-chip>
                         </template>
+
+                        <!-- <template v-slot:[`item.notification`]="{ item }">
+                            <binary-notif-chip :boolean="item.notification"> </binary-notif-chip>
+                        </template> -->
                     </v-data-table>
                 </v-col>
             </v-row>
@@ -83,26 +89,27 @@
             <v-row no-gutters>
                 <v-dialog v-model="dialog" persistent width="40rem">
                     <form-start-planning
-                        :form="form"
-                        :isNew="true"
-                        :isView="false"
-                        :dataStartPlanning="dataStartPlanning"
-                        @editClicked="onEdit"
-                        @cancelClicked="onCancel"
-                        @submitClicked="onSubmit"
-                        @okClicked="onOK">
+                    :form="form"
+                    :isNew="true"
+                    :isView="false"
+                    :dataAllBiro="dataAllBiro"
+                    :dataStartPlanning="dataStartPlanning"
+                    @editClicked="onEdit"
+                    @cancelClicked="onCancel"
+                    @submitClicked="onSubmit"
+                    @okClicked="onOK">
                     </form-start-planning>
                 </v-dialog>
             </v-row>
         </v-container>
 
-        <success-error-alert
+        <!-- <success-error-alert
         :success="alert.success"
         :show="alert.show"
         :title="alert.title"
         :subtitle="alert.subtitle"
         @okClicked="onAlertOk"
-        />
+        /> -->
     </v-app>
 </template>
 
@@ -111,10 +118,11 @@ import { mapState, mapActions } from "vuex";
 import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
+import BinaryNotifChip from "@/components/chips/BinaryNotifChip";
 export default {
     name: "StartPlanning",
     components: {
-        FormStartPlanning, SuccessErrorAlert, BinaryStatusChip
+        FormStartPlanning, SuccessErrorAlert, BinaryStatusChip, BinaryNotifChip
     },
     
     watch: {},
@@ -123,27 +131,37 @@ export default {
         search: "",
         dataTable: {
             headers: [
-                { text: "ID", value: "id", width: "10%" },
-                { text: "Planning For", value: "year", width: "15%" },
-                { text: "Status", value: "is_active.id", width: "8%" },
+                { text: "ID", value: "id", width: "7%" },
+                { text: "Planning For", value: "year", width: "12%" },
+                { text: "Status", value: "is_active", width: "8%" },
+                { text: "Due Date", value: "due_date", width: "15%" },
                 { text: "Notification", value: "notification", width: "15%" },
-                { text: "Updated By", value: "updated_by", width: "20%" },
+                { text: "Updated By", value: "updated_by", width: "15%" },
                 { text: "Updated Date", value: "updated_at", width: "15%" },
                 { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
             ],
         },
+        sortBy: 'id',
+        sortDesc: false,
         form: {
             year: "",
-            is_active:{
-                id:"",
-                label:""
+            is_active: {
+                id: "",
+                label: ""
             },
             // is_active: "",
             created_by: "",
             updated_by: "",
             updated_at: "",
-            due_date: "",
-            notification: "",
+            //due_date: "",
+            due_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            // send_notification: "",
+            notification: {
+                id: "",
+                label: ""   
+            },
+            biros: [],
+            body: "",
         },
         alert: {
             show: false,
@@ -155,21 +173,18 @@ export default {
 
     created() {
         this.getStartPlanning();
+        this.getAllBiro();
     },
 
     computed: {
-        cardTitle() {
-            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
-        },
         ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
-
-        cardTitle() {
-            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
-        },
+        ...mapState("allBiro", ["dataAllBiro"]),
     },
 
     methods: {
         ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
+        ...mapActions("allBiro", ["getAllBiro"]),
+
         onAdd() {
             this.dialog = !this.dialog;
         },
@@ -210,7 +225,20 @@ export default {
         },
         onOK() {
             return this.$router.go(-1);
-        }
+        },
+
+        // formatDate (date) {
+        //     if (!date) return null
+
+        //     const [year, month, day] = date.split('-')
+        //     return `${month}/${day}/${year}`
+        // },
+        // parseDate (date) {
+        //     if (!date) return null
+
+        //     const [month, day, year] = date.split('/')
+        //     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+        // },
     },
 };
 </script>

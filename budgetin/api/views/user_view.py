@@ -1,9 +1,10 @@
 from rest_framework.response import Response
 from rest_framework import viewsets
-from api.models.user_model import User
-from api.serializers.user_serializer import UserSerializer
-from api.utils.date_format import timestamp_to_strdateformat
 from rest_framework.decorators import action
+
+from api.models import User
+from api.serializers import UserSerializer
+from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.hit_api import get_imo_d_employee, get_ithc_employee_info
 
 class UserViewSet(viewsets.ModelViewSet):

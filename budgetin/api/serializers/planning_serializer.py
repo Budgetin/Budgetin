@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from api.models.planning_model import Planning
+
+from api.models import Planning
 
 
 class PlanningSerializer(serializers.ModelSerializer):

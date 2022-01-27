@@ -1,12 +1,8 @@
 from rest_framework import viewsets
-from api.models.project_model import Project
-from api.serializers.project_serializer import ProjectSerializer
+
+from api.models import Project
+from api.serializers import ProjectSerializer
 from api.utils.date_format import timestamp_to_strdateformat
-
-#For Include
-from api.utils.include import include
-
-#For Audit Logging
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 

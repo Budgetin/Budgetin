@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from api.models.pic_budget_model import PicBudget
+
+from api.models import PicBudget
 
 
 class PicBudgetSerializer(serializers.ModelSerializer):

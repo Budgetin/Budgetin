@@ -1,8 +1,7 @@
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from api.models.abstract_model import TimestampModel, UserTrackModel
 from django_softdelete.models import SoftDeleteModel
 
+from api.models.abstract_model import TimestampModel, UserTrackModel
 
 class User(TimestampModel, UserTrackModel, SoftDeleteModel):
     employee_id = models.BigIntegerField(unique=True, blank=True)
