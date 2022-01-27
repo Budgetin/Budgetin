@@ -142,6 +142,7 @@ export default {
     },
     onEdit(item) {
       this.$store.commit("masterCoa/SET_EDITTED_ITEM", item);
+      this.$store.commit("masterCoa/SET_EDITTED_ITEM_HISTORIES", item);
     },    
     onCancel() {
       this.dialog = false;

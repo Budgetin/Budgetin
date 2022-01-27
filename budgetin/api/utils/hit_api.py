@@ -92,6 +92,7 @@ def get_biro_info(biro_id):
         "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
     }
     res = requests.get(url, headers=headers, verify=False)
+    print(res)
     if res.json():
         #check for biro that is not deleted
         biro = [b for b in res.json() if b['is_deleted'] == False]
