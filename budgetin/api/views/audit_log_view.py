@@ -24,7 +24,8 @@ class AuditLogViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.C
             each['timestamp'] = timestamp_to_strdateformat(str(each['timestamp']), "%d %B %Y")
             data_as_json = json.loads(each['serialized_data'])
             data_as_json['is_deleted'] = 1 if data_as_json['is_deleted']==True else 0
-            data_as_json['is_capex'] = 1 if data_as_json['is_capex']==True else 0
+            if 'is_capex' in data_as_json:
+                data_as_json['is_capex'] = 1 if data_as_json['is_capex']==True else 0
             data_as_json['created_at'] = timestamp_to_strdateformat(str(data_as_json['created_at']), "%d %B %Y")
             data_as_json['created_by'] = User.all_objects.get(pk=data_as_json['created_by']).display_name
             data_as_json['updated_at'] = timestamp_to_strdateformat(str(data_as_json['updated_at']), "%d %B %Y")
