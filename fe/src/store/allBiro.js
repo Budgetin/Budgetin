@@ -31,9 +31,16 @@ const allBiro = {
       getAPI
         .get(ENDPOINT)
         .then((response) => {
-          const cleanData = response.data
+          const cleanData = response.data.map((data) => {
+            return {
+              id: data.id,
+              code: data.code,
+              name: data.name,
+              sub_group: data.sub_group,
+            };
+          });
           const sorted = cleanData.sort((a, b) =>
-            a.update_at > b.update_at ? 1 : -1
+            a.id > b.id ? 1 : -1
           );
           commit("GET_SUCCESS", sorted);
         })

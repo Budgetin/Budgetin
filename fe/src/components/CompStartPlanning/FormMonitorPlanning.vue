@@ -19,7 +19,7 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-text-field
-                  v-model="form.biro.group"
+                  v-model="form.biro.group_code"
                   outlined
                   dense
                   disabled
@@ -37,7 +37,7 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-text-field
-                  v-model="form.biro.subgroup"
+                  v-model="form.biro.sub_group_code"
                   outlined
                   dense
                   disabled
@@ -75,7 +75,7 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-text-field
-                  v-model="form.biro.pic"
+                  v-model="form.pic_initial"
                   outlined
                   dense
                   disabled
@@ -95,7 +95,7 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-text-field
-                  v-model="form.biro.pic"
+                  v-model="form.updated_at"
                   outlined
                   dense
                   disabled
@@ -113,8 +113,8 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-select
-                  v-model="form.is_deleted"
-                  :items="statusOptions"
+                  v-model="form.status"
+                  :items="monitorPlanning"
                   item-text="activeInactive"
                   label="Active"
                   outlined
@@ -151,9 +151,10 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "FormMonitorPlanning",
-  props: ["form", "isNew", "isView"],
+  props: ["form", "isNew", "isView", "dataAllBiro"],
   
   data: () => ({
     validation: {
@@ -175,6 +176,10 @@ export default {
   }),
   
   computed: {
+    ...mapState("statusInfo", ["statusInfoPlanning"]),
+    ...mapState("allBiro", ["getAllBiro"]),
+    ...mapState("monitorPlanning", ["getMonitorPlanning"]),
+
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
@@ -189,11 +194,11 @@ export default {
       // let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
       if (validate) {
         const payload = {
-          group: this.form.biro.group,
-          subgroup: this.form.biro.subgroup,
-          code: this.$refs.form.biro.code,
-          pic: this.$refs.form.biro.pic,
-          monitoring_status_id: this.$refs.form.monitoring_status_id,
+          group: this.form.biro.group_code,
+          subgroup: this.form.biro.sub_group_code,
+          code: this.form.biro.code,
+          pic: this.form.pic_initial,
+          monitoring_status: this.form.monitoring_status,
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }

@@ -10,11 +10,11 @@
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-data-table
-                        :headers="dataTable.headers"
-                        :loading="loadingGetMonitorPlanning"
-                        :items="dataMonitorPlanning"
-                        :search="search"
-                        class="data-table">
+                    :headers="dataTable.headers"
+                    :loading="loadingGetMonitorPlanning"
+                    :items="dataMonitorPlanning"
+                    :search="search"
+                    class="data-table">
                         <template v-slot:top>
                             <v-toolbar-title>
                                 <v-row class="mb-5" no-gutters>
@@ -76,12 +76,12 @@ export default {
         dataTable: {
             headers: [
                 { text: "No", value: "no", width: "5%" },
-                { text: "Group", value: "group", width: "15%" },
-                { text: "Sub-Group", value: "subgroup", width: "15%" },
-                { text: "Biro", value: "code", width: "15%" },
-                { text: "PIC", value: "pic", width: "15%" },
+                { text: "Group", value: "biro.group_code", width: "15%" },
+                { text: "Sub-Group", value: "biro.sub_group_code", width: "15%" },
+                { text: "Biro", value: "biro.code", width: "15%" },
+                { text: "PIC", value: "pic_initial", width: "15%" },
                 { text: "Updated Date", value: "updated_at", width: "20%" },
-                { text: "Status", value: "monitoring_status_id", width: "17%" },
+                { text: "Status", value: "status", width: "17%" },
                 { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
             ],
         },
@@ -89,13 +89,17 @@ export default {
             biro: {
                 ithc_biro: "",
                 code: "",
-                subgroup: "",
-                group: "",
-                pic: "",
+                sub_group_code: "",
+                group_code: "",
+                name: "",
             },
-            monitoring_status_id: "",
+            monitoring_status: "",
             is_deleted: "",
             planning_id: "",
+            pic_employee_id: "",
+            pic_initial: "",
+            pic_display_name: "",
+            status: "",
             updated_by: "",
             updated_at: "",
         },
