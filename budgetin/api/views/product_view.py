@@ -1,12 +1,8 @@
 from rest_framework import viewsets
+
 from api.models import Product,Strategy,User
-from api.serializers.product_serializer import ProductSerializer
+from api.serializers import ProductSerializer
 from api.utils.date_format import timestamp_to_strdateformat
-
-#For Include
-from api.utils.include import include
-
-#For Audit Logging
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 

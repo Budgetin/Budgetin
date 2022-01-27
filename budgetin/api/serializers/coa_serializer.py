@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from api.models.coa_model import Coa
+
+from api.models import Coa
 
 
 class CoaSerializer(serializers.ModelSerializer):

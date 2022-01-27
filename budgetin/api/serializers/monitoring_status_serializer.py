@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from api.models.monitoring_status_model import MonitoringStatus
+
+from api.models import MonitoringStatus
 
 
 class MonitoringStatusSerializer(serializers.ModelSerializer):

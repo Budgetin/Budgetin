@@ -1,6 +1,7 @@
 import requests
 
 from django.conf import settings
+
 from api.exceptions import *
 from api.utils.triple_des import encrypt_3des
 

@@ -1,8 +1,7 @@
-from tkinter import CASCADE
 from django.db import models
 from django_softdelete.models import SoftDeleteModel
-from .abstract_model import TimestampModel
-from .abstract_model import UserTrackModel
+
+from api.models.abstract_model import TimestampModel, UserTrackModel
 
 
 class ProjectDetail(SoftDeleteModel, TimestampModel, UserTrackModel):

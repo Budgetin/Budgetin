@@ -1,8 +1,7 @@
 from django.db import models
 from django_softdelete.models import SoftDeleteModel
-from .abstract_model import TimestampModel, UserTrackModel
 
-
+from api.models.abstract_model import TimestampModel, UserTrackModel
 
 class Project(SoftDeleteModel, TimestampModel, UserTrackModel):
     itfam_id = models.CharField(max_length=200)

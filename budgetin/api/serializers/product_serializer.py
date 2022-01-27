@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from api.models.product_model import Product
+
+from api.models import Product
 
 
 class ProductSerializer(serializers.ModelSerializer):

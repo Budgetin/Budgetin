@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from api.utils.jwt import *
+from api.models import User
+from api.utils.jwt import generate_token, decode_token
 from api.utils.hit_api import login_eai, get_ithc_employee_info, get_eselon
-from api.models.user_model import User
 from api.exceptions import InvalidCredentialException, NotEligibleException
 
 def get_user_info(username):

@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from api.models.biro_model import Biro
+
+from api.models import Biro
 
 
 class BiroSerializer(serializers.ModelSerializer):

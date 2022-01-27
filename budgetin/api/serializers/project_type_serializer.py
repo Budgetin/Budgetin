@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from api.models.project_type_model import ProjectType
+
+from api.models import ProjectType
 
 
 class ProjectTypeSerializer(serializers.ModelSerializer):

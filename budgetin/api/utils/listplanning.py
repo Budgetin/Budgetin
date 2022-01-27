@@ -1,11 +1,6 @@
-from api.models.project_detail_model import ProjectDetail
-from api.models.planning_model import Planning
-from api.models.project_model import Project
-from api.models.product_model import Product
-from api.models.biro_model import Biro
-from api.models.project_type_model import ProjectType
-import json
 from django.forms.models import model_to_dict
+
+from api.models import ProjectDetail, Planning, Project, Product, Biro, ProjectType
 
 def get_all_list_planning():
     listPlanning = ProjectDetail.objects.all().values()

@@ -1,11 +1,9 @@
 from rest_framework import viewsets
+
 from api.models import Coa, User
-from api.serializers.coa_serializer import CoaSerializer
+from api.serializers import CoaSerializer
 from api.permissions import IsAuthenticated, IsAdmin
 from api.utils.date_format import timestamp_to_strdateformat
-from api.utils.include import include
-
-#For Audit Logging
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
 

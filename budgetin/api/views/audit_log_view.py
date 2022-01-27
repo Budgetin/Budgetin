@@ -1,10 +1,11 @@
 import json
+
 from rest_framework import viewsets, mixins
-from api.models import AuditLog, User
-from api.serializers.audit_log_serializer import AuditLogSerializer
 from rest_framework.response import Response
+
+from api.models import AuditLog, User
+from api.serializers import AuditLogSerializer
 from api.utils.date_format import timestamp_to_strdateformat
-from api.utils.enum import TableEnum
 
 class AuditLogViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = AuditLog.objects.all()

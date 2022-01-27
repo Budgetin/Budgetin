@@ -1,8 +1,8 @@
 from rest_framework import viewsets 
-from api.models.strategy_model import Strategy
-from api.serializers.strategy_serializer import StrategySerializer
+
+from api.models import Strategy, User
+from api.serializers import StrategySerializer
 from api.utils.date_format import timestamp_to_strdateformat
-from api.models import User
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.auditlog import AuditLog
