@@ -10,11 +10,11 @@
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-data-table
-                        :headers="dataTable.headers"
-                        :loading="loadingGetStartPlanning"
-                        :items="dataStartPlanning"
-                        :search="search"
-                        class="data-table">
+                    :headers="dataTable.headers"
+                    :loading="loadingGetStartPlanning"
+                    :items="dataStartPlanning"
+                    :search="search"
+                    class="data-table">
                         <template v-slot:top>
                             <v-toolbar-title>
                                 <v-row class="mb-5" no-gutters>
@@ -238,7 +238,7 @@ export default {
         text-align: end;
 
         button {
-        margin: 10px 32px;
+            margin: 10px 32px;
         }
     }
 
