@@ -5,25 +5,7 @@ from api.models.action_model import Action
 from api.models.table_model import Table
 
 from api.utils.enum import ActionEnum
-class AuditLog():
-    #Action Name
-    Create = "Create"
-    Read = "Read"
-    Update = "Update"
-    Delete = "Delete"
-    
-    #Table Name
-    AuditLog = "Audit Log"
-    Biro = "Biro"
-    Budget = "Budget"
-    Coa = "Coa"
-    Monitoring = "Monitoring"
-    PicBudget = "PicBudget"
-    Planning = "Planning"
-    Product = "Product"
-    Project = "Project"
-    ProjectDetail = "Project Detail"
-    
+class AuditLog():    
     def Save(data, request, action_enum, entity_enum):
         actionid = Action.objects.filter(name=action_enum.value).values()[0]['id']
         tableid = Table.objects.filter(name=entity_enum.value).values()[0]['id']
