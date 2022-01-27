@@ -1,14 +1,10 @@
 import datetime
 import json
 from api.models.audit_log_model import AuditLog as AL
-from api.models.action_model import Action
-from api.models.table_model import Table
 
 from api.utils.enum import ActionEnum
 class AuditLog():    
-    def Save(data, request, action_enum, entity_enum):
-        actionid = Action.objects.filter(name=action_enum.value).values()[0]['id']
-        tableid = Table.objects.filter(name=entity_enum.value).values()[0]['id']
+    def Save(data, request, action_enum, table_enum):
         
         if data and action_enum != ActionEnum.DELETE:
             entity_id = data.data['id']
@@ -20,7 +16,7 @@ class AuditLog():
         # AL.objects.create(timestamp=datetime.datetime.now(
         #     ), modified_by=request.custom_user['id'], entity_id=entity_id, serialized_data=serialized_data, action_id=actionid, table_id=tableid)
         AL.objects.create(timestamp=datetime.datetime.now(
-            ), modified_by=1, entity_id=entity_id, serialized_data=serialized_data, action_id=actionid, table_id=tableid)
+            ), modified_by=1, entity_id=entity_id, serialized_data=serialized_data, action=action_enum.value, table=table_enum.value)
 
 
 #CONTEKAN
