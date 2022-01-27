@@ -84,49 +84,6 @@ def get_all_biro(params=''):
     raise NotFoundException()
 
 
-#Get Biro Information
-def get_biro_info(biro_id):
-    url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/biros/?include=manager_employee,sub_group,sub_group.manager_employee,sub_group.group,sub_group.group.manager_employee,sub_group.group.divisi&id__exact={}".format(
-        biro_id)
-    headers = {
-        "Authorization": "Api-Key {}".format(settings.ITHC_API_KEY)
-    }
-    res = requests.get(url, headers=headers, verify=False)
-    print(res)
-    if res.json():
-        #check for biro that is not deleted
-        biro = [b for b in res.json() if b['is_deleted'] == False]
-        if biro:
-            biro_manager_email = ""
-            sub_group_manager_email = ""
-            group_manager_email = ""
-            biro_manager_id = biro[0]['manager_employee']
-            if biro_manager_id:
-                biro_manager_email = biro[0]['manager_employee']['work_email']
-            sub_group_id = biro[0]['sub_group']['id']
-            sub_group_manager_id = biro[0]['sub_group']['manager_employee']
-            if sub_group_manager_id:
-                sub_group_manager_email = biro[0]['sub_group']['manager_employee']['work_email']
-            group_id = biro[0]['sub_group']['group']['id']
-            group_manager_id = biro[0]['sub_group']['group']['manager_employee']
-            if group_manager_id:
-                group_manager_email = biro[0]['sub_group']['group']['manager_employee']['work_email']
-            divisi_id = biro[0]['sub_group']['group']['divisi']['id']
-            return {
-                'biro_id' : biro_id,
-                'biro_manager_id' : biro_manager_id,
-                'biro_manager_email' : biro_manager_email,
-                'sub_group_id' : sub_group_id,
-                'sub_group_manager_id' : sub_group_manager_id,
-                'sub_group_manager_email' : sub_group_manager_email,
-                'group_id' : group_id,
-                'group_manager_id' : group_manager_id,
-                'group_manager_email' : group_manager_email,
-                'divisi_id' : divisi_id
-            }
-    raise NotFoundException()
-    
-
 #Get Employee Information
 def get_ithc_employee_info(username):
     url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?include=biro,sub_group,sub_group.group,sub_group.group.divisi,eselon&username__exact={}".format(
