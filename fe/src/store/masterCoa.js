@@ -45,7 +45,6 @@ const masterCoa = {
         });
     },
     getMasterCoaById({ commit }, id) {
-      // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
       return new Promise((resolve, reject) => {
@@ -104,6 +103,7 @@ const masterCoa = {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
             store.dispatch("masterCoa/getFromAPI");
+            store.dispatch("masterCoa/getHistory");
             // store.dispatch("masterCategory/getFromAPI");
           })
           .catch((error) => {
@@ -130,7 +130,6 @@ const masterCoa = {
     },
 
     deleteMasterCoaById({ commit }, id) {
-      // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_DELETE_ITEM", true);
       return new Promise((resolve, reject) => {
         getAPI
@@ -148,37 +147,21 @@ const masterCoa = {
       });
     },
 
-    // getEdittedItemHistories({ commit }) {
-    //   const itemID = store.state.masterCoa.edittedItem.id;
-    //   if (!itemID) return;
-    //   getAPI
-    //     .get(ENDPOINT + `${itemID}/histories/`)
-    //     .then((response) => {
-    //       commit("SET_LOADING_GET_EDITTED_ITEM", false);
-    //       commit("SET_EDITTED_ITEM_HISTORIES", response.data);
-    //     })
-    //     .catch((error) => {
-    //       commit("GET_ERROR", error.response.data);
-    //     });
-    // },
-    // getActiveMasterCoa({ commit }) {
-    //   if (store.state.masterCoa.requestActiveStatus !== "SUCCESS")
-    //     getAPI
-    //       .get(ENDPOINT + "?filter{status}=1")
-    //       .then((response) => {
-    //         const cleanData = response.data.Coas.map((data) => {
-    //           return {
-    //             id: data.id,
-    //             Coa_name: data.Coa_name,
-    //             status: String(data.status),
-    //           };
-    //         });
-    //         commit("GET_ACTIVE_DATA_UPDATE", cleanData);
-    //       })
-    //       .catch((error) => {
-    //         commit("GET_ERROR", error);
-    //       });
-    // },
+    getHistory({ commit }, id) {
+      commit("SET_EDITTED_ITEM_HISTORIES", []); 
+      getAPI
+        .get("/api/auditlog?table=coa&entity=" + `${id}`)
+        .then((response) => {
+          const data = response.data;
+          console.log(data)
+          commit("SET_EDITTED_ITEM_HISTORIES", data); 
+          // resolve(data);
+        })
+        .catch((error) => {
+          commit("GET_ERROR", error);
+        });
+    },
+
   },
   mutations: {
     // get related
@@ -228,9 +211,8 @@ const masterCoa = {
     SET_EDITTED_ITEM_HISTORIES(state, payload) {
       state.edittedItemHistories = payload;
     },
-
     SET_REQUEST_STATUS(state, payload) {
-      state.requestStatus = payload;
+      state.requestStatus = "SUCCESS";
     },
 
     ON_CHANGE(state, payload) {

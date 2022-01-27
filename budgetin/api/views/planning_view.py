@@ -79,14 +79,14 @@ class PlanningViewSet(viewsets.ModelViewSet):
         request.data['created_by'] = 1
         
         #Process send notification
-        if 'send_notification' in request.data:
-            if request.data['send_notification'] == True:
-                if 'biros' and 'body' in request.data:
-                    biro_id_list = request.data['biros']
-                    subject = "[Budgetin] Akses Input Budget"
-                    body = request.data['body']
-                    if len(biro_id_list) > 0 and body != "":
-                        send_email(biro_id_list, subject, body)
+        # if 'send_notification' in request.data:
+        #     if request.data['send_notification'] == True:
+        #         if 'biros' and 'body' in request.data:
+        #             biro_id_list = request.data['biros']
+        #             subject = "[Budgetin] Akses Input Budget"
+        #             body = request.data['body']
+        #             if len(biro_id_list) > 0 and body != "":
+        #                 send_email(biro_id_list, subject, body)
         
         planning = super().create(request, *args, **kwargs)
         AuditLog.Save(planning, request, ActionEnum.CREATE, TableEnum.PLANNING)

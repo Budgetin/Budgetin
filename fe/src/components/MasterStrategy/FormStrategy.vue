@@ -67,7 +67,7 @@
 <script>
 export default {
   name: "FormStrategy",
-  props: ["form","dataMasterStrategy", "isView", "isNew"],
+  props: ["form", "isView", "isNew"],
   data: () => ({
     validation: {
       required: [

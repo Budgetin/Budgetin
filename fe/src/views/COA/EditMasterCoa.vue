@@ -20,7 +20,8 @@
       <v-col xs="12" sm="6" md="6" lg="5">
         <v-container>
           <timeline-log
-
+            :items="edittedItemHistories"
+            v-if="edittedItemHistories"
           ></timeline-log>
         </v-container>
       </v-col>
@@ -54,15 +55,28 @@ export default {
   components: {TimelineLog,FormCoa,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
+    this.getHistoryItem();
+
+  },
+  computed: {
+    ...mapState("masterCoa", [ "edittedItemHistories"]),
   },
   methods: {
     ...mapActions("masterCoa", [
       "patchMasterCoa",
-      "getMasterCoaById","deleteMasterCoaById"
+      "getMasterCoaById","deleteMasterCoaById","getHistory"
     ]),
     getEdittedItem() {
       this.getMasterCoaById(this.$route.params.id).then(() => {
         this.setForm();
+      });
+    },
+    getHistoryItem() {
+      this.getHistory(this.$route.params.id).then(() => {
+        console.log(this.edittedItemHistories)
+        this.edittedItemHistories = JSON.parse(
+        JSON.stringify(this.$store.state.masterCoa.edittedItemHistories)
+      );
       });
     },
     setForm() {

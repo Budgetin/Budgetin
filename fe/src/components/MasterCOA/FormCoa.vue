@@ -165,7 +165,6 @@ export default {
   methods: {
     onSubmit() {
       let validate = this.$refs.form.validate();
-      let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
       if (validate) {
         const payload = {
           id: this.form?.id,
@@ -173,7 +172,7 @@ export default {
           definition : this.form.definition,
           hyperion_name: this.form.hyperion_name,
           is_capex: this.form.is_capex ? 1 : 0 ,
-          minimum_item_origin: nominal ? nominal : 0
+          minimum_item_origin: this.nominal ? parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) : 0
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }

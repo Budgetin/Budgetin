@@ -55,9 +55,6 @@ export default {
   created() {
     this.getEdittedItem();
   },
-  computed: {
-    ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
-  },
   methods: {
     ...mapActions("masterStrategy", ["patchMasterStrategy","getMasterStrategyById","deleteMasterStrategyById"]),
     getEdittedItem() {

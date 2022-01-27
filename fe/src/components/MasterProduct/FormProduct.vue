@@ -127,9 +127,8 @@ export default {
           id: this.form?.id,
           product_code : this.form.product_code,
           product_name : this.form.product_name,
-          strategy : this.form.strategy,
+          strategy : this.form.strategy.id ? this.form.strategy.id : this.form.strategy,
         };
-        console.log(payload)
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }
     },
