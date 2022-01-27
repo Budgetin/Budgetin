@@ -11,9 +11,7 @@ from api.utils.enum import ActionEnum, TableEnum
 
 def construct_monitoring_dict(monitoring):
     monitoring_dict = model_to_dict(monitoring)
-    monitoring_dict['biro_code'] = monitoring.biro.code
-    monitoring_dict['sub_group_code'] = monitoring.biro.sub_group_code
-    monitoring_dict['group_code'] = monitoring.biro.group_code
+    monitoring_dict['biro'] = model_to_dict(monitoring.biro)
     monitoring_dict['status'] = monitoring.monitoring_status.name
     monitoring_dict['created_at'] = monitoring.created_at.strftime("%d %B %Y")
     monitoring_dict['updated_at'] = monitoring.updated_at.strftime("%d %B %Y")
