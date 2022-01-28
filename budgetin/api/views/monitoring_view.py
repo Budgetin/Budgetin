@@ -24,9 +24,9 @@ class MonitoringViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         parameter  = request.GET.get('planning')
         if parameter:
-            monitoring = Monitoring.objects.select_related('biro').select_related('monitoring_status').filter(planning=parameter)
+            monitoring = Monitoring.objects.select_related('biro', 'monitoring_status').filter(planning=parameter)
         else:
-            monitoring = Monitoring.objects.select_related('biro').select_related('monitoring_status').all()
+            monitoring = Monitoring.objects.select_related('biro', 'monitoring_status').all()
 
         result = []
         for each in monitoring:
@@ -36,7 +36,7 @@ class MonitoringViewSet(viewsets.ModelViewSet):
     
     def retrieve(self, request, *args, **kwargs):
         id = kwargs['pk']
-        monitoring = Monitoring.objects.select_related('biro').select_related('monitoring_status').get(pk=id)
+        monitoring = Monitoring.objects.select_related('biro', 'monitoring_status').get(pk=id)
         monitoring_dict = construct_monitoring_dict(monitoring)
         return Response(monitoring_dict)
 
