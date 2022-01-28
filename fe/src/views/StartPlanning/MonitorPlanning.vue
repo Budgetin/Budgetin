@@ -75,7 +75,6 @@ export default {
         search: "",
         dataTable: {
             headers: [
-                { text: "No", value: "no", width: "5%" },
                 { text: "Group", value: "biro.group_code", width: "15%" },
                 { text: "Sub-Group", value: "biro.sub_group_code", width: "15%" },
                 { text: "Biro", value: "biro.code", width: "15%" },

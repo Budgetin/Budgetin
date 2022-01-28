@@ -114,9 +114,10 @@
               <div class="monitor-planning__field">
                 <v-select
                   v-model="form.status"
-                  :items="monitorPlanning"
-                  item-text="activeInactive"
-                  label="Active"
+                  :items="statusMonitor"
+                  item-text="label"
+                  item-value="id"
+                  placeholder="Input Status"
                   outlined
                   return-object
                   :disabled="isView"
@@ -166,17 +167,15 @@ export default {
       ],
     },
 
-    statusOptions: [
-      {activeInactive: 'Active'},
-      {activeInactive: 'Inactive'}
-    ],
-    status: null,
-    
-    closeOnContentClick: true,
+    // statusOptions: [
+    //   {activeInactive: 'Active'},
+    //   {activeInactive: 'Inactive'}
+    // ],
+    // status: null,
   }),
   
   computed: {
-    ...mapState("statusInfo", ["statusInfoPlanning"]),
+    ...mapState("statusInfo", ["statusMonitor"]),
     ...mapState("allBiro", ["getAllBiro"]),
     ...mapState("monitorPlanning", ["getMonitorPlanning"]),
 

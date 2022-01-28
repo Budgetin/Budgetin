@@ -4,22 +4,22 @@
             <v-row no-gutters>
                 <!-- MONITOR PLANNING -->
                 <form-monitor-planning
-                    :form="form"
-                    :isView="isView"
-                    @editClicked="onEdit"
-                    @cancelClicked="onCancel"
-                    @submitClicked="onSubmit"
-                    @okClicked="onOK"
-                    class="view-status-monitoring__detail">
+                :form="form"
+                :isView="isView"
+                @editClicked="onEdit"
+                @cancelClicked="onCancel"
+                @submitClicked="onSubmit"
+                @okClicked="onOK"
+                class="view-status-monitoring__detail">
                 </form-monitor-planning>
 
                 <!-- LOG HISTORY -->
                 <form-log-history
-                    :form="form"
-                    @editClicked="onEdit"
-                    @cancelClicked="onCancel"
-                    @submitClicked="onSubmit"
-                    class="view-status-monitoring__logHistory">
+                :form="form"
+                @editClicked="onEdit"
+                @cancelClicked="onCancel"
+                @submitClicked="onSubmit"
+                class="view-status-monitoring__logHistory">
                 </form-log-history>
             </v-row>
         </v-container>

@@ -31,6 +31,28 @@ const startPlanning = {
       getAPI
         .get(ENDPOINT)
         .then((response) => {
+          // const cleanData = response.data.map((data) => {
+          //   return {
+          //     id: data.id,
+          //     year: data.year,
+          //     is_active: {
+          //       id: data.is_active.id,
+          //       label: data.is_active.id?"Active":"Inactive"
+          //     },
+          //     due_date: data.due_date,
+          //     notification: {
+          //       id: data.notification,
+          //       label: data.notification?"Yes":"No"
+          //     },
+          //     is_deleted: data.is_deleted,
+          //     updated_at: data.update_at,
+          //     updated_by: data.updated_by,
+          //   };
+          // });
+          // const sorted = cleanData.sort((a, b) =>
+          //   a.year > b.year ? 1 : -1
+          // );
+
           const cleanData = response.data
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
@@ -50,6 +72,19 @@ const startPlanning = {
           .get(ENDPOINT + `${id}/`)
           .then((response) => {
             const data = response.data;
+            // let getData = {
+            //   id: 1,
+            //   is_deleted: false,
+            //   deleted_at: null,
+            //   created_at: "27 January 2022",
+            //   updated_at: "27 January 2022",
+            //   created_by: "harvelouis",
+            //   updated_by: "harvelouis",
+            //   year: 2023,
+            //   is_active: true,
+            //   notification: false,
+            //   due_date: "31 December 2022"
+            // }
             commit("SET_EDITTED_ITEM", data);
             resolve(data);
           })
@@ -92,6 +127,7 @@ const startPlanning = {
       });
     },
     patchStartPlanning({ commit }, payload) {
+      console.log("Payload ID: "+payload.id);
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
       return new Promise((resolve, reject) => {

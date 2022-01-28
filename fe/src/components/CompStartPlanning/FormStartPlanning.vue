@@ -67,21 +67,21 @@
                 <template v-slot:activator="{ on, attrs }">
                   <div class="StartPlanning__field">
                     <v-text-field
-                      v-model="form.due_date"
-                      outlined
-                      v-bind="attrs"
-                      v-on="on"
-                      placeholder="Pick a Date"
-                      :disabled="isView"
-                      :rules="validation.required">
+                    ref="form"
+                    v-model="form.due_date"
+                    outlined
+                    v-bind="attrs"
+                    v-on="on"
+                    placeholder="Pick a Date"
+                    :disabled="isView"
+                    :rules="validation.required">
                     </v-text-field>
                   </div>
                 </template>
                 <v-date-picker
-                  ref="form"
-                  v-model="form.due_date"
-                  @input="menu = false"
-                  :min="new Date().toISOString().substr(0, 10)">
+                v-model="form.due_date"
+                @input="menu = false"
+                :min="new Date().toISOString().substr(0, 10)">
                 </v-date-picker>
               </v-menu>
             </v-col>
@@ -111,40 +111,41 @@
         </v-row>
 
         <!-- SEND TO -->
-        <v-row no-gutters v-if="form.notification.id==1">
-          <v-col> Send to <strong class="red--text">*</strong>
-            <v-col no-gutters>
-              <v-select
-                class="StartPlanning__select"
-                :items="dataAllBiro"
-                v-model="form.biros"
-                item-text="code"
-                item-value="id"
-                placeholder="Choose Biro"
-                multiple
-                chips
-                outlined
-                :rules="validation.required">
-              </v-select>
-            </v-col>            
-          </v-col>
-        </v-row>
-
-        <!-- E-MAIL BODY -->
-        <v-row no-gutters v-if="form.notification.id==1">
-          <v-col> E-mail Body
-            <v-col>
-              <div class="emailBody">
-                <v-textarea
-                v-model="form.body"
-                outlined
-                dense
-                :disabled="isView">
-                </v-textarea>
-              </div>
+        <v-container v-if="form.notification">
+          <v-row no-gutters v-if="form.notification.id==1">
+            <v-col> Send to <strong class="red--text">*</strong>
+              <v-col no-gutters>
+                <v-select
+                  class="StartPlanning__select"
+                  :items="dataAllBiro"
+                  v-model="form.biros"
+                  item-text="code"
+                  item-value="id"
+                  placeholder="Choose Biro"
+                  multiple
+                  chips
+                  outlined>
+                </v-select>
+              </v-col>            
             </v-col>
-          </v-col>
-        </v-row>
+          </v-row>
+
+          <!-- E-MAIL BODY -->
+          <v-row no-gutters v-if="form.notification.id==1">
+            <v-col> E-mail Body
+              <v-col>
+                <div class="emailBody">
+                  <v-textarea
+                  v-model="form.body"
+                  outlined
+                  dense
+                  :disabled="isView">
+                  </v-textarea>
+                </div>
+              </v-col>
+            </v-col>
+          </v-row>
+        </v-container>
 
         <!-- BUTTONS -->
         <v-row no-gutters>
@@ -183,14 +184,13 @@
 
 <script>
 import { mapState } from "vuex";
-// import format from 'date-fns/format'
 export default {
   name: "FormStartPlanning",
   props: ["form", "isNew", "isView", "dataAllBiro"],
-  
+
   data: () => ({
     //yearSubstring: new Date().getFullYear(),
-    //localDate: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+    //due_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
     menu: null,
     validation: {
       required: [
@@ -200,13 +200,11 @@ export default {
         v => /^[0-9.,]+$/.test(v) || "This field is numbers only",
       ],
       yearRule: v  => {
-        if (!v.trim()) return true;
+        //if (!v.trim()) return true;
         if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;
         return 'Year has to be integer and contains 4 digits';
       },
     },
-    
-    //closeOnContentClick: true,
   }),
   
   computed: {
@@ -220,33 +218,30 @@ export default {
     errorMsg() {
       return this.$store.state.source.errorMsg;
     },
-    // formattedDate() {
-    //   return this.form.due_date ? format(this.form.due_date, 'YYYY-MM-DDT23:59') : ' '
-    // }
   },
 
   methods: {
     onSubmit() {
       console.log("Masuk Sini");
       let validate = this.$refs.form.validate();
-      //let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
-      console.log("Masuk Sini Lagi");
+      console.log("Masuk Let Validate");
       if (validate) {
         const payload = {
-          id: this.form?.id,
+          id: this.form.id,
           year: this.form.year,
           is_active: this.form.is_active.id,
           due_date: this.form.due_date + "T23:59",
-          send_notification: this.form.notification.id ? 1 : 0,
-          biros: [this.form.biros] ? [this.form.biros] : 0,
+          notification: this.form.notification.id ? 1 : 0,
+          biros: this.form.biros ? this.form.biros : 0,
           body: this.form.body ? this.form.body : 0,
         };
-        console.log("Year"+this.form.year);
-        console.log("DueDate"+this.form.due_date);
-        console.log("is_active"+this.form.is_active.id);
-        console.log("sendNotif"+this.form.notification.id);
-        console.log(this.form.biros);
-        console.log("body"+this.form.body);
+        // console.log("ID"+this.form.id);
+        // console.log("Year"+this.form.year);
+        // console.log("DueDate"+this.form.due_date);
+        // console.log("is_active"+this.form.is_active.id);
+        // console.log("sendNotif"+this.form.notification.id);
+        // console.log("Biro"+this.form.biros);
+        // console.log("body"+this.form.body);
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
         this.$refs.form.reset()
       }
