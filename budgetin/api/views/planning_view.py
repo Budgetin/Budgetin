@@ -133,10 +133,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         return planning
 
     def destroy(self, request, *args, **kwargs):
-        request.data['updated_by'] = 1
-        planning = super().destroy(request, *args, **kwargs)
-        AuditLog.Save(planning, request, ActionEnum.DELETE, TableEnum.PLANNING)
-        return planning
+        pass # User cannot be deleted
     
     @action(detail=False, methods=['get'])
     def active(self, request):
