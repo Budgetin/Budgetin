@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from api.models.project_detail_model import ProjectDetail
+from api.models.user_model import User
 from api.serializers.project_detail_serializer import ProjectDetailSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 from rest_framework.decorators import action
@@ -11,7 +12,7 @@ from copy import deepcopy
 from api.models import ProjectDetail
 from api.serializers import ProjectDetailSerializer
 from api.utils.date_format import timestamp_to_strdateformat
-from api.utils.listplanning import get_all_list_planning
+
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
@@ -58,6 +59,7 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
         counter = 1
         for projectdetail in projectdetails:
             dict = model_to_dict(projectdetail)
+            dict['created_by'] = User.all_objects.get(pk=projectdetail.created_by).display_name
             dict['project_detail_id'] = projectdetail.id
             dict['planning'] = model_to_dict(projectdetail.planning)
             dict['project'] = model_to_dict(projectdetail.project)
@@ -74,6 +76,7 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
                 for budget in curr_budgets:
                     new_dict = deepcopy(dict)
                     new_dict['project']['budget'] = model_to_dict(budget)
+                    new_dict['project']['budget']['planning_nominal'] = budget.planning_q1 + budget.planning_q2 + budget.planning_q3 + budget.planning_q4
                     new_dict['project']['budget']['coa'] = model_to_dict(budget.coa)
                     new_dict['id'] = counter
                     result.append(new_dict)

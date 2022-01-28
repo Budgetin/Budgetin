@@ -98,6 +98,8 @@ class PlanningViewSet(viewsets.ModelViewSet):
     
     def retrieve(self, request, *args, **kwargs):
         planning = super().retrieve(request, *args, **kwargs)
+        planning.data['is_active'] = 1 if planning.data['is_active']==True else 0
+        planning.data['notification'] = 1 if planning.data['notification']==True else 0
         planning.data['due_date'] = timestamp_to_strdateformat(planning.data['due_date'], "%Y-%m-%d")
         if planning.data['updated_by'] is not None:
             planning.data['updated_by'] = User.objects.get(pk=planning.data['updated_by']).display_name
