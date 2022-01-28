@@ -65,7 +65,7 @@ export default {
     getHistoryItem() {
       this.getHistory(this.$route.params.id).then(() => {
         this.items = JSON.parse(
-        JSON.stringify(this.$store.state.masterProduct.edittedItemHistories))
+        JSON.stringify(this.$store.state.masterUser.edittedItemHistories))
       });
     },
     setForm() {
@@ -116,7 +116,7 @@ export default {
     items:null,
     form: {
       id: "",
-      username: {
+      name: {
         username:"",
         option:""
       },

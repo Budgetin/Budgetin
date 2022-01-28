@@ -125,7 +125,7 @@ export default {
     },
     form: {
       id: "",
-      username: {
+      name: {
         username:"",
         option:""
       },
@@ -184,7 +184,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "Master Source has been saved successfully";
+      this.alert.subtitle = "Master User has been saved successfully";
     },
     onSaveError(error) {
       this.dialog = false;
