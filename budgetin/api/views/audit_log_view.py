@@ -1,12 +1,13 @@
 import json
 
+from django.forms.models import model_to_dict
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 
 from api.models import AuditLog, User, Strategy
 from api.serializers import AuditLogSerializer
-from django.forms.models import model_to_dict
 from api.utils.date_format import timestamp_to_strdateformat
+from api.utils.enum import ActionEnum
 
 class AuditLogViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = AuditLog.objects.all()
@@ -24,7 +25,7 @@ class AuditLogViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.C
             each['timestamp'] = timestamp_to_strdateformat(str(each['timestamp']), "%d %B %Y")
             each['modified_by'] = User.all_objects.get(pk=each['modified_by']).display_name
             data_as_json = json.loads(each['serialized_data'])
-            if each['action'] != "Delete":
+            if each['action'] != ActionEnum.DELETE.value:
                 data_as_json['is_deleted'] = 1 if data_as_json['is_deleted']==True else 0
                 if 'is_capex' in data_as_json:
                     data_as_json['is_capex'] = 1 if data_as_json['is_capex']==True else 0
