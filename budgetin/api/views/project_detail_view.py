@@ -1,16 +1,12 @@
 from django.forms import model_to_dict
 from rest_framework import viewsets
 from rest_framework.response import Response
-<<<<<<< Updated upstream
 from rest_framework.decorators import action
-=======
 from api.models.project_detail_model import ProjectDetail
-from api.models.budget_model import Budget
 from api.serializers.project_detail_serializer import ProjectDetailSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 from rest_framework.decorators import action
 from copy import deepcopy
->>>>>>> Stashed changes
 
 from api.models import ProjectDetail
 from api.serializers import ProjectDetailSerializer
