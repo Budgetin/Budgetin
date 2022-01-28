@@ -59,7 +59,7 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
         counter = 1
         for projectdetail in projectdetails:
             dict = model_to_dict(projectdetail)
-            dict['created_by'] = User.all_objects.get(pk=projectdetail.created_by).display_name
+            dict['created_by'] = User.objects.get(pk=projectdetail.created_by).display_name
             dict['project_detail_id'] = projectdetail.id
             dict['planning'] = model_to_dict(projectdetail.planning)
             dict['project'] = model_to_dict(projectdetail.project)

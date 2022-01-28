@@ -11,7 +11,7 @@ from api.utils.hit_api import get_imo_d_employee, get_ithc_employee_info
 from api.exceptions.validation_exception import ValidationException
 
 def is_duplicate_user(username):
-    if User.all_objects.filter(username=username):
+    if User.objects.filter(username=username):
         raise ValidationException
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

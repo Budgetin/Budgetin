@@ -21,10 +21,10 @@ class StrategyViewSet(viewsets.ModelViewSet):
         strategies = super().list(request, *args, **kwargs)
         for strategy in strategies.data:
             if strategy['updated_by'] is not None:
-                strategy['updated_by'] = User.all_objects.get(pk=strategy['updated_by']).display_name
+                strategy['updated_by'] = User.objects.get(pk=strategy['updated_by']).display_name
             else:
                 strategy['updated_by'] = ''
-            strategy['created_by'] = User.all_objects.get(pk=strategy['created_by']).display_name
+            strategy['created_by'] = User.objects.get(pk=strategy['created_by']).display_name
             strategy['created_at'] = timestamp_to_strdateformat(strategy['created_at'], "%d %B %Y")
             strategy['updated_at'] = timestamp_to_strdateformat(strategy['updated_at'], "%d %B %Y")
         return strategies
@@ -32,10 +32,10 @@ class StrategyViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         strategy = super().retrieve(request, *args, **kwargs)
         if strategy.data['updated_by'] is not None:
-                strategy.data['updated_by'] = User.all_objects.get(pk=strategy.data['updated_by']).display_name
+                strategy.data['updated_by'] = User.objects.get(pk=strategy.data['updated_by']).display_name
         else:
             strategy.data['updated_by'] = ''
-        strategy.data['created_by'] = User.all_objects.get(pk=strategy.data['created_by']).display_name
+        strategy.data['created_by'] = User.objects.get(pk=strategy.data['created_by']).display_name
         strategy.data['created_at'] = timestamp_to_strdateformat(strategy.data['created_at'], "%d %B %Y")
         strategy.data['updated_at'] = timestamp_to_strdateformat(strategy.data['updated_at'], "%d %B %Y")
         
