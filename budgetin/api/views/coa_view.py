@@ -6,7 +6,7 @@ from api.permissions import IsAuthenticated, IsAdmin
 from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
-from budgetin.api.exceptions.validation_exception import ValidationException
+from api.exceptions import ValidationException
 
 def is_duplicate_coa_create(name, hyperion_name):
     if Coa.objects.filter(name=name).exclude(hyperion_name=hyperion_name) or Coa.objects.filter(hyperion_name=hyperion_name).exclude(name=name):

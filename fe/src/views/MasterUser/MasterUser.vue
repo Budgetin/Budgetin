@@ -154,7 +154,6 @@ export default {
   methods: {
     ...mapActions("masterUser", ["getMasterUser", "postMasterUser"]),
     ...mapActions("masterEmployee", ["getMasterEmployee"]),
-    // ...mapActions("login", ["logOut"]),
     setBreadcrumbs() {
       let param = this.isView ? "View User" : "Edit User";
       this.$store.commit("breadcrumbs/SET_LINKS", [
@@ -176,7 +175,6 @@ export default {
       this.dialog = !this.dialog;
     },
     onEdit(item) {
-      console.log(item)
       this.$store.commit("masterUser/SET_EDITTED_ITEM", item);
     },    
     onCancel() {

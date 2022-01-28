@@ -6,7 +6,7 @@ from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.auditlog import AuditLog
-from budgetin.api.exceptions.validation_exception import ValidationException
+from api.exceptions.validation_exception import ValidationException
 
 def is_duplicate(name):
     if Strategy.objects.filter(name=name):
