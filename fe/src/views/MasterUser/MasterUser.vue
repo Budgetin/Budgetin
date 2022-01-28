@@ -125,7 +125,7 @@ export default {
     },
     form: {
       id: "",
-      username: {
+      name: {
         username:"",
         option:""
       },
@@ -145,8 +145,7 @@ export default {
   created() {
     this.getMasterUser();
     this.getMasterEmployee();
-    // this.getMasterStrategy();
-    // this.setBreadcrumbs();
+    this.setBreadcrumbs();
   },
   computed: {
     ...mapState("masterUser", ["loadingGetMasterUser", "dataMasterUser"]),
@@ -156,7 +155,20 @@ export default {
     ...mapActions("masterUser", ["getMasterUser", "postMasterUser"]),
     ...mapActions("masterEmployee", ["getMasterEmployee"]),
     // ...mapActions("login", ["logOut"]),
-
+    setBreadcrumbs() {
+      let param = this.isView ? "View User" : "Edit User";
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Master User",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "MasterUser",
+          },
+        },
+      ]);
+    },
     logout(){
       this.logOut();
     },
@@ -184,7 +196,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "Master Source has been saved successfully";
+      this.alert.subtitle = "Master User has been saved successfully";
     },
     onSaveError(error) {
       this.dialog = false;

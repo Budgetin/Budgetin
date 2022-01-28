@@ -127,13 +127,26 @@ export default {
   created() {
     this.getMasterStrategy();
     this.getMasterStrategy();
-    // this.setBreadcrumbs();
+    this.setBreadcrumbs();
   },
   computed: {
     ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
   },
   methods: {
     ...mapActions("masterStrategy", ["getMasterStrategy", "postMasterStrategy"]),
+    setBreadcrumbs() {
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Master Strategy",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "MasterStrategy",
+          },
+        },
+      ]);
+    },
     onAdd() {
       this.dialog = !this.dialog;
     },

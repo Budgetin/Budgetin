@@ -40,6 +40,18 @@
               >
               </item-log-master-product>
             </template>
+            <template v-if="item.table == 'strategy'">
+              <item-log-master-strategy
+                :data="item"
+              >
+              </item-log-master-strategy>
+            </template>
+            <template v-if="item.table == 'user'">
+              <item-log-master-user
+                :data="item"
+              >
+              </item-log-master-user>
+            </template>
             <v-row class="mt-1">
               <div>
                 <strong>
@@ -57,6 +69,8 @@
 <script>
 import ItemLogMasterCoa from "@/components/MasterCOA/ItemLogMasterCoa"
 import ItemLogMasterProduct from "@/components/MasterProduct/ItemLogMasterProduct"
+import ItemLogMasterStrategy from "@/components/MasterStrategy/ItemLogMasterStrategy"
+import ItemLogMasterUser from "@/components/MasterUser/ItemLogMasterUser"
 
 // import formatting from "@/mixins/formatting";
 export default {
@@ -71,7 +85,7 @@ export default {
       default: false,
     },
   },
-  components: { ItemLogMasterCoa,ItemLogMasterProduct },
+  components: { ItemLogMasterCoa,ItemLogMasterProduct,ItemLogMasterStrategy,ItemLogMasterUser },
   created() {
     // console.log(items)
   },

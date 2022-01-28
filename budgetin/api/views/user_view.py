@@ -1,4 +1,3 @@
-from numpy import delete
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -51,7 +50,7 @@ class UserViewSet(viewsets.ModelViewSet):
         request.data['display_name'] = employee_info['display_name']
         request.data['created_by'] = 1
         user = super().create(request, *args, **kwargs)
-        AuditLog.Save(user, request, ActionEnum.CREATE, TableEnum.COA)
+        AuditLog.Save(user, request, ActionEnum.CREATE, TableEnum.USER)
         return user
 
     def update(self, request, *args, **kwargs):
@@ -61,10 +60,9 @@ class UserViewSet(viewsets.ModelViewSet):
         return user
     
     def destroy(self, request, *args, **kwargs):
-        user = super().retrieve(request, *args, **kwargs)
-        user['is_active'] = True
-        AuditLog.Save(user, request, ActionEnum.DELETE, TableEnum.USER)
-        return user
+        return Response({
+            'message': 'User cannot be deleted'
+        })
 
     @action(detail=False, methods=['get'])
     def imo(self, request, pk=None):

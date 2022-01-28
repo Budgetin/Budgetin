@@ -4,7 +4,8 @@ from django_softdelete.models import SoftDeleteModel
 from api.models.abstract_model import TimestampModel, UserTrackModel
 
 class Budget(SoftDeleteModel, TimestampModel, UserTrackModel):
-    project_detail = models.ForeignKey('ProjectDetail', on_delete=models.CASCADE)
+    #related_name buat backward join (dari table ProjectDetail)
+    project_detail = models.ForeignKey('ProjectDetail', on_delete=models.CASCADE, related_name='budget')
     coa = models.ForeignKey('Coa', on_delete=models.CASCADE)
     expense_type = models.CharField(max_length=200)
     planning_q1 = models.BigIntegerField()

@@ -16,16 +16,15 @@
         </v-container>
       </v-col>
 
-      <!-- log timeline -->
-      <!-- <v-col xs="12" sm="6" md="6" lg="5">
+     <!-- log timeline -->
+      <v-col xs="12" sm="6" md="6" lg="5">
         <v-container>
           <timeline-log
-            v-if="cleanHistories"
-            :items="cleanHistories"
-            topic="Category"
+            :items="items"
+            v-if="items"
           ></timeline-log>
         </v-container>
-      </v-col> -->
+      </v-col>
     </v-row>
     <!-- <pre>{{ cleanHistories }}</pre> -->
     <success-error-alert
@@ -49,17 +48,45 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import FormStrategy from "@/components/MasterStrategy/FormStrategy";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import TimelineLog from "@/components/TimelineLog";
+
 export default {
   name: "EditMasterStrategy",
-  components: { FormStrategy,SuccessErrorAlert},
+  components: {TimelineLog, FormStrategy,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
+    this.getHistoryItem();
+    this.setBreadcrumbs();
   },
   methods: {
-    ...mapActions("masterStrategy", ["patchMasterStrategy","getMasterStrategyById","deleteMasterStrategyById"]),
+    ...mapActions("masterStrategy", ["patchMasterStrategy","getMasterStrategyById","deleteMasterStrategyById","getHistory"]),
+    setBreadcrumbs() {
+      let param = this.isView ? "View Strategy" : "Edit Strategy";
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Master Strategy",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "MasterStrategy",
+          },
+        },
+        {
+          text: param,
+          disabled: true,
+        },
+      ]);
+    },
     getEdittedItem() {
       this.getMasterStrategyById(this.$route.params.id).then(() => {
         this.setForm();
+      });
+    },
+    getHistoryItem() {
+      this.getHistory(this.$route.params.id).then(() => {
+        this.items = JSON.parse(
+        JSON.stringify(this.$store.state.masterStrategy.edittedItemHistories))
       });
     },
     setForm() {
@@ -69,6 +96,7 @@ export default {
     },
     onEdit() {
       this.isView = false;
+      this.setBreadcrumbs();
     },
     onDelete(){
       this.deleteMasterStrategyById(this.$route.params.id)
@@ -111,6 +139,7 @@ export default {
       this.alert.show = false;
       this.isView = true;
       this.getEdittedItem();
+      this.getHistoryItem();
     },
     onAlertDeleteOk() {
       this.delete_alert.show = false;
@@ -131,6 +160,7 @@ export default {
   },
   data: () => ({
     isView: true,
+    items:null,
     form: {
       id: "",
       name:""

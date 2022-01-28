@@ -80,6 +80,16 @@ const routes = [
         name: 'ListProject',
         component: () => import("@/views/ListProject/ListProject"),
       },   
+      {
+        path: 'listPlanning',
+        name: 'ListPlanning',
+        component: () => import("@/views/ListPlanning/ListPlanning"),
+      },
+      {
+        path: '/listPlanning/:id/edit',
+        name: 'EditListPlanning',
+        component: () => import("@/views/ListPlanning/EditListPlanning"),
+      }, 
     ]
   },
   {

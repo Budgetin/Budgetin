@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 // List Path Created Module
+import breadcrumbs from "./breadcrumbs";
+
 import masterCoa from "./masterCoa"
 import masterStrategy from "./masterStrategy"
 import masterProduct from "./masterProduct"
@@ -12,7 +14,7 @@ import login from "./login"
 import startPlanning from "./startPlanning"
 import monitorPlanning from "./monitorPlanning"
 import allBiro from "./allBiro"
-
+import listPlanning from "./listPlanning"
 
 Vue.use(Vuex)
 
@@ -27,6 +29,7 @@ export default new Vuex.Store({
   // }
   namespaced: true,
   modules: {
+    breadcrumbs,
     masterCoa,
     masterStrategy,
     masterProduct,
@@ -36,6 +39,7 @@ export default new Vuex.Store({
     login,
     startPlanning,
     monitorPlanning,
-    allBiro
+    allBiro,
+    listPlanning
   },
 })

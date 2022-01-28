@@ -130,13 +130,26 @@ export default {
   }),
   created() {
     this.getMasterCoa();
-    // this.setBreadcrumbs();
+    this.setBreadcrumbs();
   },
   computed: {
     ...mapState("masterCoa", ["loadingGetMasterCoa", "dataMasterCoa"]),
   },
   methods: {
     ...mapActions("masterCoa", ["getMasterCoa", "postMasterCoa"]),
+    setBreadcrumbs() {
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Master Coa",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "Coa",
+          },
+        },
+      ]);
+    },
     onAdd() {
       this.dialog = !this.dialog;
     },

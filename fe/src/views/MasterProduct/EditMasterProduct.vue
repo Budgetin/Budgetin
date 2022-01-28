@@ -58,6 +58,7 @@ export default {
     this.getEdittedItem();
     this.getMasterStrategy();
     this.getHistoryItem();
+    this.setBreadcrumbs();
   },
   computed: {
     ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
@@ -65,7 +66,24 @@ export default {
   methods: {
     ...mapActions("masterProduct", ["patchMasterProduct","getMasterProductById","deleteMasterProductById","getHistory"]),
     ...mapActions("masterStrategy", ["getMasterStrategy"]),
-    
+    setBreadcrumbs() {
+      let param = this.isView ? "View Product" : "Edit Product";
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Master Product",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "MasterProduct",
+          },
+        },
+        {
+          text: param,
+          disabled: true,
+        },
+      ]);
+    },
     getEdittedItem() {
       this.getMasterProductById(this.$route.params.id).then(() => {
         this.setForm();
@@ -84,6 +102,7 @@ export default {
     },
     onEdit() {
       this.isView = false;
+      this.setBreadcrumbs();
     },
     onDelete(){
       this.deleteMasterProductById(this.$route.params.id)
@@ -127,7 +146,6 @@ export default {
       this.isView = true;
       this.getEdittedItem();
       this.getHistoryItem();
-
     },
     onAlertDeleteOk() {
       this.delete_alert.show = false;
