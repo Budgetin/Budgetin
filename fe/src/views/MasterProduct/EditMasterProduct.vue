@@ -127,7 +127,6 @@ export default {
       this.isView = true;
       this.getEdittedItem();
       this.getHistoryItem();
-
     },
     onAlertDeleteOk() {
       this.delete_alert.show = false;

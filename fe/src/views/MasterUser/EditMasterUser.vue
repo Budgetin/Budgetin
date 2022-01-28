@@ -17,15 +17,14 @@
       </v-col>
 
       <!-- log timeline -->
-      <!-- <v-col xs="12" sm="6" md="6" lg="5">
+      <v-col xs="12" sm="6" md="6" lg="5">
         <v-container>
           <timeline-log
-            v-if="cleanHistories"
-            :items="cleanHistories"
-            topic="Category"
+            :items="items"
+            v-if="items"
           ></timeline-log>
         </v-container>
-      </v-col> -->
+      </v-col>
     </v-row>
     <!-- <pre>{{ cleanHistories }}</pre> -->
     <success-error-alert
@@ -42,22 +41,31 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import FormUser from "@/components/MasterUser/FormUser";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import TimelineLog from "@/components/TimelineLog";
+
 export default {
   name: "EditMasterUser",
-  components: { FormUser,SuccessErrorAlert},
+  components: { TimelineLog,FormUser,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
     this.getMasterEmployee();
+    this.getHistoryItem();
   },
   computed: {
     ...mapState("masterEmployee", ["loadingGetMasterEmployee", "dataMasterEmployee"]),
   },
   methods: {
-    ...mapActions("masterUser", ["patchMasterUser","getMasterUserById"]),
+    ...mapActions("masterUser", ["patchMasterUser","getMasterUserById","getHistory"]),
     ...mapActions("masterEmployee", ["getMasterEmployee"]),
     getEdittedItem() {
       this.getMasterUserById(this.$route.params.id).then(() => {
         this.setForm();
+      });
+    },
+    getHistoryItem() {
+      this.getHistory(this.$route.params.id).then(() => {
+        this.items = JSON.parse(
+        JSON.stringify(this.$store.state.masterUser.edittedItemHistories))
       });
     },
     setForm() {
@@ -100,13 +108,15 @@ export default {
       this.alert.show = false;
       this.isView = true;
       this.getEdittedItem();
+      this.getHistoryItem();
     },
   },
   data: () => ({
     isView: true,
+    items:null,
     form: {
       id: "",
-      username: {
+      name: {
         username:"",
         option:""
       },
