@@ -1,6 +1,16 @@
+from django.forms import model_to_dict
 from rest_framework import viewsets
 from rest_framework.response import Response
+<<<<<<< Updated upstream
 from rest_framework.decorators import action
+=======
+from api.models.project_detail_model import ProjectDetail
+from api.models.budget_model import Budget
+from api.serializers.project_detail_serializer import ProjectDetailSerializer
+from api.utils.date_format import timestamp_to_strdateformat
+from rest_framework.decorators import action
+from copy import deepcopy
+>>>>>>> Stashed changes
 
 from api.models import ProjectDetail
 from api.serializers import ProjectDetailSerializer
@@ -47,7 +57,37 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def list_planning(self, request, pk=None):
-        list_planning = get_all_list_planning()
-        return Response(list_planning)
+        projectdetails = ProjectDetail.objects.select_related('planning', 'project', 'project_type', 'project__biro', 'project__product').all()
+        result = []
+        counter = 1
+        for projectdetail in projectdetails:
+            dict = model_to_dict(projectdetail)
+            dict['project_detail_id'] = projectdetail.id
+            dict['planning'] = model_to_dict(projectdetail.planning)
+            dict['project'] = model_to_dict(projectdetail.project)
+            dict['project_type'] = projectdetail.project_type.name
+            dict['project']['product'] = model_to_dict(projectdetail.project.product)
+            dict['project']['product']['strategy'] = model_to_dict(projectdetail.project.product.strategy)
+            dict['project']['biro'] = projectdetail.project.biro.code
+            dict['created_at'] = projectdetail.created_at.strftime("%d %B %Y")
+            dict['updated_at'] = projectdetail.updated_at.strftime("%d %B %Y")
+            
+            curr_budgets = projectdetail.budget.select_related('coa').all()
+            
+            if len(curr_budgets) > 0:
+                for budget in curr_budgets:
+                    new_dict = deepcopy(dict)
+                    new_dict['project']['budget'] = model_to_dict(budget)
+                    new_dict['project']['budget']['coa'] = model_to_dict(budget.coa)
+                    new_dict['id'] = counter
+                    result.append(new_dict)
+                    counter = counter+1
+            else:
+                dict['project']['budget'] = None
+                dict['id'] = counter
+                result.append(dict)
+                counter = counter+1
+            
+        return Response(result)
     
             
