@@ -6,9 +6,16 @@ from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.auditlog import AuditLog
+from budgetin.api.exceptions.validation_exception import ValidationException
+
+def is_duplicate(name):
+    if Strategy.objects.filter(name=name):
+        raise ValidationException
 class StrategyViewSet(viewsets.ModelViewSet):
     queryset = Strategy.objects.all()
     serializer_class = StrategySerializer
+
+  
     
     def list(self, request, *args, **kwargs):
         strategies = super().list(request, *args, **kwargs)
@@ -37,12 +44,14 @@ class StrategyViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
+        is_duplicate(request.data['name'])
         strategy = super().create(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.CREATE, TableEnum.STRATEGY)
         return strategy
 
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
+        is_duplicate(request.data['name'])
         strategy = super().update(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.UPDATE, TableEnum.STRATEGY)
         return strategy

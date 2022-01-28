@@ -5,7 +5,7 @@ from api.models.abstract_model import TimestampModel, UserTrackModel
 
 
 class Coa(SoftDeleteModel, TimestampModel, UserTrackModel):
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200)
     definition = models.CharField(max_length=1000, blank=True, null=True)
     hyperion_name = models.CharField(max_length=200)
     is_capex = models.BooleanField(default=False)

@@ -41,7 +41,7 @@ def include(param, paramid):
     
     if arrParam[0] == "product":
         if len(arrParam)==2 and arrParam[1] == "strategy":
-            product = Product.objects.filter(id=paramid).values()[0]
+            product = Product.all_object.filter(id=paramid).values()[0]
             strategy = include("strategy",product['strategy_id'])
             return {
                 'id' : product['id'],
@@ -50,7 +50,7 @@ def include(param, paramid):
                 'strategy' : strategy
             }
         else:
-            product = Product.objects.filter(id=paramid).values()[0]
+            product = Product.all_object.filter(id=paramid).values()[0]
             return {
                 'id' : product['id'],
                 'name' : product['product_name'],
