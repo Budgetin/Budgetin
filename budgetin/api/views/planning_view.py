@@ -114,9 +114,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         # request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
-        
         planning = super().create(request, *args, **kwargs)
-        AuditLog.Save(planning, request, ActionEnum.CREATE, TableEnum.PLANNING)
         
         planning_id = planning.data['id']
         biros = get_all_biro('manager_employee,sub_group,sub_group.group,manager_employee,sub_group.manager_employee,sub_group.group.manager_employee')
@@ -125,16 +123,21 @@ class PlanningViewSet(viewsets.ModelViewSet):
         #Process send notification
         if is_send_notification(request):
             send_notification(request, biros)
+            planning.data['body'] = request.data['body']
+            
+        AuditLog.Save(planning, request, ActionEnum.CREATE, TableEnum.PLANNING)
+        
         return planning
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
+        planning = super().update(request, *args, **kwargs)
 
         if(is_send_notification(request)):
             send_notification(request)
+            planning.data['email_body'] = request.data['body']
         
-        planning = super().update(request, *args, **kwargs)
         AuditLog.Save(planning, request, ActionEnum.UPDATE, TableEnum.PLANNING)
         return planning
 
