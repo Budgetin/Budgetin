@@ -9,7 +9,7 @@ from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.send_email import send_email
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import MonitoringStatusEnum
-from api.utils.manager_email import get_managers_email
+from api.utils.manager_email import get_managers_email_list
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
@@ -17,7 +17,9 @@ def create_update_all_biro_and_create_monitoring(biros, planning_id):
     monitoring_status_id = MonitoringStatus.objects.filter(name=MonitoringStatusEnum.TODO.value).values()[0]['id']
     for ithc_biro in biros:
         biro, created = create_update_biro(ithc_biro)
-        if ithc_biro["manager_employee"] is not None:
+
+        # Biro that lasts with * (IBO*, NIS*) is not included
+        if ithc_biro["code"][-1] != "*":
             create_monitoring(ithc_biro, biro, planning_id, monitoring_status_id)
 
 def create_update_biro(biro):
@@ -31,14 +33,24 @@ def create_update_biro(biro):
         )
         
 def create_monitoring(ithc_biro, biro, planning_id, monitoring_status_id):
+    pic = get_pic(ithc_biro)
+    
     Monitoring.objects.create(
         biro_id=biro.id, 
         planning_id=planning_id, 
         monitoring_status_id=monitoring_status_id,
-        pic_employee_id=ithc_biro['manager_employee']['id'],
-        pic_initial=ithc_biro['manager_employee']['initial'],
-        pic_display_name=ithc_biro['manager_employee']['display_name'],
+        pic_employee_id=pic['id'],
+        pic_initial=pic['initial'],
+        pic_display_name=pic['display_name'],
     )
+    
+def get_pic(ithc_biro):
+    if ithc_biro["manager_employee"] is not None:
+        return ithc_biro["manager_employee"]
+    if ithc_biro["sub_group"]["manager_employee"] is not None:
+        return ithc_biro["sub_group"]["manager_employee"]
+
+    return ithc_biro["sub_group"]["group"]["manager_employee"]
     
 def is_send_notification(request):
     field_exists = 'send_notification' and 'biros' and 'body' in request.data 
@@ -58,10 +70,7 @@ def send_notification(request, biros):
     return receiver_email_list
         
 def get_receiver_email_list(biros, biro_id_list):
-    receiver_email_list = []
-    for biro_id in biro_id_list:
-        email_list = get_managers_email(biro_id, biros)
-        receiver_email_list.extend(email_list)
+    receiver_email_list = get_managers_email_list(biro_id_list, biros)
 
     # remove duplicate email
     receiver_email_list = list(dict.fromkeys(receiver_email_list))
@@ -101,7 +110,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        #request.data['created_by'] = request.custom_user['id']
+        # request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
         
         planning = super().create(request, *args, **kwargs)
