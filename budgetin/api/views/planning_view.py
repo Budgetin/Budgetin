@@ -53,11 +53,11 @@ def get_pic(ithc_biro):
     return ithc_biro["sub_group"]["group"]["manager_employee"]
     
 def is_send_notification(request):
-    field_exists = 'send_notification' and 'biros' and 'body' in request.data 
+    field_exists = 'notification' and 'biros' and 'body' in request.data 
     if not field_exists:
         return False
     
-    field_valid = request.data['send_notification'] == True and request.data['body'] != '' and len(request.data['biros']) > 0
+    field_valid = request.data['notification'] == True and request.data['body'] != '' and len(request.data['biros']) > 0
     return field_valid
     
 def send_notification(request, biros=''):
