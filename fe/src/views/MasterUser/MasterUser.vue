@@ -145,8 +145,7 @@ export default {
   created() {
     this.getMasterUser();
     this.getMasterEmployee();
-    // this.getMasterStrategy();
-    // this.setBreadcrumbs();
+    this.setBreadcrumbs();
   },
   computed: {
     ...mapState("masterUser", ["loadingGetMasterUser", "dataMasterUser"]),
@@ -156,7 +155,20 @@ export default {
     ...mapActions("masterUser", ["getMasterUser", "postMasterUser"]),
     ...mapActions("masterEmployee", ["getMasterEmployee"]),
     // ...mapActions("login", ["logOut"]),
-
+    setBreadcrumbs() {
+      let param = this.isView ? "View User" : "Edit User";
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Master User",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "MasterUser",
+          },
+        },
+      ]);
+    },
     logout(){
       this.logOut();
     },

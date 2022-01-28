@@ -56,10 +56,28 @@ export default {
   created() {
     this.getEdittedItem();
     this.getHistoryItem();
+    this.setBreadcrumbs();
   },
   methods: {
     ...mapActions("masterStrategy", ["patchMasterStrategy","getMasterStrategyById","deleteMasterStrategyById","getHistory"]),
-    
+    setBreadcrumbs() {
+      let param = this.isView ? "View Strategy" : "Edit Strategy";
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Master Strategy",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "MasterStrategy",
+          },
+        },
+        {
+          text: param,
+          disabled: true,
+        },
+      ]);
+    },
     getEdittedItem() {
       this.getMasterStrategyById(this.$route.params.id).then(() => {
         this.setForm();
@@ -78,6 +96,7 @@ export default {
     },
     onEdit() {
       this.isView = false;
+      this.setBreadcrumbs();
     },
     onDelete(){
       this.deleteMasterStrategyById(this.$route.params.id)

@@ -50,6 +50,7 @@ export default {
     this.getEdittedItem();
     this.getMasterEmployee();
     this.getHistoryItem();
+    this.setBreadcrumbs();
   },
   computed: {
     ...mapState("masterEmployee", ["loadingGetMasterEmployee", "dataMasterEmployee"]),
@@ -57,6 +58,24 @@ export default {
   methods: {
     ...mapActions("masterUser", ["patchMasterUser","getMasterUserById","getHistory"]),
     ...mapActions("masterEmployee", ["getMasterEmployee"]),
+    setBreadcrumbs() {
+      let param = this.isView ? "View User" : "Edit User";
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Master User",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "MasterUser",
+          },
+        },
+        {
+          text: param,
+          disabled: true,
+        },
+      ]);
+    },
     getEdittedItem() {
       this.getMasterUserById(this.$route.params.id).then(() => {
         this.setForm();
@@ -75,6 +94,7 @@ export default {
     },
     onEdit() {
       this.isView = false;
+      this.setBreadcrumbs();
     },
     onOK() {
       this.$router.go(-1);

@@ -56,13 +56,31 @@ export default {
   created() {
     this.getEdittedItem();
     this.getHistoryItem();
-
+    this.setBreadcrumbs();
   },
   methods: {
     ...mapActions("masterCoa", [
       "patchMasterCoa",
       "getMasterCoaById","deleteMasterCoaById","getHistory"
     ]),
+    setBreadcrumbs() {
+      let param = this.isView ? "View Coa" : "Edit Coa";
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Master COA",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "Coa",
+          },
+        },
+        {
+          text: param,
+          disabled: true,
+        },
+      ]);
+    },
     getEdittedItem() {
       this.getMasterCoaById(this.$route.params.id).then(() => {
         this.setForm();
@@ -81,6 +99,7 @@ export default {
     },
     onEdit() {
       this.isView = false;
+      this.setBreadcrumbs();
     },
     onDelete(){
       this.deleteMasterCoaById(this.$route.params.id)

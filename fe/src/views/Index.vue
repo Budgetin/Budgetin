@@ -2,6 +2,7 @@
   <v-app>
     <sidebar />
     <v-main>
+      <app-bar />
       <router-view class="bg-grey"></router-view>
     </v-main>
   </v-app>
@@ -9,6 +10,7 @@
 
 <script>
 import Sidebar from "../components/Sidebar.vue";
+import AppBar from "../components/AppBar.vue";
 
 import { mapGetters, mapActions } from "vuex";
 
@@ -17,6 +19,7 @@ export default {
 
   components: {
     Sidebar,
+    AppBar,
   },
   computed: {
   },

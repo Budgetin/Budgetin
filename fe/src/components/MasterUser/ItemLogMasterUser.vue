@@ -12,7 +12,7 @@ export default {
   props: ["data"],
   computed:{
     getActive(){
-      return this.data.serialized_data.is_active == 1 ? "Yes" : "No";
+      return this.data.serialized_data.is_active == 1 ? "Active" : "Inactive";
     }
   }
 }

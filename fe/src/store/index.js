@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 // List Path Created Module
+import breadcrumbs from "./breadcrumbs";
+
 import masterCoa from "./masterCoa"
 import masterStrategy from "./masterStrategy"
 import masterProduct from "./masterProduct"
@@ -27,6 +29,7 @@ export default new Vuex.Store({
   // }
   namespaced: true,
   modules: {
+    breadcrumbs,
     masterCoa,
     masterStrategy,
     masterProduct,
