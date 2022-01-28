@@ -4,6 +4,8 @@ from rest_framework.decorators import action
 
 from api.models import User
 from api.serializers import UserSerializer
+from api.utils.auditlog import AuditLog
+from api.utils.enum import ActionEnum, TableEnum
 from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.hit_api import get_imo_d_employee, get_ithc_employee_info
 
@@ -42,7 +44,19 @@ class UserViewSet(viewsets.ModelViewSet):
         request.data['employee_id'] = employee_info['employee_id']
         request.data['display_name'] = employee_info['display_name']
         request.data['created_by'] = 1
-        return super().create(request, *args, **kwargs)
+        user = super().create(request, *args, **kwargs)
+        AuditLog.Save(user, request, ActionEnum.CREATE, TableEnum.USER)
+        return user
+
+    def update(self, request, *args, **kwargs):
+        user = super().update(request, *args, **kwargs)
+        AuditLog.Save(user, request, ActionEnum.UPDATE, TableEnum.USER)
+        return user
+    
+    def destroy(self, request, *args, **kwargs):
+        user = super().destroy(request, *args, **kwargs)
+        AuditLog.Save(user, request, ActionEnum.DELETE, TableEnum.USER)
+        return user
 
     @action(detail=False, methods=['get'])
     def imo(self, request, pk=None):

@@ -1,17 +1,17 @@
 <template>
-  <v-app id="master-coa">
-    <v-container class="master-coa__container outer-container">
+  <v-app id="list-planning">
+    <v-container class="list-planning__container outer-container">
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          <v-subheader class="master-coa__header">Master COA</v-subheader>
+          <v-subheader class="list-planning__header">List Planning</v-subheader>
         </v-col>
       </v-row>
 
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
           <v-data-table
-            :items="dataMasterCoa"
-            :loading="loadingGetMasterCoa"
+            :items="dataListPlanning"
+            :loading="loadingGetListPlanning"
             :headers="dataTable.headers"
             :search="search"
           >
@@ -20,7 +20,7 @@
                 <v-row class="mb-5" no-gutters>
                   <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
                     <v-text-field
-                      class="master-coa__input"
+                      class="list-planning__input"
                       v-model="search"
                       append-icon="mdi-magnify"
                       label="Search"
@@ -35,10 +35,10 @@
                     md="8"
                     lg="8"
                     no-gutters
-                    class="master-coa__btn"
+                    class="list-planning__btn"
                   >
                     <v-btn rounded color="primary" @click="onAdd">
-                      Add COA
+                      Add Planning
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -49,7 +49,7 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'EditMasterCoa',
+                  name: 'EditListPlanning',
                   params: { id: item.id },
                 }"
               >
@@ -70,15 +70,15 @@
 
       <v-row no-gutters>
         <v-dialog v-model="dialog" persistent width="37.5rem">
-          <form-coa
+          <form-planning
           :form="form"
           :isView="false"
           :isNew="true"
-          :dataMasterCoa="dataMasterCoa"
+          :dataListPlanning="dataListPlanning"
           @editClicked="onEdit"
           @cancelClicked="onCancel"
           @submitClicked="onSubmit"
-          ></form-coa>
+          ></form-planning>
         </v-dialog>
       </v-row>
     </v-container>
@@ -95,11 +95,11 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import FormCoa from "@/components/MasterCOA/FormCoa";
+import FormPlanning from "@/components/ListPlanning/FormPlanning";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "MasterCoa",
-  components: {FormCoa,SuccessErrorAlert},
+  name: "ListPlanning",
+  components: {FormPlanning,SuccessErrorAlert},
   watch: {},
   data: () => ({
     dialog: false,
@@ -107,10 +107,30 @@ export default {
     search: "",
     dataTable: {
       headers: [
-        { text: "COA", value: "name"},
-        { text: "Hyperion Name", value: "hyperion_name"},
-        { text: "Update By", value: "update_by"},
-        { text: "Update Date", value: "updated_at"},
+        { text: "For", value: "planning.year"},
+        { text: "ID ITFAM", value: "project.itfam_id"},
+        { text: "Project ID", value: "dcsp_id"},
+        { text: "Project Name", value: "project.project_name"},
+        { text: "Project Description", value: "project.project_description"},
+        { text: "Tech / Non Tech", value: "project.is_tech"},
+        { text: "Product ID", value: "project.product.product_code"},
+        { text: "RCC", value: "project.rcc"},
+        { text: "Project Type", value: "project_type"},
+        { text: "Biro", value: "project.biro"},
+        { text: "Is Budget", value: "project.budget.id"},
+        { text: "COA", value: "project.budget.coa.name"},
+        { text: "Capex/Opex", value: "project.budget.expense_type"},
+        { text: "Start Year", value: "project.start_year"},
+        { text: "End Year", value: "project.end_year"},
+        { text: "Total Investment", value: "project.total_investment_value"},
+        { text: "Budget This Year", value: ""},
+        { text: "Q1", value: "project.budget.planning_q1"},
+        { text: "Q2", value: "project.budget.planning_q2"},
+        { text: "Q3", value: "project.budget.planning_q3"},
+        { text: "Q4", value: "project.budget.planning_q4"},
+        { text: "Strategy", value: "project.product.strategy.name"},
+        { text: "Created By", value: "created_at"},
+        { text: "Updated At", value: "updated_at"},
         { text: "Actions", value: "actions", align: "center", sortable: false },
       ]
     },
@@ -130,25 +150,25 @@ export default {
     },
   }),
   created() {
-    this.getMasterCoa();
+    this.getListPlanning();
     // this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("masterCoa", ["loadingGetMasterCoa", "dataMasterCoa"]),
+    ...mapState("listPlanning", ["loadingGetListPlanning", "dataListPlanning"]),
   },
   methods: {
-    ...mapActions("masterCoa", ["getMasterCoa", "postMasterCoa"]),
+    ...mapActions("listPlanning", ["getListPlanning", "postListPlanning"]),
     onAdd() {
       this.dialog = !this.dialog;
     },
     onEdit(item) {
-      this.$store.commit("masterCoa/SET_EDITTED_ITEM", item);
+      this.$store.commit("listPlanning/SET_EDITTED_ITEM", item);
     },    
     onCancel() {
       this.dialog = false;
     },
     onSubmit(e) {
-      this.postMasterCoa(e)
+      this.postListPlanning(e)
         .then(() => {
           this.onSaveSuccess();
         })
@@ -161,7 +181,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "Master Source has been saved successfully";
+      this.alert.subtitle = "List Source has been saved successfully";
     },
     onSaveError(error) {
       this.dialog = false;
@@ -184,18 +204,18 @@ button {
 </style>
 
 <style lang="scss" scoped>
-#master-coa {
-  .master-coa__header {
+#list-planning {
+  .list-planning__header {
     padding-left: 32px;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .master-coa__input {
+  .list-planning__input {
     padding: 10px 32px;
   }
 
-  .master-coa__btn {
+  .list-planning__btn {
     text-align: end;
 
     button {
@@ -203,7 +223,7 @@ button {
     }
   }
 
-  .master-coa__container {
+  .list-planning__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -214,8 +234,8 @@ button {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #master-coa {
-    .master-coa__btn {
+  #list-planning {
+    .list-planning__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -224,7 +244,7 @@ button {
         margin: 0px 0px 32px 0px;
       }
     }
-    .master-coa__card {
+    .list-planning__card {
       flex-direction: column;
       button {
         width: 16rem !important;
