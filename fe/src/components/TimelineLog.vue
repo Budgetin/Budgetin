@@ -31,26 +31,22 @@
             <template v-if="item.table == 'coa'">
               <item-log-master-coa
                 :data="item"
-              >
-              </item-log-master-coa>
+              />
             </template>
             <template v-if="item.table == 'product'">
               <item-log-master-product
                 :data="item"
-              >
-              </item-log-master-product>
+              />
             </template>
             <template v-if="item.table == 'strategy'">
               <item-log-master-strategy
                 :data="item"
-              >
-              </item-log-master-strategy>
+              />
             </template>
             <template v-if="item.table == 'user'">
               <item-log-master-user
                 :data="item"
-              >
-              </item-log-master-user>
+              />
             </template>
             <v-row class="mt-1">
               <div>
