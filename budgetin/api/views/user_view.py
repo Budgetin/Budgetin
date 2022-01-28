@@ -54,7 +54,9 @@ class UserViewSet(viewsets.ModelViewSet):
         return user
     
     def destroy(self, request, *args, **kwargs):
-        pass
+        return Response({
+            'message': 'User cannot be deleted'
+        })
 
     @action(detail=False, methods=['get'])
     def imo(self, request, pk=None):
