@@ -8,7 +8,11 @@ from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.hit_api import get_imo_d_employee, get_ithc_employee_info
+from api.exceptions.validation_exception import ValidationException
 
+def is_duplicate_user(username):
+    if User.all_objects.filter(username=username):
+        raise ValidationException
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -40,6 +44,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return user
 
     def create(self, request, *args, **kwargs):
+        is_duplicate_user(request.data['username'])
         employee_info = get_ithc_employee_info(request.data['username'])
         request.data['employee_id'] = employee_info['employee_id']
         request.data['display_name'] = employee_info['display_name']
@@ -49,6 +54,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return user
 
     def update(self, request, *args, **kwargs):
+        is_duplicate_user(request.data['username'])
         user = super().update(request, *args, **kwargs)
         AuditLog.Save(user, request, ActionEnum.UPDATE, TableEnum.USER)
         return user

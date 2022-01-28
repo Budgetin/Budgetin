@@ -102,6 +102,7 @@ export default {
     onCancel() {
       this.isView = true;
       this.setForm();
+      this.setBreadcrumbs();
     },
     onSubmit(e) {
       this.patchMasterUser(e)
