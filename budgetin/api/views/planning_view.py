@@ -60,7 +60,7 @@ def is_send_notification(request):
     field_valid = request.data['send_notification'] == True and request.data['body'] != '' and len(request.data['biros']) > 0
     return field_valid
     
-def send_notification(request, biros):
+def send_notification(request, biros=''):
     biro_id_list = request.data['biros']
     subject = "[noreply] budgetin"
     body = request.data['body']
@@ -127,15 +127,8 @@ class PlanningViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
 
-        #Process send notification
-        if 'send_notification' in request.data:
-            if request.data['send_notification'] == True:
-                if 'biros' and 'body' in request.data:
-                    biro_id_list = request.data['biros']
-                    subject = "[Budgetin] Akses Input Budget"
-                    body = request.data['body']
-                    if len(biro_id_list) > 0 and body != "":
-                        send_email(biro_id_list, subject, body)
+        if(is_send_notification(request)):
+            send_notification(request)
         
         planning = super().update(request, *args, **kwargs)
         AuditLog.Save(planning, request, ActionEnum.UPDATE, TableEnum.PLANNING)
