@@ -46,7 +46,7 @@ class UserViewSet(viewsets.ModelViewSet):
         request.data['display_name'] = employee_info['display_name']
         request.data['created_by'] = 1
         user = super().create(request, *args, **kwargs)
-        AuditLog.Save(user, request, ActionEnum.CREATE, TableEnum.COA)
+        AuditLog.Save(user, request, ActionEnum.CREATE, TableEnum.USER)
         return user
 
     def update(self, request, *args, **kwargs):
