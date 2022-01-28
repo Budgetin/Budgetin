@@ -54,9 +54,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return user
     
     def destroy(self, request, *args, **kwargs):
-        user = super().destroy(request, *args, **kwargs)
-        AuditLog.Save(user, request, ActionEnum.DELETE, TableEnum.USER)
-        return user
+        pass
 
     @action(detail=False, methods=['get'])
     def imo(self, request, pk=None):
