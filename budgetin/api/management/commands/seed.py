@@ -56,7 +56,7 @@ class Command(BaseCommand):
             data_list = json.load(f)
         for data in data_list:
             data['pk'] = data.pop('id')
-            Product.objects.get_or_create(pk=data['pk'], defaults=data)
+            Product.all_object.get_or_create(pk=data['pk'], defaults=data)
         self.comment("Seeding Product")
 
     def seed_planning(self):
