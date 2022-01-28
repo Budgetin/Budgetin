@@ -12,7 +12,7 @@ import login from "./login"
 import startPlanning from "./startPlanning"
 import monitorPlanning from "./monitorPlanning"
 import allBiro from "./allBiro"
-
+import listPlanning from "./listPlanning"
 
 Vue.use(Vuex)
 
@@ -36,6 +36,7 @@ export default new Vuex.Store({
     login,
     startPlanning,
     monitorPlanning,
-    allBiro
+    allBiro,
+    listPlanning
   },
 })
