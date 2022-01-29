@@ -103,7 +103,7 @@
                   outlined
                   return-object
                   :disabled="isView"
-                  :rules="validation.required">
+                  :rules="validation.required.concat(isNew)">
                 </v-select>
               </div>
             </v-col>
@@ -149,9 +149,36 @@
 
         <!-- BUTTONS -->
         <v-row no-gutters>
+          <v-col cols="12" align="right">
+            <v-btn
+              rounded
+              outlined
+              class="primary--text"
+              @click="$emit('okClicked')"
+              v-if="isView"
+            >
+              OK
+            </v-btn>
+            <v-btn
+              rounded
+              outlined
+              class="primary--text"
+              @click="$emit('cancelClicked')"
+              v-if="!isView"
+            >
+              Cancel
+            </v-btn>
+            <v-btn rounded class="primary ml-3" type="submit" v-if="!isView">
+              Save
+            </v-btn>
+          </v-col>
+        </v-row>
+
+
+        <!-- <v-row no-gutters>
           <v-col no-gutters class="StartPlanning__btn">
             <v-btn rounded outlined class="primary--text" @click="$emit('cancelClicked')" v-if="!isView && !isNew" style="width: 8rem; margin-top: 212px; margin-left: 212px">
-              Cancel
+              Batal
             </v-btn>
           </v-col>
           <v-col no-gutters>
@@ -175,7 +202,7 @@
             <v-btn v-if="isView" rounded class="primary" @click="$emit('okClicked')" style="width: 8rem; margin-top: 212px">
               OK
             </v-btn>
-          </v-col>
+          </v-col> -->
         </v-row>
       </v-form>      
     </v-card-text>

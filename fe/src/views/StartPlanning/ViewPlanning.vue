@@ -62,11 +62,11 @@ export default {
             updated_at: "",
             due_date: "",
             //due_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-            //notification: "",
-            notification: {
-                id: "",
-                label: ""   
-            },
+            notification: "",
+            // notification: {
+            //     id: null,
+            //     label: ""   
+            // },
             biros: [],
             body: "",
         },
@@ -95,6 +95,7 @@ export default {
         getEdittedItem() {
             console.log("Masuk Editted Item");
             this.getStartPlanningById(this.$route.params.id).then(() => {
+                console.log("ParamID: "+this.$route.params.id);
                 this.setForm();
             });
         },
@@ -103,7 +104,7 @@ export default {
             this.form = JSON.parse(
                 JSON.stringify(this.$store.state.startPlanning.edittedItem)
             );
-            console.log("Form: "+this.form);
+            console.log(this.form);
         },
         onEdit() {
             console.log("Masuk on Edit");

@@ -47,7 +47,7 @@ const monitorPlanning = {
 
       return new Promise((resolve, reject) => {
         getAPI
-          .get(ENDPOINT + `${id}/`)
+          .get(ENDPOINT + "?planning=" + `${id}`)
           .then((response) => {
             const data = response.data;
             commit("SET_EDITTED_ITEM", data);
@@ -140,7 +140,7 @@ const monitorPlanning = {
     // getActivemonitorPlanning({ commit }) {
     //   if (store.state.monitorPlanning.requestActiveStatus !== "SUCCESS")
     //     getAPI
-    //       .get(ENDPOINT + "?filter{status}=1")
+    //       .get(ENDPOINT + "?{status}=1")
     //       .then((response) => {
     //         const cleanData = response.data.Coas.map((data) => {
     //           return {

@@ -49,7 +49,7 @@
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-icon  class="ma-3" v-on="on" color="primary" @click="onMonitor()">
+                                        <v-icon  class="ma-3" v-on="on" color="primary" @click="onMonitor(item)">
                                             mdi-monitor
                                         </v-icon>
                                     </template>
@@ -147,7 +147,7 @@ export default {
             id: "",
             year: "",
             is_active: {
-                id: "",
+                id: null,
                 label: ""
             },
             // is_active: "",
@@ -158,7 +158,7 @@ export default {
             due_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
             // send_notification: "",
             notification: {
-                id: "",
+                id: null,
                 label: ""   
             },
             biros: [],
@@ -174,16 +174,19 @@ export default {
 
     created() {
         this.getStartPlanning();
+        this.getMonitorPlanning();
         this.getAllBiro();
     },
 
     computed: {
         ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
+        ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning"]),
         ...mapState("allBiro", ["dataAllBiro"]),
     },
 
     methods: {
         ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
+        ...mapActions("monitorPlanning", ["getMonitorPlanning", "postMonitorPlanning"]),
         ...mapActions("allBiro", ["getAllBiro"]),
 
         onAdd() {
@@ -218,8 +221,9 @@ export default {
         onAlertOk() {
             this.alert.show = false;
         },
-        onMonitor() {
-            console.log(item+"monitor");
+        onMonitor(item) {
+            this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
+            console.log("MonitorItem: "+item);
         },
         onEdit(item) {
             this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
