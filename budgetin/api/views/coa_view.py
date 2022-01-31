@@ -24,7 +24,7 @@ class CoaViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = Coa.objects.all()
         for coa in queryset:
-            coa.format_timestamp()
+            coa.format_timestamp("%d %B %Y")
             coa.format_created_updated_by()
             
         serializer = CoaSerializer(queryset, many=True)
@@ -32,7 +32,7 @@ class CoaViewSet(viewsets.ModelViewSet):
     
     def retrieve(self, request, *args, **kwargs):
         coa =  Coa.objects.get(pk=kwargs['pk'])
-        coa.format_timestamp()
+        coa.format_timestamp("%d %B %Y")
         coa.format_created_updated_by()
         
         serializer = CoaSerializer(coa, many=False)
