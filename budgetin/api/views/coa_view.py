@@ -1,10 +1,9 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from api.models import Coa, User
+from api.models import Coa
 from api.serializers import CoaSerializer
 from api.permissions import IsAuthenticated, IsAdmin
-from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
 from api.exceptions import ValidationException

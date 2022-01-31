@@ -3,9 +3,8 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from api.models import Planning, User, Monitoring, Biro
+from api.models import Planning, Monitoring, Biro
 from api.serializers import PlanningSerializer
-from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.send_email import send_email
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import MonitoringStatusEnum
@@ -81,33 +80,23 @@ class PlanningViewSet(viewsets.ModelViewSet):
     serializer_class = PlanningSerializer
 
     def list(self, request, *args, **kwargs):
-        planning = super().list(request, *args, **kwargs)
-        for each in planning.data:
-            each['is_active'] = 1 if each['is_active']==True else 0
-            each['notification'] = 1 if each['notification']==True else 0
-            each['due_date'] = timestamp_to_strdateformat(each['due_date'], "%d %B %Y")
-            if each['updated_by'] is not None:
-                each['updated_by'] = User.objects.get(pk=each['updated_by']).display_name
-            else:
-                each['updated_by'] = ""
-            each['created_by'] = User.objects.get(pk=each['created_by']).display_name
-            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
-        return planning
+        queryset = Planning.objects.all()
+        for planning in queryset:
+            planning.format_duedate("%Y-%m-%d")
+            planning.format_timestamp("%d %B %Y")
+            planning.format_created_updated_by()
+        
+        serializer = PlanningSerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        planning = super().retrieve(request, *args, **kwargs)
-        planning.data['is_active'] = 1 if planning.data['is_active']==True else 0
-        planning.data['notification'] = 1 if planning.data['notification']==True else 0
-        planning.data['due_date'] = timestamp_to_strdateformat(planning.data['due_date'], "%Y-%m-%d")
-        if planning.data['updated_by'] is not None:
-            planning.data['updated_by'] = User.objects.get(pk=planning.data['updated_by']).display_name
-        else:
-            planning.data['updated_by'] = ""
-        planning.data['created_by'] = User.objects.get(pk=planning.data['created_by']).display_name
-        planning.data['created_at'] = timestamp_to_strdateformat(planning.data['created_at'], "%d %B %Y")
-        planning.data['updated_at'] = timestamp_to_strdateformat(planning.data['updated_at'], "%d %B %Y")
-        return planning
+        planning = Planning.objects.get(pk=kwargs['pk'])
+        planning.format_duedate("%Y-%m-%d")
+        planning.format_timestamp("%d %B %Y")
+        planning.format_created_updated_by()        
+        
+        serializer = PlanningSerializer(planning, many=False)
+        return Response(serializer.data)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):

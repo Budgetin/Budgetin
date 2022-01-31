@@ -11,3 +11,6 @@ class Planning(SoftDeleteModel, TimestampModel, UserTrackModel):
     due_date = models.DateTimeField()
 
     all_object = models.Manager()
+    
+    def format_duedate(self, format):
+        self.due_date = self.due_date.strftime(format)

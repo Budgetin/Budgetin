@@ -1,8 +1,9 @@
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
+from rest_framework.response import Response
 
 from api.models import Product,Strategy,User
-from api.serializers import ProductSerializer
+from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
@@ -22,40 +23,21 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
 
     def list(self, request, *args, **kwargs):
-        product = super().list(request, *args, **kwargs)
-        for each in product.data:
-            if each['updated_by'] is not None:
-                each['updated_by'] = User.objects.get(pk=each['updated_by']).display_name
-            else:
-                each['updated_by'] = ''
-            strategy = Strategy.objects.get(pk=each['strategy'])
-            each['strategy'] = {
-                "id" : strategy.id,
-                "name" : strategy.name
-            }
-            each['created_by'] = User.objects.get(pk=each['created_by']).display_name
-            #Reformat date
-            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
+        queryset = Product.objects.all().select_related('strategy')
+        for product in queryset:
+            product.format_timestamp("%d %B %Y")
+            product.format_created_updated_by()
 
-        return product
+        serializer = ProductResponseSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        product = super().retrieve(request, *args, **kwargs)
-        #reformat date
-        if product.data['updated_by'] is not None:
-                product.data['updated_by'] = User.objects.get(pk=product.data['updated_by']).display_name
-        else:
-            product.data['updated_by'] = ''
-        strategy = Strategy.objects.get(pk=product.data['strategy'])
-        product.data['strategy'] = {
-            "id" : strategy.id,
-            "name" : strategy.name
-        }
-        product.data['created_by'] = User.objects.get(pk=product.data['created_by']).display_name
-        product.data['created_at'] = timestamp_to_strdateformat(product.data['created_at'], "%d %B %Y")
-        product.data['updated_at'] = timestamp_to_strdateformat(product.data['updated_at'], "%d %B %Y")
-        return product
+        product = Product.objects.select_related('strategy').get(pk=kwargs['pk'])
+        product.format_timestamp("%d %B %Y")
+        product.format_created_updated_by()
+        
+        serializer = ProductResponseSerializer(product, many=False)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']

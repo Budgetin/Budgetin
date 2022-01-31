@@ -19,7 +19,11 @@ class UserTrackModel(models.Model):
 
     def format_created_updated_by(self):
         User = apps.get_model('api', 'User')
-        self.created_by = User.objects.get(pk=self.created_by).display_name
+        if self.created_by:     
+            self.created_by = User.objects.get(pk=self.created_by).display_name
+        else:
+            self.created_by = ''
+                
         if self.updated_by:
             self.updated_by = User.objects.get(pk=self.updated_by).display_name
         else:

@@ -1,8 +1,8 @@
 from rest_framework import viewsets
+from rest_framework.response import Response
 
 from api.models import Project
 from api.serializers import ProjectSerializer
-from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
@@ -11,17 +11,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
 
     def list(self, request, *args, **kwargs):
-        project = super().list(request, *args, **kwargs)
-        for each in project.data:
-            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
-        return project
+        queryset = Project.objects.all()
+        for project in queryset:
+            project.format_timestamp("%d %B %Y")
+            
+        serializer = ProjectSerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        project = super().retrieve(request, *args, **kwargs)
-        project.data['created_at'] = timestamp_to_strdateformat(project.data['created_at'], "%d %B %Y")
-        project.data['updated_at'] = timestamp_to_strdateformat(project.data['updated_at'], "%d %B %Y")
-        return project
+        project = Project.objects.get(pk=kwargs['pk'])
+        project.format_timestamp("%d %B %Y")
+            
+        serializer = ProjectSerializer(project, many=True)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']

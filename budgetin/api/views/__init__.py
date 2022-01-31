@@ -1,7 +1,6 @@
 from .budget_view import BudgetViewSet
 from .coa_view import CoaViewSet
 from .monitoring_view import MonitoringViewSet
-from .pic_budget_view import PicBudgetViewSet
 from .planning_view import PlanningViewSet
 from .product_view import ProductViewSet
 from .project_detail_view import ProjectDetailViewSet

@@ -1,8 +1,8 @@
 from rest_framework import viewsets 
+from rest_framework.response import Response
 
-from api.models import Strategy, User
+from api.models import Strategy
 from api.serializers import StrategySerializer
-from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.auditlog import AuditLog
@@ -15,31 +15,23 @@ class StrategyViewSet(viewsets.ModelViewSet):
     queryset = Strategy.objects.all()
     serializer_class = StrategySerializer
 
-  
     
     def list(self, request, *args, **kwargs):
-        strategies = super().list(request, *args, **kwargs)
-        for strategy in strategies.data:
-            if strategy['updated_by'] is not None:
-                strategy['updated_by'] = User.objects.get(pk=strategy['updated_by']).display_name
-            else:
-                strategy['updated_by'] = ''
-            strategy['created_by'] = User.objects.get(pk=strategy['created_by']).display_name
-            strategy['created_at'] = timestamp_to_strdateformat(strategy['created_at'], "%d %B %Y")
-            strategy['updated_at'] = timestamp_to_strdateformat(strategy['updated_at'], "%d %B %Y")
-        return strategies
+        queryset = Strategy.objects.all()
+        for strategy in queryset:
+            strategy.format_timestamp("%d %B %Y")
+            strategy.format_created_updated_by()
+        
+        serializer = StrategySerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        strategy = super().retrieve(request, *args, **kwargs)
-        if strategy.data['updated_by'] is not None:
-                strategy.data['updated_by'] = User.objects.get(pk=strategy.data['updated_by']).display_name
-        else:
-            strategy.data['updated_by'] = ''
-        strategy.data['created_by'] = User.objects.get(pk=strategy.data['created_by']).display_name
-        strategy.data['created_at'] = timestamp_to_strdateformat(strategy.data['created_at'], "%d %B %Y")
-        strategy.data['updated_at'] = timestamp_to_strdateformat(strategy.data['updated_at'], "%d %B %Y")
+        strategy = Strategy.objects.get(pk=kwargs['pk'])
+        strategy.format_timestamp("%d %B %Y")
+        strategy.format_created_updated_by()
         
-        return strategy
+        serializer = StrategySerializer(strategy, many=False)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
