@@ -3,9 +3,8 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from api.models import Planning, User, Monitoring, Biro
+from api.models import Planning, Monitoring, Biro
 from api.serializers import PlanningSerializer
-from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.send_email import send_email
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import MonitoringStatusEnum
