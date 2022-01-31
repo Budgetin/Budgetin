@@ -174,37 +174,6 @@
             </v-btn>
           </v-col>
         </v-row>
-
-
-        <!-- <v-row no-gutters>
-          <v-col no-gutters class="StartPlanning__btn">
-            <v-btn rounded outlined class="primary--text" @click="$emit('cancelClicked')" v-if="!isView && !isNew" style="width: 8rem; margin-top: 212px; margin-left: 212px">
-              Batal
-            </v-btn>
-          </v-col>
-          <v-col no-gutters>
-            <v-btn rounded class="primary" @click="$emit('submitClicked')" v-if="!isView && !isNew" style="width: 8rem; margin-top: 212px">
-              Submit
-            </v-btn>
-          </v-col>
-
-          <v-col no-gutters class="StartPlanning__btn">
-            <v-btn rounded outlined class="primary--text" @click="$emit('cancelClicked')" v-if="isNew" style="width: 8rem; margin-top: 64px; margin-left: 212px">
-              Cancel
-            </v-btn>
-          </v-col>
-          <v-col no-gutters>
-            <v-btn rounded class="primary" type="submit" v-if="isNew" style="width: 8rem; margin-top: 64px">
-              Submit
-            </v-btn>
-          </v-col>
-
-          <v-col no-gutters class="StartPlanning__btn">
-            <v-btn v-if="isView" rounded class="primary" @click="$emit('okClicked')" style="width: 8rem; margin-top: 212px">
-              OK
-            </v-btn>
-          </v-col> -->
-        </v-row>
       </v-form>      
     </v-card-text>
   </v-card>

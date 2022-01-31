@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 from api.models import Coa
-from api.serializers import CoaSerializer
+from api.serializers import CoaSerializer, CoaResponseSerializer
 from api.permissions import IsAuthenticated, IsAdmin
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
@@ -26,7 +26,7 @@ class CoaViewSet(viewsets.ModelViewSet):
             coa.format_timestamp("%d %B %Y")
             coa.format_created_updated_by()
             
-        serializer = CoaSerializer(queryset, many=True)
+        serializer = CoaResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
@@ -34,7 +34,7 @@ class CoaViewSet(viewsets.ModelViewSet):
         coa.format_timestamp("%d %B %Y")
         coa.format_created_updated_by()
         
-        serializer = CoaSerializer(coa, many=False)
+        serializer = CoaResponseSerializer(coa, many=False)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):

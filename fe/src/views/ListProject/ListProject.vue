@@ -20,7 +20,67 @@
 
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+                    <!-- :loading="loadingGetProject"
+                    :items="dataProject" -->
+                    
                     <v-data-table
+                    :headers="dataTable.headers"
+                    :items="dataTable.desserts"
+                    :search="search"
+                    class="data-table">
+                        <template v-slot:top>
+                            <v-toolbar-title>
+                                <v-row class="mb-5" no-gutters>
+                                    <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
+                                        <v-row no-gutters>
+                                            <v-text-field
+                                            class="list-project__input"
+                                            v-model="search"
+                                            append-icon="mdi-magnify"
+                                            label="Search"
+                                            single-line
+                                            hide-details>
+                                            </v-text-field>
+                                        </v-row>
+                                    </v-col>
+
+                                    <v-col no-gutters>
+                                        <v-btn color="primary" @click="onFilter" class="mt-4">
+                                            <v-icon> mdi-filter-outline </v-icon>
+                                        </v-btn>
+                                    </v-col>
+
+                                    <v-col no-gutters class="list-project__btn">
+                                        <v-btn rounded color="primary" @click="onExport">
+                                            <v-icon left> mdi-export-variant </v-icon>
+                                            Export Data
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
+                            </v-toolbar-title>
+                        </template>
+                                    
+                        <template v-slot:[`item.actions`]="{ item }">
+                            <!-- VIEW PROJECT -->
+                            <router-link
+                                style="text-decoration: none"
+                                :to="{
+                                    name: 'ViewProject',
+                                    params: { id: item.id },
+                                }">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                                            mdi-eye
+                                        </v-icon>
+                                    </template>
+                                    <span>View/Edit</span>
+                                </v-tooltip>
+                            </router-link>
+                        </template>
+                    </v-data-table>
+
+                    <!-- <v-data-table
                     :headers="dessertHeaders"
                     :items="desserts"
                     :single-expand="singleExpand"
@@ -76,9 +136,9 @@
                             </td>
                         </template>
 
-                        <template v-slot:[`item.actions`]="{ item }">
+                        <template v-slot:[`item.actions`]="{ item }"> -->
                             <!-- VIEW/EDIT PLANNING -->
-                            <router-link
+                            <!-- <router-link
                                 style="text-decoration: none"
                                 :to="{
                                 name: 'ViewPlanning',
@@ -94,7 +154,7 @@
                                 </v-tooltip>
                             </router-link>
                         </template>
-                    </v-data-table>
+                    </v-data-table> -->
                 </v-col>
             </v-row>
 
@@ -120,55 +180,58 @@ export default {
             items: ['Active', 'Inactive'],
 
             search: "",
-            dessertHeaders: [
-                // { text: "Action", value: "actions", align: "center", sortable: false, width: "7%"},
-                { text: "ID", value: "id", width: "10%" },
-                { text: "ID ITFAM", value: "id_itfam", width: "10%", align: "start" },
-                { text: "Project Name", value: "project_name", width: "15%" },
-                { text: "Project Description", value: "project_desc", width: "20%" },
-                { text: "RCC", value: "rcc", width: "10%" },
-                { text: "Biro", value: "code", width: "10%" },
-                { text: '', value: 'data-table-expand', width: "5%" },
-            ],
-            desserts: [
-                {
-                    id: 1,
-                    id_itfam: "202300011",
-                    project_name: "Prototype Re-design LAN ATM Pertokoan",
-                    project_desc: "Merapikan LAN ATM EBC",
-                    rcc: "093",
-                    code: "NIS B",
-                },
-                {
-                    id: 2,
-                    id_itfam: "202300012",
-                    project_name: "Wi-fi Cabang",
-                    project_desc: "Access point untuk Future Branch",
-                    rcc: "093",
-                    code: "NIS B",
-                },
-                {
-                    id: 3,
-                    id_itfam: "202300013",
-                    project_name: "Tool Fiber Optic",
-                    project_desc: "Fiber Optic Tester",
-                    rcc: "093",
-                    code: "NIS A",
-                },
-                {
-                    id: 4,
-                    id_itfam: "202300014",
-                    project_name: "Subduck BNDC Cibitung",
-                    project_desc: "Zone fiber optic MM2100",
-                    rcc: "093",
-                    code: "NIS C",
-                },
-            ],
+            dataTable: {
+                headers: [
+                    { text: "Action", value: "actions", align: "center", sortable: false, width: "7%"},
+                    { text: "ID", value: "id", width: "7%" },
+                    { text: "ID ITFAM", value: "id_itfam", width: "10%", align: "start" },
+                    { text: "Project Name", value: "project_name", width: "25%" },
+                    { text: "Project Description", value: "project_desc", width: "30%" },
+                    { text: "RCC", value: "rcc", width: "10%" },
+                    { text: "Biro", value: "code", width: "10%" },
+                    { text: '', value: 'data-table-expand', width: "5%" },
+                ],
+                desserts: [
+                    {
+                        id: 1,
+                        id_itfam: "202300011",
+                        project_name: "Prototype Re-design LAN ATM Pertokoan",
+                        project_desc: "Merapikan LAN ATM EBC",
+                        rcc: "093",
+                        code: "NIS B",
+                    },
+                    {
+                        id: 2,
+                        id_itfam: "202300012",
+                        project_name: "Wi-fi Cabang",
+                        project_desc: "Access point untuk Future Branch",
+                        rcc: "093",
+                        code: "NIS B",
+                    },
+                    {
+                        id: 3,
+                        id_itfam: "202300013",
+                        project_name: "Tool Fiber Optic",
+                        project_desc: "Fiber Optic Tester",
+                        rcc: "093",
+                        code: "NIS A",
+                    },
+                    {
+                        id: 4,
+                        id_itfam: "202300014",
+                        project_name: "Subduck BNDC Cibitung",
+                        project_desc: "Zone fiber optic MM2100",
+                        rcc: "093",
+                        code: "NIS C",
+                    },
+                ],
+            },
         };
     },
 
     methods: {
         onExport() {
+
         },
         onCancel() {
             this.dialog = false;
@@ -178,6 +241,9 @@ export default {
         },
         onView() {
             console.log(item);
+        },
+        onFilter() {
+
         }
     }
 };

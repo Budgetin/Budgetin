@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from api.models import Planning, Monitoring, Biro
-from api.serializers import PlanningSerializer
+from api.serializers import PlanningSerializer, PlanningResponseSerializer
 from api.utils.send_email import send_email
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import MonitoringStatusEnum
@@ -86,7 +86,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
             planning.format_timestamp("%d %B %Y")
             planning.format_created_updated_by()
         
-        serializer = PlanningSerializer(queryset, many=True)
+        serializer = PlanningResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
@@ -95,7 +95,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         planning.format_timestamp("%d %B %Y")
         planning.format_created_updated_by()        
         
-        serializer = PlanningSerializer(planning, many=False)
+        serializer = PlanningResponseSerializer(planning, many=False)
         return Response(serializer.data)
 
     @transaction.atomic

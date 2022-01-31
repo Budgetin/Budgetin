@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from api.models import User
-from api.serializers import UserSerializer
+from api.serializers import UserSerializer, UserResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.date_format import timestamp_to_strdateformat
@@ -12,6 +12,10 @@ from api.exceptions.validation_exception import ValidationException
 
 def is_duplicate_user(username):
     if User.objects.filter(username=username):
+        raise ValidationException
+
+def is_duplicate_user_update(id, username):
+    if User.objects.filter(username=username).exclude(pk=id):
         raise ValidationException
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -23,7 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user.format_timestamp("%d %B %Y")
             user.format_created_updated_by()
         
-        serializer = UserSerializer(queryset, many=True)
+        serializer = UserResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
@@ -31,7 +35,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user.format_timestamp("%d %B %Y")
         user.format_created_updated_by()
         
-        serializer = UserSerializer(user, many=False)
+        serializer = UserResponseSerializer(user, many=False)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
@@ -45,7 +49,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return user
 
     def update(self, request, *args, **kwargs):
-        is_duplicate_user(request.data['username'])
+        is_duplicate_user_update(kwargs['pk'], request.data['username'])
         user = super().update(request, *args, **kwargs)
         AuditLog.Save(user, request, ActionEnum.UPDATE, TableEnum.USER)
         return user
