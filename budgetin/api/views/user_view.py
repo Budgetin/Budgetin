@@ -18,30 +18,21 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def list(self, request, *args, **kwargs):
-        user = super().list(request, *args, **kwargs)
-        for each in user.data:
-            if each['updated_by'] is not None:
-                each['updated_by'] = User.objects.get(pk=each['updated_by']).display_name
-            else:
-                each['updated_by'] = ''
-            #Reformat date
-            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
-            
-            each['is_active'] = 1 if each['is_active'] else 0 
-        return user
+        queryset = User.objects.all()
+        for user in queryset:
+            user.format_timestamp("%d %B %Y")
+            user.format_created_updated_by()
+        
+        serializer = UserSerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        user = super().retrieve(request, *args, **kwargs)
-        if user.data['updated_by'] is not None:
-                user.data['updated_by'] = User.objects.get(pk=user.data['updated_by']).display_name
-        else:
-            user.data['updated_by'] = ''
-        user.data['created_at'] = timestamp_to_strdateformat(user.data['created_at'], "%d %B %Y")
-        user.data['updated_at'] = timestamp_to_strdateformat(user.data['updated_at'], "%d %B %Y")
-
-        user.data['is_active'] = 1 if user.data['is_active'] else 0 
-        return user
+        user = User.objects.get(pk=kwargs['pk'])
+        user.format_timestamp("%d %B %Y")
+        user.format_created_updated_by()
+        
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         is_duplicate_user(request.data['username'])
