@@ -176,6 +176,7 @@ export default {
         this.getStartPlanning();
         this.getMonitorPlanning();
         this.getAllBiro();
+        this.setBreadcrumbs();
     },
 
     computed: {
@@ -188,6 +189,21 @@ export default {
         ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
         ...mapActions("monitorPlanning", ["getMonitorPlanning", "postMonitorPlanning"]),
         ...mapActions("allBiro", ["getAllBiro"]),
+
+        setBreadcrumbs() {
+            let param = this.isView ? "View Planning" : "Edit Planning";
+            this.$store.commit("breadcrumbs/SET_LINKS", [
+                {
+                    text: "Start Planning",
+                    link: true,
+                    exact: true,
+                    disabled: false,
+                    to: {
+                        name: "StartPlanning",
+                    },
+                },
+            ]);
+        },
 
         onAdd() {
             this.dialog = !this.dialog;
@@ -227,7 +243,7 @@ export default {
         },
         onEdit(item) {
             this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
-            console.log("Item: "+item);
+            console.log(item);
         },
         onOK() {
             return this.$router.go(-1);

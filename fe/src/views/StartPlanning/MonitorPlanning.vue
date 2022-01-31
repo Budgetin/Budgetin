@@ -80,7 +80,7 @@ export default {
                 { text: "Biro", value: "biro.code", width: "15%" },
                 { text: "PIC", value: "pic_initial", width: "15%" },
                 { text: "Updated Date", value: "updated_at", width: "20%" },
-                { text: "Status", value: "status", width: "17%" },
+                { text: "Status", value: "monitoring_status", width: "17%" },
                 { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
             ],
         },
@@ -88,7 +88,9 @@ export default {
         monitorData: [],
         
         form: {
+            id: "",
             biro: {
+                id: "",
                 ithc_biro: "",
                 code: "",
                 sub_group_code: "",
@@ -101,7 +103,6 @@ export default {
             pic_employee_id: "",
             pic_initial: "",
             pic_display_name: "",
-            status: "",
             updated_by: "",
             updated_at: "",
         },
@@ -116,6 +117,7 @@ export default {
     created() {
         this.getEdittedItem();
         this.getMonitorPlanningById(this.$route.params.id);
+        this.setBreadcrumbs();
     },
     
     computed: {
@@ -128,6 +130,21 @@ export default {
     methods: {
         ...mapActions("monitorPlanning", ["getMonitorPlanningById", "postMonitorPlanning"]),
 
+        setBreadcrumbs() {
+            let param = this.isView ? "View Monitor Planning Status" : "Edit Monitor Planning Status";
+            this.$store.commit("breadcrumbs/SET_LINKS", [
+                {
+                    text: "Monitor Planning Status",
+                    link: true,
+                    exact: true,
+                    disabled: false,
+                    to: {
+                        name: "MonitorPlanning",
+                    },
+                },
+            ]);
+        },
+        
         getEdittedItem() {
             console.log("Masuk Editted Item");
 
@@ -172,9 +189,10 @@ export default {
             this.alert.show = false;
         },
         
-        // onEdit(item) {
-        //     this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
-        // },
+        onEdit(item) {
+            this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
+            console.log(item);
+        },
         onOK() {
             return this.$router.go(-1);
         }
