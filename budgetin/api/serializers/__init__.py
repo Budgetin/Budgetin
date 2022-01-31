@@ -1,7 +1,7 @@
 from .audit_log_serializer import AuditLogSerializer
 from .biro_serializer import BiroSerializer
 from .budget_serializer import BudgetSerializer
-from .coa_serializer import CoaSerializer
+from .coa_serializer import CoaSerializer, CoaResponseSerializer
 from .monitoring_serializer import MonitoringSerializer
 from .planning_serializer import PlanningSerializer
 from .product_serializer import ProductSerializer, ProductResponseSerializer
