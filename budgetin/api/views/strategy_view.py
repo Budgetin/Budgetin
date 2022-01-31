@@ -1,7 +1,7 @@
 from rest_framework import viewsets 
 from rest_framework.response import Response
 
-from api.models import Strategy, User
+from api.models import Strategy
 from api.serializers import StrategySerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum

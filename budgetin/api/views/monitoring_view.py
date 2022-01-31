@@ -5,7 +5,6 @@ from rest_framework.response import Response
 
 from api.models import Monitoring
 from api.serializers import MonitoringSerializer
-from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
