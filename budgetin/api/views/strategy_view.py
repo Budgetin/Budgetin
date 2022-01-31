@@ -8,8 +8,12 @@ from api.utils.enum import ActionEnum, TableEnum
 from api.utils.auditlog import AuditLog
 from api.exceptions.validation_exception import ValidationException
 
-def is_duplicate(name):
+def is_duplicate_create(name):
     if Strategy.objects.filter(name=name):
+        raise ValidationException
+
+def is_duplicate(id, name):
+    if Strategy.objects.filter(name=name).exclude(pk=id):
         raise ValidationException
 class StrategyViewSet(viewsets.ModelViewSet):
     queryset = Strategy.objects.all()
@@ -36,14 +40,14 @@ class StrategyViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
-        is_duplicate(request.data['name'])
+        is_duplicate_create(request.data['name'])
         strategy = super().create(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.CREATE, TableEnum.STRATEGY)
         return strategy
 
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
-        is_duplicate(request.data['name'])
+        is_duplicate(kwargs['pk'], request.data['name'])
         strategy = super().update(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.UPDATE, TableEnum.STRATEGY)
         return strategy
