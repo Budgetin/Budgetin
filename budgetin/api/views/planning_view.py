@@ -112,6 +112,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         if is_send_notification(request):
             send_notification(request, biros)
             planning.data['body'] = request.data['body']
+            planning.data['send_to'] = request.data['biros_code']
             
         AuditLog.Save(planning, request, ActionEnum.CREATE, TableEnum.PLANNING)
         
