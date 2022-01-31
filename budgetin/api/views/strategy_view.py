@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 from api.models import Strategy
-from api.serializers import StrategySerializer
+from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.auditlog import AuditLog
@@ -22,7 +22,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
             strategy.format_timestamp("%d %B %Y")
             strategy.format_created_updated_by()
         
-        serializer = StrategySerializer(queryset, many=True)
+        serializer = StrategyResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
@@ -30,7 +30,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
         strategy.format_timestamp("%d %B %Y")
         strategy.format_created_updated_by()
         
-        serializer = StrategySerializer(strategy, many=False)
+        serializer = StrategyResponseSerializer(strategy, many=False)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):

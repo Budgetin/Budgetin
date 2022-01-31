@@ -8,6 +8,6 @@ from .product_serializer import ProductSerializer, ProductResponseSerializer
 from .project_detail_serializer import ProjectDetailSerializer
 from .project_serializer import ProjectSerializer
 from .project_type_serializer import ProjectTypeSerializer
-from .strategy_serializer import StrategySerializer
+from .strategy_serializer import StrategySerializer, StrategyResponseSerializer
 from .user_serializer import UserSerializer
 
