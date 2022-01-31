@@ -13,6 +13,10 @@ from api.exceptions.validation_exception import ValidationException
 def is_duplicate_user(username):
     if User.objects.filter(username=username):
         raise ValidationException
+
+def is_duplicate_user_update(id, username):
+    if User.objects.filter(username=username).exclude(pk=id):
+        raise ValidationException
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -45,7 +49,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return user
 
     def update(self, request, *args, **kwargs):
-        is_duplicate_user(request.data['username'])
+        is_duplicate_user_update(kwargs['pk'], request.data['username'])
         user = super().update(request, *args, **kwargs)
         AuditLog.Save(user, request, ActionEnum.UPDATE, TableEnum.USER)
         return user
