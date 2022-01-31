@@ -75,7 +75,7 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-text-field
-                  v-model="form.pic_initial"
+                  v-model="form.pic_display_name"
                   outlined
                   dense
                   disabled
@@ -113,10 +113,10 @@
               sm="6">
               <div class="monitor-planning__field">
                 <v-select
-                  v-model="form.status"
+                  v-model="form.monitoring_status"
                   :items="statusMonitor"
                   item-text="label"
-                  item-value="id"
+                  item-value="label"
                   placeholder="Input Status"
                   outlined
                   return-object
@@ -129,7 +129,7 @@
         </v-row>
 
         <!-- BUTTONS -->
-        <v-row no-gutters>
+        <!-- <v-row no-gutters>
           <v-col no-gutters class="monitor-planning__btn">
             <v-btn rounded outlined class="primary--text" @click="onCancel" v-if="!isView" style="width: 8rem; margin-top: 120px; margin-left: 212px">
               Cancel
@@ -145,6 +145,32 @@
               OK
             </v-btn>
           </v-col>
+        </v-row> -->
+
+        <v-row no-gutters>
+          <v-col cols="12" align="right">
+            <v-btn
+              rounded
+              outlined
+              class="primary--text"
+              @click="$emit('okClicked')"
+              v-if="isView"
+            >
+              OK
+            </v-btn>
+            <v-btn
+              rounded
+              outlined
+              class="primary--text"
+              @click="$emit('cancelClicked')"
+              v-if="!isView"
+            >
+              Cancel
+            </v-btn>
+            <v-btn rounded class="primary ml-3" type="submit" v-if="!isView">
+              Save
+            </v-btn>
+          </v-col>
         </v-row>
       </v-form>      
     </v-card-text>
@@ -155,7 +181,7 @@
 import { mapState } from "vuex";
 export default {
   name: "FormMonitorPlanning",
-  props: ["form", "isNew", "isView", "dataAllBiro"],
+  props: ["form", "isNew", "isView"],
   
   data: () => ({
     validation: {
@@ -167,17 +193,17 @@ export default {
       ],
     },
 
-    // statusOptions: [
-    //   {activeInactive: 'Active'},
-    //   {activeInactive: 'Inactive'}
-    // ],
-    // status: null,
+    statusMonitor: [
+      {label: 'To Do'},
+      {label: 'Draft'},
+      {label: 'Submitted'}
+    ],
   }),
   
   computed: {
-    ...mapState("statusInfo", ["statusMonitor"]),
-    ...mapState("allBiro", ["getAllBiro"]),
-    ...mapState("monitorPlanning", ["getMonitorPlanning"]),
+    // ...mapState("statusInfo", ["statusMonitor"]),
+    ...mapState("allBiro", ["getAllBiro", "dataAllBiro"]),
+    // ...mapState("monitorPlanning", ["getMonitorPlanning", "dataMonitorPlanning"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
@@ -193,11 +219,12 @@ export default {
       // let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
       if (validate) {
         const payload = {
-          group: this.form.biro.group_code,
-          subgroup: this.form.biro.sub_group_code,
+          id: this.form.id,
+          group_code: this.form.biro.group_code,
+          sub_group_code: this.form.biro.sub_group_code,
           code: this.form.biro.code,
-          pic: this.form.pic_initial,
-          monitoring_status: this.form.monitoring_status,
+          pic_initial: this.form.pic_initial,
+          monitoring_status: this.form.monitoring_status.label,
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }
