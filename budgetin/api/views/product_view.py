@@ -25,7 +25,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         product = super().list(request, *args, **kwargs)
         for each in product.data:
             if each['updated_by'] is not None:
-                each['updated_by'] = User.all_objects.get(pk=each['updated_by']).display_name
+                each['updated_by'] = User.objects.get(pk=each['updated_by']).display_name
             else:
                 each['updated_by'] = ''
             strategy = Strategy.objects.get(pk=each['strategy'])
@@ -33,7 +33,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 "id" : strategy.id,
                 "name" : strategy.name
             }
-            each['created_by'] = User.all_objects.get(pk=each['created_by']).display_name
+            each['created_by'] = User.objects.get(pk=each['created_by']).display_name
             #Reformat date
             each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
             each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
@@ -44,7 +44,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         product = super().retrieve(request, *args, **kwargs)
         #reformat date
         if product.data['updated_by'] is not None:
-                product.data['updated_by'] = User.all_objects.get(pk=product.data['updated_by']).display_name
+                product.data['updated_by'] = User.objects.get(pk=product.data['updated_by']).display_name
         else:
             product.data['updated_by'] = ''
         strategy = Strategy.objects.get(pk=product.data['strategy'])
@@ -52,7 +52,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             "id" : strategy.id,
             "name" : strategy.name
         }
-        product.data['created_by'] = User.all_objects.get(pk=product.data['created_by']).display_name
+        product.data['created_by'] = User.objects.get(pk=product.data['created_by']).display_name
         product.data['created_at'] = timestamp_to_strdateformat(product.data['created_at'], "%d %B %Y")
         product.data['updated_at'] = timestamp_to_strdateformat(product.data['updated_at'], "%d %B %Y")
         return product

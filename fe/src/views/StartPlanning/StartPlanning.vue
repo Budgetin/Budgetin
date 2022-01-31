@@ -22,12 +22,12 @@
                                 <v-row class="mb-5" no-gutters>
                                     <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
                                         <v-text-field
-                                            class="start-planning__input"
-                                            v-model="search"
-                                            append-icon="mdi-magnify"
-                                            label="Search"
-                                            single-line
-                                            hide-details>
+                                        class="start-planning__input"
+                                        v-model="search"
+                                        append-icon="mdi-magnify"
+                                        label="Search"
+                                        single-line
+                                        hide-details>
                                         </v-text-field>
                                     </v-col>
                                     <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="start-planning__btn">
@@ -49,7 +49,7 @@
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
-                                        <v-icon  class="ma-3" v-on="on" color="primary" @click="onMonitor()">
+                                        <v-icon  class="ma-3" v-on="on" color="primary" @click="onMonitor(item)">
                                             mdi-monitor
                                         </v-icon>
                                     </template>
@@ -61,8 +61,8 @@
                             <router-link
                                 style="text-decoration: none"
                                 :to="{
-                                name: 'ViewPlanning',
-                                params: { id: item.id },
+                                    name: 'ViewPlanning',
+                                    params: { id: item.id },
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
@@ -79,9 +79,9 @@
                             <binary-status-chip :boolean="item.is_active"> </binary-status-chip>
                         </template>
 
-                        <!-- <template v-slot:[`item.notification`]="{ item }">
+                        <template v-slot:[`item.notification`]="{ item }">
                             <binary-notif-chip :boolean="item.notification"> </binary-notif-chip>
-                        </template> -->
+                        </template>
                     </v-data-table>
                 </v-col>
             </v-row>
@@ -103,13 +103,13 @@
             </v-row>
         </v-container>
 
-        <!-- <success-error-alert
+        <success-error-alert
         :success="alert.success"
         :show="alert.show"
         :title="alert.title"
         :subtitle="alert.subtitle"
         @okClicked="onAlertOk"
-        /> -->
+        />
     </v-app>
 </template>
 
@@ -124,10 +124,10 @@ export default {
     components: {
         FormStartPlanning, SuccessErrorAlert, BinaryStatusChip, BinaryNotifChip
     },
-    
     watch: {},
     data: () => ({
         dialog: false,
+        isEdit: false,
         search: "",
         dataTable: {
             headers: [
@@ -138,15 +138,16 @@ export default {
                 { text: "Notification", value: "notification", width: "15%" },
                 { text: "Updated By", value: "updated_by", width: "15%" },
                 { text: "Updated Date", value: "updated_at", width: "15%" },
-                { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
+                { text: "Action", value: "actions", align: "center", sortable: false, width: "15%"},
             ],
         },
         sortBy: 'id',
         sortDesc: false,
         form: {
+            id: "",
             year: "",
             is_active: {
-                id: "",
+                id: null,
                 label: ""
             },
             // is_active: "",
@@ -157,7 +158,7 @@ export default {
             due_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
             // send_notification: "",
             notification: {
-                id: "",
+                id: null,
                 label: ""   
             },
             biros: [],
@@ -173,16 +174,19 @@ export default {
 
     created() {
         this.getStartPlanning();
+        this.getMonitorPlanning();
         this.getAllBiro();
     },
 
     computed: {
         ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
+        ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning"]),
         ...mapState("allBiro", ["dataAllBiro"]),
     },
 
     methods: {
         ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
+        ...mapActions("monitorPlanning", ["getMonitorPlanning", "postMonitorPlanning"]),
         ...mapActions("allBiro", ["getAllBiro"]),
 
         onAdd() {
@@ -217,28 +221,17 @@ export default {
         onAlertOk() {
             this.alert.show = false;
         },
-        onMonitor() {
-            console.log(item+"monitor");
+        onMonitor(item) {
+            this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
+            console.log("MonitorItem: "+item);
         },
         onEdit(item) {
             this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
+            console.log("Item: "+item);
         },
         onOK() {
             return this.$router.go(-1);
         },
-
-        // formatDate (date) {
-        //     if (!date) return null
-
-        //     const [year, month, day] = date.split('-')
-        //     return `${month}/${day}/${year}`
-        // },
-        // parseDate (date) {
-        //     if (!date) return null
-
-        //     const [month, day, year] = date.split('/')
-        //     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-        // },
     },
 };
 </script>

@@ -17,6 +17,9 @@ const startPlanning = {
     errorMsg: null,
     edittedItem: null,
     edittedItemHistories: [],
+    requestHistoriesStatus:"IDLE",
+    loadingGetEdittedItemHistories: false,
+    edittedItemHistories: [],
   },
   getters: {
     value: (state) => state.value
@@ -92,6 +95,7 @@ const startPlanning = {
       });
     },
     patchStartPlanning({ commit }, payload) {
+      console.log("Payload ID: "+payload.id);
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
       return new Promise((resolve, reject) => {
@@ -124,37 +128,25 @@ const startPlanning = {
           });
       });
     },
-    // getEdittedItemHistories({ commit }) {
-    //   const itemID = store.state.startPlanning.edittedItem.id;
-    //   if (!itemID) return;
-    //   getAPI
-    //     .get(ENDPOINT + `${itemID}/histories/`)
-    //     .then((response) => {
-    //       commit("SET_LOADING_GET_EDITTED_ITEM", false);
-    //       commit("SET_EDITTED_ITEM_HISTORIES", response.data);
-    //     })
-    //     .catch((error) => {
-    //       commit("GET_ERROR", error.response.data);
-    //     });
-    // },
-    // getActivestartPlanning({ commit }) {
-    //   if (store.state.startPlanning.requestActiveStatus !== "SUCCESS")
-    //     getAPI
-    //       .get(ENDPOINT + "?filter{status}=1")
-    //       .then((response) => {
-    //         const cleanData = response.data.Coas.map((data) => {
-    //           return {
-    //             id: data.id,
-    //             Coa_name: data.Coa_name,
-    //             status: String(data.status),
-    //           };
-    //         });
-    //         commit("GET_ACTIVE_DATA_UPDATE", cleanData);
-    //       })
-    //       .catch((error) => {
-    //         commit("GET_ERROR", error);
-    //       });
-    // },
+    getHistory({ commit }, id) {
+      commit("SET_REQUEST_STATUS"); 
+      return new Promise((resolve, reject) => {
+      getAPI
+        .get("/api/auditlog?table=planning&entity=" + `${id}`)
+        .then((response) => {
+          const data = response.data;
+          const sorted = data.sort((a, b) =>
+          a.id < b.id ? 1 : -1
+        );
+          commit("SET_EDITTED_ITEM_HISTORIES", sorted); 
+          resolve(sorted);
+        })
+        .catch((error) => {
+          commit("GET_ERROR", error);
+          reject(error);
+        });
+      });
+    },
   },
   mutations: {
     // get related
@@ -200,13 +192,16 @@ const startPlanning = {
       state.loadingGetEdittedItem = payload;
     },
 
-    // history related
-    SET_EDITTED_ITEM_HISTORIES(state, payload) {
-      state.edittedItemHistories = payload;
+    // history relate
+    SET_EDITTED_ITEM_HISTORIES(state, edittedItemHistories) {
+      state.requestHistoriesStatus = "SUCCESS";
+      state.loadingGetEdittedItemHistories = false;
+      state.edittedItemHistories = edittedItemHistories;
     },
-
-    SET_REQUEST_STATUS(state, payload) {
-      state.requestStatus = payload;
+    SET_REQUEST_STATUS(state) {
+      state.requestHistoriesStatus = "PENDING";
+      state.loadingGetEdittedItemHistories = true;
+      state.edittedItemHistories = [];
     },
 
     ON_CHANGE(state, payload) {

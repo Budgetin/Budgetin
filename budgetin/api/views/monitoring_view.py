@@ -12,7 +12,6 @@ from api.utils.enum import ActionEnum, TableEnum
 def construct_monitoring_dict(monitoring):
     monitoring_dict = model_to_dict(monitoring)
     monitoring_dict['biro'] = model_to_dict(monitoring.biro)
-    monitoring_dict['status'] = monitoring.monitoring_status.name
     monitoring_dict['created_at'] = monitoring.created_at.strftime("%d %B %Y")
     monitoring_dict['updated_at'] = monitoring.updated_at.strftime("%d %B %Y")
     return monitoring_dict
@@ -24,9 +23,9 @@ class MonitoringViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         parameter  = request.GET.get('planning')
         if parameter:
-            monitoring = Monitoring.objects.select_related('biro', 'monitoring_status').filter(planning=parameter)
+            monitoring = Monitoring.objects.select_related('biro').filter(planning=parameter)
         else:
-            monitoring = Monitoring.objects.select_related('biro', 'monitoring_status').all()
+            monitoring = Monitoring.objects.select_related('biro').all()
 
         result = []
         for each in monitoring:
@@ -36,7 +35,7 @@ class MonitoringViewSet(viewsets.ModelViewSet):
     
     def retrieve(self, request, *args, **kwargs):
         id = kwargs['pk']
-        monitoring = Monitoring.objects.select_related('biro', 'monitoring_status').get(pk=id)
+        monitoring = Monitoring.objects.select_related('biro').get(pk=id)
         monitoring_dict = construct_monitoring_dict(monitoring)
         return Response(monitoring_dict)
 

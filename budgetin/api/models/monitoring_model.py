@@ -5,9 +5,9 @@ from api.models.abstract_model import TimestampModel
 
 
 class Monitoring(SoftDeleteModel, TimestampModel):
-    biro = models.ForeignKey('Biro', on_delete=models.CASCADE)
-    monitoring_status = models.ForeignKey('MonitoringStatus',on_delete=models.CASCADE)
-    planning = models.ForeignKey('Planning', on_delete=models.CASCADE)
-    pic_employee_id = models.BigIntegerField()
+    biro = models.ForeignKey('Biro', on_delete=models.CASCADE, blank=True)
+    monitoring_status = models.CharField(max_length=50)
+    planning = models.ForeignKey('Planning', on_delete=models.CASCADE, blank=True)
+    pic_employee_id = models.BigIntegerField(blank=True)
     pic_initial = models.CharField(max_length=10, blank=True)
     pic_display_name = models.CharField(max_length=50, blank=True)

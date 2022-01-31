@@ -16,6 +16,11 @@ const statusInfo = {
     statusNotification: [
       { id: 1, label: "Yes" },
       { id: 0, label: "No" },
+    ],
+    statusMonitor: [
+      { id: "2", label: "Submitted" },
+      { id: "1", label: "Draft" },
+      { id: "0", label: "To-Do" },
     ]
   },
 };

@@ -23,7 +23,7 @@ class AuditLogViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.C
             return Response({"message":"table and / or entity not found"})
         for each in log:
             each['timestamp'] = timestamp_to_strdateformat(str(each['timestamp']), "%d %B %Y")
-            each['modified_by'] = User.all_objects.get(pk=each['modified_by']).display_name
+            each['modified_by'] = User.objects.get(pk=each['modified_by']).display_name
             data_as_json = json.loads(each['serialized_data'])
             if each['action'] != ActionEnum.DELETE.value:
                 data_as_json['is_deleted'] = 1 if data_as_json['is_deleted']==True else 0
@@ -32,10 +32,10 @@ class AuditLogViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.C
                 if 'strategy' in data_as_json:
                     data_as_json['strategy'] = model_to_dict(Strategy.all_objects.get(pk=data_as_json['strategy']))
                 data_as_json['created_at'] = timestamp_to_strdateformat(str(data_as_json['created_at']), "%d %B %Y")
-                data_as_json['created_by'] = User.all_objects.get(pk=data_as_json['created_by']).display_name
+                data_as_json['created_by'] = User.objects.get(pk=data_as_json['created_by']).display_name
                 data_as_json['updated_at'] = timestamp_to_strdateformat(str(data_as_json['updated_at']), "%d %B %Y")
                 if data_as_json['updated_by']:
-                    data_as_json['updated_by'] = User.all_objects.get(pk=data_as_json['updated_by']).display_name
+                    data_as_json['updated_by'] = User.objects.get(pk=data_as_json['updated_by']).display_name
             each['serialized_data'] = data_as_json
         return Response(log)
         

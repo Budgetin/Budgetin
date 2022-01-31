@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.response import Response
 
 from api.models import Coa, User
 from api.serializers import CoaSerializer
@@ -6,7 +7,7 @@ from api.permissions import IsAuthenticated, IsAdmin
 from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
-from api.exceptions.validation_exception import ValidationException
+from api.exceptions import ValidationException
 
 def is_duplicate_coa_create(name, hyperion_name):
     if Coa.objects.filter(name=name).exclude(hyperion_name=hyperion_name) or Coa.objects.filter(hyperion_name=hyperion_name).exclude(name=name):
@@ -21,28 +22,21 @@ class CoaViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        coa = super().list(request, *args, **kwargs)
-        for each in coa.data:
-            if each['updated_by'] is not None:
-                each['updated_by'] = User.all_objects.get(pk=each['updated_by']).display_name
-            else:
-                each['updated_by'] = ''
-            each['created_by'] = User.all_objects.get(pk=each['created_by']).display_name
-            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
-        return coa
+        queryset = Coa.objects.all()
+        for coa in queryset:
+            coa.format_timestamp("%d %B %Y")
+            coa.format_created_updated_by()
+            
+        serializer = CoaSerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        coa = super().retrieve(request, *args, **kwargs)
-        if coa.data['updated_by'] is not None:
-                coa.data['updated_by'] = User.all_objects.get(pk=coa.data['updated_by']).display_name
-        else:
-            coa.data['updated_by'] = ''
-        coa.data['created_by'] = User.all_objects.get(pk=coa.data['created_by']).display_name
-        coa.data['created_at'] = timestamp_to_strdateformat(coa.data['created_at'], "%d %B %Y")
-        coa.data['updated_at'] = timestamp_to_strdateformat(coa.data['updated_at'], "%d %B %Y")
+        coa =  Coa.objects.get(pk=kwargs['pk'])
+        coa.format_timestamp("%d %B %Y")
+        coa.format_created_updated_by()
         
-        return coa
+        serializer = CoaSerializer(coa, many=False)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']

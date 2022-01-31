@@ -2,25 +2,36 @@
     <v-app id="view-planning">
         <v-container>
             <v-row no-gutters>
-                <!-- START PLANNING -->
+                <!-- VIEW PLANNING -->
                 <form-start-planning
-                    :form="form"
-                    :isView="isView"
-                    @editClicked="onEdit"
-                    @cancelClicked="onCancel"
-                    @submitClicked="onSubmit"
-                    @okClicked="onOK"
-                    class="view-planning__detail">
+                :form="form"
+                :isView="isView"
+                :dataStartPlanning="dataStartPlanning"
+                :dataAllBiro="dataAllBiro"
+                @editClicked="onEdit"
+                @cancelClicked="onCancel"
+                @submitClicked="onSubmit"
+                @okClicked="onOK"
+                class="view-planning__detail">
                 </form-start-planning>
 
                 <!-- LOG HISTORY -->
-                <form-log-history
-                    :form="form"
-                    @editClicked="onEdit"
-                    @cancelClicked="onCancel"
-                    @submitClicked="onSubmit"
-                    class="view-planning__logHistory">
-                </form-log-history>
+                <v-col xs="12" sm="6" md="6" lg="5">
+                    <v-container>
+                        <timeline-log
+                            :items="itemsHistory"
+                            v-if="itemsHistory">
+                        </timeline-log>
+                    </v-container>
+                </v-col>
+                
+                <!-- <form-log-history
+                :form="form"
+                @editClicked="onEdit"
+                @cancelClicked="onCancel"
+                @submitClicked="onSubmit"
+                class="view-planning__logHistory">
+                </form-log-history> -->
             </v-row>
 
             <success-error-alert
@@ -37,28 +48,37 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
-import FormLogHistory from '@/components/CompStartPlanning/FormLogHistory';
+//import FormLogHistory from '@/components/CompStartPlanning/FormLogHistory';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import TimelineLog from "@/components/TimelineLog";
 export default {
     name: "ViewPlanning",
     components: {
-        FormStartPlanning, FormLogHistory, SuccessErrorAlert
+        FormStartPlanning, SuccessErrorAlert, TimelineLog
     },
-    created() {
-        this.getEdittedItem();
-    },
-    watch: {},
     data: () => ({
         isView: true,
-
+        itemsHistory: null,
         form: {
+            id: "",
             year: "",
-            is_active: "",
+            is_active: {
+                id: "",
+                label: ""
+            },
+            //is_active: "",
             created_by: "",
             updated_by: "",
             updated_at: "",
             due_date: "",
-            notification: "",
+            //due_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            //notification: "",
+            notification: {
+                id: "",
+                label: ""   
+            },
+            biros: [],
+            body: "",
         },
         alert: {
             show: false,
@@ -68,49 +88,72 @@ export default {
         },
     }),
 
+    created() {
+        this.getEdittedItem();
+        this.getHistoryItem();
+    },
+
+    computed: {
+        ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
+        ...mapState("allBiro", ["loadingGetAllBiro", "dataAllBiro"]),
+    },
+
     methods: {
-        ...mapActions("startPlanning", [
-            "patchStartPlanning",
-            "getStartPlanningById",
-        ]),
+        ...mapActions("startPlanning", ["patchStartPlanning", "getStartPlanningById", "getHistory"]),
+        
+        getHistoryItem() {
+            console.log("Masuk getHistoryItem");
+            this.getHistory(this.$route.params.id).then(() => {
+                console.log("Masuk getHistory");
+                this.itemsHistory = JSON.parse(
+                    JSON.stringify(this.$store.state.startPlanning.edittedItemHistories));
+                    console.log("Masuk JSON getHistory");
+            });
+        },
         getEdittedItem() {
+            // console.log("Masuk Editted Item");
             this.getStartPlanningById(this.$route.params.id).then(() => {
+                // console.log("ParamID: "+this.$route.params.id);
                 this.setForm();
             });
         },
         setForm() {
+            // console.log("Masuk Set Form");
             this.form = JSON.parse(
                 JSON.stringify(this.$store.state.startPlanning.edittedItem)
             );
+            // console.log(this.form);
         },
         onEdit() {
+            // console.log("Masuk on Edit");
             this.isView = false;
-            this.isNew = false;
         },
-        onAdd() {
-            this.dialog = !this.dialog;
-        }, 
         onCancel() {
             this.isView = true;
             this.setForm();
         },
         onSubmit(e) {
+            // console.log("Submit: "+e);
             this.patchStartPlanning(e)
             .then(() => {
+                // console.log("Masuk Save Success");
                 this.onSaveSuccess();
             })
             .catch((error) => {
+                // console.log("Masuk Save Error");
                 this.onSaveError(error);
             });
         },
         onSaveSuccess() {
+            // console.log("Masuk Save Success LAGI");
             this.dialog = false;
             this.alert.show = true;
             this.alert.success = true;
             this.alert.title = "Save Success";
-            this.alert.subtitle = "Start Planning Data has been saved successfully";
+            this.alert.subtitle = "Edit Planning Data has been saved successfully";
         },
         onSaveError(error) {
+            // console.log("Masuk Save Error LAGI");
             this.dialog = false;
             this.alert.show = true;
             this.alert.success = false;
@@ -121,6 +164,7 @@ export default {
             this.alert.show = false;
             this.isView = true;
             this.getEdittedItem();
+            this.getHistoryItem();
         },
         onOK() {
             return this.$router.go(-1);

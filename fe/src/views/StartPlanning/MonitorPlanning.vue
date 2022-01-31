@@ -12,7 +12,7 @@
                     <v-data-table
                     :headers="dataTable.headers"
                     :loading="loadingGetMonitorPlanning"
-                    :items="dataMonitorPlanning"
+                    :items="monitorData"
                     :search="search"
                     class="data-table">
                         <template v-slot:top>
@@ -31,9 +31,9 @@
                                 </v-row>
                             </v-toolbar-title>
                         </template>
-                                    
+
+                        <!-- VIEW/EDIT PLANNING -->  
                         <template v-slot:[`item.actions`]="{ item }">
-                            <!-- VIEW/EDIT PLANNING -->
                             <router-link
                                 style="text-decoration: none"
                                 :to="{
@@ -51,9 +51,9 @@
                             </router-link>
                         </template>
 
-                        <template v-slot:[`item.is_deleted`]="{ item }">
-                            <binary-status-chip :boolean="item.is_deleted"> </binary-status-chip>
-                        </template>
+                        <!-- <template v-slot:[`item.status`]="{ item }">
+                            <binary-status-chip :boolean="item.status"> </binary-status-chip>
+                        </template> -->
                     </v-data-table>
                 </v-col>
             </v-row>
@@ -75,7 +75,6 @@ export default {
         search: "",
         dataTable: {
             headers: [
-                { text: "No", value: "no", width: "5%" },
                 { text: "Group", value: "biro.group_code", width: "15%" },
                 { text: "Sub-Group", value: "biro.sub_group_code", width: "15%" },
                 { text: "Biro", value: "biro.code", width: "15%" },
@@ -85,6 +84,9 @@ export default {
                 { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
             ],
         },
+
+        monitorData: [],
+        
         form: {
             biro: {
                 ithc_biro: "",
@@ -112,22 +114,30 @@ export default {
     }),
 
     created() {
-        this.getMonitorPlanning();
+        this.getEdittedItem();
+        this.getMonitorPlanningById(this.$route.params.id);
     },
     
     computed: {
         cardTitle() {
             return this.isNew ? "Add" : this.isView ? "View" : "Edit";
         },
-        ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning"]),
-
-        cardTitle() {
-            return this.isNew ? "Add" : this.isView ? "View" : "Edit";
-        },
+        ...mapState("monitorPlanning", ["loadingGetMonitorPlanning"]),
     },
 
     methods: {
-        ...mapActions("monitorPlanning", ["getMonitorPlanning", "postMonitorPlanning"]),
+        ...mapActions("monitorPlanning", ["getMonitorPlanningById", "postMonitorPlanning"]),
+
+        getEdittedItem() {
+            console.log("Masuk Editted Item");
+
+            this.getMonitorPlanningById(this.$route.params.id).then(() => {
+                console.log("ParamID: "+this.$route.params.id);
+            
+            this.monitorData = JSON.parse(
+                JSON.stringify(this.$store.state.monitorPlanning.edittedItem))
+            });
+        },
 
         onAdd() {
             this.dialog = !this.dialog;
@@ -161,12 +171,10 @@ export default {
         onAlertOk() {
             this.alert.show = false;
         },
-        onMonitor() {
-            console.log(item+"monitor");
-        },
-        onEdit(item) {
-            this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
-        },
+        
+        // onEdit(item) {
+        //     this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
+        // },
         onOK() {
             return this.$router.go(-1);
         }
