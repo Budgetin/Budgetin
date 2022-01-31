@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 from api.models import Product,Strategy,User
-from api.serializers import ProductSerializer
+from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
@@ -28,7 +28,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             product.format_timestamp("%d %B %Y")
             product.format_created_updated_by()
 
-        serializer = ProductSerializer(queryset, many=True)
+        serializer = ProductResponseSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
@@ -36,7 +36,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         product.format_timestamp("%d %B %Y")
         product.format_created_updated_by()
         
-        serializer = ProductSerializer(product, many=False)
+        serializer = ProductResponseSerializer(product, many=False)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
