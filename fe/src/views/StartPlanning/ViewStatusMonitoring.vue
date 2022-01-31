@@ -6,6 +6,7 @@
                 <form-monitor-planning
                 :form="form"
                 :isView="isView"
+                :dataMonitorPlanning="dataMonitorPlanning"
                 @editClicked="onEdit"
                 @cancelClicked="onCancel"
                 @submitClicked="onSubmit"
@@ -14,13 +15,22 @@
                 </form-monitor-planning>
 
                 <!-- LOG HISTORY -->
-                <form-log-history
+                <v-col xs="12" sm="6" md="6" lg="5">
+                    <v-container>
+                        <timeline-log
+                            :items="itemsHistory"
+                            v-if="itemsHistory">
+                        </timeline-log>
+                    </v-container>
+                </v-col>
+
+                <!-- <form-log-history
                 :form="form"
                 @editClicked="onEdit"
                 @cancelClicked="onCancel"
                 @submitClicked="onSubmit"
                 class="view-status-monitoring__logHistory">
-                </form-log-history>
+                </form-log-history> -->
             </v-row>
         </v-container>
 
@@ -37,31 +47,32 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 import FormMonitorPlanning from '@/components/CompStartPlanning/FormMonitorPlanning';
-import FormLogHistory from '@/components/CompStartPlanning/FormLogHistory';
+// import FormLogHistory from '@/components/CompStartPlanning/FormLogHistory';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import TimelineLog from "@/components/TimelineLog";
 export default {
     name: "ViewStatusMonitoring",
     components: {
-        FormMonitorPlanning, FormLogHistory, SuccessErrorAlert
+        FormMonitorPlanning, SuccessErrorAlert, TimelineLog
     },
-    created() {
-        this.getEdittedItem();
-    },
-    watch: {},
     data: () => ({
         isView: true,
-
+        itemsHistory: null,
         form: {
+            id: "",
             biro: {
                 ithc_biro: "",
                 code: "",
-                subgroup: "",
-                group: "",
-                pic: "",
+                sub_group_code: "",
+                group_code: "",
+                name: "",
             },
-            monitoring_status_id: "",
+            monitoring_status: "",
             is_deleted: "",
             planning_id: "",
+            pic_employee_id: "",
+            pic_initial: "",
+            pic_display_name: "",
             updated_by: "",
             updated_at: "",
         },
@@ -73,37 +84,84 @@ export default {
         },
     }),
 
+    created() {
+        this.getEdittedItem();
+        this.getHistoryItem();
+        // this.setBreadcrumbs();
+    },
+
+    computed: {
+        ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning"]),
+        ...mapState("allBiro", ["loadingGetAllBiro", "dataAllBiro"]),
+    },
+
     methods: {
-        ...mapActions("monitorPlanning", [
-            "patchMonitorPlanning",
-            "getMonitorPlanningById",
-        ]),
+        ...mapActions("monitorPlanning", ["patchMonitorPlanning", "getMonitorPlanningDetailById", "getHistory"]),
+
+        setBreadcrumbs() {
+            let param = this.isView ? "View Monitor Planning Status" : "Edit Monitor Planning Status";
+            this.$store.commit("breadcrumbs/SET_LINKS", [
+                {
+                    text: "Monitor Planning Status",
+                    link: true,
+                    exact: true,
+                    disabled: false,
+                    to: {
+                        name: "MonitorPlanning",
+                    },
+                },
+                {
+                    text: param,
+                    disabled: true,
+                },
+            ]);
+        },
+        
+        getHistoryItem() {
+            // console.log("Masuk getHistoryItem");
+            this.getHistory(this.$route.params.id).then(() => {
+                // console.log("Masuk getHistory");
+                this.itemsHistory = JSON.parse(
+                    JSON.stringify(this.$store.state.monitorPlanning.edittedItemHistories));
+                    // console.log("Masuk JSON getHistory");
+            });
+        },
         getEdittedItem() {
-            this.getMonitorPlanningById(this.$route.params.id).then(() => {
+            // console.log("Masuk Editted Item");
+            this.getMonitorPlanningDetailById(this.$route.params.id).then(() => {
+                // console.log("ParamID: "+this.$route.params.id);
                 this.setForm();
             });
         },
         setForm() {
+            // console.log("Masuk Set Form");
             this.form = JSON.parse(
                 JSON.stringify(this.$store.state.monitorPlanning.edittedItem)
             );
+            // console.log(this.form);
         },
         onAdd() {
             this.dialog = !this.dialog;
         },
         onEdit() {
+            // console.log("Masuk on Edit");
             this.isView = false;
-            this.isNew = false;
+            // this.isNew = false;
+            this.setBreadcrumbs();
         }, 
         onCancel() {
             this.dialog = false;
+            this.setBreadcrumbs();
         },
         onSubmit(e) {
-            this.postMonitorPlanning(e)
+            console.log(e);
+            this.patchMonitorPlanning(e)
             .then(() => {
+                console.log("Masuk Save Success");
                 this.onSaveSuccess();
             })
             .catch((error) => {
+                console.log("Masuk Save Error");
                 this.onSaveError(error);
             });
         },
@@ -112,7 +170,7 @@ export default {
             this.alert.show = true;
             this.alert.success = true;
             this.alert.title = "Save Success";
-            this.alert.subtitle = "Start Planning Data has been saved successfully";
+            this.alert.subtitle = "Monitor Planning Status Data has been saved successfully";
         },
         onSaveError(error) {
             this.dialog = false;
@@ -123,6 +181,9 @@ export default {
         },
         onAlertOk() {
             this.alert.show = false;
+            this.isView = true;
+            this.getEdittedItem();
+            this.getHistoryItem();
         },
         onOK() {
             return this.$router.go(-1);

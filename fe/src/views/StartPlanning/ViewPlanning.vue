@@ -91,6 +91,7 @@ export default {
     created() {
         this.getEdittedItem();
         this.getHistoryItem();
+        this.setBreadcrumbs();
     },
 
     computed: {
@@ -101,13 +102,32 @@ export default {
     methods: {
         ...mapActions("startPlanning", ["patchStartPlanning", "getStartPlanningById", "getHistory"]),
         
+        setBreadcrumbs() {
+            let param = this.isView ? "View Planning" : "Edit Planning";
+            this.$store.commit("breadcrumbs/SET_LINKS", [
+                {
+                    text: "Start Planning",
+                    link: true,
+                    exact: true,
+                    disabled: false,
+                    to: {
+                        name: "StartPlanning",
+                    },
+                },
+                {
+                    text: param,
+                    disabled: true,
+                },
+            ]);
+        },
+
         getHistoryItem() {
-            console.log("Masuk getHistoryItem");
+            // console.log("Masuk getHistoryItem");
             this.getHistory(this.$route.params.id).then(() => {
-                console.log("Masuk getHistory");
+                // console.log("Masuk getHistory");
                 this.itemsHistory = JSON.parse(
                     JSON.stringify(this.$store.state.startPlanning.edittedItemHistories));
-                    console.log("Masuk JSON getHistory");
+                    // sconsole.log("Masuk JSON getHistory");
             });
         },
         getEdittedItem() {
@@ -127,13 +147,15 @@ export default {
         onEdit() {
             // console.log("Masuk on Edit");
             this.isView = false;
+            this.setBreadcrumbs();
         },
         onCancel() {
             this.isView = true;
             this.setForm();
+            this.setBreadcrumbs();
         },
         onSubmit(e) {
-            // console.log("Submit: "+e);
+            console.log(e);
             this.patchStartPlanning(e)
             .then(() => {
                 // console.log("Masuk Save Success");

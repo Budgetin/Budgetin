@@ -1,0 +1,25 @@
+<template>
+    <v-container class="mt-5">
+        <v-row>Group: {{data.serialized_data.biro.group_code}}</v-row>
+        <v-row>Sub-Group: {{data.serialized_data.biro.sub_group_code}}</v-row>
+        <v-row>Biro: {{data.serialized_data.biro.code}}</v-row>
+        <v-row>PIC: {{data.serialized_data.pic_initial}}</v-row>
+        <v-row>Status: {{data.serialized_data.status}}</v-row>
+    </v-container>
+</template>
+
+<script>
+export default {
+  name: "ItemLogMonitorPlanning",
+  props: ["data"],
+//   computed:{
+//     getActive(){
+//       return this.data.serialized_data.is_active == 1 ? "Active" : "Inactive";
+//     },
+//     getNotif(){
+//       return this.data.serialized_data.notification == 1 ? "Yes" : "No";
+//     }
+//   }
+}
+
+</script>

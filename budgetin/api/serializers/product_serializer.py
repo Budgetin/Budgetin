@@ -9,6 +9,11 @@ class StrategySerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
         
 class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = '__all__'                
+        
+class ProductResponseSerializer(serializers.ModelSerializer):
     strategy = StrategySerializer(many=False)
     created_by = serializers.CharField()
     updated_by = serializers.CharField()
