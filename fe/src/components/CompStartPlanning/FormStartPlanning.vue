@@ -24,7 +24,7 @@
                   outlined
                   return-object
                   :disabled="isView"
-                  :rules="validation.required.concat(validation.yearRule)">
+                  :rules="validation.required">
                 </v-text-field>
               </div>
             </v-col>
@@ -46,7 +46,7 @@
                   outlined
                   return-object
                   :disabled="isView"
-                  :rules="validation.required">
+                  :rules="validation.statusRule">
                 </v-select>
               </div>
             </v-col>
@@ -103,7 +103,7 @@
                   outlined
                   return-object
                   :disabled="isView"
-                  :rules="validation.required">
+                  :rules="validation.notifRule">
                 </v-select>
               </div>
             </v-col>
@@ -115,17 +115,18 @@
           <v-row no-gutters v-if="form.notification.id==1">
             <v-col> Send to <strong class="red--text">*</strong>
               <v-col no-gutters>
+                <div class="sendTo">
                 <v-select
-                  class="StartPlanning__select"
                   :items="dataAllBiro"
                   v-model="form.biros"
                   item-text="code"
-                  item-value="id"
+                  item-value="id, code"
                   placeholder="Choose Biro"
                   multiple
                   chips
                   outlined>
                 </v-select>
+                </div>
               </v-col>            
             </v-col>
           </v-row>
@@ -149,9 +150,36 @@
 
         <!-- BUTTONS -->
         <v-row no-gutters>
+          <v-col cols="12" align="right">
+            <v-btn
+              rounded
+              outlined
+              class="primary--text"
+              @click="$emit('okClicked')"
+              v-if="isView"
+            >
+              OK
+            </v-btn>
+            <v-btn
+              rounded
+              outlined
+              class="primary--text"
+              @click="$emit('cancelClicked')"
+              v-if="!isView"
+            >
+              Cancel
+            </v-btn>
+            <v-btn rounded class="primary ml-3" type="submit" v-if="!isView">
+              Save
+            </v-btn>
+          </v-col>
+        </v-row>
+
+
+        <!-- <v-row no-gutters>
           <v-col no-gutters class="StartPlanning__btn">
             <v-btn rounded outlined class="primary--text" @click="$emit('cancelClicked')" v-if="!isView && !isNew" style="width: 8rem; margin-top: 212px; margin-left: 212px">
-              Cancel
+              Batal
             </v-btn>
           </v-col>
           <v-col no-gutters>
@@ -175,7 +203,7 @@
             <v-btn v-if="isView" rounded class="primary" @click="$emit('okClicked')" style="width: 8rem; margin-top: 212px">
               OK
             </v-btn>
-          </v-col>
+          </v-col> -->
         </v-row>
       </v-form>      
     </v-card-text>
@@ -186,7 +214,7 @@
 import { mapState } from "vuex";
 export default {
   name: "FormStartPlanning",
-  props: ["form", "isNew", "isView", "dataAllBiro"],
+  props: ["form", "isNew", "isView"],
 
   data: () => ({
     //yearSubstring: new Date().getFullYear(),
@@ -199,18 +227,23 @@ export default {
       targetRule: [
         v => /^[0-9.,]+$/.test(v) || "This field is numbers only",
       ],
-      yearRule: v  => {
+      yearRule: [
         //if (!v.trim()) return true;
-        if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;
-        return 'Year has to be integer and contains 4 digits';
-      },
+        v => { if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;
+        return 'Year has to be integer and contains 4 digits'; }
+      ],
+      // yearRule: v  => {
+      //   //if (!v.trim()) return true;
+      //   if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;
+      //   return 'Year has to be integer and contains 4 digits';
+      // },
     },
   }),
   
   computed: {
     ...mapState("statusInfo", ["statusInfoPlanning"]),
     ...mapState("statusInfo", ["statusNotification"]),
-    ...mapState("allBiro", ["getAllBiro"]),
+    ...mapState("allBiro", ["getAllBiro", "dataAllBiro"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
@@ -222,9 +255,9 @@ export default {
 
   methods: {
     onSubmit() {
-      console.log("Masuk Sini");
+      // console.log("Masuk Sini");
       let validate = this.$refs.form.validate();
-      console.log("Masuk Let Validate");
+      // console.log("Masuk Let Validate");
       if (validate) {
         const payload = {
           id: this.form.id,

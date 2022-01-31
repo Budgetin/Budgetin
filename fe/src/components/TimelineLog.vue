@@ -48,6 +48,11 @@
                 :data="item"
               />
             </template>
+            <template v-if="item.table == 'planning'">
+              <item-log-start-planning
+                :data="item"
+              />
+            </template>
             <v-row class="mt-1">
               <div>
                 <strong>
@@ -67,6 +72,7 @@ import ItemLogMasterCoa from "@/components/MasterCOA/ItemLogMasterCoa"
 import ItemLogMasterProduct from "@/components/MasterProduct/ItemLogMasterProduct"
 import ItemLogMasterStrategy from "@/components/MasterStrategy/ItemLogMasterStrategy"
 import ItemLogMasterUser from "@/components/MasterUser/ItemLogMasterUser"
+import ItemLogStartPlanning from "@/components/CompStartPlanning/ItemLogStartPlanning"
 
 // import formatting from "@/mixins/formatting";
 export default {
@@ -81,7 +87,7 @@ export default {
       default: false,
     },
   },
-  components: { ItemLogMasterCoa,ItemLogMasterProduct,ItemLogMasterStrategy,ItemLogMasterUser },
+  components: { ItemLogMasterCoa,ItemLogMasterProduct,ItemLogMasterStrategy,ItemLogMasterUser,ItemLogStartPlanning },
   created() {
     // console.log(items)
   },
