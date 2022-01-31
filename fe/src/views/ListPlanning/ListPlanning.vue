@@ -18,7 +18,7 @@
             <template v-slot:top>
               <v-toolbar-title>
                 <v-row class="mb-5" no-gutters>
-                  <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
+                  <v-col cols="12" xs="12" sm="6" md="3" lg="3" no-gutters>
                     <v-text-field
                       class="list-planning__input"
                       v-model="search"
@@ -28,6 +28,21 @@
                     >
                     </v-text-field>
                   </v-col>
+
+                  <v-col
+                    cols="6"
+                    xs="6"
+                    sm="2"
+                    md="1"
+                    lg="1"
+                    no-gutters
+                    class="column__btn"
+                  >
+                    <v-btn class="mt-2" color="primary" >
+                      <v-icon>mdi-table-column-plus-before</v-icon>
+                    </v-btn>
+                  </v-col>
+
                   <v-col
                     cols="12"
                     xs="12"
@@ -107,6 +122,7 @@ export default {
     search: "",
     dataTable: {
       headers: [
+        { text: "Actions", value: "actions", align: "center", sortable: false },
         { text: "For", value: "planning.year"},
         { text: "ID ITFAM", value: "project.itfam_id"},
         { text: "Project ID", value: "dcsp_id"},
@@ -131,7 +147,6 @@ export default {
         { text: "Strategy", value: "project.product.strategy.name"},
         { text: "Created By", value: "created_by"},
         { text: "Updated At", value: "updated_at"},
-        { text: "Actions", value: "actions", align: "center", sortable: false },
       ]
     },
     form: {
@@ -198,13 +213,15 @@ export default {
 </script>
 
 <style>
-button {
+button{
   min-width: 2rem;
 }
+
 table > tbody > tr > td:nth-child(1), 
 table > thead > tr > th:nth-child(1) {
   position: sticky !important; 
   position: -webkit-sticky !important; 
+  /* max-width: 4.1rem; */
   left: 0; 
   z-index: 9998;
   background: white;
@@ -216,7 +233,7 @@ table > tbody > tr > td:nth-child(2),
 table > thead > tr > th:nth-child(2) {
   position: sticky !important; 
   position: -webkit-sticky !important; 
-  left:5%; 
+  left:4.55rem; 
   z-index: 9998;
   background: white;
 }
@@ -226,6 +243,7 @@ table > thead > tr > th:nth-child(2) {
 </style>
 
 <style lang="scss" scoped>
+
 #list-planning {
   .list-planning__header {
     padding-left: 32px;
@@ -239,7 +257,6 @@ table > thead > tr > th:nth-child(2) {
 
   .list-planning__btn {
     text-align: end;
-
     button {
       margin: 10px 32px;
     }
@@ -275,3 +292,4 @@ table > thead > tr > th:nth-child(2) {
     }
   }
 }
+</style>
