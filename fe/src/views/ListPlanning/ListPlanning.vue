@@ -9,11 +9,78 @@
 
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          
+          <v-data-table
+            :items="dataListPlanning"
+            :loading="loadingGetListPlanning"
+            :headers="dataTable.headers"
+            :search="search"
+          >
+            <template v-slot:top>
+              <v-toolbar-title>
+                <v-row class="mb-5" no-gutters>
+                  <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
+                    <v-text-field
+                      class="list-planning__input"
+                      v-model="search"
+                      append-icon="mdi-magnify"
+                      label="Search"
+                      hide-details
+                    >
+                    </v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    xs="12"
+                    sm="6"
+                    md="8"
+                    lg="8"
+                    no-gutters
+                    class="list-planning__btn"
+                  >
+                    <v-btn rounded color="primary" @click="onAdd">
+                      Add Planning
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-toolbar-title>
+            </template>
+
+            <template v-slot:[`item.actions`]="{ item }">
+              <router-link
+                style="text-decoration: none"
+                :to="{
+                  name: 'EditListPlanning',
+                  params: { id: item.id },
+                }"
+              >
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                      mdi-eye
+                    </v-icon>
+                  </template>
+                  <span>View/Edit</span>
+                </v-tooltip>
+              </router-link>
+            </template>
+
+          </v-data-table>
         </v-col>
       </v-row>
 
-
+      <v-row no-gutters>
+        <v-dialog v-model="dialog" persistent width="37.5rem">
+          <form-planning
+          :form="form"
+          :isView="false"
+          :isNew="true"
+          :dataListPlanning="dataListPlanning"
+          @editClicked="onEdit"
+          @cancelClicked="onCancel"
+          @submitClicked="onSubmit"
+          ></form-planning>
+        </v-dialog>
+      </v-row>
     </v-container>
 
     <success-error-alert
@@ -134,6 +201,28 @@ export default {
 button {
   min-width: 2rem;
 }
+table > tbody > tr > td:nth-child(1), 
+table > thead > tr > th:nth-child(1) {
+  position: sticky !important; 
+  position: -webkit-sticky !important; 
+  left: 0; 
+  z-index: 9998;
+  background: white;
+}
+table > thead > tr > th:nth-child(1) {
+  z-index: 9999;
+}
+table > tbody > tr > td:nth-child(2), 
+table > thead > tr > th:nth-child(2) {
+  position: sticky !important; 
+  position: -webkit-sticky !important; 
+  left:5%; 
+  z-index: 9998;
+  background: white;
+}
+table > thead > tr > th:nth-child(2) {
+  z-index: 9999;
+}
 </style>
 
 <style lang="scss" scoped>
@@ -186,4 +275,3 @@ button {
     }
   }
 }
-</style>

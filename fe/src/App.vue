@@ -36,7 +36,8 @@ export default {
 #master-coa,
 #master-product,
 #master-user,
-#master-strategy
+#master-strategy,
+#list-planning
 {
   font-family: "Nunito", sans-serif !important;
 }
