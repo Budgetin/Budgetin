@@ -1,6 +1,6 @@
 import json
 from django.core.management.base import BaseCommand
-from api.models import ProjectType, Strategy, MonitoringStatus, User, Coa, Product, Planning
+from api.models import ProjectType, Strategy, User, Coa, Product, Planning
 
 
 class Command(BaseCommand):
@@ -22,16 +22,6 @@ class Command(BaseCommand):
             data['pk'] = data.pop('id')
             Strategy.objects.get_or_create(pk=data['pk'], defaults=data)
         self.comment("Seeding Strategy")
-
-    def seed_monitoring_status(self):
-        with open('api/json/monitoring_status.json') as f:
-            data_list = json.load(f)
-
-        for data in data_list:
-            data['pk'] = data.pop('id')
-            MonitoringStatus.objects.get_or_create(
-                pk=data['pk'], defaults=data)
-        self.comment("Seeding Monitoring Status")
 
     def seed_user_dev(self):
         with open('api/json/user.json') as f:
@@ -74,7 +64,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.seed_project_type()
         self.seed_strategy()
-        self.seed_monitoring_status()
         self.seed_user_dev()
         self.seed_coa()
         self.seed_product()

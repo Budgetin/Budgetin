@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from api.models import Planning, User, Monitoring, Biro, MonitoringStatus
+from api.models import Planning, User, Monitoring, Biro
 from api.serializers import PlanningSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.send_email import send_email
@@ -14,13 +14,12 @@ from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
 def create_update_all_biro_and_create_monitoring(biros, planning_id):
-    monitoring_status_id = MonitoringStatus.objects.filter(name=MonitoringStatusEnum.TODO.value).values()[0]['id']
     for ithc_biro in biros:
         biro, created = create_update_biro(ithc_biro)
 
         # Biro that lasts with * (IBO*, NIS*) is not included
         if ithc_biro["code"][-1] != "*":
-            create_monitoring(ithc_biro, biro, planning_id, monitoring_status_id)
+            create_monitoring(ithc_biro, biro, planning_id)
 
 def create_update_biro(biro):
     return Biro.objects.update_or_create(
@@ -32,13 +31,13 @@ def create_update_biro(biro):
                     }
         )
         
-def create_monitoring(ithc_biro, biro, planning_id, monitoring_status_id):
+def create_monitoring(ithc_biro, biro, planning_id):
     pic = get_pic(ithc_biro)
     
     Monitoring.objects.create(
         biro_id=biro.id, 
         planning_id=planning_id, 
-        monitoring_status_id=monitoring_status_id,
+        monitoring_status=MonitoringStatusEnum.TODO.value,
         pic_employee_id=pic['id'],
         pic_initial=pic['initial'],
         pic_display_name=pic['display_name'],
