@@ -9,5 +9,5 @@ from .project_detail_serializer import ProjectDetailSerializer
 from .project_serializer import ProjectSerializer
 from .project_type_serializer import ProjectTypeSerializer
 from .strategy_serializer import StrategySerializer, StrategyResponseSerializer
-from .user_serializer import UserSerializer
+from .user_serializer import UserSerializer, UserResponseSerializer
 
