@@ -3,7 +3,6 @@ from .biro_serializer import BiroSerializer
 from .budget_serializer import BudgetSerializer
 from .coa_serializer import CoaSerializer
 from .monitoring_serializer import MonitoringSerializer
-from .pic_budget_serializer import PicBudgetSerializer
 from .planning_serializer import PlanningSerializer
 from .product_serializer import ProductSerializer
 from .project_detail_serializer import ProjectDetailSerializer
