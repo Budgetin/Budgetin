@@ -1,7 +1,7 @@
 from math import fabs
 from rest_framework import serializers
 
-from api.models import Budget, Product, Biro, Project, ProjectDetail, Planning, ProjectType
+from api.models import Budget, Product, Biro, Project, ProjectDetail, Planning
 
 
 class BudgetSerializer(serializers.ModelSerializer):
@@ -34,19 +34,17 @@ class PlanningSerializer(serializers.ModelSerializer):
     class Meta:
         model = Planning
         fields = ['id', 'year', 'due_date', 'is_active']
-        
-class ProjectTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProjectType
-        fields = ['id', 'name']
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
     planning = PlanningSerializer(many=False)
     project = ProjectSerializer(many=False)
-    project_type = ProjectTypeSerializer(many=False)
+    project_type = serializers.SerializerMethodField()
     class Meta:
         model = ProjectDetail
         fields = ['id', 'dcsp_id', 'planning', 'project', 'project_type']
+        
+    def get_project_type(self, project_detail):
+        return project_detail.project_type.name
 
 
 class BudgetResponseSerializer(serializers.ModelSerializer):
