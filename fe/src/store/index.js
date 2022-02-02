@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 // List Path Created Module
 import breadcrumbs from "./breadcrumbs";
-
+import choosedColumn from "./choosedColumn"
 import masterCoa from "./masterCoa"
 import masterStrategy from "./masterStrategy"
 import masterProduct from "./masterProduct"
@@ -40,6 +40,7 @@ export default new Vuex.Store({
     startPlanning,
     monitorPlanning,
     allBiro,
-    listPlanning
+    listPlanning,
+    choosedColumn
   },
 })
