@@ -56,7 +56,6 @@ class MonitoringViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
-        request.data['updated_by'] = 1                                 
-        monitoring = super().destroy(request, *args, **kwargs)
-        AuditLog.Save(monitoring, request, ActionEnum.DELETE, TableEnum.MONITORING)
-        return monitoring
+        return Response({
+            'message': 'Monitoring cannot be deleted'
+        })
