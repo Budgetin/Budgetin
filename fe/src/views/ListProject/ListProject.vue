@@ -25,7 +25,7 @@
                     
                     <v-data-table
                     :headers="dataTable.headers"
-                    loading="loadingGetProject"
+                    :loading="loadingGetListProject"
                     :items="dataListProject"
                     :search="search"
                     class="data-table">
@@ -82,30 +82,24 @@
                     </v-data-table>
                 </v-col>
             </v-row>
-
-            <!-- <v-row no-gutters>
-                <v-dialog v-model="dialog" persistent width="40rem">
-                    <form-list-project
-                        @cancelClicked="onCancel">
-                    </form-list-project>
-                </v-dialog>
-            </v-row> -->
         </v-container>
     </v-app>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
+import FormListProject from '@/components/CompListProject/FormListProject';
 export default {
     name: "ListProject",
     components: {
-        
+        FormListProject
     },
     watch: {},
     data: () => ({
         tab: null,
         items: ['Active', 'Inactive'],
-
+        
+        isEdit: false,
         search: "",
         dataTable: {
             headers: [
@@ -114,68 +108,38 @@ export default {
                 { text: "ID ITFAM", value: "itfam_id", width: "10%", align: "start" },
                 { text: "Project Name", value: "project_name", width: "25%" },
                 { text: "Project Description", value: "project_description", width: "30%" },
-                { text: "RCC", value: "rcc", width: "10%" },
-                { text: "Biro", value: "biro", width: "10%" },
-                { text: "Product ID", value: "product", width: "10%" },
-                { text: "Product Code", value: "product_code", width: "10%" },
-                { text: "Product Name", value: "product_name", width: "10%" },
+                { text: "RCC", value: "biro.rcc", width: "10%" },
+                { text: "Biro", value: "biro.code", width: "10%" },
+                { text: "Product Code", value: "product.product_code", width: "10%" },
+                { text: "Product Name", value: "product.product_name", width: "10%" },
                 { text: "Start Year", value: "start_year", width: "10%" },
                 { text: "End Year", value: "end_year", width: "10%" },
             ],
-            // desserts: [
-            //     {
-            //         id: 1,
-            //         itfam_id: "202300011",
-            //         project_name: "Prototype Re-design LAN ATM Pertokoan",
-            //         project_desc: "Merapikan LAN ATM EBC",
-            //         rcc: "093",
-            //         code: "NIS B",
-            //     },
-            //     {
-            //         id: 2,
-            //         itfam_id: "202300012",
-            //         project_name: "Wi-fi Cabang",
-            //         project_desc: "Access point untuk Future Branch",
-            //         rcc: "093",
-            //         code: "NIS B",
-            //     },
-            //     {
-            //         id: 3,
-            //         itfam_id: "202300013",
-            //         project_name: "Tool Fiber Optic",
-            //         project_desc: "Fiber Optic Tester",
-            //         rcc: "093",
-            //         code: "NIS A",
-            //     },
-            //     {
-            //         id: 4,
-            //         itfam_id: "202300014",
-            //         project_name: "Subduck BNDC Cibitung",
-            //         project_desc: "Zone fiber optic MM2100",
-            //         rcc: "093",
-            //         code: "NIS C",
-            //     },
-            // ],
         },
 
         form: {
             id: "",
-            itfam_id: "",
             project_name: "",
             project_description: "",
-            rcc: "",
-            biro: "",
-            product: "",
-            product_code: "",
-            product_name: "",
+            product: {
+                 product_code: "",
+                product_name: "",
+            },
+            itfam_id: "",
+            biro: {
+                rcc: "",
+                code: "",
+            },
+            is_tech: "",
             start_year: "",
-            end_year: ""
+            end_year: "",
+            total_investment_value: ""
         },
     }),
 
     created() {
         this.getListProject();
-        // this.setBreadcrumbs();
+        this.setBreadcrumbs();
     },
 
     computed: {
@@ -184,6 +148,22 @@ export default {
 
     methods: {
         ...mapActions("listProject", ["getListProject"]),
+
+        setBreadcrumbs() {
+            let param = this.isView ? "View Detail Project" : "Edit Project";
+            this.$store.commit("breadcrumbs/SET_LINKS", [
+                {
+                    text: "List of Projects",
+                    link: true,
+                    exact: true,
+                    disabled: false,
+                    to: {
+                        name: "ListProject",
+                    },
+                },
+            ]);
+        },
+
         onExport() {
 
         },
@@ -194,7 +174,7 @@ export default {
 
         },
         onEdit(item) {
-            this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
+            this.$store.commit("listProject/SET_EDITTED_ITEM", item);
             console.log(item);
         },
         onOK() {

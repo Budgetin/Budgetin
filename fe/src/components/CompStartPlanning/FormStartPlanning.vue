@@ -176,8 +176,7 @@
               outlined
               class="primary--text"
               @click="$emit('okClicked')"
-              v-if="isView"
-            >
+              v-if="isView">
               OK
             </v-btn>
             <v-btn
@@ -185,8 +184,7 @@
               outlined
               class="primary--text"
               @click="$emit('cancelClicked')"
-              v-if="!isView"
-            >
+              v-if="!isView">
               Cancel
             </v-btn>
             <v-btn rounded class="primary ml-3" type="submit" v-if="!isView">

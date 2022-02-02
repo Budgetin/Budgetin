@@ -19,7 +19,6 @@ const startPlanning = {
     edittedItemHistories: [],
     requestHistoriesStatus:"IDLE",
     loadingGetEdittedItemHistories: false,
-    edittedItemHistories: [],
   },
   getters: {
     value: (state) => state.value

@@ -19,7 +19,6 @@ const listProject = {
     edittedItemHistories: [],
     requestHistoriesStatus:"IDLE",
     loadingGetEdittedItemHistories: false,
-    edittedItemHistories: [],
   },
   getters: {
     value: (state) => state.value
