@@ -1,6 +1,7 @@
+from math import fabs
 from rest_framework import serializers
 
-from api.models import Budget, Product, Biro, Project, ProjectDetail, Planning
+from api.models import Budget, Product, Biro, Project, ProjectDetail, Planning, ProjectType
 
 
 class BudgetSerializer(serializers.ModelSerializer):
@@ -34,12 +35,18 @@ class PlanningSerializer(serializers.ModelSerializer):
         model = Planning
         fields = ['id', 'year', 'due_date', 'is_active']
         
+class ProjectTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectType
+        fields = ['id', 'name']
+
 class ProjectDetailSerializer(serializers.ModelSerializer):
     planning = PlanningSerializer(many=False)
     project = ProjectSerializer(many=False)
+    project_type = ProjectTypeSerializer(many=False)
     class Meta:
         model = ProjectDetail
-        fields = ['id', 'dcsp_id', 'planning', 'project']
+        fields = ['id', 'dcsp_id', 'planning', 'project', 'project_type']
 
 
 class BudgetResponseSerializer(serializers.ModelSerializer):
@@ -53,7 +60,7 @@ class BudgetResponseSerializer(serializers.ModelSerializer):
                   'realization_jan', 'realization_feb', 'realization_mar', 'realization_apr', 'realization_may',
                   'realization_jun', 'realization_jul', 'realization_aug', 'realization_sep', 'realization_oct',
                   'realization_nov', 'realization_dec', 'switching_in', 'switching_out', 'top_up', 'returns',
-                  'allocate', 'coa', 'project_detail', 'created_by', 'updated_by']
+                  'allocate', 'coa', 'project_detail', 'created_by', 'updated_by', 'created_at', 'updated_at']
         
     def get_coa(self, budget):
         return budget.coa.name
