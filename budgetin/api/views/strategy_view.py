@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import viewsets 
 from rest_framework.response import Response
 
@@ -33,6 +34,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
         serializer = StrategyResponseSerializer(strategy, many=False)
         return Response(serializer.data)
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
@@ -41,6 +43,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
         AuditLog.Save(strategy, request, ActionEnum.CREATE, TableEnum.STRATEGY)
         return strategy
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
         is_duplicate(request.data['name'])
@@ -48,6 +51,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
         AuditLog.Save(strategy, request, ActionEnum.UPDATE, TableEnum.STRATEGY)
         return strategy
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
         strategy = super().destroy(request, *args, **kwargs)

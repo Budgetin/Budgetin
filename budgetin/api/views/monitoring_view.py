@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.forms.models import model_to_dict
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -38,6 +39,7 @@ class MonitoringViewSet(viewsets.ModelViewSet):
         monitoring_dict = construct_monitoring_dict(monitoring)
         return Response(monitoring_dict)
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
@@ -45,12 +47,14 @@ class MonitoringViewSet(viewsets.ModelViewSet):
         AuditLog.Save(monitoring, request, ActionEnum.CREATE, TableEnum.MONITORING)
         return monitoring
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
         monitoring = super().update(request, *args, **kwargs)
         AuditLog.Save(monitoring, request, ActionEnum.UPDATE, TableEnum.MONITORING)
         return monitoring
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = 1                                 
         monitoring = super().destroy(request, *args, **kwargs)
