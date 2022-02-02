@@ -79,10 +79,10 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
         
     @action(detail=False, methods=['get'])
     def list_planning(self, request, *args, **kwargs):
+        projectdetails = ProjectDetail.objects.select_related('planning', 'project', 'project_type', 'project__biro', 'project__product').all()
+        
         if 'pk' in kwargs:        
-            projectdetails = ProjectDetail.objects.select_related('planning', 'project', 'project_type', 'project__biro', 'project__product').filter(id=kwargs['pk'])
-        else:
-            projectdetails = ProjectDetail.objects.select_related('planning', 'project', 'project_type', 'project__biro', 'project__product').all()
+            projectdetails = projectdetails.filter(id=kwargs['pk'])
         
         for projectdetail in projectdetails:
             projectdetail.format_timestamp("%d %B %Y")
