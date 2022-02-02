@@ -54,3 +54,16 @@ class BudgetViewSet(viewsets.ModelViewSet):
         budget = super().destroy(request, *args, **kwargs)
         AuditLog.Save(budget, request, ActionEnum.DELETE, TableEnum.BUDGET)
         return budget
+
+    def list_for_export():
+        budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
+                                                'project_detail__project', 'project_detail__project_type', 
+                                                'project_detail__project__biro', 'project_detail__project__product', 
+                                                'project_detail__project__product__strategy').all()
+        
+        for budget in budgets:
+            budget.format_timestamp("%d %B %Y")
+            budget.format_created_updated_by()
+            
+        serializer = BudgetResponseSerializer(budgets, many=True)
+        return Response(serializer.data)
