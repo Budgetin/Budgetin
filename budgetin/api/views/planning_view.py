@@ -27,6 +27,7 @@ def create_update_biro(biro):
                     'name': biro['name'],
                     'sub_group_code': biro['sub_group']['code'],
                     'group_code': biro['sub_group']['group']['code'],
+                    'rcc': biro['sub_group']['rcc'],
                     }
         )
         
