@@ -135,12 +135,103 @@ export default {
       ]
     },
     form: {
-      id: "",
-      name: "",
-      definition: "",
-      hyperion_name: "",
-      is_capex: "",
-      minimum_item_origin: "",
+        id: "",
+        is_deleted: "",
+        deleted_at: "",
+        created_by: "",
+        updated_by: "",
+        planning: {
+            id: "",
+            is_deleted: "",
+            deleted_at: "",
+            created_by: "",
+            updated_by: "",
+            year: "",
+            is_active: "",
+            notification: "",
+            due_date: ""
+        },
+        project: {
+            id: "",
+            is_deleted: "",
+            deleted_at: "",
+            created_by: "",
+            updated_by: "",
+            itfam_id: "",
+            project_name: "",
+            project_description: "",
+            biro: "",
+            start_year: "",
+            end_year: "",
+            total_investment_value: "",
+            product: {
+                id: "",
+                is_deleted: "",
+                deleted_at: "",
+                created_by: "",
+                updated_by: "",
+                product_code: "",
+                product_name: "",
+                strategy: {
+                    id: "",
+                    is_deleted: "",
+                    deleted_at: "",
+                    created_by: "",
+                    updated_by: "",
+                    name: ""
+                },
+                is_active: ""
+            },
+            is_tech: "",
+            budget: {
+                id: "",
+                is_deleted: "",
+                deleted_at: "",
+                created_by: "",
+                updated_by: "",
+                project_detail: "",
+                coa: {
+                    id: "",
+                    is_deleted: "",
+                    deleted_at: "",
+                    created_by: "",
+                    updated_by: "",
+                    name: "",
+                    definition: "",
+                    hyperion_name: "",
+                    is_capex: "",
+                    minimum_item_origin: ""
+                },
+                expense_type: "",
+                planning_q1: "",
+                planning_q2: "",
+                planning_q3: "",
+                planning_q4: "",
+                realization_jan: "",
+                realization_feb: "",
+                realization_mar: "",
+                realization_apr: "",
+                realization_may: "",
+                realization_jun: "",
+                realization_jul: "",
+                realization_aug: "",
+                realization_sep: "",
+                realization_oct: "",
+                realization_nov: "",
+                realization_dec: "",
+                switching_in: "",
+                switching_out: "",
+                top_up: "",
+                returns: "",
+                allocate: "",
+                planning_nominal: ""
+            }
+        },
+        project_type: "",
+        dcsp_id: "",
+        project_detail_id: "",
+        created_at: "",
+        updated_at: ""
     },
     alert: {
       show: false,
@@ -206,22 +297,23 @@ table > thead > tr > th:nth-child(1) {
   position: sticky !important; 
   position: -webkit-sticky !important; 
   left: 0; 
-  z-index: 9998;
+  z-index: 19;
   background: white;
 }
 table > thead > tr > th:nth-child(1) {
-  z-index: 9999;
+  z-index: 20;
 }
+
 table > tbody > tr > td:nth-child(2), 
 table > thead > tr > th:nth-child(2) {
   position: sticky !important; 
   position: -webkit-sticky !important; 
-  left:5%; 
-  z-index: 9998;
+  left:4.1rem; 
+  z-index: 19;
   background: white;
 }
 table > thead > tr > th:nth-child(2) {
-  z-index: 9999;
+  z-index: 20;
 }
 </style>
 
