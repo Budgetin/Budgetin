@@ -1,23 +1,21 @@
 <template>
   <v-card>
     <v-card-title class="text-h5" style="margin-bottom: 32px">
-      {{ cardTitle }} a Planning
+      <!-- {{ cardTitle }} a Planning -->
+      Filter
       <v-spacer></v-spacer>
-      <v-btn v-if="isView" icon small @click="$emit('editClicked')">
-        <v-icon color="primary"> mdi-square-edit-outline </v-icon>
-      </v-btn>
     </v-card-title>
 
     <v-card-text>
-      <v-form ref="form" class="StartPlanning__form" lazy-validation @submit.prevent="onSubmit">
+      <v-form ref="form" class="FilterBox__form" lazy-validation @submit.prevent="onSubmit">
         <v-row no-gutters>
           <!-- PLANNING FOR -->
-          <v-col cols="6"> Planning For <strong class="red--text">*</strong>
+          <v-col cols="6"> Planning For
             <v-col
               class="d-flex"
               cols="12"
               sm="6">
-              <div class="StartPlanning__field">
+              <div class="FilterBox__field">
                 <v-text-field
                   v-model="form.year"
                   placeholder="Input a Year"
@@ -36,7 +34,7 @@
               class="d-flex"
               cols="12"
               sm="6">
-              <div class="StartPlanning__field">
+              <div class="FilterBox__field">
                 <v-select
                   v-model="form.is_active"
                   :items="statusInfoPlanning"
@@ -65,7 +63,7 @@
                 offset-y
                 min-width="auto">
                 <template v-slot:activator="{ on, attrs }">
-                  <div class="StartPlanning__field">
+                  <div class="FilterBox__field">
                     <v-text-field
                     ref="form"
                     v-model="form.due_date"
@@ -93,7 +91,7 @@
               class="d-flex"
               cols="12"
               sm="6">
-              <div class="StartPlanning__field">
+              <div class="FilterBox__field">
                 <v-select
                   v-model="form.notification"
                   :items="statusNotification"
@@ -120,7 +118,7 @@
                   :items="dataAllBiro"
                   v-model="form.biros"
                   item-text="code"
-                  item-value="id"
+                  item-value="id, code"
                   placeholder="Choose Biro"
                   multiple
                   chips
@@ -130,26 +128,6 @@
               </v-col>            
             </v-col>
           </v-row>
-
-          <!-- HIDDEN FIELD -->
-          <!-- <v-row no-gutters v-if="form.notification.id==1">
-            <v-col> Send to <strong class="red--text">*</strong>
-              <v-col no-gutters>
-                <div class="sendTo">
-                <v-select
-                  :items="dataAllBiro"
-                  v-model="form.biros"
-                  item-text="code"
-                  item-value="code"
-                  placeholder="Choose Biro"
-                  multiple
-                  chips
-                  outlined>
-                </v-select>
-                </div>
-              </v-col>            
-            </v-col>
-          </v-row> -->
 
           <!-- E-MAIL BODY -->
           <v-row no-gutters v-if="form.notification.id==1">
@@ -202,7 +180,7 @@
 <script>
 import { mapState } from "vuex";
 export default {
-  name: "FormStartPlanning",
+  name: "FormFilterBox",
   props: ["form", "isNew", "isView"],
 
   data: () => ({
@@ -301,20 +279,20 @@ export default {
   .v-card__text {
     color: unset !important;
   }
-  .StartPlanning__checkbox{
+  .FilterBox__checkbox{
     align-content:flex-start
   }
-  .StartPlanning__form{
+  .FilterBox__form{
     width: auto;
     margin-left: 2% !important;
   }
-  .StartPlanning__select{
+  .FilterBox__select{
     min-width: 500px;
   }
-  .StartPlanning__field {
+  .FilterBox__field {
     min-width: 165px;
   }
-  .StartPlanning__btn {
+  .FilterBox__btn {
         text-align: end;
         button {
             margin: 10px 32px;
