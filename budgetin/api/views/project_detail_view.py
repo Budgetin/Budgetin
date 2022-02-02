@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 
 from api.models.project_detail_model import ProjectDetail
 from api.models.user_model import User
-from api.serializers import ProjectDetailSerializer, ProjectDetailResponseSerializer, BudgetResponseSerializer
+from api.serializers import ProjectDetailSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 from rest_framework.decorators import action
 from copy import deepcopy
@@ -18,26 +18,6 @@ from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
-def construct_project_detail(projectdetails):
-    result = []
-    for projectdetail in projectdetails:
-        projectdetail['project_detail_id'] = projectdetail['id']
-        projectdetail['id'] = len(result)+1
-        
-        if len(projectdetail["budget"]) > 0:
-            for budget in projectdetail["budget"]:
-                new_data = deepcopy(projectdetail)
-                new_data['budget'] = budget
-                new_data['planning_nominal'] = budget['planning_q1'] + budget['planning_q2'] + budget['planning_q3'] + budget['planning_q4']
-                new_data['id'] = len(result)+1
-                result.append(new_data)
-        else:
-            projectdetail['budget'] = None
-            result.append(projectdetail)
-            
-    if len(result) == 1:
-        return result[0]
-    return result
 
 class ProjectDetailViewSet(viewsets.ModelViewSet):
     queryset = ProjectDetail.objects.all()
@@ -78,21 +58,5 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
         AuditLog.Save(project_detail, request, ActionEnum.DELETE, TableEnum.PROJECT_DETAIL)
         return project_detail
         
-    @action(detail=False, methods=['get'])
-    def list_planning(self, request, *args, **kwargs):
-        projectdetails = ProjectDetail.objects.select_related('planning', 'project', 'project_type', 'project__biro', 'project__product').all()
-        
-        if 'pk' in kwargs:        
-            projectdetails = projectdetails.filter(id=kwargs['pk'])
-        
-        for projectdetail in projectdetails:
-            projectdetail.format_timestamp("%d %B %Y")
-            projectdetail.format_created_updated_by()
-            projectdetail.project_type_name = projectdetail.project_type.name
-        
-        serializer = ProjectDetailResponseSerializer(projectdetails, many=True)
-        result = construct_project_detail(serializer.data)
-        
-        return Response(result)
     
             
