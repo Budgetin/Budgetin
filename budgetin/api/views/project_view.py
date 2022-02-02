@@ -22,7 +22,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = Project.objects.get(pk=kwargs['pk'])
         project.format_timestamp("%d %B %Y")
             
-        serializer = ProjectResponseSerializer(project, many=True)
+        serializer = ProjectResponseSerializer(project, many=False)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
