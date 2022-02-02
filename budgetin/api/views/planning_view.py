@@ -76,6 +76,14 @@ def get_receiver_email_list(biros, biro_id_list):
     
     return receiver_email_list
 
+def get_biros_code(biros_id):
+    biros = Biro.objects.filter(ithc_biro__in=biros_id)
+    biros_code = []
+    for biro in biros:
+        biros_code.append(biro.code)
+
+    return biros_code
+
 class PlanningViewSet(viewsets.ModelViewSet):
     queryset = Planning.objects.all()
     serializer_class = PlanningSerializer
@@ -113,7 +121,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         if is_send_notification(request):
             send_notification(request, biros)
             planning.data['body'] = request.data['body']
-            planning.data['send_to'] = request.data['biros_code']
+            planning.data['send_to'] = get_biros_code(request.data['biros'])
             
         AuditLog.Save(planning, request, ActionEnum.CREATE, TableEnum.PLANNING)
         
@@ -127,6 +135,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         if(is_send_notification(request)):
             send_notification(request)
             planning.data['email_body'] = request.data['body']
+            planning.data['send_to'] = get_biros_code(request.data['biros'])
         
         AuditLog.Save(planning, request, ActionEnum.UPDATE, TableEnum.PLANNING)
         return planning

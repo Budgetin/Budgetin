@@ -7,7 +7,6 @@ django-soft-delete==0.9.18
 djangorestframework==3.13.1
 idna==3.3
 numpy==1.22.1
-openpyxl==3.0.9
 pandas==1.4.0
 psycopg2==2.9.3
 pycparser==2.21

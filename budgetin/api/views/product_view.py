@@ -1,4 +1,3 @@
-from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -40,7 +39,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = ProductResponseSerializer(product, many=False)
         return Response(serializer.data)
 
-    @transaction.atomic
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
@@ -49,7 +47,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         AuditLog.Save(product, request, ActionEnum.CREATE, TableEnum.PRODUCT)
         return product
 
-    @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
         is_product_duplicate(kwargs['pk'],request.data['product_code'],request.data['product_name'])
@@ -57,7 +54,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         AuditLog.Save(product, request, ActionEnum.UPDATE, TableEnum.PRODUCT)
         return product
 
-    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = 1                                 
         product = super().destroy(request, *args, **kwargs)

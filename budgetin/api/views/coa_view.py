@@ -1,4 +1,3 @@
-from django.db import transaction
 from rest_framework import viewsets
 from rest_framework.response import Response
 
@@ -38,7 +37,6 @@ class CoaViewSet(viewsets.ModelViewSet):
         serializer = CoaResponseSerializer(coa, many=False)
         return Response(serializer.data)
 
-    @transaction.atomic
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
@@ -47,15 +45,13 @@ class CoaViewSet(viewsets.ModelViewSet):
         AuditLog.Save(coa, request, ActionEnum.CREATE, TableEnum.COA)
         return coa
 
-    @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
-        is_duplicate_coa(kwargs['id'],request.data['name'],request.data['hyperion_name'])
+        is_duplicate_coa(kwargs['pk'],request.data['name'],request.data['hyperion_name'])
         coa = super().update(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.UPDATE, TableEnum.COA)
         return coa
 
-    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
         coa = super().destroy(request, *args, **kwargs)

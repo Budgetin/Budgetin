@@ -25,7 +25,8 @@
                     
                     <v-data-table
                     :headers="dataTable.headers"
-                    :items="dataTable.desserts"
+                    :loading="loadingGetListProject"
+                    :items="dataListProject"
                     :search="search"
                     class="data-table">
                         <template v-slot:top>
@@ -65,7 +66,7 @@
                             <router-link
                                 style="text-decoration: none"
                                 :to="{
-                                    name: 'ViewProject',
+                                    name: 'ViewListProject',
                                     params: { id: item.id },
                                 }">
                                 <v-tooltip bottom>
@@ -79,172 +80,106 @@
                             </router-link>
                         </template>
                     </v-data-table>
-
-                    <!-- <v-data-table
-                    :headers="dessertHeaders"
-                    :items="desserts"
-                    :single-expand="singleExpand"
-                    :expanded.sync="expanded"
-                    item-key="id_itfam"
-                    show-expand
-                    :search="search">
-                        <template v-slot:top>
-                            <v-toolbar-title>
-                                <v-row class="mb-5" no-gutters>
-                                    <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
-                                        <v-row class="mb-5" no-gutters>
-                                            <v-text-field
-                                                class="list-project__input"
-                                                v-model="search"
-                                                append-icon="mdi-magnify"
-                                                label="Search"
-                                                single-line
-                                                hide-details>
-                                            </v-text-field>
-
-                                            <v-btn color="primary" @click="onFilter" class="mt-4">
-                                                <v-icon> mdi-filter-outline </v-icon>
-                                            </v-btn>
-                                        </v-row>
-                                    </v-col>
-                                    
-                                    <v-col cols="12" xs="12" sm="6" md="8" lg="8" no-gutters class="list-project__btn">
-                                        <v-btn rounded color="primary" @click="onExport">
-                                            <v-icon left> mdi-export-variant </v-icon>
-                                            Export Data
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-                            </v-toolbar-title>
-
-                            <v-toolbar-title>
-                                <v-row class="mb-5" no-gutters>
-                                   <v-flex xs14 offset-xs10>
-                                        <v-switch
-                                        v-model="singleExpand"
-                                        label="Single expand"
-                                        class="mt-2">
-                                        </v-switch>
-                                    </v-flex>
-                                </v-row>
-                            </v-toolbar-title>
-                        </template>
-                        
-                        <template v-slot:expanded-item="{ headers, item }">
-                            <td :colspan="headers.length">
-                                More info about {{ item.name }}
-                            </td>
-                        </template>
-
-                        <template v-slot:[`item.actions`]="{ item }"> -->
-                            <!-- VIEW/EDIT PLANNING -->
-                            <!-- <router-link
-                                style="text-decoration: none"
-                                :to="{
-                                name: 'ViewPlanning',
-                                params: { id: item.id },
-                                }">
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on }">
-                                        <v-icon v-on="on" color="primary" @click="onView">
-                                            mdi-eye
-                                        </v-icon>
-                                    </template>
-                                    <span>View/Edit</span>
-                                </v-tooltip>
-                            </router-link>
-                        </template>
-                    </v-data-table> -->
                 </v-col>
             </v-row>
-
-            <!-- <v-row no-gutters>
-                <v-dialog v-model="dialog" persistent width="40rem">
-                    <form-list-project
-                        @cancelClicked="onCancel">
-                    </form-list-project>
-                </v-dialog>
-            </v-row> -->
         </v-container>
     </v-app>
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
+import FormListProject from '@/components/CompListProject/FormListProject';
 export default {
+    name: "ListProject",
+    components: {
+        FormListProject
+    },
     watch: {},
-    data() {
-        return {
-            expanded: [],
-            singleExpand: false,
-            tab: null,
-            items: ['Active', 'Inactive'],
+    data: () => ({
+        tab: null,
+        items: ['Active', 'Inactive'],
+        
+        isEdit: false,
+        search: "",
+        dataTable: {
+            headers: [
+                { text: "Action", value: "actions", align: "center", sortable: false, width: "7%"},
+                { text: "ID", value: "id", width: "7%" },
+                { text: "ID ITFAM", value: "itfam_id", width: "10%", align: "start" },
+                { text: "Project Name", value: "project_name", width: "25%" },
+                { text: "Project Description", value: "project_description", width: "30%" },
+                { text: "RCC", value: "biro.rcc", width: "10%" },
+                { text: "Biro", value: "biro.code", width: "10%" },
+                { text: "Product Code", value: "product.product_code", width: "10%" },
+                { text: "Product Name", value: "product.product_name", width: "10%" },
+                { text: "Start Year", value: "start_year", width: "10%" },
+                { text: "End Year", value: "end_year", width: "10%" },
+            ],
+        },
 
-            search: "",
-            dataTable: {
-                headers: [
-                    { text: "Action", value: "actions", align: "center", sortable: false, width: "7%"},
-                    { text: "ID", value: "id", width: "7%" },
-                    { text: "ID ITFAM", value: "id_itfam", width: "10%", align: "start" },
-                    { text: "Project Name", value: "project_name", width: "25%" },
-                    { text: "Project Description", value: "project_desc", width: "30%" },
-                    { text: "RCC", value: "rcc", width: "10%" },
-                    { text: "Biro", value: "code", width: "10%" },
-                    { text: '', value: 'data-table-expand', width: "5%" },
-                ],
-                desserts: [
-                    {
-                        id: 1,
-                        id_itfam: "202300011",
-                        project_name: "Prototype Re-design LAN ATM Pertokoan",
-                        project_desc: "Merapikan LAN ATM EBC",
-                        rcc: "093",
-                        code: "NIS B",
-                    },
-                    {
-                        id: 2,
-                        id_itfam: "202300012",
-                        project_name: "Wi-fi Cabang",
-                        project_desc: "Access point untuk Future Branch",
-                        rcc: "093",
-                        code: "NIS B",
-                    },
-                    {
-                        id: 3,
-                        id_itfam: "202300013",
-                        project_name: "Tool Fiber Optic",
-                        project_desc: "Fiber Optic Tester",
-                        rcc: "093",
-                        code: "NIS A",
-                    },
-                    {
-                        id: 4,
-                        id_itfam: "202300014",
-                        project_name: "Subduck BNDC Cibitung",
-                        project_desc: "Zone fiber optic MM2100",
-                        rcc: "093",
-                        code: "NIS C",
-                    },
-                ],
+        form: {
+            id: "",
+            project_name: "",
+            project_description: "",
+            product: {
+                 product_code: "",
+                product_name: "",
             },
-        };
+            itfam_id: "",
+            biro: {
+                rcc: "",
+                code: "",
+            },
+            is_tech: "",
+            start_year: "",
+            end_year: "",
+            total_investment_value: ""
+        },
+    }),
+
+    created() {
+        this.getListProject();
+        this.setBreadcrumbs();
+    },
+
+    computed: {
+        ...mapState("listProject", ["loadingGetListProject", "dataListProject"]),
     },
 
     methods: {
+        ...mapActions("listProject", ["getListProject"]),
+
+        setBreadcrumbs() {
+            let param = this.isView ? "View Detail Project" : "Edit Project";
+            this.$store.commit("breadcrumbs/SET_LINKS", [
+                {
+                    text: "List of Projects",
+                    link: true,
+                    exact: true,
+                    disabled: false,
+                    to: {
+                        name: "ListProject",
+                    },
+                },
+            ]);
+        },
+
         onExport() {
 
         },
         onCancel() {
             this.dialog = false;
         },
-        onMonitor() {
-            console.log(item+"monitor");
-        },
-        onView() {
-            console.log(item);
-        },
         onFilter() {
 
-        }
+        },
+        onEdit(item) {
+            this.$store.commit("listProject/SET_EDITTED_ITEM", item);
+            console.log(item);
+        },
+        onOK() {
+            return this.$router.go(-1);
+        },
     }
 };
 </script>
