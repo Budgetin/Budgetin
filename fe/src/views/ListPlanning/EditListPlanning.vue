@@ -2,16 +2,16 @@
   <v-container>
     <v-row no-gutters justify="space-between">
       <!-- edit form -->
-      <v-col xs="12" sm="6" md="6" lg="7">
+      <v-col xs="12" sm="10" md="10" lg="10">
         <v-container>
-          <form-coa
+          <form-planning
             :form="form"
             :isView="isView"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-coa>
+          ></form-planning>
         </v-container>
       </v-col>
 
@@ -39,27 +39,27 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormCoa from "@/components/MasterCOA/FormCoa";
+import FormPlanning from "@/components/ListPlanning/FormPlanning";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "EditMasterCoa",
-  components: { FormCoa,SuccessErrorAlert},
+  name: "EditListPlanning",
+  components: { FormPlanning,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
   },
   methods: {
-    ...mapActions("masterCoa", [
-      "patchMasterCoa",
-      "getMasterCoaById",
+    ...mapActions("listPlanning", [
+      "patchListPlanning",
+      "getListPlanningById",
     ]),
     getEdittedItem() {
-      this.getMasterCoaById(this.$route.params.id).then(() => {
+      this.getListPlanningById(this.$route.params.id).then(() => {
         this.setForm();
       });
     },
     setForm() {
       this.form = JSON.parse(
-        JSON.stringify(this.$store.state.masterCoa.edittedItem)
+        JSON.stringify(this.$store.state.listPlanning.edittedItem)
       );
     },
     onEdit() {
@@ -73,7 +73,7 @@ export default {
       this.setForm();
     },
     onSubmit(e) {
-      this.patchMasterCoa(e)
+      this.patchListPlanning(e)
         .then(() => {
           this.onSaveSuccess();
         })
@@ -85,7 +85,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "Master Coa has been saved successfully";
+      this.alert.subtitle = "List Planning has been saved successfully";
     },
     onSaveError(error) {
       this.alert.show = true;
@@ -102,12 +102,103 @@ export default {
   data: () => ({
     isView: true,
     form: {
-      id: "",
-      name: "",
-      definition: "",
-      hyperion_name: "",
-      is_capex: "",
-      minimum_item_origin: "",
+        id: "",
+        is_deleted: "",
+        deleted_at: "",
+        created_by: "",
+        updated_by: "",
+        planning: {
+            id: "",
+            is_deleted: "",
+            deleted_at: "",
+            created_by: "",
+            updated_by: "",
+            year: "",
+            is_active: "",
+            notification: "",
+            due_date: ""
+        },
+        project: {
+            id: "",
+            is_deleted: "",
+            deleted_at: "",
+            created_by: "",
+            updated_by: "",
+            itfam_id: "",
+            project_name: "",
+            project_description: "",
+            biro: "",
+            start_year: "",
+            end_year: "",
+            total_investment_value: "",
+            product: {
+                id: "",
+                is_deleted: "",
+                deleted_at: "",
+                created_by: "",
+                updated_by: "",
+                product_code: "",
+                product_name: "",
+                strategy: {
+                    id: "",
+                    is_deleted: "",
+                    deleted_at: "",
+                    created_by: "",
+                    updated_by: "",
+                    name: ""
+                },
+                is_active: ""
+            },
+            is_tech: "",
+            budget: {
+                id: "",
+                is_deleted: "",
+                deleted_at: "",
+                created_by: "",
+                updated_by: "",
+                project_detail: "",
+                coa: {
+                    id: "",
+                    is_deleted: "",
+                    deleted_at: "",
+                    created_by: "",
+                    updated_by: "",
+                    name: "",
+                    definition: "",
+                    hyperion_name: "",
+                    is_capex: "",
+                    minimum_item_origin: ""
+                },
+                expense_type: "",
+                planning_q1: "",
+                planning_q2: "",
+                planning_q3: "",
+                planning_q4: "",
+                realization_jan: "",
+                realization_feb: "",
+                realization_mar: "",
+                realization_apr: "",
+                realization_may: "",
+                realization_jun: "",
+                realization_jul: "",
+                realization_aug: "",
+                realization_sep: "",
+                realization_oct: "",
+                realization_nov: "",
+                realization_dec: "",
+                switching_in: "",
+                switching_out: "",
+                top_up: "",
+                returns: "",
+                allocate: "",
+                planning_nominal: ""
+            }
+        },
+        project_type: "",
+        dcsp_id: "",
+        project_detail_id: "",
+        created_at: "",
+        updated_at: ""
     },
     alert: {
       show: false,
@@ -120,21 +211,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#master-coa {
+#list-planning {
   width: 80%;
   margin: 0px auto;
 
-  .master-coa__header {
+  .list-planning__header {
     padding-left: 32px;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .master-coa__input {
+  .list-planning__input {
     padding: 10px 32px;
   }
 
-  .master-coa__btn {
+  .list-planning__btn {
     text-align: end;
 
     button {
@@ -142,14 +233,14 @@ export default {
     }
   }
 
-  .master-coa__container {
+  .list-planning__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 8px;
   }
 
-  .master-coa__card {
+  .list-planning__card {
     button {
       width: 8rem;
     }
@@ -158,8 +249,8 @@ export default {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #master-coa {
-    .master-coa__btn {
+  #list-planning {
+    .list-planning__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -168,7 +259,7 @@ export default {
         margin: 0px 0px 32px 0px;
       }
     }
-    .master-coa__card {
+    .list-planning__card {
       flex-direction: column;
       button {
         width: 16rem !important;
