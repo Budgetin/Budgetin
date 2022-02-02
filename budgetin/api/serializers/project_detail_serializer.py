@@ -12,12 +12,13 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 class PlanningSerializer(serializers.ModelSerializer):
     class Meta:
         model = Planning
-        fields = '__all__'
+        fields = ['id', 'year']
 
 class StrategySerializer(serializers.ModelSerializer):
     class Meta:
         model = Strategy
-        fields = '__all__'
+        fields = ['id', 'name']
+        
 class ProductSerializer(serializers.ModelSerializer):
     strategy = StrategySerializer(many=False)
     class Meta:
