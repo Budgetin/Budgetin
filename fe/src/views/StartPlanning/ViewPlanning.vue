@@ -66,13 +66,10 @@ export default {
                 id: "",
                 label: ""
             },
-            //is_active: "",
             created_by: "",
             updated_by: "",
             updated_at: "",
             due_date: "",
-            //due_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-            //notification: "",
             notification: {
                 id: "",
                 label: ""   
@@ -131,9 +128,9 @@ export default {
             });
         },
         getEdittedItem() {
-            // console.log("Masuk Editted Item");
+            console.log("Masuk Editted Item");
             this.getStartPlanningById(this.$route.params.id).then(() => {
-                // console.log("ParamID: "+this.$route.params.id);
+                console.log("ParamID: "+this.$route.params.id);
                 this.setForm();
             });
         },

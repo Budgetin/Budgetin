@@ -1,16 +1,16 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/planning/";
+const ENDPOINT = "/api/project/";
 
-const startPlanning = {
+const listProject = {
   namespaced: true,
   state: {
-    loadingGetStartPlanning: false, // for loading table
+    loadingGetListProject: false, // for loading table
     loadingGetEdittedItem: false,
-    loadingPostPatchStartPlanning: false, // for loading post/patch
-    dataStartPlanning: [], // for v-data-table
-    dataActiveStartPlanning: [], //for dropdown
+    loadingPostPatchListProject: false, // for loading post/patch
+    dataListProject: [], // for v-data-table
+    dataActiveListProject: [], //for dropdown
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
@@ -24,9 +24,9 @@ const startPlanning = {
     value: (state) => state.value
   },
   actions: {
-    getStartPlanning() {
-      if (store.state.startPlanning.requestStatus !== "SUCCESS")
-        store.dispatch("startPlanning/getFromAPI");
+    getListProject() {
+      if (store.state.listProject.requestStatus !== "SUCCESS")
+        store.dispatch("listProject/getFromAPI");
     },
     getFromAPI({ commit }) {
       commit("GET_INIT");
@@ -43,7 +43,7 @@ const startPlanning = {
           commit("GET_ERROR", error);
         });
     },
-    getStartPlanningById({ commit }, id) {
+    getListProjectById({ commit }, id) {
       // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
@@ -61,7 +61,7 @@ const startPlanning = {
           });
       });
     },
-    postStartPlanning({ commit }, payload) {
+    postListProject({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
@@ -69,7 +69,7 @@ const startPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("startPlanning/getFromAPI");
+            store.dispatch("listProject/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -93,7 +93,7 @@ const startPlanning = {
           });
       });
     },
-    patchStartPlanning({ commit }, payload) {
+    patchListProject({ commit }, payload) {
       console.log("Payload ID: "+payload.id);
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
@@ -103,7 +103,7 @@ const startPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("startPlanning/getFromAPI");
+            store.dispatch("listProject/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -131,7 +131,7 @@ const startPlanning = {
       commit("SET_REQUEST_STATUS"); 
       return new Promise((resolve, reject) => {
       getAPI
-        .get("/api/auditlog?table=planning&entity=" + `${id}`)
+        .get("/api/auditlog?table=project&entity=" + `${id}`)
         .then((response) => {
           const data = response.data;
           const sorted = data.sort((a, b) =>
@@ -151,37 +151,37 @@ const startPlanning = {
     // get related
     GET_INIT(state) {
       state.requestStatus = "PENDING";
-      state.loadingGetStartPlanning = true;
+      state.loadingGetListProject = true;
     },
-    GET_SUCCESS(state, dataStartPlanning) {
+    GET_SUCCESS(state, dataListProject) {
       state.requestStatus = "SUCCESS";
-      state.loadingGetStartPlanning = false;
-      state.dataStartPlanning = dataStartPlanning;
+      state.loadingGetListProject = false;
+      state.dataListProject = dataListProject;
     },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveStartPlanning) {
+    GET_ACTIVE_DATA_UPDATE(state, dataActiveListProject) {
       state.requestActiveStatus = "IDLE";
-      state.dataActiveStartPlanning = dataActiveStartPlanning;
+      state.dataActiveListProject = dataActiveListProject;
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingGetStartPlanning = false;
+      state.loadingGetListProject = false;
       state.errorMsg = error;
-      state.dataStartPlanning = [];
-      state.dataActiveStartPlanning = [];
+      state.dataListProject = [];
+      state.dataActiveListProject = [];
     },
 
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";
-      state.loadingPostPatchStartPlanning = true;
+      state.loadingPostPatchListProject = true;
     },
     POST_PATCH_SUCCESS(state) {
       state.requestStatus = "SUCCESS";
-      state.loadingPostPatchStartPlanning = false;
+      state.loadingPostPatchListProject = false;
     },
     POST_PATCH_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingPostPatchStartPlanning = false;
+      state.loadingPostPatchListProject = false;
       state.errorMsg = error;
     },
     SET_EDITTED_ITEM(state, payload) {
@@ -212,4 +212,4 @@ const startPlanning = {
   },
 };
 
-export default startPlanning
+export default listProject
