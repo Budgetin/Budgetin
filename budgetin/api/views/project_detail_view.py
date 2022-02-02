@@ -30,7 +30,7 @@ def construct_project_detail(projectdetails):
                 new_data['budget'] = budget
                 new_data['planning_nominal'] = budget['planning_q1'] + budget['planning_q2'] + budget['planning_q3'] + budget['planning_q4']
                 new_data['id'] = len(result)+1
-                result.append(projectdetail)
+                result.append(new_data)
         else:
             projectdetail['budget'] = None
             result.append(projectdetail)
@@ -38,6 +38,7 @@ def construct_project_detail(projectdetails):
     if len(result) == 1:
         return result[0]
     return result
+
 class ProjectDetailViewSet(viewsets.ModelViewSet):
     queryset = ProjectDetail.objects.all()
     serializer_class = ProjectDetailSerializer
