@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Budget, Product, Biro, Project, ProjectDetail
+from api.models import Budget, Product, Biro, Project, ProjectDetail, Planning
 
 
 class BudgetSerializer(serializers.ModelSerializer):
@@ -28,15 +28,19 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ['id', 'project_name', 'project_description', 'itfam_id', 'is_tech', 'start_year', 'end_year', 'total_investment_value', 'product', 'biro']
+
+class PlanningSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Planning
+        fields = ['id', 'year', 'due_date', 'is_active']
         
 class ProjectDetailSerializer(serializers.ModelSerializer):
-    year = serializers.SerializerMethodField()
+    planning = PlanningSerializer(many=False)
     project = ProjectSerializer(many=False)
     class Meta:
         model = ProjectDetail
-        fields = ['id', 'dcsp_id', 'year', 'project']
-    def get_year(self, project_detail):
-        return project_detail.planning.year
+        fields = ['id', 'dcsp_id', 'planning', 'project']
+
 
 class BudgetResponseSerializer(serializers.ModelSerializer):
     coa = serializers.SerializerMethodField()
