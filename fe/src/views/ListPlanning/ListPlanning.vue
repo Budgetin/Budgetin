@@ -29,21 +29,6 @@
                     </v-text-field>
                   </v-col>
 
-                  <!-- Add Button Baru -->
-                  <v-col
-                    cols="6"
-                    xs="6"
-                    sm="2"
-                    md="1"
-                    lg="1"
-                    no-gutters
-                    class="column__btn"
-                  >
-                    <v-btn class="mt-2" color="primary" >
-                      <v-icon>mdi-table-column-plus-before</v-icon>
-                    </v-btn>
-                  </v-col>
-
                   <v-col
                     cols="6"
                     xs="6"
