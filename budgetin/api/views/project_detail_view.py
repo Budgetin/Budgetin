@@ -53,8 +53,12 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
         return project_detail
     
     @action(detail=False, methods=['get'])
-    def list_planning(self, request, pk=None):
-        projectdetails = ProjectDetail.objects.select_related('planning', 'project', 'project_type', 'project__biro', 'project__product').all()
+    def list_planning(self, request, *args, **kwargs):
+        if kwargs.get('pk') is not None:
+            projectdetails = ProjectDetail.objects.select_related('planning', 'project', 'project_type', 'project__biro', 'project__product').filter(id=kwargs.get('pk'))
+        else:
+            projectdetails = ProjectDetail.objects.select_related('planning', 'project', 'project_type', 'project__biro', 'project__product').all()
+            
         result = []
         counter = 1
         for projectdetail in projectdetails:
@@ -86,7 +90,10 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
                 dict['id'] = counter
                 result.append(dict)
                 counter = counter+1
-            
-        return Response(result)
+                
+        if kwargs.get('pk') is not None:
+            return Response(result[0])
+        else:
+            return Response(result)
     
             
