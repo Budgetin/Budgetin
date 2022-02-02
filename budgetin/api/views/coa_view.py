@@ -47,7 +47,7 @@ class CoaViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
-        is_duplicate_coa(kwargs['id'],request.data['name'],request.data['hyperion_name'])
+        is_duplicate_coa(kwargs['pk'],request.data['name'],request.data['hyperion_name'])
         coa = super().update(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.UPDATE, TableEnum.COA)
         return coa
