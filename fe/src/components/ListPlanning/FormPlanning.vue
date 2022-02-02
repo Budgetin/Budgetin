@@ -13,12 +13,56 @@
 
     <v-card-text>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
-        <!-- Planning name -->
+        <!-- Judul -->
         <v-row no-gutters>
-          <v-col cols="6"> Planning <strong class="red--text">*</strong> </v-col>
-          <v-col cols="6">
+          <v-col cols="12" style="font-size:16px">
+            <strong> Project Detail </strong>
+          </v-col>
+        </v-row>
+
+        <br>
+        <!-- Nama nama -->
+        <v-row no-gutters>
+          <v-col cols="4">
+            For <strong class="red--text">*</strong>
+          </v-col>
+          <v-col cols="4">
+            Project ID <strong class="red--text">*</strong>
+          </v-col>
+          <v-col cols="4">
+            Project Type <strong class="red--text">*</strong>
+          </v-col>
+        </v-row>
+
+        <!-- Kolom kolom -->
+        <v-row no-gutters>
+          <v-col cols="4">
             <v-text-field
-              v-model="form.name"
+              v-model="form.planning.year"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="4"> 
+            <v-text-field
+              v-model="form.dcsp_id"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              v-model="form.project_type"
               outlined
               dense
               :disabled="isView"
@@ -28,14 +72,27 @@
             </v-text-field>
           </v-col>
         </v-row>
-        <!-- definition -->
+
+        <hr>
+        <br>
+
         <v-row no-gutters>
-          <v-col cols="6">
-            Definition <strong class="red--text">*</strong>
+          <v-col cols="12" style="font-size:16px">
+            <strong> Project </strong>
           </v-col>
-          <v-col cols="6">
+        </v-row>
+
+        <br>
+        <!-- Project Name -->
+        <v-row no-gutters>
+          <v-col cols="12">
+            Project Name <strong class="red--text">*</strong>
+          </v-col>
+        </v-row>
+        <v-row no-gutters>
+          <v-col cols="12">
             <v-text-field
-              v-model="form.definition"
+              v-model="form.project.project_name"
               outlined
               dense
               :disabled="isView"
@@ -45,14 +102,85 @@
             </v-text-field>
           </v-col>
         </v-row>
-        <!-- Hyperion -->
+
+        <!-- Project Description -->
         <v-row no-gutters>
-          <v-col cols="6">
-            Hyperion <strong class="red--text">*</strong>
+          <v-col cols="12">
+            Project Description <strong class="red--text">*</strong>
           </v-col>
-          <v-col cols="6">
+        </v-row>
+        <v-row no-gutters>
+          <v-col cols="12">
+            <v-textarea
+              v-model="form.project.project_description"
+              outlined
+              dense
+              rows=4
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+            >
+            </v-textarea>
+          </v-col>
+        </v-row>
+
+        <!-- Nama nama -->
+        <v-row no-gutters>
+          <v-col cols="3">
+            ID-ITFAM
+          </v-col>
+          <v-col cols="3">
+            Start Year <strong class="red--text">*</strong>
+          </v-col>
+          <v-col cols="3">
+            End Year
+          </v-col>
+          <v-col cols="3">
+            Total Investment Value <strong class="red--text">*</strong>
+          </v-col>
+        </v-row>
+
+        <!-- Kolom kolom -->
+        <v-row no-gutters >
+          <v-col cols="3">
             <v-text-field
-              v-model="form.hyperion_name"
+              v-model="form.dcsp_id"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="3"> 
+            <v-text-field
+              v-model="form.project.start_year"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="3">
+            <v-text-field
+              v-model="form.project.end_year"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="3">
+            <v-text-field
+              v-model="form.project.total_investment_value"
               outlined
               dense
               :disabled="isView"
@@ -62,8 +190,230 @@
             </v-text-field>
           </v-col>
         </v-row>
+
+        <!-- Nama nama -->
+        <v-row no-gutters>
+          <v-col cols="3">
+            Tech/Non-Tech <strong class="red--text">*</strong>
+          </v-col>
+          <v-col cols="3">
+            Product 
+          </v-col>
+          <v-col cols="3">
+            Biro <strong class="red--text">*</strong>
+          </v-col>
+          <v-col cols="3">
+            RCC <strong class="red--text">*</strong>
+          </v-col>
+        </v-row>
+
+        <!-- Kolom kolom -->
+        <v-row no-gutters >
+          <v-col cols="3">
+            <v-text-field
+              v-model="form.project.is_tech"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="3"> 
+            <v-text-field
+              v-model="form.project.product.product_code"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="3">
+            <v-text-field
+              v-model="form.project.biro"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="3">
+            <v-text-field
+              v-model="form.project.rcc"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+            >
+            </v-text-field>
+          </v-col>
+        </v-row>
+
+        <hr>
+        <br>
+
+        <v-row no-gutters>
+          <v-col cols="12" style="font-size:16px">
+            <strong> Budget </strong>
+          </v-col>
+        </v-row>
+
+        <br>
+
+        <!-- Nama nama -->
+        <v-row no-gutters>
+          <v-col cols="3">
+            COA <strong class="red--text">*</strong>
+          </v-col>
+          <v-col cols="3">
+            CAPEX/OPEX
+          </v-col>
+        </v-row>
+
+        <!-- Kolom kolom -->
+        <v-row no-gutters >
+          <v-col cols="3">
+            <v-text-field
+              v-model="form.project.budget.coa.name"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="3"> 
+            <v-text-field
+              v-model="form.project.budget.expense_type"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+            >
+            </v-text-field>
+          </v-col>
+        </v-row>
+
+        <!-- Nama nama -->
+        <v-row no-gutters>
+          <v-col cols="3">
+            Q1
+          </v-col>
+          <v-col cols="3">
+            Q2
+          </v-col>
+          <v-col cols="3">
+            Q3
+          </v-col>
+          <v-col cols="3">
+            Q4
+          </v-col>
+        </v-row>
+
+        <!-- Kolom kolom -->
+        <v-row no-gutters >
+          <v-col cols="3">
+            <v-text-field
+              v-model="form.project.budget.planning_q1"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="3"> 
+            <v-text-field
+              v-model="form.project.budget.planning_q2"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="3">
+            <v-text-field
+              v-model="form.project.budget.planning_q3"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="3">
+            <v-text-field
+              v-model="form.project.budget.planning_q4"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+            >
+            </v-text-field>
+          </v-col>
+        </v-row>
+
+        <v-row no-gutters>
+          <v-col cols="3">
+            
+          </v-col>
+          <v-col cols="3">
+            
+          </v-col>
+          <v-col cols="3">
+            
+          </v-col>
+          <v-col cols="3">
+            Total
+          </v-col>
+        </v-row>
+
+        <!-- Kolom kolom -->
+        <v-row no-gutters >
+          <v-col cols="3">
+            
+          </v-col>
+          <v-col cols="3"> 
+            
+          </v-col>
+          <v-col cols="3">
+            
+          </v-col>
+          <v-col cols="3">
+            <v-text-field
+              v-model="form.project.budget.planning_nominal"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+            >
+            </v-text-field>
+          </v-col>
+        </v-row>
+
         <!-- CAPEX -->
-        <v-row no-gutters>
+        <!-- <v-row no-gutters>
           <v-col cols="6" class="mb-5">
             <v-checkbox
               v-model="form.is_capex"
@@ -71,10 +421,10 @@
               :disabled="isView"
             ></v-checkbox>
           </v-col>
-        </v-row>
+        </v-row> -->
 
         <!-- Minimum Value -->
-        <v-row no-gutters v-if="form.is_capex">
+        <!-- <v-row no-gutters v-if="form.is_capex">
           <v-col cols="6"> Minimum Value </v-col>
           <v-col cols="6">
             <v-text-field
@@ -88,7 +438,7 @@
             >
             </v-text-field>
           </v-col>
-        </v-row>
+        </v-row> -->
         <!-- BUTTONS -->
         <v-row no-gutters>
           <v-col cols="12" align="right">
@@ -177,7 +527,9 @@ export default {
 };
 </script>
 
+
 <style lang="scss" scopped>
+
 .v-card__text {
   color: unset !important;
 }
