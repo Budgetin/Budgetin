@@ -42,7 +42,7 @@ export default new Vuex.Store({
     monitorPlanning,
     allBiro,
     listPlanning,
-    listProject
-    choosedColumn
+    listProject,
+    choosedColumn,
   },
 })
