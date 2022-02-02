@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import viewsets
 
 from api.models import Budget
@@ -22,6 +23,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         budget.data['updated_at'] = timestamp_to_strdateformat(budget.data['updated_at'], "%d %B %Y")
         return budget
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
@@ -29,12 +31,14 @@ class BudgetViewSet(viewsets.ModelViewSet):
         AuditLog.Save(budget, request, ActionEnum.CREATE, TableEnum.BUDGET)
         return budget
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
         budget = super().update(request, *args, **kwargs)
         AuditLog.Save(budget, request, ActionEnum.UPDATE, TableEnum.BUDGET)
         return budget
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = 1                                 
         budget = super().destroy(request, *args, **kwargs)

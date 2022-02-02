@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.forms import model_to_dict
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -33,6 +34,7 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
         project_detail.data['updated_at'] = timestamp_to_strdateformat(project_detail.data['updated_at'], "%d %B %Y")
         return project_detail
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
         request.data['created_by'] = 1
@@ -40,12 +42,14 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
         AuditLog.Save(project_detail, request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
         return project_detail
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = 1
         project_detail = super().update(request, *args, **kwargs)
         AuditLog.Save(project_detail, request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
         return project_detail
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = 1                                 
         project_detail = super().destroy(request, *args, **kwargs)

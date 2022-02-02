@@ -6,3 +6,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+        
+class UserResponseSerializer(serializers.ModelSerializer):
+    created_by = serializers.CharField()
+    updated_by = serializers.CharField()
+    is_active = serializers.IntegerField()
+    class Meta:
+        model = User
+        fields = '__all__'

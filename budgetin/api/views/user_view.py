@@ -1,9 +1,10 @@
+from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from api.models import User
-from api.serializers import UserSerializer
+from api.serializers import UserSerializer, UserResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.date_format import timestamp_to_strdateformat
@@ -13,36 +14,32 @@ from api.exceptions.validation_exception import ValidationException
 def is_duplicate_user(username):
     if User.objects.filter(username=username):
         raise ValidationException
+
+def is_duplicate_user_update(id, username):
+    if User.objects.filter(username=username).exclude(pk=id):
+        raise ValidationException
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
     def list(self, request, *args, **kwargs):
-        user = super().list(request, *args, **kwargs)
-        for each in user.data:
-            if each['updated_by'] is not None:
-                each['updated_by'] = User.objects.get(pk=each['updated_by']).display_name
-            else:
-                each['updated_by'] = ''
-            #Reformat date
-            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
-            
-            each['is_active'] = 1 if each['is_active'] else 0 
-        return user
+        queryset = User.objects.all()
+        for user in queryset:
+            user.format_timestamp("%d %B %Y")
+            user.format_created_updated_by()
+        
+        serializer = UserResponseSerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        user = super().retrieve(request, *args, **kwargs)
-        if user.data['updated_by'] is not None:
-                user.data['updated_by'] = User.objects.get(pk=user.data['updated_by']).display_name
-        else:
-            user.data['updated_by'] = ''
-        user.data['created_at'] = timestamp_to_strdateformat(user.data['created_at'], "%d %B %Y")
-        user.data['updated_at'] = timestamp_to_strdateformat(user.data['updated_at'], "%d %B %Y")
+        user = User.objects.get(pk=kwargs['pk'])
+        user.format_timestamp("%d %B %Y")
+        user.format_created_updated_by()
+        
+        serializer = UserResponseSerializer(user, many=False)
+        return Response(serializer.data)
 
-        user.data['is_active'] = 1 if user.data['is_active'] else 0 
-        return user
-
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         is_duplicate_user(request.data['username'])
         employee_info = get_ithc_employee_info(request.data['username'])
@@ -53,8 +50,9 @@ class UserViewSet(viewsets.ModelViewSet):
         AuditLog.Save(user, request, ActionEnum.CREATE, TableEnum.USER)
         return user
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
-        is_duplicate_user(request.data['username'])
+        is_duplicate_user_update(kwargs['pk'], request.data['username'])
         user = super().update(request, *args, **kwargs)
         AuditLog.Save(user, request, ActionEnum.UPDATE, TableEnum.USER)
         return user
