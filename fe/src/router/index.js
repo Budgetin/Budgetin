@@ -70,16 +70,16 @@ const routes = [
         name: 'ViewStatusMonitoring',
         component: () => import("@/views/StartPlanning/ViewStatusMonitoring")
       },
-      // {
-      //   path: '/startPlanning/:id/editStatusMonitor',
-      //   name: 'EditStatusMonitoring',
-      //   component: () => import("@/views/StartPlanning/EditStatusMonitoring")
-      // },
       {
         path: 'listProject',
         name: 'ListProject',
         component: () => import("@/views/ListProject/ListProject"),
-      },   
+      },
+      {
+        path: '/listProject/:id/view',
+        name: 'ViewListProject',
+        component: () => import("@/views/ListProject/ViewListProject")
+      },
       {
         path: 'listPlanning',
         name: 'ListPlanning',
@@ -89,7 +89,7 @@ const routes = [
         path: '/listPlanning/:id/edit',
         name: 'EditListPlanning',
         component: () => import("@/views/ListPlanning/EditListPlanning"),
-      }, 
+      },
     ]
   },
   {

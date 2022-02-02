@@ -1,30 +1,33 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/project_detail/list_planning/";
+const ENDPOINT = "/api/project/";
 
-const listPlanning = {
+const listProject = {
   namespaced: true,
   state: {
-    loadingGetListPlanning: false, // for loading table
+    loadingGetListProject: false, // for loading table
     loadingGetEdittedItem: false,
-    loadingPostPatchListPlanning: false, // for loading post/patch
-    dataListPlanning: [], // for v-data-table
-    dataActiveListPlanning: [], //for dropdown
+    loadingPostPatchListProject: false, // for loading post/patch
+    dataListProject: [], // for v-data-table
+    dataActiveListProject: [], //for dropdown
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
     edittedItem: null,
     edittedItemHistories: [],
+    requestHistoriesStatus:"IDLE",
+    loadingGetEdittedItemHistories: false,
+    edittedItemHistories: [],
   },
   getters: {
     value: (state) => state.value
   },
   actions: {
-    getListPlanning() {
-      if (store.state.listPlanning.requestStatus !== "SUCCESS")
-        store.dispatch("listPlanning/getFromAPI");
+    getListProject() {
+      if (store.state.listProject.requestStatus !== "SUCCESS")
+        store.dispatch("listProject/getFromAPI");
     },
     getFromAPI({ commit }) {
       commit("GET_INIT");
@@ -41,7 +44,7 @@ const listPlanning = {
           commit("GET_ERROR", error);
         });
     },
-    getListPlanningById({ commit }, id) {
+    getListProjectById({ commit }, id) {
       // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
@@ -59,7 +62,7 @@ const listPlanning = {
           });
       });
     },
-    postListPlanning({ commit }, payload) {
+    postListProject({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
@@ -67,7 +70,7 @@ const listPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listPlanning/getFromAPI");
+            store.dispatch("listProject/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -76,8 +79,8 @@ const listPlanning = {
               errorMsg = "";
               switch (error.response.status) {
                 case 400:
-                  if (error.response.data.hasOwnProperty("Planning_name")) {
-                    errorMsg += error.response.data.Planning_name;
+                  if (error.response.data.hasOwnProperty("year")) {
+                    errorMsg += error.response.data.year;
                   }
                   break;
 
@@ -91,7 +94,8 @@ const listPlanning = {
           });
       });
     },
-    patchListPlanning({ commit }, payload) {
+    patchListProject({ commit }, payload) {
+      console.log("Payload ID: "+payload.id);
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
       return new Promise((resolve, reject) => {
@@ -100,8 +104,7 @@ const listPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listPlanning/getFromAPI");
-            // store.dispatch("masterCategory/getFromAPI");
+            store.dispatch("listProject/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -110,8 +113,8 @@ const listPlanning = {
               errorMsg = "";
               switch (error.response.status) {
                 case 400:
-                  if (error.response.data.hasOwnProperty("Planning_name")) {
-                    errorMsg += error.response.data.Planning_name;
+                  if (error.response.data.hasOwnProperty("year")) {
+                    errorMsg += error.response.data.year;
                   }
                   break;
 
@@ -125,73 +128,61 @@ const listPlanning = {
           });
       });
     },
-    // getEdittedItemHistories({ commit }) {
-    //   const itemID = store.state.listPlanning.edittedItem.id;
-    //   if (!itemID) return;
-    //   getAPI
-    //     .get(ENDPOINT + `${itemID}/histories/`)
-    //     .then((response) => {
-    //       commit("SET_LOADING_GET_EDITTED_ITEM", false);
-    //       commit("SET_EDITTED_ITEM_HISTORIES", response.data);
-    //     })
-    //     .catch((error) => {
-    //       commit("GET_ERROR", error.response.data);
-    //     });
-    // },
-    // getActiveListPlanning({ commit }) {
-    //   if (store.state.listPlanning.requestActiveStatus !== "SUCCESS")
-    //     getAPI
-    //       .get(ENDPOINT + "?filter{status}=1")
-    //       .then((response) => {
-    //         const cleanData = response.data.Plannings.map((data) => {
-    //           return {
-    //             id: data.id,
-    //             Planning_name: data.Planning_name,
-    //             status: String(data.status),
-    //           };
-    //         });
-    //         commit("GET_ACTIVE_DATA_UPDATE", cleanData);
-    //       })
-    //       .catch((error) => {
-    //         commit("GET_ERROR", error);
-    //       });
-    // },
+    getHistory({ commit }, id) {
+      commit("SET_REQUEST_STATUS"); 
+      return new Promise((resolve, reject) => {
+      getAPI
+        .get("/api/auditlog?table=project&entity=" + `${id}`)
+        .then((response) => {
+          const data = response.data;
+          const sorted = data.sort((a, b) =>
+          a.id < b.id ? 1 : -1
+        );
+          commit("SET_EDITTED_ITEM_HISTORIES", sorted); 
+          resolve(sorted);
+        })
+        .catch((error) => {
+          commit("GET_ERROR", error);
+          reject(error);
+        });
+      });
+    },
   },
   mutations: {
     // get related
     GET_INIT(state) {
       state.requestStatus = "PENDING";
-      state.loadingGetListPlanning = true;
+      state.loadingGetListProject = true;
     },
-    GET_SUCCESS(state, dataListPlanning) {
+    GET_SUCCESS(state, dataListProject) {
       state.requestStatus = "SUCCESS";
-      state.loadingGetListPlanning = false;
-      state.dataListPlanning = dataListPlanning;
+      state.loadingGetListProject = false;
+      state.dataListProject = dataListProject;
     },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveListPlanning) {
+    GET_ACTIVE_DATA_UPDATE(state, dataActiveListProject) {
       state.requestActiveStatus = "IDLE";
-      state.dataActiveListPlanning = dataActiveListPlanning;
+      state.dataActiveListProject = dataActiveListProject;
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingGetListPlanning = false;
+      state.loadingGetListProject = false;
       state.errorMsg = error;
-      state.dataListPlanning = [];
-      state.dataActiveListPlanning = [];
+      state.dataListProject = [];
+      state.dataActiveListProject = [];
     },
 
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";
-      state.loadingPostPatchListPlanning = true;
+      state.loadingPostPatchListProject = true;
     },
     POST_PATCH_SUCCESS(state) {
       state.requestStatus = "SUCCESS";
-      state.loadingPostPatchListPlanning = false;
+      state.loadingPostPatchListProject = false;
     },
     POST_PATCH_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingPostPatchListPlanning = false;
+      state.loadingPostPatchListProject = false;
       state.errorMsg = error;
     },
     SET_EDITTED_ITEM(state, payload) {
@@ -201,13 +192,16 @@ const listPlanning = {
       state.loadingGetEdittedItem = payload;
     },
 
-    // history related
-    SET_EDITTED_ITEM_HISTORIES(state, payload) {
-      state.edittedItemHistories = payload;
+    // history relate
+    SET_EDITTED_ITEM_HISTORIES(state, edittedItemHistories) {
+      state.requestHistoriesStatus = "SUCCESS";
+      state.loadingGetEdittedItemHistories = false;
+      state.edittedItemHistories = edittedItemHistories;
     },
-
-    SET_REQUEST_STATUS(state, payload) {
-      state.requestStatus = payload;
+    SET_REQUEST_STATUS(state) {
+      state.requestHistoriesStatus = "PENDING";
+      state.loadingGetEdittedItemHistories = true;
+      state.edittedItemHistories = [];
     },
 
     ON_CHANGE(state, payload) {
@@ -219,4 +213,4 @@ const listPlanning = {
   },
 };
 
-export default listPlanning;
+export default listProject

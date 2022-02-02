@@ -18,7 +18,7 @@
             <template v-slot:top>
               <v-toolbar-title>
                 <v-row class="mb-5" no-gutters>
-                  <v-col cols="12" xs="12" sm="6" md="3" lg="3" no-gutters>
+                  <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
                     <v-text-field
                       class="list-planning__input"
                       v-model="search"
@@ -123,7 +123,6 @@ export default {
     search: "",
     dataTable: {
       headers: [
-        { text: "Actions", value: "actions", align: "center", sortable: false },
         { text: "For", value: "planning.year"},
         { text: "ID ITFAM", value: "project.itfam_id"},
         { text: "Project ID", value: "dcsp_id"},
@@ -148,15 +147,107 @@ export default {
         { text: "Strategy", value: "project.product.strategy.name"},
         { text: "Created By", value: "created_by"},
         { text: "Updated At", value: "updated_at"},
+        { text: "Actions", value: "actions", align: "center", sortable: false },
       ]
     },
     form: {
-      id: "",
-      name: "",
-      definition: "",
-      hyperion_name: "",
-      is_capex: "",
-      minimum_item_origin: "",
+        id: "",
+        is_deleted: "",
+        deleted_at: "",
+        created_by: "",
+        updated_by: "",
+        planning: {
+            id: "",
+            is_deleted: "",
+            deleted_at: "",
+            created_by: "",
+            updated_by: "",
+            year: "",
+            is_active: "",
+            notification: "",
+            due_date: ""
+        },
+        project: {
+            id: "",
+            is_deleted: "",
+            deleted_at: "",
+            created_by: "",
+            updated_by: "",
+            itfam_id: "",
+            project_name: "",
+            project_description: "",
+            biro: "",
+            start_year: "",
+            end_year: "",
+            total_investment_value: "",
+            product: {
+                id: "",
+                is_deleted: "",
+                deleted_at: "",
+                created_by: "",
+                updated_by: "",
+                product_code: "",
+                product_name: "",
+                strategy: {
+                    id: "",
+                    is_deleted: "",
+                    deleted_at: "",
+                    created_by: "",
+                    updated_by: "",
+                    name: ""
+                },
+                is_active: ""
+            },
+            is_tech: "",
+            budget: {
+                id: "",
+                is_deleted: "",
+                deleted_at: "",
+                created_by: "",
+                updated_by: "",
+                project_detail: "",
+                coa: {
+                    id: "",
+                    is_deleted: "",
+                    deleted_at: "",
+                    created_by: "",
+                    updated_by: "",
+                    name: "",
+                    definition: "",
+                    hyperion_name: "",
+                    is_capex: "",
+                    minimum_item_origin: ""
+                },
+                expense_type: "",
+                planning_q1: "",
+                planning_q2: "",
+                planning_q3: "",
+                planning_q4: "",
+                realization_jan: "",
+                realization_feb: "",
+                realization_mar: "",
+                realization_apr: "",
+                realization_may: "",
+                realization_jun: "",
+                realization_jul: "",
+                realization_aug: "",
+                realization_sep: "",
+                realization_oct: "",
+                realization_nov: "",
+                realization_dec: "",
+                switching_in: "",
+                switching_out: "",
+                top_up: "",
+                returns: "",
+                allocate: "",
+                planning_nominal: ""
+            }
+        },
+        project_type: "",
+        dcsp_id: "",
+        project_detail_id: "",
+        created_at: "",
+        updated_at: ""
     },
     alert: {
       show: false,
@@ -214,37 +305,35 @@ export default {
 </script>
 
 <style>
-button{
+button {
   min-width: 2rem;
 }
-
 table > tbody > tr > td:nth-child(1), 
 table > thead > tr > th:nth-child(1) {
   position: sticky !important; 
   position: -webkit-sticky !important; 
-  /* max-width: 4.1rem; */
   left: 0; 
-  z-index: 9998;
+  z-index: 19;
   background: white;
 }
 table > thead > tr > th:nth-child(1) {
-  z-index: 9999;
+  z-index: 20;
 }
+
 table > tbody > tr > td:nth-child(2), 
 table > thead > tr > th:nth-child(2) {
   position: sticky !important; 
   position: -webkit-sticky !important; 
-  left:4.55rem; 
-  z-index: 9998;
+  left:4.1rem; 
+  z-index: 19;
   background: white;
 }
 table > thead > tr > th:nth-child(2) {
-  z-index: 9999;
+  z-index: 20;
 }
 </style>
 
 <style lang="scss" scoped>
-
 #list-planning {
   .list-planning__header {
     padding-left: 32px;
@@ -258,6 +347,7 @@ table > thead > tr > th:nth-child(2) {
 
   .list-planning__btn {
     text-align: end;
+
     button {
       margin: 10px 32px;
     }
@@ -293,4 +383,3 @@ table > thead > tr > th:nth-child(2) {
     }
   }
 }
-</style>

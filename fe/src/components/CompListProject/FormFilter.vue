@@ -9,7 +9,7 @@
     <v-card-text>
       <v-form ref="form" class="FilterBox__form" lazy-validation @submit.prevent="onSubmit">
         <v-row no-gutters>
-          <!-- PLANNING FOR -->
+          <!-- ID ITFAM -->
           <v-col cols="6"> Planning For
             <v-col
               class="d-flex"
@@ -28,7 +28,7 @@
             </v-col>
           </v-col>
 
-          <!-- STATUS -->
+          <!-- PROJECT NAME -->
           <v-col cols="6"> Status <strong class="red--text">*</strong>
             <v-col
               class="d-flex"

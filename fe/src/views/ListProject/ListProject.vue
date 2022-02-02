@@ -25,7 +25,8 @@
                     
                     <v-data-table
                     :headers="dataTable.headers"
-                    :items="dataTable.desserts"
+                    loading="loadingGetProject"
+                    :items="dataListProject"
                     :search="search"
                     class="data-table">
                         <template v-slot:top>
@@ -65,7 +66,7 @@
                             <router-link
                                 style="text-decoration: none"
                                 :to="{
-                                    name: 'ViewProject',
+                                    name: 'ViewListProject',
                                     params: { id: item.id },
                                 }">
                                 <v-tooltip bottom>
@@ -94,81 +95,111 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 export default {
+    name: "ListProject",
+    components: {
+        
+    },
     watch: {},
-    data() {
-        return {
-            expanded: [],
-            singleExpand: false,
-            tab: null,
-            items: ['Active', 'Inactive'],
+    data: () => ({
+        tab: null,
+        items: ['Active', 'Inactive'],
 
-            search: "",
-            dataTable: {
-                headers: [
-                    { text: "Action", value: "actions", align: "center", sortable: false, width: "7%"},
-                    { text: "ID", value: "id", width: "7%" },
-                    { text: "ID ITFAM", value: "id_itfam", width: "10%", align: "start" },
-                    { text: "Project Name", value: "project_name", width: "25%" },
-                    { text: "Project Description", value: "project_desc", width: "30%" },
-                    { text: "RCC", value: "rcc", width: "10%" },
-                    { text: "Biro", value: "code", width: "10%" },
-                    { text: '', value: 'data-table-expand', width: "5%" },
-                ],
-                desserts: [
-                    {
-                        id: 1,
-                        id_itfam: "202300011",
-                        project_name: "Prototype Re-design LAN ATM Pertokoan",
-                        project_desc: "Merapikan LAN ATM EBC",
-                        rcc: "093",
-                        code: "NIS B",
-                    },
-                    {
-                        id: 2,
-                        id_itfam: "202300012",
-                        project_name: "Wi-fi Cabang",
-                        project_desc: "Access point untuk Future Branch",
-                        rcc: "093",
-                        code: "NIS B",
-                    },
-                    {
-                        id: 3,
-                        id_itfam: "202300013",
-                        project_name: "Tool Fiber Optic",
-                        project_desc: "Fiber Optic Tester",
-                        rcc: "093",
-                        code: "NIS A",
-                    },
-                    {
-                        id: 4,
-                        id_itfam: "202300014",
-                        project_name: "Subduck BNDC Cibitung",
-                        project_desc: "Zone fiber optic MM2100",
-                        rcc: "093",
-                        code: "NIS C",
-                    },
-                ],
-            },
-        };
+        search: "",
+        dataTable: {
+            headers: [
+                { text: "Action", value: "actions", align: "center", sortable: false, width: "7%"},
+                { text: "ID", value: "id", width: "7%" },
+                { text: "ID ITFAM", value: "itfam_id", width: "10%", align: "start" },
+                { text: "Project Name", value: "project_name", width: "25%" },
+                { text: "Project Description", value: "project_description", width: "30%" },
+                { text: "RCC", value: "rcc", width: "10%" },
+                { text: "Biro", value: "biro", width: "10%" },
+                { text: "Product ID", value: "product", width: "10%" },
+                { text: "Product Code", value: "product_code", width: "10%" },
+                { text: "Product Name", value: "product_name", width: "10%" },
+                { text: "Start Year", value: "start_year", width: "10%" },
+                { text: "End Year", value: "end_year", width: "10%" },
+            ],
+            // desserts: [
+            //     {
+            //         id: 1,
+            //         itfam_id: "202300011",
+            //         project_name: "Prototype Re-design LAN ATM Pertokoan",
+            //         project_desc: "Merapikan LAN ATM EBC",
+            //         rcc: "093",
+            //         code: "NIS B",
+            //     },
+            //     {
+            //         id: 2,
+            //         itfam_id: "202300012",
+            //         project_name: "Wi-fi Cabang",
+            //         project_desc: "Access point untuk Future Branch",
+            //         rcc: "093",
+            //         code: "NIS B",
+            //     },
+            //     {
+            //         id: 3,
+            //         itfam_id: "202300013",
+            //         project_name: "Tool Fiber Optic",
+            //         project_desc: "Fiber Optic Tester",
+            //         rcc: "093",
+            //         code: "NIS A",
+            //     },
+            //     {
+            //         id: 4,
+            //         itfam_id: "202300014",
+            //         project_name: "Subduck BNDC Cibitung",
+            //         project_desc: "Zone fiber optic MM2100",
+            //         rcc: "093",
+            //         code: "NIS C",
+            //     },
+            // ],
+        },
+
+        form: {
+            id: "",
+            itfam_id: "",
+            project_name: "",
+            project_description: "",
+            rcc: "",
+            biro: "",
+            product: "",
+            product_code: "",
+            product_name: "",
+            start_year: "",
+            end_year: ""
+        },
+    }),
+
+    created() {
+        this.getListProject();
+        // this.setBreadcrumbs();
+    },
+
+    computed: {
+        ...mapState("listProject", ["loadingGetListProject", "dataListProject"]),
     },
 
     methods: {
+        ...mapActions("listProject", ["getListProject"]),
         onExport() {
 
         },
         onCancel() {
             this.dialog = false;
         },
-        onMonitor() {
-            console.log(item+"monitor");
-        },
-        onView() {
-            console.log(item);
-        },
         onFilter() {
 
-        }
+        },
+        onEdit(item) {
+            this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
+            console.log(item);
+        },
+        onOK() {
+            return this.$router.go(-1);
+        },
     }
 };
 </script>
