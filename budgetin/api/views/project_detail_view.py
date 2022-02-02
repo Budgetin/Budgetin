@@ -90,5 +90,22 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
         result = construct_project_detail(serializer.data)
         
         return Response(result)
+
+
+    def list_planning_data(pk=None):
+        if pk:        
+            projectdetails = ProjectDetail.objects.select_related('planning', 'project', 'project_type', 'project__biro', 'project__product').filter(id=pk)
+        else:
+            projectdetails = ProjectDetail.objects.select_related('planning', 'project', 'project_type', 'project__biro', 'project__product').all()
+        
+        for projectdetail in projectdetails:
+            projectdetail.format_timestamp("%d %B %Y")
+            projectdetail.format_created_updated_by()
+            projectdetail.project_type_name = projectdetail.project_type.name
+        
+        serializer = ProjectDetailResponseSerializer(projectdetails, many=True)
+        result = construct_project_detail(serializer.data)
+        
+        return Response(result)
     
             
