@@ -76,6 +76,9 @@
                 </v-tooltip>
               </router-link>
             </template>
+            <template v-slot:[`item.is_budget`]="{ item }">
+                <binary-is-budget-chip :boolean="item.is_budget"> </binary-is-budget-chip>
+            </template>
           </v-data-table>
         </v-col>
       </v-row>
@@ -103,11 +106,13 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import FormPlanning from "@/components/ListPlanning/FormPlanning";
 import ColumnOption from "@/components/ListPlanning/ColumnOption";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import BinaryIsBudgetChip from "@/components/chips/BinaryIsBudgetChip";
 export default {
   name: "ListPlanning",
-  components: { ColumnOption, SuccessErrorAlert },
+  components: {FormPlanning,SuccessErrorAlert,ColumnOption,BinaryIsBudgetChip},
   watch: {},
   data: () => ({
     dialog: false,
@@ -116,49 +121,49 @@ export default {
     dataTable: {
       selectedHeader: [],
       Listheader: [
-        { text: "Project ID", value: "dcsp_id", width: "7rem" },
-        { text: "Project Name", value: "project.project_name", width: "8rem" },
-        { text: "ID ITFAM", value: "project.itfam_id", width: "7rem" },
+        { text: "Project ID", value: "project_detail.dcsp_id", width: "7rem" },
+        { text: "Project Name", value: "project_detail.project.project_name", width: "8rem" },
+        { text: "ID ITFAM", value: "project_detail.project.itfam_id", width: "7rem" },
         {
           text: "Project Description",
-          value: "project.project_description",
+          value: "project_detail.project.project_description",
           width: "10rem",
         },
-        { text: "Tech / Non Tech", value: "project.is_tech", width: "9rem" },
+        { text: "Tech / Non Tech", value: "project_detail.project.is_tech", width: "9rem" },
         {
           text: "Product ID",
-          value: "project.product.product_code",
+          value: "project_detail.project.product.product_code",
           width: "7rem",
         },
-        { text: "RCC", value: "project.rcc", width: "5rem" },
-        { text: "Project Type", value: "project_type", width: "9rem" },
-        { text: "Biro", value: "project.biro", width: "5rem" },
-        { text: "Is Budget", value: "project.budget.id", width: "7rem" },
-        { text: "COA", value: "project.budget.coa.name", width: "5rem" },
+        { text: "RCC", value: "project_detail.project.biro.rcc", width: "5rem" },
+        { text: "Project Type", value: "project_detail.project_type", width: "9rem" },
+        { text: "Biro", value: "project_detail.project.biro.code", width: "5rem" },
+        { text: "Is Budget", value: "is_budget", width: "7rem" },
+        { text: "COA", value: "coa", width: "5rem" },
         {
           text: "Capex/Opex",
-          value: "project.budget.expense_type",
+          value: "expense_type",
           width: "8rem",
         },
-        { text: "Start Year", value: "project.start_year", width: "7rem" },
-        { text: "End Year", value: "project.end_year", width: "7rem" },
+        { text: "Start Year", value: "project_detail.project.start_year", width: "7rem" },
+        { text: "End Year", value: "project_detail.project.end_year", width: "7rem" },
         {
           text: "Total Investment",
-          value: "project.total_investment_value",
+          value: "project_detail.project.total_investment_value",
           width: "9rem",
         },
         {
           text: "Budget This Year",
-          value: "project.budget.planning_nominal",
+          value: "planning_nominal",
           width: "9rem",
         },
-        { text: "Q1", value: "project.budget.planning_q1", width: "5rem" },
-        { text: "Q2", value: "project.budget.planning_q2", width: "5rem" },
-        { text: "Q3", value: "project.budget.planning_q3", width: "5rem" },
-        { text: "Q4", value: "project.budget.planning_q4", width: "5rem" },
+        { text: "Q1", value: "planning_q1", width: "5rem" },
+        { text: "Q2", value: "planning_q2", width: "5rem" },
+        { text: "Q3", value: "planning_q3", width: "5rem" },
+        { text: "Q4", value: "planning_q4", width: "5rem" },
         {
           text: "Strategy",
-          value: "project.product.strategy.name",
+          value: "project_detail.project.product.strategy",
           width: "6rem",
         },
         { text: "Created By", value: "created_by", width: "7rem" },
@@ -166,104 +171,69 @@ export default {
       ],
     },
     form: {
-      id: "",
-      is_deleted: "",
-      deleted_at: "",
-      created_by: "",
-      updated_by: "",
-      planning: {
+    id: "",
+    is_budget: "",
+    expense_type: "",
+    planning_nominal: "",
+    planning_q1: "",
+    planning_q2: "",
+    planning_q3: "",
+    planning_q4: "",
+    realization_jan: "",
+    realization_feb: "",
+    realization_mar: "",
+    realization_apr: "",
+    realization_may: "",
+    realization_jun: "",
+    realization_jul: "",
+    realization_aug: "",
+    realization_sep: "",
+    realization_oct: "",
+    realization_nov: "",
+    realization_dec: "",
+    switching_in: "",
+    switching_out: "",
+    top_up: "",
+    returns: "",
+    allocate: "",
+    coa: "",
+    project_detail: {
         id: "",
-        is_deleted: "",
-        deleted_at: "",
-        created_by: "",
-        updated_by: "",
-        year: "",
-        is_active: "",
-        notification: "",
-        due_date: "",
-      },
-      project: {
-        id: "",
-        is_deleted: "",
-        deleted_at: "",
-        created_by: "",
-        updated_by: "",
-        itfam_id: "",
-        project_name: "",
-        project_description: "",
-        biro: "",
-        start_year: "",
-        end_year: "",
-        total_investment_value: "",
-        product: {
-          id: "",
-          is_deleted: "",
-          deleted_at: "",
-          created_by: "",
-          updated_by: "",
-          product_code: "",
-          product_name: "",
-          strategy: {
+        dcsp_id: "",
+        planning: {
             id: "",
-            is_deleted: "",
-            deleted_at: "",
-            created_by: "",
-            updated_by: "",
-            name: "",
-          },
-          is_active: "",
+            year: "",
+            due_date: "",
+            is_active: ""
         },
-        is_tech: "",
-        budget: {
-          id: "",
-          is_deleted: "",
-          deleted_at: "",
-          created_by: "",
-          updated_by: "",
-          project_detail: "",
-          coa: {
+        project: {
             id: "",
-            is_deleted: "",
-            deleted_at: "",
-            created_by: "",
-            updated_by: "",
-            name: "",
-            definition: "",
-            hyperion_name: "",
-            is_capex: "",
-            minimum_item_origin: "",
-          },
-          expense_type: "",
-          planning_q1: "",
-          planning_q2: "",
-          planning_q3: "",
-          planning_q4: "",
-          realization_jan: "",
-          realization_feb: "",
-          realization_mar: "",
-          realization_apr: "",
-          realization_may: "",
-          realization_jun: "",
-          realization_jul: "",
-          realization_aug: "",
-          realization_sep: "",
-          realization_oct: "",
-          realization_nov: "",
-          realization_dec: "",
-          switching_in: "",
-          switching_out: "",
-          top_up: "",
-          returns: "",
-          allocate: "",
-          planning_nominal: "",
+            project_name: "",
+            project_description: "",
+            itfam_id: "",
+            is_tech: "",
+            start_year: "",
+            end_year: "",
+            total_investment_value: "",
+            product: {
+                id: "",
+                product_code: "",
+                strategy: ""
+            },
+            biro: {
+                id: "",
+                code: "",
+                name: "",
+                rcc: ""
+            }
         },
-      },
-      project_type: "",
-      dcsp_id: "",
-      project_detail_id: "",
-      created_at: "",
-      updated_at: "",
+        project_type: ""
     },
+    created_by: "",
+    updated_by: "",
+    created_at: "",
+    updated_at: ""
+},
     alert: {
       show: false,
       success: null,
@@ -294,7 +264,7 @@ export default {
         });
         this.dataTable.selectedHeader.splice(1, 0, {
           text: "For",
-          value: "planning.year",
+          value: "project_detail.planning.year",
           width: "5rem",
         });
         this.setColumn(this.dataTable.selectedHeader);
@@ -318,7 +288,7 @@ export default {
       console.log(this.listColumn);
     },
     chooseColumn() {
-      this.dataTable.selectedHeader.splice(0, 2);
+      //this.dataTable.selectedHeader.splice(0, 2);
       this.dialog = !this.dialog;
     },
     onEdit(item) {
@@ -343,7 +313,7 @@ export default {
         });
         this.dataTable.selectedHeader.splice(1, 0, {
           text: "For",
-          value: "planning.year",
+          value: "project_detail.planning.year",
           width: "5rem",
         });
         this.setColumn(this.dataTable.selectedHeader);
