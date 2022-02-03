@@ -49,12 +49,14 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 
 class BudgetResponseSerializer(serializers.ModelSerializer):
     coa = serializers.SerializerMethodField()
+    planning_nominal = serializers.SerializerMethodField()
+    is_budget = serializers.SerializerMethodField()
     project_detail = ProjectDetailSerializer()
     created_by = serializers.CharField()
     updated_by = serializers.CharField()
     class Meta:
         model = Budget
-        fields = ['id', 'expense_type', 'planning_q1', 'planning_q2', 'planning_q3', 'planning_q4', 
+        fields = ['id', 'is_budget', 'expense_type', 'planning_nominal', 'planning_q1', 'planning_q2', 'planning_q3', 'planning_q4', 
                   'realization_jan', 'realization_feb', 'realization_mar', 'realization_apr', 'realization_may',
                   'realization_jun', 'realization_jul', 'realization_aug', 'realization_sep', 'realization_oct',
                   'realization_nov', 'realization_dec', 'switching_in', 'switching_out', 'top_up', 'returns',
@@ -62,3 +64,9 @@ class BudgetResponseSerializer(serializers.ModelSerializer):
         
     def get_coa(self, budget):
         return budget.coa.name
+    
+    def get_planning_nominal(self, budget):
+        return budget.planning_q1 + budget.planning_q2 + budget.planning_q3 + budget.planning_q4
+    
+    def get_is_budget(self, budget):
+        return 1 if budget.expense_type != "" else 0
