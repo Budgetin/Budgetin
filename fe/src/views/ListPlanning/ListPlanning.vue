@@ -298,6 +298,7 @@ export default {
       this.dialog = false;
     },
     onClose(e) {
+      this.dataTable.selectedHeader.splice(0, 2);
       this.dialog = false;
       if (e.length > 0) {
         this.dataTable.selectedHeader = [];
