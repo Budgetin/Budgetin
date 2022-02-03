@@ -77,7 +77,10 @@
               </router-link>
             </template>
             <template v-slot:[`item.is_budget`]="{ item }">
-                <binary-is-budget-chip :boolean="item.is_budget"> </binary-is-budget-chip>
+                <binary-yes-no-chip :boolean="item.is_budget"> </binary-yes-no-chip>
+            </template>
+            <template v-slot:[`item.project_detail.project.is_tech`]="{ item }">
+                <binary-yes-no-chip :boolean="item.project_detail.project.is_tech"> </binary-yes-no-chip>
             </template>
           </v-data-table>
         </v-col>
@@ -109,10 +112,10 @@ import { mapState, mapActions } from "vuex";
 import FormPlanning from "@/components/ListPlanning/FormPlanning";
 import ColumnOption from "@/components/ListPlanning/ColumnOption";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
-import BinaryIsBudgetChip from "@/components/chips/BinaryIsBudgetChip";
+import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
 export default {
   name: "ListPlanning",
-  components: {FormPlanning,SuccessErrorAlert,ColumnOption,BinaryIsBudgetChip},
+  components: {FormPlanning,SuccessErrorAlert,ColumnOption,BinaryYesNoChip},
   watch: {},
   data: () => ({
     dialog: false,
