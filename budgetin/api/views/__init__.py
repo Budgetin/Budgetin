@@ -13,5 +13,6 @@ from .login_view import LoginView
 from .logout_view import LogoutView
 from .test_view import TestView
 from .excel_import_view import ImportExcelView
-from .excel_export_view import ExportExcelView
+from .export.export_list_planning import ExportListPlanning
+from .export.export_list_project import ExportListProject
 from .biro_view import BiroView

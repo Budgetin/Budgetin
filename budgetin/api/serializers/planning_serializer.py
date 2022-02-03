@@ -2,6 +2,11 @@ from rest_framework import serializers
 
 from api.models import Planning
 
+class ActivePlanningSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Planning
+        fields = ['id', 'year']
+
 class PlanningSerializer(serializers.ModelSerializer):
     class Meta:
         model = Planning

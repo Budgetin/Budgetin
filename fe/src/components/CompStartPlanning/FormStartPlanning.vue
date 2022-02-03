@@ -131,26 +131,6 @@
             </v-col>
           </v-row>
 
-          <!-- HIDDEN FIELD -->
-          <!-- <v-row no-gutters v-if="form.notification.id==1">
-            <v-col> Send to <strong class="red--text">*</strong>
-              <v-col no-gutters>
-                <div class="sendTo">
-                <v-select
-                  :items="dataAllBiro"
-                  v-model="form.biros"
-                  item-text="code"
-                  item-value="code"
-                  placeholder="Choose Biro"
-                  multiple
-                  chips
-                  outlined>
-                </v-select>
-                </div>
-              </v-col>            
-            </v-col>
-          </v-row> -->
-
           <!-- E-MAIL BODY -->
           <v-row no-gutters v-if="form.notification.id==1">
             <v-col> E-mail Body
@@ -260,7 +240,7 @@ export default {
         // console.log("DueDate"+this.form.due_date);
         // console.log("is_active"+this.form.is_active.id);
         // console.log("sendNotif"+this.form.notification.id);
-        // console.log("Biro"+this.form.biros);
+        console.log(this.form.biros);
         // console.log("body"+this.form.body);
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
         this.$refs.form.reset()

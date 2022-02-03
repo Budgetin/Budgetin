@@ -38,7 +38,7 @@
         <v-row no-gutters>
           <v-col cols="4">
             <v-text-field
-              v-model="form.planning.year"
+              v-model="form.project_detail.planning.year"
               outlined
               dense
               :disabled="isView"
@@ -50,7 +50,7 @@
           </v-col>
           <v-col cols="4"> 
             <v-text-field
-              v-model="form.dcsp_id"
+              v-model="form.project_detail.dcsp_id"
               outlined
               dense
               :disabled="isView"
@@ -62,7 +62,7 @@
           </v-col>
           <v-col cols="4">
             <v-text-field
-              v-model="form.project_type"
+              v-model="form.project_detail.project_type"
               outlined
               dense
               :disabled="isView"
@@ -92,7 +92,7 @@
         <v-row no-gutters>
           <v-col cols="12">
             <v-text-field
-              v-model="form.project.project_name"
+              v-model="form.project_detail.project.project_name"
               outlined
               dense
               :disabled="isView"
@@ -112,7 +112,7 @@
         <v-row no-gutters>
           <v-col cols="12">
             <v-textarea
-              v-model="form.project.project_description"
+              v-model="form.project_detail.project.project_description"
               outlined
               dense
               rows=4
@@ -144,7 +144,7 @@
         <v-row no-gutters >
           <v-col cols="3">
             <v-text-field
-              v-model="form.dcsp_id"
+              v-model="form.project_detail.project.itfam_id"
               outlined
               dense
               :disabled="isView"
@@ -156,7 +156,7 @@
           </v-col>
           <v-col cols="3"> 
             <v-text-field
-              v-model="form.project.start_year"
+              v-model="form.project_detail.project.start_year"
               outlined
               dense
               :disabled="isView"
@@ -168,7 +168,7 @@
           </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="form.project.end_year"
+              v-model="form.project_detail.project.end_year"
               outlined
               dense
               :disabled="isView"
@@ -180,7 +180,7 @@
           </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="form.project.total_investment_value"
+              v-model="form.project_detail.project.total_investment_value"
               outlined
               dense
               :disabled="isView"
@@ -211,7 +211,7 @@
         <v-row no-gutters >
           <v-col cols="3">
             <v-text-field
-              v-model="form.project.is_tech"
+              v-model="form.project_detail.project.is_tech"
               outlined
               dense
               :disabled="isView"
@@ -223,7 +223,7 @@
           </v-col>
           <v-col cols="3"> 
             <v-text-field
-              v-model="form.project.product.product_code"
+              v-model="form.project_detail.project.product.product_code"
               outlined
               dense
               :disabled="isView"
@@ -235,7 +235,7 @@
           </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="form.project.biro"
+              v-model="form.project_detail.project.biro.code"
               outlined
               dense
               :disabled="isView"
@@ -247,7 +247,7 @@
           </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="form.project.rcc"
+              v-model="form.project_detail.project.biro.rcc"
               outlined
               dense
               :disabled="isView"
@@ -283,7 +283,7 @@
         <v-row no-gutters >
           <v-col cols="3">
             <v-text-field
-              v-model="form.project.budget.coa.name"
+              v-model="form.coa"
               outlined
               dense
               :disabled="isView"
@@ -295,7 +295,7 @@
           </v-col>
           <v-col cols="3"> 
             <v-text-field
-              v-model="form.project.budget.expense_type"
+              v-model="form.expense_type"
               outlined
               dense
               :disabled="isView"
@@ -326,7 +326,7 @@
         <v-row no-gutters >
           <v-col cols="3">
             <v-text-field
-              v-model="form.project.budget.planning_q1"
+              v-model="form.planning_q1"
               outlined
               dense
               :disabled="isView"
@@ -338,7 +338,7 @@
           </v-col>
           <v-col cols="3"> 
             <v-text-field
-              v-model="form.project.budget.planning_q2"
+              v-model="form.planning_q2"
               outlined
               dense
               :disabled="isView"
@@ -350,7 +350,7 @@
           </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="form.project.budget.planning_q3"
+              v-model="form.planning_q3"
               outlined
               dense
               :disabled="isView"
@@ -362,7 +362,7 @@
           </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="form.project.budget.planning_q4"
+              v-model="form.planning_q4"
               outlined
               dense
               :disabled="isView"
@@ -401,7 +401,7 @@
           </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="form.project.budget.planning_nominal"
+              v-model="form.planning_nominal"
               outlined
               dense
               :disabled="isView"
