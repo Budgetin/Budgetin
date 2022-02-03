@@ -5,6 +5,7 @@ from api.models import User
 from api.utils.jwt import generate_token, decode_token
 from api.utils.hit_api import login_eai, get_ithc_employee_info, get_initial_and_eselon
 from api.exceptions import InvalidCredentialException, NotEligibleException
+from api.utils.enum import RoleEnum
 
 def get_user_info(username):
     #Check if user exists in Budgetin DB
@@ -18,7 +19,7 @@ def get_user_info(username):
     #Check if User S1, S2, S3
     user = get_ithc_employee_info(username)
     if user['biro_manager_id'] == user['employee_id'] or user['sub_group_manager_id'] == user['employee_id'] or user['group_manager_id'] == user['employee_id']:
-        return user['employee_id'], user['display_name'], 'User', user['initial'], user['eselon']
+        return user['employee_id'], user['display_name'], RoleEnum.USER.value, user['initial'], user['eselon']
     
     raise NotEligibleException()
 
