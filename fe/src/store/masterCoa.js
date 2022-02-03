@@ -212,6 +212,9 @@ const masterCoa = {
       state.requestStatus = "ERROR";
       state.loadingPostPatchMasterCoa = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
     SET_EDITTED_ITEM(state, payload) {
       state.edittedItem = payload;
@@ -250,6 +253,9 @@ const masterCoa = {
       state.deleteStatus = "ERROR";
       state.loadingDeleteItem = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
   },
 };

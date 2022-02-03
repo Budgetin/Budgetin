@@ -8,9 +8,9 @@
             <v-col >
                 <v-data-table
                 :headers="dataTable.projectDetailsHeaders"
-                :loading="loadingGetListProject"
-                :items="data">
-                </v-data-table>
+                :loading="status"
+                :items="showItem">
+                </v-data-table> 
                 <!-- :items="projectDetail" -->
             </v-col>
         </v-row>
@@ -21,9 +21,10 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 export default {
     name: "TableProjectDetails",
-    props: ["data"],
+    props: ["projectDetail"],
     data: () => ({
         isView: true,
+        showItem :[],
         form: {
             id: "",
             created_by: "",
@@ -92,15 +93,14 @@ export default {
             ]
         },
 
-        projectDetail: [],
 
         dataTable: {
             projectDetailsHeaders: [
-                { text: "Year", value: "data.planning.year", width: "10%" },
-                { text: "Project ID", value: "project_detail.dcsp_id", width: "15%" },
-                { text: "Status", value: "project_detail.planning.is_active", width: "20%" },
-                { text: "Due Date", value: "project_detail.planning.due_date", width: "20%" },
-                { text: "Project Type", value: "project_detail.project_type", width: "25%" }
+                { text: "Year", value: "planning.year", width: "10%" },
+                { text: "Project ID", value: "dcsp_id", width: "15%" },
+                { text: "Status", value: "planning.is_active", width: "20%" },
+                { text: "Due Date", value: "planning.due_date", width: "20%" },
+                { text: "Project Type", value: "project_type", width: "25%" }
             ],
             // projectDetailsHeaders: [
             //     { text: "Year", value: "year", width: "10%" },
@@ -121,33 +121,39 @@ export default {
         },
     }),
 
+    mounted(){
+        this.showItem = this.projectDetail.project_detail;
+        console.log(this.showItem);
+
+    },
     created() {
-        this.getEdittedItem();
-        this.getListProjectById(this.$route.params.id);
+        // this.getEdittedItem();
+        // this.getListProjectById(this.$route.params.id);
         // console.log("TABLE PROJECT DETAILS MASUK CREATED PARAM ID");
         // console.log(this.$route.params.id);
-        console.log(this.data);
     },
 
     computed: {
-        ...mapState("listProject", ["loadingGetListProject", "dataListPlanning"]),
+       status: function() {
+           return this.projectDetail.project_detail ? false : true
+       }
     },
 
     methods: {
-        ...mapActions("listProject", ["getListProjectById"]),
+        // ...mapActions("listProject", ["getListProjectById"]),
 
-        getEdittedItem() {
-            console.log("TABLE PROJECT DETAILS MASUK EDITTED ITEM1");
-            this.getListProjectById(this.$route.params.id).then(() => {
-                console.log("TABLE PROJECT DETAILS MASUK EDITTED ITEM2");
-                console.log(this.$route.params.id);
+        // getEdittedItem() {
+        //     console.log("TABLE PROJECT DETAILS MASUK EDITTED ITEM1");
+        //     this.getListProjectById(this.$route.params.id).then(() => {
+        //         console.log("TABLE PROJECT DETAILS MASUK EDITTED ITEM2");
+        //         console.log(this.$route.params.id);
                 
-                this.projectDetail = JSON.parse(
-                    JSON.stringify(this.$store.state.listProject.edittedItem)
-                );
-                console.log(this.projectDetail);
-            });
-        },
+        //         this.projectDetail = JSON.parse(
+        //             JSON.stringify(this.$store.state.listProject.edittedItem)
+        //         );
+        //         console.log(this.projectDetail);
+        //     });
+        // },
         onOK() {
             return this.$router.go(-1);
         }

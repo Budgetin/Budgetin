@@ -14,7 +14,8 @@
 
             <v-card class="view-list-project__table">
                 <table-project-details
-                :data="dataListProject.project_detail">
+                :projectDetail="projectDetail"
+                v-if="projectDetail.project_detail">
                 </table-project-details>
             </v-card>
 
@@ -92,9 +93,7 @@ export default {
     },
     data: () => ({
         isView: true,
-
         projectDetail: [],
-
         form: {
             id: "",
             created_by: "",
@@ -189,11 +188,8 @@ export default {
     }),
 
     created() {
-        this.getEdittedItem();
         this.getDetailItem();
         this.setBreadcrumbs();
-        this.getListProjectById(this.$route.params.id);
-        console.log("INI CREATED");
     },
 
     computed: {
@@ -223,26 +219,26 @@ export default {
         },
 
         getDetailItem() {
-            console.log("INI GET DETAIL ITEM");
             this.getListProjectById(this.$route.params.id).then(() => {
                 // console.log(this.$route.params.id);
                 
                 this.projectDetail = JSON.parse(
                     JSON.stringify(this.$store.state.listProject.edittedItem)
                 );
-                // console.log(this.projectDetail);
-            });
-        },
-
-        getEdittedItem() {
-            this.getListProjectById(this.$route.params.id).then(() => {
                 this.setForm();
             });
         },
+
+        // getEdittedItem() {
+        //     this.getListProjectById(this.$route.params.id).then(() => {
+        //         this.setForm();
+        //     });
+        // },
         setForm() {
             this.form = JSON.parse(
                 JSON.stringify(this.$store.state.listProject.edittedItem)
             );
+            console.log(this.projectDetail)
         },
         onOK() {
             return this.$router.go(-1);
