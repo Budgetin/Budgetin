@@ -10,5 +10,6 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view()),
     path('test/', views.TestView.as_view()),
     path('upload/', views.ImportExcelView.as_view()),
-    path('download/', views.ExportExcelView.as_view()),
+    path('download_list_planning/', views.ExportListPlanning.as_view()),
+    path('download_list_project/', views.ExportListProject.as_view()),
 ]

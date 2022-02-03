@@ -43,3 +43,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = super().destroy(request, *args, **kwargs)
         AuditLog.Save(project, request, ActionEnum.DELETE, TableEnum.PROJECT)
         return project
+
+    def list_for_export():
+        queryset = Project.objects.all()
+        for project in queryset:
+            project.format_timestamp("%d %B %Y")
+            
+        serializer = ProjectResponseSerializer(queryset, many=True)
+        return Response(serializer.data)
