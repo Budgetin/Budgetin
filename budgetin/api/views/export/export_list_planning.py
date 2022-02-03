@@ -1,15 +1,11 @@
-from wsgiref.util import FileWrapper
 from django.http import HttpResponse
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.decorators import parser_classes, api_view
 from rest_framework.parsers import MultiPartParser
 import pandas as pd
 from io import BytesIO
 
 from api.views import BudgetViewSet
-from rest_framework.decorators import action
-class ExportExcelView(APIView):
+class ExportListPlanning(APIView):
     parser_classes = (MultiPartParser,)
     
     def get(self, request, format=None):
@@ -38,7 +34,6 @@ class ExportExcelView(APIView):
             data_temp.append(data['updated_at'])
             data_temp.append(1)
             #SUM Budget for this year budget
-            # if data['budget']:
             data_temp.append(data['coa'])
             data_temp.append(data['expense_type'])
             budget_this_year = data['planning_q1'] + data['planning_q2'] + data['planning_q3'] + data['planning_q4']
