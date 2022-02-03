@@ -24,11 +24,15 @@ class BiroSerializer(serializers.ModelSerializer):
         fields = ['id', 'code', 'name', 'rcc']
 
 class ProjectSerializer(serializers.ModelSerializer):
+    is_tech = serializers.SerializerMethodField()
     product = ProductSerializer(many=False)
     biro = BiroSerializer(many=False)
     class Meta:
         model = Project
         fields = ['id', 'project_name', 'project_description', 'itfam_id', 'is_tech', 'start_year', 'end_year', 'total_investment_value', 'product', 'biro']
+        
+    def get_is_tech(self, project):
+        return 1 if project.is_tech == True else 0
 
 class PlanningSerializer(serializers.ModelSerializer):
     class Meta:
