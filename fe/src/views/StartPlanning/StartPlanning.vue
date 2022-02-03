@@ -76,11 +76,11 @@
                         </template>
 
                         <template v-slot:[`item.is_active`]="{ item }">
-                            <binary-status-chip :boolean="item.is_active"> </binary-status-chip>
+                            <binary-yes-no-chip :boolean="item.is_active"> </binary-yes-no-chip>
                         </template>
 
                         <template v-slot:[`item.notification`]="{ item }">
-                            <binary-notif-chip :boolean="item.notification"> </binary-notif-chip>
+                            <binary-yes-no-chip :boolean="item.notification"> </binary-yes-no-chip>
                         </template>
                     </v-data-table>
                 </v-col>
@@ -118,11 +118,11 @@ import { mapState, mapActions } from "vuex";
 import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
-import BinaryNotifChip from "@/components/chips/BinaryNotifChip";
+import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
 export default {
     name: "StartPlanning",
     components: {
-        FormStartPlanning, SuccessErrorAlert, BinaryStatusChip, BinaryNotifChip
+        FormStartPlanning, SuccessErrorAlert, BinaryStatusChip, BinaryYesNoChip
     },
     watch: {},
     data: () => ({

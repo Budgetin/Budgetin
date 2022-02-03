@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "BinaryIsBudgetChip",
+  name: "BinaryYesNoChip",
   props: ["boolean"],
   computed: {
     chipColor() {
