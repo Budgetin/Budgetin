@@ -1,5 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
+import router from "@/router/index.js"
 
 const ENDPOINT = "/api/coa/";
 
@@ -36,6 +37,7 @@ const masterCoa = {
       getAPI
         .get(ENDPOINT)
         .then((response) => {
+          console.log(response)
           const cleanData = response.data
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
@@ -186,11 +188,15 @@ const masterCoa = {
       state.dataActiveMasterCoa = dataActiveMasterCoa;
     },
     GET_ERROR(state, error) {
+      console.log(error.response)
       state.requestStatus = "ERROR";
       state.loadingGetMasterCoa = false;
       state.errorMsg = error;
       state.dataMasterCoa = [];
       state.dataActiveMasterCoa = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
     // post / patch related

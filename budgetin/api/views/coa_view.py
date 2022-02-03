@@ -18,7 +18,7 @@ def is_duplicate_coa(id, name, hyperion_name):
 class CoaViewSet(viewsets.ModelViewSet):
     queryset = Coa.objects.all()
     serializer_class = CoaSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         queryset = Coa.objects.all()
