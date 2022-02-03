@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from api.models import Planning, Monitoring, Biro
-from api.serializers import PlanningSerializer, PlanningResponseSerializer
+from api.serializers import PlanningSerializer, PlanningResponseSerializer, ActivePlanningSerializer
 from api.utils.send_email import send_email
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import MonitoringStatusEnum
@@ -150,4 +150,5 @@ class PlanningViewSet(viewsets.ModelViewSet):
     def active(self, request):
         active_planning = Planning.objects.filter(is_active=True).values()
         
-        return Response(active_planning)
+        serializer = ActivePlanningSerializer(active_planning, many=True)
+        return Response(serializer.data)
