@@ -8,9 +8,13 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductSerializer(serializers.ModelSerializer):
+    strategy = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = ['id', 'product_name', 'product_code', ]
+        fields = ['id', 'product_name', 'product_code', 'strategy']
+        
+    def get_strategy(self, product):
+        return product.strategy.name
         
 class BiroSerializer(serializers.ModelSerializer):
     class Meta:
