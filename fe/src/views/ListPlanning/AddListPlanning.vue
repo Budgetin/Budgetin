@@ -6,8 +6,6 @@
         <v-container>
           <form-planning
             :form="form"
-            :isView="isView"
-            :isNew="isNew"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
@@ -43,14 +41,14 @@ import { mapState, mapActions, mapGetters } from "vuex";
 import FormPlanning from "@/components/ListPlanning/FormPlanning";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "EditListPlanning",
+  name: "AddListPlanning",
   components: { FormPlanning,SuccessErrorAlert},
   created() {
-    this.getEdittedItem();
+    //this.getEdittedItem();
   },
   methods: {
     ...mapActions("listPlanning", [
-      "patchListPlanning",
+      "postListPlanning",
       "getListPlanningById",
     ]),
     getEdittedItem() {
@@ -80,8 +78,9 @@ export default {
       this.setForm();
     },
     onSubmit(e) {
-      this.patchListPlanning(e)
-        .then(() => {
+      //this.patchListPlanning(e)
+      this.postListPlanning(e)
+      .then(() => {
           this.onSaveSuccess();
         })
         .catch((error) => {
@@ -103,75 +102,43 @@ export default {
     onAlertOk() {
       this.alert.show = false;
       this.isView = true;
-      this.getEdittedItem();
+      //this.getEdittedItem();
     },
   },
   data: () => ({
     isView: true,
     form: {
-    id: "",
-    is_budget: "",
-    expense_type: "",
-    planning_nominal: "",
-    planning_q1: "",
-    planning_q2: "",
-    planning_q3: "",
-    planning_q4: "",
-    realization_jan: "",
-    realization_feb: "",
-    realization_mar: "",
-    realization_apr: "",
-    realization_may: "",
-    realization_jun: "",
-    realization_jul: "",
-    realization_aug: "",
-    realization_sep: "",
-    realization_oct: "",
-    realization_nov: "",
-    realization_dec: "",
-    switching_in: "",
-    switching_out: "",
-    top_up: "",
-    returns: "",
-    allocate: "",
-    coa: "",
-    project_detail: {
-        id: "",
-        dcsp_id: "",
-        planning: {
-            id: "",
-            year: "",
-            due_date: "",
-            is_active: ""
-        },
-        project: {
-            id: "",
-            project_name: "",
-            project_description: "",
-            itfam_id: "",
-            is_tech: "",
-            start_year: "",
-            end_year: "",
-            total_investment_value: "",
-            product: {
-                id: "",
-                product_code: "",
-                strategy: ""
+        itfam_id : "",
+        project_name : "",
+        project_description : "",
+        biro : "",
+        start_year : "",
+        end_year : "",
+        total_investment_value : "",
+        product : "",
+        is_tech : "",
+        planning : "",
+        project_type : "",
+        dcsp_id : "",
+        budget:[
+            {
+                coa : "",
+                expense_type : "",
+                planning_q1 : "",
+                planning_q2 : "",
+                planning_q3 : "",
+                planning_q4 : ""
             },
-            biro: {
-                id: "",
-                code: "",
-                name: "",
-                rcc: ""
-            }
-        },
-        project_type: ""
+            {
+                coa : "",
+                expense_type : "",
+                planning_q2 : "",
+                planning_q1 : "",
+                planning_q3 : "",
+                planning_q4 : ""
+            },
+        ]
     },
-    created_by: "",
-    updated_by: "",
-    created_at: "",
-    updated_at: ""
-},
     alert: {
       show: false,
       success: null,

@@ -86,9 +86,9 @@ const routes = [
         component: () => import("@/views/ListPlanning/ListPlanning"),
       },
       {
-        path: '/listPlanning/:id/edit',
-        name: 'EditListPlanning',
-        component: () => import("@/views/ListPlanning/EditListPlanning"),
+        path: '/listPlanning/new',
+        name: 'AddListPlanning',
+        component: () => import("@/views/ListPlanning/AddListPlanning"),
       },
     ]
   },

@@ -67,7 +67,7 @@ const listPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listPlanning/getFromAPI");
+            //store.dispatch("listPlanning/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
