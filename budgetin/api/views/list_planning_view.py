@@ -42,18 +42,25 @@ class CreateListPlanning(APIView):
         parsed_project_detail.save()
 
         # Budget Part #
-        for budget in data['budget']:
+        # if there's no budget, create an empty budget
+        if not 'budget' in data:
             parsed_budget = Budget(
                 project_detail = parsed_project_detail,
-                coa = Coa.objects.get(pk=budget['coa']),
-                expense_type = budget['expense_type'],
-                planning_q1 = budget['planning_q1'],
-                planning_q2 = budget['planning_q2'],
-                planning_q3 = budget['planning_q3'],
-                planning_q4 = budget['planning_q4'],
-            #DEBT
-                created_by = 1
+                #DEBT
+                created_by=1
             )
-            parsed_budget.save()
-
+        else:
+            for budget in data['budget']:
+                parsed_budget = Budget(
+                    project_detail = parsed_project_detail,
+                    coa = Coa.objects.get(pk=budget['coa']),
+                    expense_type = budget['expense_type'],
+                    planning_q1 = budget['planning_q1'],
+                    planning_q2 = budget['planning_q2'],
+                    planning_q3 = budget['planning_q3'],
+                    planning_q4 = budget['planning_q4'],
+                #DEBT
+                    created_by = 1
+                )
+        parsed_budget.save()
         return Response({"message":"List Planning Saved"},status=201)
