@@ -76,7 +76,7 @@
                         </template>
 
                         <template v-slot:[`item.is_active`]="{ item }">
-                            <binary-yes-no-chip :boolean="item.is_active"> </binary-yes-no-chip>
+                            <binary-status-chip :boolean="item.is_active"> </binary-status-chip>
                         </template>
 
                         <template v-slot:[`item.notification`]="{ item }">

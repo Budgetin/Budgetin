@@ -20,53 +20,25 @@
             </v-card>
 
             <v-card class="view-list-project__table">
-                <table-budget-planning>
+                <table-budget-planning
+                :budgetPlanning="budgetPlanning"
+                v-if="budgetPlanning.project_detail">
                 </table-budget-planning>
             </v-card>
+
+            <v-card class="view-list-project__table">
+                <table-budget-realization
+                :budgetRealization="budgetRealization"
+                v-if="budgetRealization.project_detail">
+                </table-budget-realization>
+            </v-card>
         </v-container>
-
-        <!-- PROJECT DETAILS -->
-        <!-- <v-container class="view-list-project__outer-container">
-            <v-row no-gutters style="margin-top: 16px">
-                <v-subheader class="view-list-project__header">Project Details</v-subheader>
-            </v-row>
-
-            <v-row no-gutters>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <v-data-table
-                    :headers="dataTable.projectDetailsHeaders"
-                    :loading="loadingGetListPlanning"
-                    :items="dataListPlanning"
-                    class="data-table">
-                    </v-data-table>
-                </v-col>
-            </v-row>
-        </v-container> -->
-
-        <!-- BUDGET PLANNING -->
-        <!-- <v-container class="view-list-project__outer-container">
-            <v-row no-gutters style="margin-top: 16px">
-                <v-subheader class="view-list-project__header">Budget Planning</v-subheader>
-            </v-row>
-
-            <v-row no-gutters>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <v-data-table
-                    :headers="dataTable.budgetPlanningHeaders"
-                    :loading="loadingGetListPlanning"
-                    :items="dataListPlanning"
-                    class="data-table">
-                    </v-data-table>
-                </v-col>
-            </v-row>
-        </v-container> -->
 
         <!-- BUDGET REALIZATION -->
         <!-- <v-container class="view-list-project__outer-container">
             <v-row no-gutters style="margin-top: 16px">
                 <v-subheader class="view-list-project__header">Budget Realization</v-subheader>
             </v-row>
-
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-data-table
@@ -86,14 +58,17 @@ import { mapState, mapActions, mapGetters } from "vuex";
 import FormListProject from '@/components/CompListProject/FormListProject';
 import TableProjectDetails from '@/components/CompListProject/TableProjectDetails';
 import TableBudgetPlanning from '@/components/CompListProject/TableBudgetPlanning';
+import TableBudgetRealization from '@/components/CompListProject/TableBudgetRealization';
 export default {
     name: "ViewListProject",
     components: {
-        FormListProject, TableProjectDetails, TableBudgetPlanning
+        FormListProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization
     },
     data: () => ({
         isView: true,
         projectDetail: [],
+        budgetPlanning: [],
+        budgetRealization: [],
         form: {
             id: "",
             created_by: "",
@@ -155,14 +130,12 @@ export default {
                             top_up: "",
                             returns: "",
                             allocate: "",
-                            project_detail: "",
                             coa: ""
                         },
                     ]
                 },
             ]
         },
-
         // dataTable: {
         //     budgetRealizationHeaders: [
         //         { text: "Year", value: "project_detail.planning.year", width: "10%" },
@@ -186,19 +159,15 @@ export default {
         //     ],
         // },
     }),
-
     created() {
         this.getDetailItem();
         this.setBreadcrumbs();
     },
-
     computed: {
         ...mapState("listProject", ["loadingGetListProject", "dataListProject"]),
     },
-
     methods: {
         ...mapActions("listProject", ["getListProjectById"]),
-
         setBreadcrumbs() {
             let param = this.isView ? "View Detail Project" : "Edit Project";
             this.$store.commit("breadcrumbs/SET_LINKS", [
@@ -217,28 +186,24 @@ export default {
                 },
             ]);
         },
-
         getDetailItem() {
             this.getListProjectById(this.$route.params.id).then(() => {
-                // console.log(this.$route.params.id);
-                
                 this.projectDetail = JSON.parse(
+                    JSON.stringify(this.$store.state.listProject.edittedItem)
+                );
+                this.budgetPlanning = JSON.parse(
+                    JSON.stringify(this.$store.state.listProject.edittedItem)
+                );
+                this.budgetRealization = JSON.parse(
                     JSON.stringify(this.$store.state.listProject.edittedItem)
                 );
                 this.setForm();
             });
         },
-
-        // getEdittedItem() {
-        //     this.getListProjectById(this.$route.params.id).then(() => {
-        //         this.setForm();
-        //     });
-        // },
         setForm() {
             this.form = JSON.parse(
                 JSON.stringify(this.$store.state.listProject.edittedItem)
             );
-            console.log(this.projectDetail)
         },
         onOK() {
             return this.$router.go(-1);
@@ -254,7 +219,6 @@ export default {
 .data-table {
     margin: 40px;
 }
-
 #view-list-project {
     .view-list-project__header {
         padding-left: 32px;
@@ -297,14 +261,12 @@ export default {
         max-height: 90%;
     }
 }
-
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
 #view-list-project {
     .view-list-project__btn {
         text-align: center;
         padding: 0px 32px;
-
         button {
         width: 100%;
         margin: 0px 0px 32px 0px;
