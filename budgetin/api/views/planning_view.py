@@ -110,6 +110,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         # request.data['created_by'] = request.custom_user['id']
+        #DEBT
         request.data['created_by'] = 1
         planning = super().create(request, *args, **kwargs)
         
@@ -129,6 +130,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
+        #DEBT
         request.data['updated_by'] = 1
         planning = super().update(request, *args, **kwargs)
 
@@ -141,6 +143,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         return planning
 
     def destroy(self, request, *args, **kwargs):
+        #DEBT
         request.data['updated_by'] = 1
         planning = super().destroy(request, *args, **kwargs)
         AuditLog.Save(planning, request, ActionEnum.DELETE, TableEnum.PLANNING)

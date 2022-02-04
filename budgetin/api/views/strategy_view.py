@@ -41,6 +41,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
+        #DEBT
         request.data['created_by'] = 1
         is_duplicate_create(request.data['name'])
         strategy = super().create(request, *args, **kwargs)
@@ -48,6 +49,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
         return strategy
 
     def update(self, request, *args, **kwargs):
+        #DEBT
         request.data['updated_by'] = 1
         is_duplicate(kwargs['pk'], request.data['name'])
         strategy = super().update(request, *args, **kwargs)
@@ -55,6 +57,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
         return strategy
 
     def destroy(self, request, *args, **kwargs):
+        #DEBT
         request.data['updated_by'] = 1
         strategy = super().destroy(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.DELETE, TableEnum.STRATEGY)

@@ -52,7 +52,7 @@
                     no-gutters
                     class="list-planning__btn"
                   >
-                    <v-btn rounded color="primary"> Add Planning </v-btn>
+                    <v-btn rounded color="primary" @click="gotoListPlanning"> Add Planning </v-btn>
                   </v-col>
                 </v-row>
               </v-toolbar-title>
@@ -62,8 +62,7 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'EditListPlanning',
-                  params: { id: item.id },
+                  name: 'AddListPlanning'
                 }"
               >
                 <v-tooltip bottom>
@@ -348,6 +347,9 @@ export default {
     onAlertOk() {
       this.alert.show = false;
     },
+    gotoListPlanning() {
+      return this.$router.push("/listPlanning/0/edit");
+    }
   },
 };
 </script>
