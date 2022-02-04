@@ -41,6 +41,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
+        #DEBT
         request.data['created_by'] = 1
         is_product_duplicate_create(request.data['product_code'],request.data['product_name'])
         product = super().create(request, *args, **kwargs)
@@ -48,6 +49,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return product
 
     def update(self, request, *args, **kwargs):
+        #DEBT
         request.data['updated_by'] = 1
         is_product_duplicate(kwargs['pk'],request.data['product_code'],request.data['product_name'])
         product = super().update(request, *args, **kwargs)
@@ -55,6 +57,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return product
 
     def destroy(self, request, *args, **kwargs):
+        #DEBT
         request.data['updated_by'] = 1                                 
         product = super().destroy(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.DELETE, TableEnum.PRODUCT)

@@ -12,4 +12,5 @@ urlpatterns = [
     path('upload/', views.ImportExcelView.as_view()),
     path('download_list_planning/', views.ExportListPlanning.as_view()),
     path('download_list_project/', views.ExportListProject.as_view()),
+    path('list_planning/', views.CreateListPlanning.as_view()),
 ]
