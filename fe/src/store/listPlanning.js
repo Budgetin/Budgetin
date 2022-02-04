@@ -1,7 +1,7 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/budget/";
+const ENDPOINT = "/api/test/";
 
 const listPlanning = {
   namespaced: true,
@@ -67,7 +67,7 @@ const listPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listPlanning/getFromAPI");
+            //store.dispatch("listPlanning/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
