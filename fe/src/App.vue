@@ -37,9 +37,14 @@ export default {
 #master-product,
 #master-user,
 #master-strategy,
-#list-planning
+#list-planning,
+#login-form
 {
   font-family: "Nunito", sans-serif !important;
+}
+
+#app-bar{
+   z-index: 15;
 }
 
 .v-data-table {

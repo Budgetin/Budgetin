@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar class="bg-grey" prominent flat app dense>
+  <v-app-bar id="app-bar" class="bg-grey" prominent flat app dense>
     <v-toolbar-title>
       <v-breadcrumbs
         :items="links"
@@ -17,10 +17,10 @@
       style="margin: auto 0px"
     >
       <!-- <span class="text-caption">photo</span> -->
-      <span class="white--text text-h6">FNA</span>
+      <span class="white--text text-h6">{{ userInitial }}</span>
     </v-avatar>
 
-    <v-btn icon style="margin: auto 0px">
+    <v-btn icon style="margin: auto 0px" @click="logout">
       <v-icon color="red">mdi-logout</v-icon>
     </v-btn>
   </v-app-bar>
@@ -28,15 +28,20 @@
 
 <script>
 // import formatting from "@/mixins/formatting";
-import { mapState } from "vuex";
+import { mapState,mapActions } from "vuex";
 export default {
   name: "AppBar",
   computed: {
     ...mapState("breadcrumbs", ["links"]),
+    ...mapState("login", ["userInitial"]),
   },
-  // mixins: [formatting],
+  methods: {
+    ...mapActions("login", ["logOut"]),
+    logout() {
+      this.logOut();
+    },
+  },
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

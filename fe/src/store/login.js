@@ -1,5 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
+import router from "@/router/index.js"
 
 const ENDPOINT = "/api/login/";
 const SECONDENDPOINT = "/api/logout/"
@@ -7,7 +8,8 @@ const SECONDENDPOINT = "/api/logout/"
 const login = {
   namespaced: true,
   state: {
-    loadingGetLogin: false, // for loading table
+    userInitial :"Admin",
+    loadingGetLogout: false, // for loading table
     loadingPostPatchLogin: false, // for loading post/patch
     dataLogin: [], // for v-data-table
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
@@ -23,12 +25,10 @@ const login = {
         store.dispatch("login/setLogout");
     },
     setLogout({ commit }) {
-      console.log("logout")
       commit("GET_INIT");
       getAPI
         .get(SECONDENDPOINT)
-        .then((response) => {
-          console.log(response);
+        .then(() => {
           commit("GET_SUCCESS");
         })
         .catch((error) => {
@@ -42,27 +42,13 @@ const login = {
         getAPI
           .post(ENDPOINT, payload)
           .then((response) => {
-            console.log(response)
+            commit("POST_PATCH_SUCCESS", response.data.initial);
             resolve(response);
           })
           .catch((error) => {
             console.log(error)
             let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  // if (error.response.data.hasOwnProperty("login_name")) {
-                  //   errorMsg += error.response.data.login_name;
-                  // }
-                  break;
-
-                default:
-                  errorMsg += `Please recheck your input or try again later`;
-                  break;
-              }
-            }
+            `Please recheck your input or try again later`;
             commit("POST_PATCH_ERROR", errorMsg);
             reject(errorMsg);
           });
@@ -72,30 +58,32 @@ const login = {
   mutations: {
     GET_INIT(state) {
       state.requestStatus = "PENDING";
-      state.loadingGetLogin = true;
+      state.loadingGetLogout = true;
     },
     GET_SUCCESS(state) {
       state.requestStatus = "SUCCESS";
-      state.loadingGetLogin = false;
+      state.loadingGetLogout = false;
+      router.push({ name: 'Login'});
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingGetLogin = false;
+      state.loadingGetLogout = false;
       state.errorMsg = error;
     },
 
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";
-      state.loadingPostPatchMasterlogin = true;
+      state.loadingPostPatchLogin = true;
     },
-    POST_PATCH_SUCCESS(state) {
-      state.requestStatus = "SUCCESS";
-      state.loadingPostPatchMasterlogin = false;
+    POST_PATCH_SUCCESS(state, initial) {
+      state.postPatchStatus = "SUCCESS";
+      state.loadingPostPatchLogin = false;
+      state.userInitial = initial;
     },
     POST_PATCH_ERROR(state, error) {
-      state.requestStatus = "ERROR";
-      state.loadingPostPatchMasterlogin = false;
+      state.postPatchStatus = "ERROR";
+      state.loadingPostPatchLogin = false;
       state.errorMsg = error;
     },
   },

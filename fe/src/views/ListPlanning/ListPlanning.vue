@@ -288,7 +288,6 @@ export default {
     },
     setColumn(list) {
       this.$store.commit("choosedColumn/SET_LIST", list);
-      console.log(this.listColumn);
     },
     chooseColumn() {
       //this.dataTable.selectedHeader.splice(0, 2);
