@@ -27,18 +27,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
+        #DEBT
         request.data['created_by'] = 1
         project = super().create(request, *args, **kwargs)
         AuditLog.Save(project, request, ActionEnum.CREATE, TableEnum.PROJECT)
         return project
 
     def update(self, request, *args, **kwargs):
+        #DEBT
         request.data['updated_by'] = 1
         project = super().update(request, *args, **kwargs)
         AuditLog.Save(project, request, ActionEnum.UPDATE, TableEnum.PROJECT)
         return project
 
     def destroy(self, request, *args, **kwargs):
+        #DEBT
         request.data['updated_by'] = 1                                 
         project = super().destroy(request, *args, **kwargs)
         AuditLog.Save(project, request, ActionEnum.DELETE, TableEnum.PROJECT)

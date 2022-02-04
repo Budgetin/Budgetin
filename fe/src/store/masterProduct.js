@@ -222,6 +222,9 @@ const masterProduct = {
       state.errorMsg = error;
       state.dataMasterProduct = [];
       state.dataActiveMasterProduct = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
     // post / patch related

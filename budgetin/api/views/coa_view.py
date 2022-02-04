@@ -18,7 +18,7 @@ def is_duplicate_coa(id, name, hyperion_name):
 class CoaViewSet(viewsets.ModelViewSet):
     queryset = Coa.objects.all()
     serializer_class = CoaSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         queryset = Coa.objects.all()
@@ -39,6 +39,7 @@ class CoaViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         #request.data['created_by'] = request.custom_user['id']
+        #DEBT
         request.data['created_by'] = 1
         is_duplicate_coa_create(request.data['name'],request.data['hyperion_name'])
         coa = super().create(request, *args, **kwargs)
@@ -46,6 +47,7 @@ class CoaViewSet(viewsets.ModelViewSet):
         return coa
 
     def update(self, request, *args, **kwargs):
+        #DEBT
         request.data['updated_by'] = 1
         is_duplicate_coa(kwargs['pk'],request.data['name'],request.data['hyperion_name'])
         coa = super().update(request, *args, **kwargs)
@@ -53,6 +55,7 @@ class CoaViewSet(viewsets.ModelViewSet):
         return coa
 
     def destroy(self, request, *args, **kwargs):
+        #DEBT
         request.data['updated_by'] = 1
         coa = super().destroy(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.DELETE, TableEnum.COA)

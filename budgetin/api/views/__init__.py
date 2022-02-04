@@ -18,3 +18,4 @@ from .export.export_list_planning import ExportListPlanning
 from .export.export_list_project import ExportListProject
 from .upload.import_list_planning import ImportListPlanning
 from .biro_view import BiroView
+from .list_planning import CreateListPlanning

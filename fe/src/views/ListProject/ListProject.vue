@@ -122,14 +122,18 @@ export default {
             project_name: "",
             project_description: "",
             product: {
-                 product_code: "",
+                id: "",
+                product_code: "",
                 product_name: "",
             },
+            // product: [],
             itfam_id: "",
             biro: {
+                id: "",
                 rcc: "",
                 code: "",
             },
+            // biro: [],
             is_tech: "",
             start_year: "",
             end_year: "",
@@ -140,6 +144,8 @@ export default {
     created() {
         this.getListProject();
         this.setBreadcrumbs();
+        console.log("LIST PROJECT");
+        console.log(this.dataListProject);
     },
 
     computed: {
