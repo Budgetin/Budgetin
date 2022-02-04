@@ -9,6 +9,10 @@ class CreateListPlanning(APIView):
         #DEBT
 
         # Project Part #
+        #DEBT ITFAM ID AUTO GENERATE, USING YEAR + PK,
+        # PERTAMA INSERT DULU KE DB
+        # AMBIL IDNYA BARU BIKIN ITFAM ID
+        # UPDATE DI DB ITFAM YG SUDAH TERISI
         project_data = {
             'itfam_id' : data['itfam_id'],
             'project_name' : data['project_name'],
@@ -23,13 +27,13 @@ class CreateListPlanning(APIView):
             'created_by' : 1
         }
         project_data.pop('itfam_id')
-        Project.objects.update_or_create(itfam_id = data['itfam_id'], defaults = project_data)
+        project, _ = Project.objects.update_or_create(itfam_id = data['itfam_id'], defaults = project_data)
 
         # Project Detail Part #
         parsed_project_detail = ProjectDetail(
             planning = Planning.all_object.get(pk=data['planning']),
             # project = parsed_project,
-            project = Project.objects.get(itfam_id = data['itfam_id']),
+            project = project,
             project_type = ProjectType.objects.get(pk=data['project_type']),
             dcsp_id = data['dcsp_id'],
         #DEBT
