@@ -4,13 +4,13 @@
       <!-- edit form -->
       <v-col xs="12" sm="10" md="10" lg="10">
         <v-container>
-          <form-planning
+          <form-add-planning
             :form="form"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-planning>
+          ></form-add-planning>
         </v-container>
       </v-col>
 
@@ -38,16 +38,16 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormPlanning from "@/components/ListPlanning/FormPlanning";
+import FormAddPlanning from "@/components/ListPlanning/FormAddPlanning";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
   name: "AddListPlanning",
-  components: { FormPlanning,SuccessErrorAlert},
+  components: { FormAddPlanning,SuccessErrorAlert},
   created() {
     //this.getEdittedItem();
   },
   methods: {
-    ...mapActions("listPlanning", [
+    ...mapActions("listPlanningAdd", [
       "postListPlanning",
       "getListPlanningById",
     ]),

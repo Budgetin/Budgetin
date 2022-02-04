@@ -150,7 +150,8 @@ export default {
             this.setBreadcrumbs();
         }, 
         onCancel() {
-            this.dialog = false;
+            this.isView = true;
+            this.setForm();
             this.setBreadcrumbs();
         },
         onSubmit(e) {

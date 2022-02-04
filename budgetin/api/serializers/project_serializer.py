@@ -31,9 +31,17 @@ class PlanningSerializer(serializers.ModelSerializer):
         return planning.due_date.strftime("%d %B %Y")
         
 class BudgetSerializer(serializers.ModelSerializer):
+    coa = serializers.SerializerMethodField()
+    year = serializers.SerializerMethodField()
     class Meta:
         model = Budget
         exclude = ['is_deleted', 'deleted_at', 'created_at', 'updated_at', 'created_by', 'updated_by']
+        
+    def get_coa(self, budget):
+        return budget.coa.name
+    
+    def get_year(self, budget):
+        return budget.project_detail.planning.year        
         
 
 class ProjectDetailSerializer(serializers.ModelSerializer):

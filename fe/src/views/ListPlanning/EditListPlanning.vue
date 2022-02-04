@@ -4,15 +4,14 @@
       <!-- edit form -->
       <v-col xs="12" sm="10" md="10" lg="10">
         <v-container>
-          <form-planning
+          <form-edit-planning
             :form="form"
             :isView="isView"
-            :isNew="isNew"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-planning>
+          ></form-edit-planning>
         </v-container>
       </v-col>
 
@@ -40,11 +39,11 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormPlanning from "@/components/ListPlanning/FormPlanning";
+import FormEditPlanning from "@/components/ListPlanning/FormEditPlanning";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
   name: "EditListPlanning",
-  components: { FormPlanning,SuccessErrorAlert},
+  components: { FormEditPlanning,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
   },
@@ -54,15 +53,9 @@ export default {
       "getListPlanningById",
     ]),
     getEdittedItem() {
-      if(this.$route.params.id == 0){
-        this.isView = false;
-        this.isNew = true;
-      }
-      else{
         this.getListPlanningById(this.$route.params.id).then(() => {
         this.setForm();
       });
-      }
     },
     setForm() {
       this.form = JSON.parse(

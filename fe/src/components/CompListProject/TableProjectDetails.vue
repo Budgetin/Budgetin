@@ -11,7 +11,6 @@
                 :loading="status"
                 :items="showItem">
                 </v-data-table> 
-                <!-- :items="projectDetail" -->
             </v-col>
         </v-row>
     </v-container>
@@ -24,7 +23,7 @@ export default {
     props: ["projectDetail"],
     data: () => ({
         isView: true,
-        showItem :[],
+        showItem: [],
         form: {
             id: "",
             created_by: "",
@@ -100,7 +99,7 @@ export default {
                 { text: "Project ID", value: "dcsp_id", width: "15%" },
                 { text: "Status", value: "planning.is_active", width: "20%" },
                 { text: "Due Date", value: "planning.due_date", width: "20%" },
-                { text: "Project Type", value: "project_type", width: "25%" }
+                { text: "Project Type", value: "project_type", width: "25%" },
             ],
             // projectDetailsHeaders: [
             //     { text: "Year", value: "year", width: "10%" },
@@ -124,13 +123,8 @@ export default {
     mounted(){
         this.showItem = this.projectDetail.project_detail;
         console.log(this.showItem);
-
     },
     created() {
-        // this.getEdittedItem();
-        // this.getListProjectById(this.$route.params.id);
-        // console.log("TABLE PROJECT DETAILS MASUK CREATED PARAM ID");
-        // console.log(this.$route.params.id);
     },
 
     computed: {
@@ -138,22 +132,7 @@ export default {
            return this.projectDetail.project_detail ? false : true
        }
     },
-
     methods: {
-        // ...mapActions("listProject", ["getListProjectById"]),
-
-        // getEdittedItem() {
-        //     console.log("TABLE PROJECT DETAILS MASUK EDITTED ITEM1");
-        //     this.getListProjectById(this.$route.params.id).then(() => {
-        //         console.log("TABLE PROJECT DETAILS MASUK EDITTED ITEM2");
-        //         console.log(this.$route.params.id);
-                
-        //         this.projectDetail = JSON.parse(
-        //             JSON.stringify(this.$store.state.listProject.edittedItem)
-        //         );
-        //         console.log(this.projectDetail);
-        //     });
-        // },
         onOK() {
             return this.$router.go(-1);
         }
