@@ -22,7 +22,8 @@ class CreateListPlanning(APIView):
         #DEBT
             'created_by' : 1
         }
-        Project.objects.update_or_create(project_data)
+        project_data.pop('itfam_id')
+        Project.objects.update_or_create(itfam_id = data['itfam_id'], defaults = project_data)
 
         # Project Detail Part #
         parsed_project_detail = ProjectDetail(
