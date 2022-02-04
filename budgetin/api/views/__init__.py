@@ -16,4 +16,4 @@ from .excel_import_view import ImportExcelView
 from .export.export_list_planning import ExportListPlanning
 from .export.export_list_project import ExportListProject
 from .biro_view import BiroView
-from .list_planning import CreateListPlanning
+from .list_planning_view import CreateListPlanning

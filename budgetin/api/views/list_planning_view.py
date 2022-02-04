@@ -9,30 +9,26 @@ class CreateListPlanning(APIView):
         #DEBT
 
         # Project Part #
-        parsed_project = Project(
-            itfam_id = data['itfam_id'],
-            project_name = data['project_name'],
-            project_description = data['project_description'],
-            biro = Biro.all_object.get(pk=data['biro']),
-            start_year = data['start_year'],
-            end_year = data['end_year'],
-            total_investment_value = data['total_investment_value'],
-            product = Product.all_object.get(pk=data['product']),
-            is_tech = data['is_tech'],
+        project_data = {
+            'itfam_id' : data['itfam_id'],
+            'project_name' : data['project_name'],
+            'project_description' : data['project_description'],
+            'biro' : Biro.all_object.get(pk=data['biro']),
+            'start_year': data['start_year'],
+            'end_year' : data['end_year'],
+            'total_investment_value' : data['total_investment_value'],
+            'product' : Product.all_object.get(pk=data['product']),
+            'is_tech' : data['is_tech'],
         #DEBT
-            created_by = 1
-        )
-        #if the project has the same itfam_id, do an update instead of insert
-        dup_project = Project.objects.get(itfam_id = data['itfam_id'])
-        if dup_project:
-            parsed_project.id = dup_project.pk
-            parsed_project.created_at = dup_project.created_at
-        parsed_project.save()
+            'created_by' : 1
+        }
+        Project.objects.update_or_create(project_data)
 
         # Project Detail Part #
         parsed_project_detail = ProjectDetail(
             planning = Planning.all_object.get(pk=data['planning']),
-            project = parsed_project,
+            # project = parsed_project,
+            project = Project.objects.get(itfam_id = data['itfam_id']),
             project_type = ProjectType.objects.get(pk=data['project_type']),
             dcsp_id = data['dcsp_id'],
         #DEBT
