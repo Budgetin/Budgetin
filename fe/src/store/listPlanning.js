@@ -1,7 +1,7 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/test/";
+const ENDPOINT = "/api/budget/";
 
 const listPlanning = {
   namespaced: true,
