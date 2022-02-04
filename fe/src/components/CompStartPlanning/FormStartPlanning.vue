@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title class="text-h5" style="margin-bottom: 32px">
+    <v-card-title class="mb-5">
       {{ cardTitle }} a Planning
       <v-spacer></v-spacer>
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">
@@ -222,9 +222,7 @@ export default {
 
   methods: {
     onSubmit() {
-      // console.log("Masuk Sini");
       let validate = this.$refs.form.validate();
-      // console.log("Masuk Let Validate");
       if (validate) {
         const payload = {
           id: this.form.id,
@@ -235,13 +233,6 @@ export default {
           biros: this.form.biros ? this.form.biros : 0,
           body: this.form.body ? this.form.body : 0,
         };
-        // console.log("ID"+this.form.id);
-        // console.log("Year"+this.form.year);
-        // console.log("DueDate"+this.form.due_date);
-        // console.log("is_active"+this.form.is_active.id);
-        // console.log("sendNotif"+this.form.notification.id);
-        console.log(this.form.biros);
-        // console.log("body"+this.form.body);
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
         this.$refs.form.reset()
       }
@@ -293,10 +284,10 @@ export default {
     min-width: 165px;
   }
   .StartPlanning__btn {
-        text-align: end;
-        button {
-            margin: 10px 32px;
-        }
-    }
+      text-align: end;
+      button {
+          margin: 10px 32px;
+      }
+  }
 </style>
     
