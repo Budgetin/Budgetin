@@ -51,12 +51,6 @@
                                         </v-btn>
                                     </v-col>
 
-                                    <v-col no-gutters class="list-project__btn">
-                                        <v-btn rounded color="primary" @click="onExport">
-                                            <v-icon left> mdi-export-variant </v-icon>
-                                            Export Data
-                                        </v-btn>
-                                    </v-col>
                                 </v-row>
                             </v-toolbar-title>
                         </template>

@@ -200,7 +200,7 @@
             Biro <strong class="red--text">*</strong>
           </v-col>
           <v-col cols="3">
-            RCC <strong class="red--text">*</strong>
+            RCC
           </v-col>
         </v-row>
 
@@ -248,7 +248,6 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
               placeholder="Input Here"
             >
             </v-text-field>
@@ -481,7 +480,7 @@
 
 <script>
 export default {
-  name: "FormPlanning",
+  name: "FormAddPlanning",
   props: ["form", "isView", "isNew"],
   data: () => ({
     validation: {
