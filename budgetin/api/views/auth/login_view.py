@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 
 from api.models import User
 from api.utils.jwt import generate_token, decode_token
-from api.utils.hit_api import login_eai, get_ithc_employee_info, get_initial_and_eselon
+from api.utils.hit_api import login_eai, get_ithc_employee_info, get_user_detail
 from api.exceptions import InvalidCredentialException, NotEligibleException, NotAuthenticatedException
 from api.utils.enum import RoleEnum
 
@@ -14,7 +14,8 @@ def get_user_info(username):
     if users:
         user = users[0]
         if user["is_deleted"] == False:
-            return user['employee_id'], user['display_name'], user['role'], user['initial'], user['eselon']
+            display_name, initial, eselon = get_user_detail(username)
+            return user['employee_id'], display_name, user['role'], initial, eselon
     
     #Check if User S1, S2, S3
     user = get_ithc_employee_info(username)

@@ -115,7 +115,7 @@ def get_ithc_employee_info(username):
             }
     raise EmployeeNotFoundException()
 
-def get_initial_and_eselon(username):
+def get_user_detail(username):
     url = "http://employee-management-be-planalyt-dev.apps.ocpdev.dti.co.id/employees/?include=eselon&username__exact={}".format(
         username)
     headers = {
@@ -125,4 +125,4 @@ def get_initial_and_eselon(username):
     if res.json():
         employee = [e for e in res.json() if e['is_deleted'] == False]
         if employee:
-            return employee[0]['initial'], employee[0]['eselon']['code']
+            return employee[0]['display_name'], employee[0]['initial'], employee[0]['eselon']['code']
