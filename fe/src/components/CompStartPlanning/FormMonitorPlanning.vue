@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title class="text-h5" style="margin-bottom: 32px">
+    <v-card-title class="mb-5">
       {{ cardTitle }} a Monitoring Status
       <v-spacer></v-spacer>
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">

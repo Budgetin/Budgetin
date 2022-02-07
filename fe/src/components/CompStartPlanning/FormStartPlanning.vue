@@ -117,14 +117,32 @@
               <v-col no-gutters>
                 <div class="sendTo">
                 <v-select
-                  :items="dataAllBiro"
-                  v-model="form.biros"
-                  item-text="code"
-                  item-value="id"
-                  placeholder="Choose Biro"
-                  multiple
-                  chips
-                  outlined>
+                :items="dataAllBiro"
+                v-model="selected"
+                item-text="code"
+                item-value="id"
+                placeholder="Choose Biro"
+                multiple
+                chips
+                outlined>
+                  <template v-slot:prepend-item>
+                    <v-list-item
+                      ripple
+                      @mousedown.prevent
+                      @click="toggle">
+                      <v-list-item-action>
+                        <v-icon :color="selected.length > 0 ? 'indigo darken-4' : ''">
+                          {{ icon }}
+                        </v-icon>
+                      </v-list-item-action>
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          Select All
+                        </v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-divider class="mt-2"></v-divider>
+                  </template>
                 </v-select>
                 </div>
               </v-col>            
@@ -156,7 +174,8 @@
               outlined
               class="primary--text"
               @click="$emit('okClicked')"
-              v-if="isView">
+              v-if="isView"
+              style="min-width: 8rem;">
               OK
             </v-btn>
             <v-btn
@@ -164,10 +183,11 @@
               outlined
               class="primary--text"
               @click="$emit('cancelClicked')"
-              v-if="!isView">
+              v-if="!isView"
+              style="min-width: 8rem;">
               Cancel
             </v-btn>
-            <v-btn rounded class="primary ml-3" type="submit" v-if="!isView">
+            <v-btn rounded class="primary ml-3" type="submit" v-if="!isView" style="min-width: 8rem;">
               Save
             </v-btn>
           </v-col>
@@ -184,8 +204,8 @@ export default {
   props: ["form", "isNew", "isView"],
 
   data: () => ({
-    //yearSubstring: new Date().getFullYear(),
-    //due_date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+    selected: [],
+    selectAll: [],
     menu: null,
     validation: {
       required: [
@@ -218,23 +238,43 @@ export default {
     errorMsg() {
       return this.$store.state.source.errorMsg;
     },
+    icon () {
+      if (this.selected.length === this.dataAllBiro.length ) return "mdi-close-box";
+      if (this.selected.length != this.dataAllBiro.length ) return "mdi-minus-box";
+      return 'mdi-checkbox-blank-outline'
+    },
   },
 
   methods: {
     onSubmit() {
       let validate = this.$refs.form.validate();
       if (validate) {
-        const payload = {
-          id: this.form.id,
-          year: this.form.year,
-          is_active: this.form.is_active.id,
-          due_date: this.form.due_date + "T23:59",
-          notification: this.form.notification.id ? 1 : 0,
-          biros: this.form.biros ? this.form.biros : 0,
-          body: this.form.body ? this.form.body : 0,
+        if (this.selectAll.length != 0) {
+          const payload = {
+            id: this.form.id,
+            year: this.form.year,
+            is_active: this.form.is_active.id,
+            due_date: this.form.due_date + "T23:59",
+            notification: this.form.notification.id ? 1 : 0,
+            biros: this.selectAll ? this.selectAll : 0,
+            body: this.form.body ? this.form.body : 0,
+          };
+          this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
+          console.log(this.selectAll);
+        } else {
+          const payload = {
+            id: this.form.id,
+            year: this.form.year,
+            is_active: this.form.is_active.id,
+            due_date: this.form.due_date + "T23:59",
+            notification: this.form.notification.id ? 1 : 0,
+            biros: this.selected ? this.selected : 0,
+            body: this.form.body ? this.form.body : 0,
+          };
+          this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
+          console.log(this.selected);
         };
-        this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
-        this.$refs.form.reset()
+        this.$refs.form.reset();
       }
     },
     onCancel() {
@@ -242,6 +282,20 @@ export default {
     },
     onOK() {
       return this.$router.go(-1);
+    },
+    toggle () {
+      this.$nextTick(() => {
+        if (this.selected.length === this.dataAllBiro.length) {
+          this.selected = [];
+          console.log("Masuk ALL");
+        } else {
+          this.selected = this.dataAllBiro.slice();
+          this.selectAll = [];
+          for(let i=0; i < this.selected.length; i++) {
+            this.selectAll.push(this.selected[i].id);
+          };
+        }
+      })
     },
   },
 }
@@ -254,19 +308,9 @@ export default {
   .emailBody {
     min-width: 90%;
   }
-
-  .cancelBtn {
-    width: 200px;
-  }
-  .saveBtn {
-    width: 200px;
-  }
-  .saveBtn--text /deep/ label {
-    color: white;
-  }
 </style>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .v-card__text {
     color: unset !important;
   }
@@ -284,10 +328,11 @@ export default {
     min-width: 165px;
   }
   .StartPlanning__btn {
-      text-align: end;
-      button {
-          margin: 10px 32px;
-      }
+    text-align: end;
+    button {
+      margin: 10px 32px;
+      min-width: 8rem;
+    }
   }
 </style>
     
