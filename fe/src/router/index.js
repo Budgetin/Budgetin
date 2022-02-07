@@ -87,8 +87,13 @@ const routes = [
       },
       {
         path: '/listPlanning/new',
-        name: 'AddListPlanning',
-        component: () => import("@/views/ListPlanning/AddListPlanning"),
+        name: 'ListPlanningNew',
+        component: () => import("@/views/ListPlanning/ListPlanningNew"),
+      },
+      {
+        path: '/listPlanning/existing',
+        name: 'ListPlanningExisting',
+        component: () => import("@/views/ListPlanning/ListPlanningExisting"),
       },
       {
         path: '/listPlanning/:id/view',
