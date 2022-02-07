@@ -1,7 +1,7 @@
 <template>
   <v-card>
-    <v-card-title class="text-h5" style="margin-bottom: 32px">
-      {{ cardTitle }} a Project Details
+    <v-card-title class="mb-5">
+      {{ cardTitle }} Project Detail
       <v-spacer></v-spacer>
     </v-card-title>
 
@@ -129,7 +129,7 @@
             <!-- <v-col> -->
               <div class="ListProject__field">
                 <v-text-field
-                  v-model="form.is_tech"
+                  v-model="label"
                   outlined
                   return-object
                   dense
@@ -177,11 +177,12 @@
             <!-- <v-col> -->
               <div class="ListProject__field">
                 <v-text-field
-                  v-model="form.total_investment_value"
+                  v-model="nominal"
                   outlined
                   return-object
                   dense
                   :disabled="isView"
+                  suffix="IDR"
                   class="mr-3">
                 </v-text-field>
               </div>
@@ -195,7 +196,7 @@
             <v-btn
               rounded
               outlined
-              class="primary--text"
+              class="primary--text ListProject__btn"
               @click="$emit('okClicked')"
               v-if="isView">
               OK
@@ -203,12 +204,12 @@
             <v-btn
               rounded
               outlined
-              class="primary--text"
+              class="primary--text ListProject__btn"
               @click="$emit('cancelClicked')"
               v-if="!isView">
               Cancel
             </v-btn>
-            <v-btn rounded class="primary ml-3" type="submit" v-if="!isView">
+            <v-btn rounded class="primary ml-3 ListProject__btn" type="submit" v-if="!isView">
               Save
             </v-btn>
           </v-col>
@@ -224,15 +225,28 @@ export default {
   name: "FormListProject",
   props: ["form", "isNew", "isView"],
 
-  // created() {
-  //   this.getListPlanningById(this.$route.params.id);
-  // },
-
   computed: {
     ...mapState("listProject", ["getListProject", "dataListProject"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+    },
+
+    nominal: {
+      // getter
+      get: function() {
+        if(this.form.total_investment_value) {
+          this.form.total_investment_value = this.form.total_investment_value.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
+          this.form.total_investment_value = this.form.total_investment_value.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        }
+        return this.form.total_investment_value;
+      },
+    },
+
+    label: {
+      get: function() {
+        return this.form.is_tech ? "Tech" : "Non-Tech";
+      }
     },
   },
 
@@ -254,19 +268,9 @@ export default {
   .emailBody {
     min-width: 90%;
   }
-
-  .cancelBtn {
-    width: 200px;
-  }
-  .saveBtn {
-    width: 200px;
-  }
-  .saveBtn--text /deep/ label {
-    color: white;
-  }
 </style>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .v-card__text {
     color: unset !important;
   }
@@ -288,6 +292,7 @@ export default {
     text-align: end;
     button {
       margin: 10px 32px;
+      width: 8 rem;
     }
   }
 </style>

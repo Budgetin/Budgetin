@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row no-gutters style="margin-top: 16px">
-      <v-subheader>Budget Realization</v-subheader>
+      <v-subheader style="font-size: 1.25rem; font-weight: 600;">Budget Realization</v-subheader>
     </v-row>
 
     <v-row no-gutters>
@@ -96,6 +96,8 @@ export default {
         dataTable: {
             budgetRealizationHeaders: [
                 { text: "Year", value: "year", width: "10%" },
+                { text: "COA", value: "coa", width: "15%" },
+                { text: "CAPEX/OPEX", value: "expense_type", width: "10%" },
                 { text: "Allocate", value: "allocate", width: "15%", align: "start" },
                 { text: "Top Up", value: "top_up", width: "15%" },
                 { text: "Return", value: "returns", width: "15%" },

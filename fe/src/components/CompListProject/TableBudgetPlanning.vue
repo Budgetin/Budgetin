@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row no-gutters style="margin-top: 16px">
-      <v-subheader>Budget Planning</v-subheader>
+      <v-subheader style="font-size: 1.25rem; font-weight: 600;">Budget Planning</v-subheader>
     </v-row>
 
     <v-row no-gutters>

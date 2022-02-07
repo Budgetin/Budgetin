@@ -37,7 +37,13 @@ export default {
 #master-product,
 #master-user,
 #master-strategy,
-#list-planning
+#list-planning,
+#list-project,
+#view-list-project,
+#start-planning,
+#view-planning,
+#monitor-planning,
+#view-status-monitoring
 {
   font-family: "Nunito", sans-serif !important;
 }

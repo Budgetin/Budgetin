@@ -8,7 +8,7 @@
                 :isView="isView"
                 :dataListProject="dataListProject"
                 @okClicked="onOK"
-                class="view-list-project__form">
+                class="view-list-project__detail">
                 </form-list-project>
             </v-row>
 
@@ -33,23 +33,6 @@
                 </table-budget-realization>
             </v-card>
         </v-container>
-
-        <!-- BUDGET REALIZATION -->
-        <!-- <v-container class="view-list-project__outer-container">
-            <v-row no-gutters style="margin-top: 16px">
-                <v-subheader class="view-list-project__header">Budget Realization</v-subheader>
-            </v-row>
-            <v-row no-gutters>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <v-data-table
-                    :headers="dataTable.budgetRealizationHeaders"
-                    :loading="loadingGetListPlanning"
-                    :items="dataListPlanning"
-                    class="data-table">
-                    </v-data-table>
-                </v-col>
-            </v-row>
-        </v-container> -->
     </v-app>
 </template>
 
@@ -136,28 +119,6 @@ export default {
                 },
             ]
         },
-        // dataTable: {
-        //     budgetRealizationHeaders: [
-        //         { text: "Year", value: "project_detail.planning.year", width: "10%" },
-        //         { text: "Allocate", value: "allocate", width: "15%", align: "start" },
-        //         { text: "Top Up", value: "top_up", width: "15%" },
-        //         { text: "Return", value: "returns", width: "15%" },
-        //         { text: "Switching In", value: "switching_in", width: "15%" },
-        //         { text: "Switching Out", value: "switching_out", width: "15%" },
-        //         { text: "January", value: "realization_jan", width: "15%" },
-        //         { text: "February", value: "realization_feb", width: "15%" },
-        //         { text: "March", value: "realization_mar", width: "15%" },
-        //         { text: "April", value: "realization_apr", width: "15%" },
-        //         { text: "May", value: "realization_may", width: "15%" },
-        //         { text: "June", value: "realization_jun", width: "15%" },
-        //         { text: "July", value: "realization_jul", width: "15%" },
-        //         { text: "August", value: "realization_aug", width: "15%" },
-        //         { text: "September", value: "realization_sep", width: "15%" },
-        //         { text: "October", value: "realization_oct", width: "15%" },
-        //         { text: "November", value: "realization_nov", width: "15%" },
-        //         { text: "December", value: "realization_dec", width: "15%" },
-        //     ],
-        // },
     }),
     created() {
         this.getDetailItem();
@@ -225,7 +186,7 @@ export default {
         font-size: 1.25rem;
         font-weight: 600;
     }
-    .view-list-project__form {
+    .view-list-project__detail {
         border-radius: 8px;
         margin: 1% auto !important;
         padding-right: 3% !important;
