@@ -92,7 +92,7 @@
                     :form="form"
                     :isNew="true"
                     :isView="false"
-                    :dataAllBiro="dataAllBiro"
+                    :dataAllBiroItHc="dataAllBiroItHc"
                     :dataStartPlanning="dataStartPlanning"
                     @editClicked="onEdit"
                     @cancelClicked="onCancel"
@@ -175,20 +175,20 @@ export default {
     created() {
         this.getStartPlanning();
         this.getMonitorPlanning();
-        this.getAllBiro();
+        this.getAllBiroItHc();
         this.setBreadcrumbs();
     },
 
     computed: {
         ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
         ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning"]),
-        ...mapState("allBiro", ["dataAllBiro"]),
+        ...mapState("allBiroItHc", ["dataAllBiroItHc"]),
     },
 
     methods: {
         ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
         ...mapActions("monitorPlanning", ["getMonitorPlanning", "postMonitorPlanning"]),
-        ...mapActions("allBiro", ["getAllBiro"]),
+        ...mapActions("allBiroItHc", ["getAllBiroItHc"]),
 
         setBreadcrumbs() {
             let param = this.isView ? "View Planning" : "Edit Planning";

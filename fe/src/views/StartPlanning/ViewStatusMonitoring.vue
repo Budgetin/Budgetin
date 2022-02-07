@@ -92,7 +92,7 @@ export default {
 
     computed: {
         ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning"]),
-        ...mapState("allBiro", ["loadingGetAllBiro", "dataAllBiro"]),
+        ...mapState("allBiroItHc", ["loadingGetAllBiroItHc", "dataAllBiroItHc"]),
     },
 
     methods: {

@@ -14,6 +14,7 @@ import login from "./login"
 import startPlanning from "./startPlanning"
 import monitorPlanning from "./monitorPlanning"
 import allBiro from "./allBiro"
+import allBiroItHc from "./allBiroItHc"
 import listPlanning from "./listPlanning"
 import listProject from "./listProject"
 
@@ -41,6 +42,7 @@ export default new Vuex.Store({
     startPlanning,
     monitorPlanning,
     allBiro,
+    allBiroItHc,
     listPlanning,
     listProject,
     choosedColumn,

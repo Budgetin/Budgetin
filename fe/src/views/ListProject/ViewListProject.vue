@@ -7,6 +7,11 @@
                 :form="form"
                 :isView="isView"
                 :dataListProject="dataListProject"
+                :dataAllBiro="dataAllBiro"
+                :dataMasterProduct="dataMasterProduct"
+                @editClicked="onEdit"
+                @cancelClicked="onCancel"
+                @submitClicked="onSubmit"
                 @okClicked="onOK"
                 class="view-list-project__detail">
                 </form-list-project>
@@ -32,6 +37,14 @@
                 v-if="budgetRealization.project_detail">
                 </table-budget-realization>
             </v-card>
+
+            <success-error-alert
+            :success="alert.success"
+            :show="alert.show"
+            :title="alert.title"
+            :subtitle="alert.subtitle"
+            @okClicked="onAlertOk"
+            />
         </v-container>
     </v-app>
 </template>
@@ -42,10 +55,11 @@ import FormListProject from '@/components/CompListProject/FormListProject';
 import TableProjectDetails from '@/components/CompListProject/TableProjectDetails';
 import TableBudgetPlanning from '@/components/CompListProject/TableBudgetPlanning';
 import TableBudgetRealization from '@/components/CompListProject/TableBudgetRealization';
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
     name: "ViewListProject",
     components: {
-        FormListProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization
+        FormListProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization, SuccessErrorAlert
     },
     data: () => ({
         isView: true,
@@ -75,7 +89,8 @@ export default {
                 id: "",
                 product_name: "",
                 product_code: "",
-                strategy: ""
+                strategy: "",
+                option: "",
             },
             project_detail: [
                 {
@@ -119,18 +134,32 @@ export default {
                 },
             ]
         },
+
+        alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
     }),
     created() {
         this.getDetailItem();
         this.setBreadcrumbs();
+        this.getMasterProduct();
+        this.getAllBiro();
     },
     computed: {
         ...mapState("listProject", ["loadingGetListProject", "dataListProject"]),
+        ...mapState("allBiro", ["loadingGetAllBiro", "dataAllBiro"]),
+        ...mapState("masterProduct", ["loadingGetMasterProduct", "dataMasterProduct"]),
     },
     methods: {
-        ...mapActions("listProject", ["getListProjectById"]),
+        ...mapActions("listProject", ["patchListProject", "getListProjectById"]),
+        ...mapActions("masterProduct", ["getMasterProduct"]),
+        ...mapActions("allBiro", ["getAllBiro"]),
+
         setBreadcrumbs() {
-            let param = this.isView ? "View Detail Project" : "Edit Project";
+            let param = this.isView ? "View Project Detail" : "Edit Project Detail";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
                     text: "List of Projects",
@@ -165,6 +194,49 @@ export default {
             this.form = JSON.parse(
                 JSON.stringify(this.$store.state.listProject.edittedItem)
             );
+        },
+        onEdit() {
+            // console.log("Masuk on Edit");
+            this.isView = false;
+            this.setBreadcrumbs();
+        },
+        onCancel() {
+            this.isView = true;
+            this.setForm();
+            this.setBreadcrumbs();
+        },
+        onSubmit(e) {
+            console.log(e);
+            this.patchListProject(e)
+            .then(() => {
+                // console.log("Masuk Save Success");
+                this.onSaveSuccess();
+            })
+            .catch((error) => {
+                // console.log("Masuk Save Error");
+                this.onSaveError(error);
+            });
+        },
+        onSaveSuccess() {
+            // console.log("Masuk Save Success LAGI");
+            this.dialog = false;
+            this.alert.show = true;
+            this.alert.success = true;
+            this.alert.title = "Save Success";
+            this.alert.subtitle = "Edit Project Detail has been saved successfully";
+        },
+        onSaveError(error) {
+            // console.log("Masuk Save Error LAGI");
+            this.dialog = false;
+            this.alert.show = true;
+            this.alert.success = false;
+            this.alert.title = "Save Failed";
+            this.alert.subtitle = error;
+        },
+        onAlertOk() {
+            this.alert.show = false;
+            this.isView = true;
+            this.getDetailItem();
         },
         onOK() {
             return this.$router.go(-1);
