@@ -4,13 +4,13 @@
       <!-- edit form -->
       <v-col xs="12" sm="10" md="10" lg="10">
         <v-container>
-          <form-add-planning
+          <form-planning-new
             :form="form"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-add-planning>
+          ></form-planning-new>
         </v-container>
       </v-col>
 
@@ -38,11 +38,11 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormAddPlanning from "@/components/ListPlanning/FormAddPlanning";
+import FormPlanningNew from "@/components/ListPlanning/FormPlanningNew";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "AddListPlanning",
-  components: { FormAddPlanning,SuccessErrorAlert},
+  name: "ListPlanningNew",
+  components: { FormPlanningNew,SuccessErrorAlert},
   created() {
     //this.getEdittedItem();
   },
@@ -52,19 +52,22 @@ export default {
       "getListPlanningById",
     ]),
     getEdittedItem() {
-      if(this.$route.params.id == 0){
-        this.isView = false;
-        this.isNew = true;
-      }
-      else{
-        this.getListPlanningById(this.$route.params.id).then(() => {
-        this.setForm();
-      });
-      }
+      this.getActivePlanning();
+      this.setActivePlanning();
+      console.log(this.activePlanning);
+      // this.getListPlanningById(this.$route.params.id).then(() => {
+      //   this.setForm();
+      // });
     },
     setForm() {
       this.form = JSON.parse(
         JSON.stringify(this.$store.state.listPlanning.edittedItem)
+      );
+      console.log(this.activePlanning);
+    },
+    setActivePlanning() {
+      this.activePlanning = JSON.parse(
+        JSON.stringify(this.$store.state.activePlanning.dataActivePlanning)
       );
     },
     onEdit() {
@@ -107,6 +110,7 @@ export default {
   },
   data: () => ({
     isView: true,
+    activePlanning: [],
     form: {
         itfam_id : "",
         project_name : "",
