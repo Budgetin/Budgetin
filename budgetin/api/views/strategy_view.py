@@ -38,25 +38,21 @@ class StrategyViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        #request.data['created_by'] = request.custom_user['id']
-        #DEBT
-        request.data['created_by'] = 1
+        request.data['created_by'] = request.custom_user['id']
         is_duplicate_create(request.data['name'])
         strategy = super().create(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.CREATE, TableEnum.STRATEGY)
         return strategy
 
     def update(self, request, *args, **kwargs):
-        #DEBT
-        request.data['updated_by'] = 1
+        request.data['updated_by'] = request.custom_user['id']
         is_duplicate(kwargs['pk'], request.data['name'])
         strategy = super().update(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.UPDATE, TableEnum.STRATEGY)
         return strategy
 
     def destroy(self, request, *args, **kwargs):
-        #DEBT
-        request.data['updated_by'] = 1
+        request.data['updated_by'] = request.custom_user['id']
         strategy = super().destroy(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.DELETE, TableEnum.STRATEGY)
         return strategy

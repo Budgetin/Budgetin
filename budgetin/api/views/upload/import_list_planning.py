@@ -29,36 +29,36 @@ def create_update_biro(biro):
                     }
         )
     
-def insert_to_db(data):
+def insert_to_db(request, data):
     biro = Biro.objects.filter(code=data['Biro']).first()
-    coa, _ = get_or_create_coa(data['COA'])
-    strategy, _ = get_or_create_strategy(data['Strategy'])
-    product, _ = get_or_create_product(data['Product ID'], strategy) #DEBT, nama kolom nya begimana? ditembak static begini
-    project, _ = get_or_create_project(data, biro, product)
-    planning, _ = get_or_create_planning(data['Tahun'])
-    project_detail, _ = get_or_create_project_detail(data, project, planning)
-    create_budget(data, project_detail, coa)
+    coa, _ = get_or_create_coa(request, data['COA'])
+    strategy, _ = get_or_create_strategy(request, data['Strategy'])
+    product, _ = get_or_create_product(request, data['Product ID'], strategy)
+    project, _ = get_or_create_project(request, data, biro, product)
+    planning, _ = get_or_create_planning(request, data['Tahun'])
+    project_detail, _ = get_or_create_project_detail(request, data, project, planning)
+    create_budget(request, data, project_detail, coa)
     
 
-def get_or_create_coa(coa_name):
+def get_or_create_coa(request, coa_name):
     return Coa.objects.get_or_create(name=coa_name, defaults={
-        'created_by': 1, #DEBT
+        'created_by': request.custom_user['id'],
         'is_capex': True, #DEBT
         'minimum_item_origin': 500000000 #DEBT
     })
     
-def get_or_create_strategy(strategy_name):
+def get_or_create_strategy(request, strategy_name):
     return Strategy.objects.get_or_create(name=strategy_name, defaults={
-        'created_by': 1, #DEBT
+        'created_by': request.custom_user['id'],
     })
     
-def get_or_create_product(product, strategy):
+def get_or_create_product(request, product, strategy):
     product_code, product_name = get_product_code_and_name(product)
     
     return Product.objects.get_or_create(product_code=product_code, defaults={
-        'created_by': 1, #DEBT
+        'created_by': request.custom_user['id'],
         'product_name': product_name,
-        'strategy': strategy #DEBT
+        'strategy': strategy
     })    
     
 def get_product_code_and_name(product):
@@ -69,10 +69,10 @@ def get_product_code_and_name(product):
     
     return product_code, product_name
     
-def get_or_create_project(data, biro, product):
+def get_or_create_project(request, data, biro, product):
     itfam_id = '20210102' #DEBT
-    project_name = data['Project Name'] #DEBT
-    project_description = data['Project Description'] #DEBT
+    project_name = data['Project Name']
+    project_description = data['Project Description']
     start_year = data['Tahun'] if math.isnan(data['Tahun Mulai']) else data['Tahun Mulai']
     end_year = data['Tahun Selesai']
     total_investment_value = data['Total Investment']
@@ -88,29 +88,29 @@ def get_or_create_project(data, biro, product):
         'biro': biro,
         'product': product,
         'is_tech': True if is_tech == 'Tech' else False,
-        'created_by': 1 # DEBT
+        'created_by': request.custom_user['id']
     })
 
-def get_or_create_planning(year):
+def get_or_create_planning(request, year):
     return Planning.objects.get_or_create(year=year, defaults={
         'is_active': False, #DEBT
         'notification': False,
         'due_date': datetime.now(),
-        'created_by': 1, #DEBT
+        'created_by': request.custom_user['id'],
     })
     
-def get_or_create_project_detail(data, project, planning):
+def get_or_create_project_detail(request, data, project, planning):
     return ProjectDetail.objects.get_or_create(planning=planning, project=project, defaults={
         'dcsp_id': data['Project ID'],
         'project_type': get_project_type(data['Project Type']),
-        'created_by': 1, #DEBT
-    }) #DEBT
+        'created_by': request.custom_user['id'],
+    })
 
 def get_project_type(type):
     project_type, _ = ProjectType.objects.get_or_create(name=type)
     return project_type
 
-def create_budget(data, project_detail, coa):
+def create_budget(request, data, project_detail, coa):
     budget = Budget(
         project_detail = project_detail,
         coa = coa,
@@ -119,10 +119,9 @@ def create_budget(data, project_detail, coa):
         planning_q2 = data["Q2"] * data["Total Budget"],
         planning_q3 = data["Q3"] * data["Total Budget"],
         planning_q4 = data["Q4"] * data["Total Budget"],
-        created_by = 1, #DEBT
+        created_by = request.custom_user['id'],
     )
     budget.save()
-
 
 class ImportListPlanning(APIView):
     parser_classes = (MultiPartParser, )
@@ -136,6 +135,6 @@ class ImportListPlanning(APIView):
         
         for index, row in df.iterrows():
             print(index)
-            insert_to_db(row)
+            insert_to_db(request, row)
             
         return Response(status=204)

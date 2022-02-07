@@ -38,25 +38,21 @@ class CoaViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        #request.data['created_by'] = request.custom_user['id']
-        #DEBT
-        request.data['created_by'] = 1
+        request.data['created_by'] = request.custom_user['id']
         is_duplicate_coa_create(request.data['name'],request.data['hyperion_name'])
         coa = super().create(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.CREATE, TableEnum.COA)
         return coa
 
     def update(self, request, *args, **kwargs):
-        #DEBT
-        request.data['updated_by'] = 1
+        request.data['updated_by'] = request.custom_user['id']
         is_duplicate_coa(kwargs['pk'],request.data['name'],request.data['hyperion_name'])
         coa = super().update(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.UPDATE, TableEnum.COA)
         return coa
 
     def destroy(self, request, *args, **kwargs):
-        #DEBT
-        request.data['updated_by'] = 1
+        request.data['updated_by'] = request.custom_user['id']
         coa = super().destroy(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.DELETE, TableEnum.COA)
         return coa
