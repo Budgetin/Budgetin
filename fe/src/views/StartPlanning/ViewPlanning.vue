@@ -14,7 +14,7 @@
                 @okClicked="onOK"
                 class="view-planning__detail">
                 </form-start-planning>
-
+                
                 <!-- LOG HISTORY -->
                 <v-col xs="12" sm="6" md="6" lg="5">
                     <v-container>
@@ -24,14 +24,6 @@
                         </timeline-log>
                     </v-container>
                 </v-col>
-                
-                <!-- <form-log-history
-                :form="form"
-                @editClicked="onEdit"
-                @cancelClicked="onCancel"
-                @submitClicked="onSubmit"
-                class="view-planning__logHistory">
-                </form-log-history> -->
             </v-row>
 
             <success-error-alert
@@ -235,13 +227,6 @@ export default {
         max-height: 90%;
         overflow-y: scroll;
     }
-    .view-planning__logHistory {
-        border-radius: 8px;
-        margin: 1% auto !important;
-        width: 40%;
-        max-height: 600px;
-        overflow-y: scroll;
-    }
     .view-planning__field {
         min-width: 150px;
     }
@@ -255,8 +240,8 @@ export default {
         padding: 0px 32px;
 
         button {
-        width: 100%;
-        margin: 0px 0px 32px 0px;
+            width: 100%;
+            margin: 0px 0px 32px 0px;
         }
     }
     .view-planning__card {
