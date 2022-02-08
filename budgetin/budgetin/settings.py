@@ -61,7 +61,7 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler.custom_exception_handler',
+    'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler.custom_exception_handler'
 }
 
 MIDDLEWARE = [

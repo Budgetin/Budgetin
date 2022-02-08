@@ -64,7 +64,7 @@ class BudgetResponseSerializer(serializers.ModelSerializer):
                   'realization_jan', 'realization_feb', 'realization_mar', 'realization_apr', 'realization_may',
                   'realization_jun', 'realization_jul', 'realization_aug', 'realization_sep', 'realization_oct',
                   'realization_nov', 'realization_dec', 'switching_in', 'switching_out', 'top_up', 'returns',
-                  'allocate', 'coa', 'project_detail', 'created_by', 'updated_by', 'created_at', 'updated_at']
+                  'allocate', 'coa', 'project_detail', 'created_by', 'updated_by', 'is_active', 'created_at', 'updated_at']
         
     def get_coa(self, budget):
         if budget.coa:
