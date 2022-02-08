@@ -107,21 +107,26 @@ const routes = [
         name: "Login",
         beforeEnter: (to, from, next) => {
           try {
-            store
-              .dispatch("login/setInitial")
-              .then(() => {
-                if (!store.getters["login/isAuthenticated"]) {
+            if (store.getters["login/isAuthenticated"]) {
+              store
+                .dispatch("login/setInitial")
+                .then(() => {
+                  if (!store.getters["login/isAuthenticated"]) {
+                    next();
+                    return;
+                  } else {
+                    router.go(-1);
+                    return;
+                  }
+                })
+                .catch((err) => {
                   next();
                   return;
-                } else {
-                  router.go(-1);
-                  return;
-                }
-              })
-              .catch((err) => {
-                next();
-                return;
-              });
+                });
+            } else {
+              next();
+              return;
+            }
           } catch (e) {
             ("masuk e");
             next();
@@ -132,34 +137,6 @@ const routes = [
       },
     ],
   },
-  // {
-  //   path: "/login",
-  //   name: "Login",
-  //   beforeEnter: (to, from, next) => {
-  //     try {
-  //       store
-  //         .dispatch("login/setInitial")
-  //         .then(() => {
-  //           if (store.getters["login/isAuthenticated"]) {
-  //             next();
-  //             return;
-  //           } else {
-  //             router.go(-1);
-  //             return;
-  //           }
-  //         })
-  //         .catch((err) => {
-  //           next();
-  //           return;
-  //         });
-  //     } catch (e) {
-  //       ("masuk e");
-  //       next();
-  //       return;
-  //     }
-  //   },
-  //   component: () => import("@/views/Login"),
-  // },
   {
     path: "/about",
     name: "About",
@@ -176,26 +153,4 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
-
-// router.beforeEach((to, from, next) => {
-//     console.log(store.getters['login/isAuthenticated'])
-//       if (store.getters['login/isAuthenticated'] == 'Admin') {
-//         next();
-//         // return;
-//       }
-
-//     store.dispatch('login/setInitial').then(()=>{
-//       console.log(store.getters['login/isAuthenticated'])
-//     //   if(store.getters['login/isAuthenticated']){
-//     //     if (store.getters['login/isAuthenticated'] != 'Admin') {
-//     //         next("/coa");
-//     //
-//     //       }
-//     //   }
-//       });
-//  }
-// else {
-//     next();
-//   }
-
 export default router;

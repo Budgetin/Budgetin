@@ -121,7 +121,6 @@ export default {
       this.setBreadcrumbs();
     },
     onSubmit(e) {
-      //console.log("Submit: "+e);
       this.patchMasterCoa(e)
         .then(() => {
           this.onSaveSuccess();

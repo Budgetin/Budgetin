@@ -62,7 +62,6 @@ const login = {
             resolve(response);
           })
           .catch((error) => {
-            console.log(error);
             let errorMsg = `Please recheck your input or try again later`;
             commit("POST_PATCH_ERROR", errorMsg);
             reject(errorMsg);

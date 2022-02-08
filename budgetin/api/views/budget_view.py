@@ -35,6 +35,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
         budget = super().create(request, *args, **kwargs)
         AuditLog.Save(budget, request, ActionEnum.CREATE, TableEnum.BUDGET)

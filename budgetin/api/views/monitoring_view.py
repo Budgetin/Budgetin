@@ -39,6 +39,7 @@ class MonitoringViewSet(viewsets.ModelViewSet):
         return Response(monitoring_dict)
 
     def create(self, request, *args, **kwargs):
+        request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
         monitoring = super().create(request, *args, **kwargs)
         AuditLog.Save(monitoring, request, ActionEnum.CREATE, TableEnum.MONITORING)

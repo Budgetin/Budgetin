@@ -36,6 +36,7 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
         return project_detail
 
     def create(self, request, *args, **kwargs):
+        request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
         project_detail = super().create(request, *args, **kwargs)
         AuditLog.Save(project_detail, request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
