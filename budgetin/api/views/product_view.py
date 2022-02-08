@@ -42,25 +42,21 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        #request.data['created_by'] = request.custom_user['id']
-        #DEBT
-        request.data['created_by'] = 1
+        request.data['created_by'] = request.custom_user['id']
         is_product_duplicate_create(request.data['product_code'],request.data['product_name'])
         product = super().create(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.CREATE, TableEnum.PRODUCT)
         return product
 
     def update(self, request, *args, **kwargs):
-        #DEBT
-        request.data['updated_by'] = 1
+        request.data['updated_by'] = request.custom_user['id']
         is_product_duplicate(kwargs['pk'],request.data['product_code'],request.data['product_name'])
         product = super().update(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.UPDATE, TableEnum.PRODUCT)
         return product
 
     def destroy(self, request, *args, **kwargs):
-        #DEBT
-        request.data['updated_by'] = 1                                 
+        request.data['updated_by'] = request.custom_user['id']                       
         product = super().destroy(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.DELETE, TableEnum.PRODUCT)
         return product

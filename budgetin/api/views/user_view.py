@@ -46,8 +46,7 @@ class UserViewSet(viewsets.ModelViewSet):
         employee_info = get_ithc_employee_info(request.data['username'])
         request.data['employee_id'] = employee_info['employee_id']
         request.data['display_name'] = employee_info['display_name']
-        #DEBT
-        request.data['created_by'] = 1
+        request.data['created_by'] = request.custom_user['id']
         user = super().create(request, *args, **kwargs)
         AuditLog.Save(user, request, ActionEnum.CREATE, TableEnum.USER)
         return user

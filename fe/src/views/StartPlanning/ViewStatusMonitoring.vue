@@ -92,7 +92,7 @@ export default {
 
     computed: {
         ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning"]),
-        ...mapState("allBiro", ["loadingGetAllBiro", "dataAllBiro"]),
+        ...mapState("allBiroItHc", ["loadingGetAllBiroItHc", "dataAllBiroItHc"]),
     },
 
     methods: {
@@ -150,7 +150,8 @@ export default {
             this.setBreadcrumbs();
         }, 
         onCancel() {
-            this.dialog = false;
+            this.isView = true;
+            this.setForm();
             this.setBreadcrumbs();
         },
         onSubmit(e) {

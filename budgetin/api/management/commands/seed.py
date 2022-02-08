@@ -1,6 +1,6 @@
 import json
 from django.core.management.base import BaseCommand
-from api.models import ProjectType, Strategy, User, Coa, Product, Planning
+from api.models import ProjectType, Strategy, User, Coa, Product
 
 
 class Command(BaseCommand):
@@ -49,14 +49,6 @@ class Command(BaseCommand):
             Product.all_object.get_or_create(pk=data['pk'], defaults=data)
         self.comment("Seeding Product")
 
-    def seed_planning(self):
-        with open('api/json/planning.json') as f:
-            data_list = json.load(f)
-        for data in data_list:
-            data['pk'] = data.pop('id')
-            Planning.objects.get_or_create(pk=data['pk'], defaults=data)
-        self.comment("Seeding Planning")
-
     def comment(self, comment):
         self.stdout.write(self.style.HTTP_SUCCESS('%s... ' %
                           comment)+self.style.SUCCESS('OK'))
@@ -67,4 +59,3 @@ class Command(BaseCommand):
         self.seed_user_dev()
         self.seed_coa()
         self.seed_product()
-        self.seed_planning()

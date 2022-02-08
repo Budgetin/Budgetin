@@ -30,6 +30,7 @@ router.register('api/project_type', views.ProjectTypeViewSet)
 router.register('api/user', views.UserViewSet)
 router.register('api/strategy', views.StrategyViewSet)
 router.register('api/auditlog', views.AuditLogViewSet)
+router.register('api/biro', views.BiroViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -39,16 +39,13 @@ class MonitoringViewSet(viewsets.ModelViewSet):
         return Response(monitoring_dict)
 
     def create(self, request, *args, **kwargs):
-        #request.data['created_by'] = request.custom_user['id']
-        #DEBT
-        request.data['created_by'] = 1
+        request.data['created_by'] = request.custom_user['id']
         monitoring = super().create(request, *args, **kwargs)
         AuditLog.Save(monitoring, request, ActionEnum.CREATE, TableEnum.MONITORING)
         return monitoring
 
     def update(self, request, *args, **kwargs):
-        #DEBT
-        request.data['updated_by'] = 1
+        request.data['updated_by'] = request.custom_user['id']
         monitoring = super().update(request, *args, **kwargs)
         AuditLog.Save(monitoring, request, ActionEnum.UPDATE, TableEnum.MONITORING)
         return monitoring

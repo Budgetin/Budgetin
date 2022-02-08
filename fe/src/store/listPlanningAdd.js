@@ -1,16 +1,16 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/biro/";
+const ENDPOINT = "/api/test/";
 
-const allBiro = {
+const listPlanning = {
   namespaced: true,
   state: {
-    loadingGetAllBiro: false, // for loading table
+    loadingGetListPlanning: false, // for loading table
     loadingGetEdittedItem: false,
-    loadingPostPatchAllBiro: false, // for loading post/patch
-    dataAllBiro: [], // for v-data-table
-    dataActiveAllBiro: [], //for dropdown
+    loadingPostPatchListPlanning: false, // for loading post/patch
+    dataListPlanning: [], // for v-data-table
+    dataActiveListPlanning: [], //for dropdown
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
@@ -22,9 +22,9 @@ const allBiro = {
     value: (state) => state.value
   },
   actions: {
-    getAllBiro() {
-      if (store.state.allBiro.requestStatus !== "SUCCESS")
-        store.dispatch("allBiro/getFromAPI");
+    getListPlanning() {
+      if (store.state.listPlanning.requestStatus !== "SUCCESS")
+        store.dispatch("listPlanning/getFromAPI");
     },
     getFromAPI({ commit }) {
       commit("GET_INIT");
@@ -32,14 +32,6 @@ const allBiro = {
         .get(ENDPOINT)
         .then((response) => {
           const cleanData = response.data
-          // const cleanData = response.data.map((data) => {
-          //   return {
-          //     id: data.id,
-          //     code: data.code,
-          //     name: data.name,
-          //     sub_group: data.sub_group,
-          //   };
-          // });
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
           );
@@ -49,7 +41,7 @@ const allBiro = {
           commit("GET_ERROR", error);
         });
     },
-    getAllBiroById({ commit }, id) {
+    getListPlanningById({ commit }, id) {
       // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
@@ -67,7 +59,7 @@ const allBiro = {
           });
       });
     },
-    postAllBiro({ commit }, payload) {
+    postListPlanning({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
@@ -75,7 +67,7 @@ const allBiro = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiro/getFromAPI");
+            //store.dispatch("listPlanning/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -84,8 +76,8 @@ const allBiro = {
               errorMsg = "";
               switch (error.response.status) {
                 case 400:
-                  if (error.response.data.hasOwnProperty("year")) {
-                    errorMsg += error.response.data.year;
+                  if (error.response.data.hasOwnProperty("Planning_name")) {
+                    errorMsg += error.response.data.Planning_name;
                   }
                   break;
 
@@ -99,7 +91,7 @@ const allBiro = {
           });
       });
     },
-    patchAllBiro({ commit }, payload) {
+    patchListPlanning({ commit }, payload) {
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
       return new Promise((resolve, reject) => {
@@ -108,7 +100,8 @@ const allBiro = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiro/getFromAPI");
+            store.dispatch("listPlanning/getFromAPI");
+            // store.dispatch("masterCategory/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -117,8 +110,8 @@ const allBiro = {
               errorMsg = "";
               switch (error.response.status) {
                 case 400:
-                  if (error.response.data.hasOwnProperty("year")) {
-                    errorMsg += error.response.data.year;
+                  if (error.response.data.hasOwnProperty("Planning_name")) {
+                    errorMsg += error.response.data.Planning_name;
                   }
                   break;
 
@@ -133,7 +126,7 @@ const allBiro = {
       });
     },
     // getEdittedItemHistories({ commit }) {
-    //   const itemID = store.state.allBiro.edittedItem.id;
+    //   const itemID = store.state.listPlanning.edittedItem.id;
     //   if (!itemID) return;
     //   getAPI
     //     .get(ENDPOINT + `${itemID}/histories/`)
@@ -145,15 +138,15 @@ const allBiro = {
     //       commit("GET_ERROR", error.response.data);
     //     });
     // },
-    // getActiveallBiro({ commit }) {
-    //   if (store.state.allBiro.requestActiveStatus !== "SUCCESS")
+    // getActiveListPlanning({ commit }) {
+    //   if (store.state.listPlanning.requestActiveStatus !== "SUCCESS")
     //     getAPI
     //       .get(ENDPOINT + "?filter{status}=1")
     //       .then((response) => {
-    //         const cleanData = response.data.Coas.map((data) => {
+    //         const cleanData = response.data.Plannings.map((data) => {
     //           return {
     //             id: data.id,
-    //             Coa_name: data.Coa_name,
+    //             Planning_name: data.Planning_name,
     //             status: String(data.status),
     //           };
     //         });
@@ -168,37 +161,37 @@ const allBiro = {
     // get related
     GET_INIT(state) {
       state.requestStatus = "PENDING";
-      state.loadingGetAllBiro = true;
+      state.loadingGetListPlanning = true;
     },
-    GET_SUCCESS(state, dataAllBiro) {
+    GET_SUCCESS(state, dataListPlanning) {
       state.requestStatus = "SUCCESS";
-      state.loadingGetAllBiro = false;
-      state.dataAllBiro = dataAllBiro;
+      state.loadingGetListPlanning = false;
+      state.dataListPlanning = dataListPlanning;
     },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveAllBiro) {
+    GET_ACTIVE_DATA_UPDATE(state, dataActiveListPlanning) {
       state.requestActiveStatus = "IDLE";
-      state.dataActiveAllBiro = dataActiveAllBiro;
+      state.dataActiveListPlanning = dataActiveListPlanning;
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingGetAllBiro = false;
+      state.loadingGetListPlanning = false;
       state.errorMsg = error;
-      state.dataAllBiro = [];
-      state.dataActiveAllBiro = [];
+      state.dataListPlanning = [];
+      state.dataActiveListPlanning = [];
     },
 
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";
-      state.loadingPostPatchAllBiro = true;
+      state.loadingPostPatchListPlanning = true;
     },
     POST_PATCH_SUCCESS(state) {
       state.requestStatus = "SUCCESS";
-      state.loadingPostPatchAllBiro = false;
+      state.loadingPostPatchListPlanning = false;
     },
     POST_PATCH_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingPostPatchAllBiro = false;
+      state.loadingPostPatchListPlanning = false;
       state.errorMsg = error;
     },
     SET_EDITTED_ITEM(state, payload) {
@@ -226,4 +219,4 @@ const allBiro = {
   },
 };
 
-export default allBiro
+export default listPlanning;

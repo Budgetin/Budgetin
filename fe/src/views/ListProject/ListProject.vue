@@ -14,7 +14,7 @@
             <v-divider></v-divider>
             <v-row no-gutters style="margin-top: 16px">
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                <v-subheader class="list-project__header">List of Projects</v-subheader>
+                    <v-subheader class="list-project__header">List of Projects</v-subheader>
                 </v-col>
             </v-row>
 
@@ -51,12 +51,6 @@
                                         </v-btn>
                                     </v-col>
 
-                                    <v-col no-gutters class="list-project__btn">
-                                        <v-btn rounded color="primary" @click="onExport">
-                                            <v-icon left> mdi-export-variant </v-icon>
-                                            Export Data
-                                        </v-btn>
-                                    </v-col>
                                 </v-row>
                             </v-toolbar-title>
                         </template>

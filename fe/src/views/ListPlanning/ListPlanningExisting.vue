@@ -4,14 +4,13 @@
       <!-- edit form -->
       <v-col xs="12" sm="10" md="10" lg="10">
         <v-container>
-          <form-edit-planning
+          <form-planning-existing
             :form="form"
-            :isView="isView"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-edit-planning>
+          ></form-planning-existing>
         </v-container>
       </v-col>
 
@@ -39,27 +38,35 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormEditPlanning from "@/components/ListPlanning/FormEditPlanning";
+import FormPlanningExisting from "@/components/ListPlanning/FormPlanningExisting";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "EditListPlanning",
-  components: { FormEditPlanning,SuccessErrorAlert},
+  name: "ListPlanningExisting",
+  components: { FormPlanningExisting,SuccessErrorAlert},
   created() {
-    this.getEdittedItem();
+    //this.getEdittedItem();
   },
   methods: {
-    ...mapActions("listPlanning", [
-      "patchListPlanning",
-      "getListPlanningById",
+    ...mapActions("listPlanningAdd", [
+      "postListPlanning",
     ]),
     getEdittedItem() {
-        this.getListPlanningById(this.$route.params.id).then(() => {
-        this.setForm();
-      });
+      this.getActivePlanning();
+      this.setActivePlanning();
+      console.log(this.activePlanning);
+      // this.getListPlanningById(this.$route.params.id).then(() => {
+      //   this.setForm();
+      // });
     },
     setForm() {
       this.form = JSON.parse(
         JSON.stringify(this.$store.state.listPlanning.edittedItem)
+      );
+      console.log(this.activePlanning);
+    },
+    setActivePlanning() {
+      this.activePlanning = JSON.parse(
+        JSON.stringify(this.$store.state.activePlanning.dataActivePlanning)
       );
     },
     onEdit() {
@@ -73,8 +80,9 @@ export default {
       this.setForm();
     },
     onSubmit(e) {
-      this.patchListPlanning(e)
-        .then(() => {
+      //this.patchListPlanning(e)
+      this.postListPlanning(e)
+      .then(() => {
           this.onSaveSuccess();
         })
         .catch((error) => {
@@ -96,75 +104,44 @@ export default {
     onAlertOk() {
       this.alert.show = false;
       this.isView = true;
-      this.getEdittedItem();
+      //this.getEdittedItem();
     },
   },
   data: () => ({
     isView: true,
+    activePlanning: [],
     form: {
-    id: "",
-    is_budget: "",
-    expense_type: "",
-    planning_nominal: "",
-    planning_q1: "",
-    planning_q2: "",
-    planning_q3: "",
-    planning_q4: "",
-    realization_jan: "",
-    realization_feb: "",
-    realization_mar: "",
-    realization_apr: "",
-    realization_may: "",
-    realization_jun: "",
-    realization_jul: "",
-    realization_aug: "",
-    realization_sep: "",
-    realization_oct: "",
-    realization_nov: "",
-    realization_dec: "",
-    switching_in: "",
-    switching_out: "",
-    top_up: "",
-    returns: "",
-    allocate: "",
-    coa: "",
-    project_detail: {
-        id: "",
-        dcsp_id: "",
-        planning: {
-            id: "",
-            year: "",
-            due_date: "",
-            is_active: ""
-        },
-        project: {
-            id: "",
-            project_name: "",
-            project_description: "",
-            itfam_id: "",
-            is_tech: "",
-            start_year: "",
-            end_year: "",
-            total_investment_value: "",
-            product: {
-                id: "",
-                product_code: "",
-                strategy: ""
+        itfam_id : "",
+        project_name : "",
+        project_description : "",
+        biro : "",
+        start_year : "",
+        end_year : "",
+        total_investment_value : "",
+        product : "",
+        is_tech : "",
+        planning : "",
+        project_type : "",
+        dcsp_id : "",
+        budget:[
+            {
+                coa : "",
+                expense_type : "",
+                planning_q1 : "",
+                planning_q2 : "",
+                planning_q3 : "",
+                planning_q4 : ""
             },
-            biro: {
-                id: "",
-                code: "",
-                name: "",
-                rcc: ""
-            }
-        },
-        project_type: ""
+            {
+                coa : "",
+                expense_type : "",
+                planning_q2 : "",
+                planning_q1 : "",
+                planning_q3 : "",
+                planning_q4 : ""
+            },
+        ]
     },
-    created_by: "",
-    updated_by: "",
-    created_at: "",
-    updated_at: ""
-},
     alert: {
       show: false,
       success: null,

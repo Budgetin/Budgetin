@@ -17,11 +17,14 @@ const statusInfo = {
       { id: 1, label: "Yes" },
       { id: 0, label: "No" },
     ],
-    // statusMonitor: [
-    //   { id: "2", label: "Submitted" },
-    //   { id: "1", label: "Draft" },
-    //   { id: "0", label: "To-Do" },
-    // ]
+    statusTechNonTech: [
+      { id: 1, label: "Tech" },
+      { id: 0, label: "Non-Tech" },
+    ],
+    statusCAPEXOPEX: [
+      { id: 1, label: "CAPEX" },
+      { id: 2, label: "OPEX" },
+    ],
   },
 };
 

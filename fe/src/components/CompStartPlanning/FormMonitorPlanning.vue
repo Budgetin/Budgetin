@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title class="text-h5" style="margin-bottom: 32px">
+    <v-card-title class="mb-5">
       {{ cardTitle }} a Monitoring Status
       <v-spacer></v-spacer>
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">
@@ -129,24 +129,6 @@
         </v-row>
 
         <!-- BUTTONS -->
-        <!-- <v-row no-gutters>
-          <v-col no-gutters class="monitor-planning__btn">
-            <v-btn rounded outlined class="primary--text" @click="onCancel" v-if="!isView" style="width: 8rem; margin-top: 120px; margin-left: 212px">
-              Cancel
-            </v-btn>
-          </v-col>
-          <v-col no-gutters>
-            <v-btn rounded class="primary" @click="onSubmit" v-if="!isView" style="width: 8rem; margin-top: 120px">
-              Submit
-            </v-btn>
-          </v-col>
-          <v-col no-gutters class="monitor-planning__btn">
-            <v-btn v-if="isView" rounded class="primary" @click="onOK" style="width: 8rem; margin-top: 120px">
-              OK
-            </v-btn>
-          </v-col>
-        </v-row> -->
-
         <v-row no-gutters>
           <v-col cols="12" align="right">
             <v-btn
@@ -154,8 +136,7 @@
               outlined
               class="primary--text"
               @click="$emit('okClicked')"
-              v-if="isView"
-            >
+              v-if="isView">
               OK
             </v-btn>
             <v-btn
@@ -163,8 +144,7 @@
               outlined
               class="primary--text"
               @click="$emit('cancelClicked')"
-              v-if="!isView"
-            >
+              v-if="!isView">
               Cancel
             </v-btn>
             <v-btn rounded class="primary ml-3" type="submit" v-if="!isView">
@@ -201,9 +181,7 @@ export default {
   }),
   
   computed: {
-    // ...mapState("statusInfo", ["statusMonitor"]),
-    ...mapState("allBiro", ["getAllBiro", "dataAllBiro"]),
-    // ...mapState("monitorPlanning", ["getMonitorPlanning", "dataMonitorPlanning"]),
+    ...mapState("allBiroItHc", ["getAllBiroItHc", "dataAllBiroItHc"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";

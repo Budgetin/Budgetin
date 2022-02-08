@@ -9,13 +9,13 @@
 
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+                    <!-- :sort-by.sync="sortBy"
+                    :sort-desc.sync="sortDesc" -->
                     <v-data-table
                     :headers="dataTable.headers"
                     :loading="loadingGetStartPlanning"
                     :items="dataStartPlanning"
                     :search="search"
-                    :sort-by.sync="sortBy"
-                    :sort-desc.sync="sortDesc"
                     class="data-table">
                         <template v-slot:top>
                             <v-toolbar-title>
@@ -76,11 +76,11 @@
                         </template>
 
                         <template v-slot:[`item.is_active`]="{ item }">
-                            <binary-yes-no-chip :boolean="item.is_active"> </binary-yes-no-chip>
+                            <binary-status-chip :boolean="item.is_active"></binary-status-chip>
                         </template>
 
                         <template v-slot:[`item.notification`]="{ item }">
-                            <binary-yes-no-chip :boolean="item.notification"> </binary-yes-no-chip>
+                            <binary-yes-no-chip :boolean="item.notification"></binary-yes-no-chip>
                         </template>
                     </v-data-table>
                 </v-col>
@@ -92,7 +92,7 @@
                     :form="form"
                     :isNew="true"
                     :isView="false"
-                    :dataAllBiro="dataAllBiro"
+                    :dataAllBiroItHc="dataAllBiroItHc"
                     :dataStartPlanning="dataStartPlanning"
                     @editClicked="onEdit"
                     @cancelClicked="onCancel"
@@ -175,20 +175,20 @@ export default {
     created() {
         this.getStartPlanning();
         this.getMonitorPlanning();
-        this.getAllBiro();
+        this.getAllBiroItHc();
         this.setBreadcrumbs();
     },
 
     computed: {
         ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
         ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning"]),
-        ...mapState("allBiro", ["dataAllBiro"]),
+        ...mapState("allBiroItHc", ["dataAllBiroItHc"]),
     },
 
     methods: {
         ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
         ...mapActions("monitorPlanning", ["getMonitorPlanning", "postMonitorPlanning"]),
-        ...mapActions("allBiro", ["getAllBiro"]),
+        ...mapActions("allBiroItHc", ["getAllBiroItHc"]),
 
         setBreadcrumbs() {
             let param = this.isView ? "View Planning" : "Edit Planning";
@@ -273,7 +273,6 @@ export default {
 
     .start-planning__btn {
         text-align: end;
-
         button {
             margin: 10px 32px;
         }
@@ -288,7 +287,7 @@ export default {
 
     .start-planning__card {
         button {
-        width: 8rem;
+            width: 8rem;
         }
     }
 }

@@ -37,7 +37,7 @@ export default {
 #master-product,
 #master-user,
 #master-strategy,
-#list-planning,
+#start-planning,
 #login-form
 {
   font-family: "Nunito", sans-serif !important;

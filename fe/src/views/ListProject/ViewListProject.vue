@@ -7,8 +7,13 @@
                 :form="form"
                 :isView="isView"
                 :dataListProject="dataListProject"
+                :dataAllBiro="dataAllBiro"
+                :dataMasterProduct="dataMasterProduct"
+                @editClicked="onEdit"
+                @cancelClicked="onCancel"
+                @submitClicked="onSubmit"
                 @okClicked="onOK"
-                class="view-list-project__form">
+                class="view-list-project__detail">
                 </form-list-project>
             </v-row>
 
@@ -20,64 +25,27 @@
             </v-card>
 
             <v-card class="view-list-project__table">
-                <table-budget-planning>
+                <table-budget-planning
+                :budgetPlanning="budgetPlanning"
+                v-if="budgetPlanning.project_detail">
                 </table-budget-planning>
             </v-card>
+
+            <v-card class="view-list-project__table">
+                <table-budget-realization
+                :budgetRealization="budgetRealization"
+                v-if="budgetRealization.project_detail">
+                </table-budget-realization>
+            </v-card>
+
+            <success-error-alert
+            :success="alert.success"
+            :show="alert.show"
+            :title="alert.title"
+            :subtitle="alert.subtitle"
+            @okClicked="onAlertOk"
+            />
         </v-container>
-
-        <!-- PROJECT DETAILS -->
-        <!-- <v-container class="view-list-project__outer-container">
-            <v-row no-gutters style="margin-top: 16px">
-                <v-subheader class="view-list-project__header">Project Details</v-subheader>
-            </v-row>
-
-            <v-row no-gutters>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <v-data-table
-                    :headers="dataTable.projectDetailsHeaders"
-                    :loading="loadingGetListPlanning"
-                    :items="dataListPlanning"
-                    class="data-table">
-                    </v-data-table>
-                </v-col>
-            </v-row>
-        </v-container> -->
-
-        <!-- BUDGET PLANNING -->
-        <!-- <v-container class="view-list-project__outer-container">
-            <v-row no-gutters style="margin-top: 16px">
-                <v-subheader class="view-list-project__header">Budget Planning</v-subheader>
-            </v-row>
-
-            <v-row no-gutters>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <v-data-table
-                    :headers="dataTable.budgetPlanningHeaders"
-                    :loading="loadingGetListPlanning"
-                    :items="dataListPlanning"
-                    class="data-table">
-                    </v-data-table>
-                </v-col>
-            </v-row>
-        </v-container> -->
-
-        <!-- BUDGET REALIZATION -->
-        <!-- <v-container class="view-list-project__outer-container">
-            <v-row no-gutters style="margin-top: 16px">
-                <v-subheader class="view-list-project__header">Budget Realization</v-subheader>
-            </v-row>
-
-            <v-row no-gutters>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <v-data-table
-                    :headers="dataTable.budgetRealizationHeaders"
-                    :loading="loadingGetListPlanning"
-                    :items="dataListPlanning"
-                    class="data-table">
-                    </v-data-table>
-                </v-col>
-            </v-row>
-        </v-container> -->
     </v-app>
 </template>
 
@@ -86,14 +54,18 @@ import { mapState, mapActions, mapGetters } from "vuex";
 import FormListProject from '@/components/CompListProject/FormListProject';
 import TableProjectDetails from '@/components/CompListProject/TableProjectDetails';
 import TableBudgetPlanning from '@/components/CompListProject/TableBudgetPlanning';
+import TableBudgetRealization from '@/components/CompListProject/TableBudgetRealization';
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
     name: "ViewListProject",
     components: {
-        FormListProject, TableProjectDetails, TableBudgetPlanning
+        FormListProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization, SuccessErrorAlert
     },
     data: () => ({
         isView: true,
         projectDetail: [],
+        budgetPlanning: [],
+        budgetRealization: [],
         form: {
             id: "",
             created_by: "",
@@ -117,7 +89,8 @@ export default {
                 id: "",
                 product_name: "",
                 product_code: "",
-                strategy: ""
+                strategy: "",
+                option: "",
             },
             project_detail: [
                 {
@@ -155,7 +128,6 @@ export default {
                             top_up: "",
                             returns: "",
                             allocate: "",
-                            project_detail: "",
                             coa: ""
                         },
                     ]
@@ -163,44 +135,31 @@ export default {
             ]
         },
 
-        // dataTable: {
-        //     budgetRealizationHeaders: [
-        //         { text: "Year", value: "project_detail.planning.year", width: "10%" },
-        //         { text: "Allocate", value: "allocate", width: "15%", align: "start" },
-        //         { text: "Top Up", value: "top_up", width: "15%" },
-        //         { text: "Return", value: "returns", width: "15%" },
-        //         { text: "Switching In", value: "switching_in", width: "15%" },
-        //         { text: "Switching Out", value: "switching_out", width: "15%" },
-        //         { text: "January", value: "realization_jan", width: "15%" },
-        //         { text: "February", value: "realization_feb", width: "15%" },
-        //         { text: "March", value: "realization_mar", width: "15%" },
-        //         { text: "April", value: "realization_apr", width: "15%" },
-        //         { text: "May", value: "realization_may", width: "15%" },
-        //         { text: "June", value: "realization_jun", width: "15%" },
-        //         { text: "July", value: "realization_jul", width: "15%" },
-        //         { text: "August", value: "realization_aug", width: "15%" },
-        //         { text: "September", value: "realization_sep", width: "15%" },
-        //         { text: "October", value: "realization_oct", width: "15%" },
-        //         { text: "November", value: "realization_nov", width: "15%" },
-        //         { text: "December", value: "realization_dec", width: "15%" },
-        //     ],
-        // },
+        alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
     }),
-
     created() {
         this.getDetailItem();
         this.setBreadcrumbs();
+        this.getMasterProduct();
+        this.getAllBiro();
     },
-
     computed: {
         ...mapState("listProject", ["loadingGetListProject", "dataListProject"]),
+        ...mapState("allBiro", ["loadingGetAllBiro", "dataAllBiro"]),
+        ...mapState("masterProduct", ["loadingGetMasterProduct", "dataMasterProduct"]),
     },
-
     methods: {
-        ...mapActions("listProject", ["getListProjectById"]),
+        ...mapActions("listProject", ["patchListProject", "getListProjectById"]),
+        ...mapActions("masterProduct", ["getMasterProduct"]),
+        ...mapActions("allBiro", ["getAllBiro"]),
 
         setBreadcrumbs() {
-            let param = this.isView ? "View Detail Project" : "Edit Project";
+            let param = this.isView ? "View Project Detail" : "Edit Project Detail";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
                     text: "List of Projects",
@@ -217,28 +176,67 @@ export default {
                 },
             ]);
         },
-
         getDetailItem() {
             this.getListProjectById(this.$route.params.id).then(() => {
-                // console.log(this.$route.params.id);
-                
                 this.projectDetail = JSON.parse(
+                    JSON.stringify(this.$store.state.listProject.edittedItem)
+                );
+                this.budgetPlanning = JSON.parse(
+                    JSON.stringify(this.$store.state.listProject.edittedItem)
+                );
+                this.budgetRealization = JSON.parse(
                     JSON.stringify(this.$store.state.listProject.edittedItem)
                 );
                 this.setForm();
             });
         },
-
-        // getEdittedItem() {
-        //     this.getListProjectById(this.$route.params.id).then(() => {
-        //         this.setForm();
-        //     });
-        // },
         setForm() {
             this.form = JSON.parse(
                 JSON.stringify(this.$store.state.listProject.edittedItem)
             );
-            console.log(this.projectDetail)
+        },
+        onEdit() {
+            // console.log("Masuk on Edit");
+            this.isView = false;
+            this.setBreadcrumbs();
+        },
+        onCancel() {
+            this.isView = true;
+            this.setForm();
+            this.setBreadcrumbs();
+        },
+        onSubmit(e) {
+            console.log(e);
+            this.patchListProject(e)
+            .then(() => {
+                // console.log("Masuk Save Success");
+                this.onSaveSuccess();
+            })
+            .catch((error) => {
+                // console.log("Masuk Save Error");
+                this.onSaveError(error);
+            });
+        },
+        onSaveSuccess() {
+            // console.log("Masuk Save Success LAGI");
+            this.dialog = false;
+            this.alert.show = true;
+            this.alert.success = true;
+            this.alert.title = "Save Success";
+            this.alert.subtitle = "Edit Project Detail has been saved successfully";
+        },
+        onSaveError(error) {
+            // console.log("Masuk Save Error LAGI");
+            this.dialog = false;
+            this.alert.show = true;
+            this.alert.success = false;
+            this.alert.title = "Save Failed";
+            this.alert.subtitle = error;
+        },
+        onAlertOk() {
+            this.alert.show = false;
+            this.isView = true;
+            this.getDetailItem();
         },
         onOK() {
             return this.$router.go(-1);
@@ -254,14 +252,13 @@ export default {
 .data-table {
     margin: 40px;
 }
-
 #view-list-project {
     .view-list-project__header {
         padding-left: 32px;
         font-size: 1.25rem;
         font-weight: 600;
     }
-    .view-list-project__form {
+    .view-list-project__detail {
         border-radius: 8px;
         margin: 1% auto !important;
         padding-right: 3% !important;
@@ -297,14 +294,12 @@ export default {
         max-height: 90%;
     }
 }
-
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
 #view-list-project {
     .view-list-project__btn {
         text-align: center;
         padding: 0px 32px;
-
         button {
         width: 100%;
         margin: 0px 0px 32px 0px;

@@ -30,3 +30,8 @@ class MonitoringStatusEnum(Enum):
     TODO = "To Do"
     DRAFT = "Draft"
     SUBMITTED = "Submitted"
+
+class ProjectTypeEnum(Enum):
+    NEW = "New"
+    CARRY_FORWARD = "Carry Forward"
+    REGULAR = "Regular"

@@ -1,16 +1,16 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/biro/";
+const ENDPOINT = "/api/biro/ithc";
 
-const allBiro = {
+const allBiroItHc = {
   namespaced: true,
   state: {
-    loadingGetAllBiro: false, // for loading table
+    loadingGetAllBiroItHc: false, // for loading table
     loadingGetEdittedItem: false,
-    loadingPostPatchAllBiro: false, // for loading post/patch
-    dataAllBiro: [], // for v-data-table
-    dataActiveAllBiro: [], //for dropdown
+    loadingPostPatchAllBiroItHc: false, // for loading post/patch
+    dataAllBiroItHc: [], // for v-data-table
+    dataActiveAllBiroItHc: [], //for dropdown
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
@@ -22,9 +22,9 @@ const allBiro = {
     value: (state) => state.value
   },
   actions: {
-    getAllBiro() {
-      if (store.state.allBiro.requestStatus !== "SUCCESS")
-        store.dispatch("allBiro/getFromAPI");
+    getAllBiroItHc() {
+      if (store.state.allBiroItHc.requestStatus !== "SUCCESS")
+        store.dispatch("allBiroItHc/getFromAPI");
     },
     getFromAPI({ commit }) {
       commit("GET_INIT");
@@ -49,7 +49,7 @@ const allBiro = {
           commit("GET_ERROR", error);
         });
     },
-    getAllBiroById({ commit }, id) {
+    getAllBiroItHcById({ commit }, id) {
       // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
@@ -67,7 +67,7 @@ const allBiro = {
           });
       });
     },
-    postAllBiro({ commit }, payload) {
+    postAllBiroItHc({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
@@ -75,7 +75,7 @@ const allBiro = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiro/getFromAPI");
+            store.dispatch("allBiroItHc/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -99,7 +99,7 @@ const allBiro = {
           });
       });
     },
-    patchAllBiro({ commit }, payload) {
+    patchAllBiroItHc({ commit }, payload) {
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
       return new Promise((resolve, reject) => {
@@ -108,7 +108,7 @@ const allBiro = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiro/getFromAPI");
+            store.dispatch("allBiroItHc/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -133,7 +133,7 @@ const allBiro = {
       });
     },
     // getEdittedItemHistories({ commit }) {
-    //   const itemID = store.state.allBiro.edittedItem.id;
+    //   const itemID = store.state.allBiroItHc.edittedItem.id;
     //   if (!itemID) return;
     //   getAPI
     //     .get(ENDPOINT + `${itemID}/histories/`)
@@ -145,8 +145,8 @@ const allBiro = {
     //       commit("GET_ERROR", error.response.data);
     //     });
     // },
-    // getActiveallBiro({ commit }) {
-    //   if (store.state.allBiro.requestActiveStatus !== "SUCCESS")
+    // getActiveAllBiroItHc({ commit }) {
+    //   if (store.state.allBiroItHc.requestActiveStatus !== "SUCCESS")
     //     getAPI
     //       .get(ENDPOINT + "?filter{status}=1")
     //       .then((response) => {
@@ -168,37 +168,37 @@ const allBiro = {
     // get related
     GET_INIT(state) {
       state.requestStatus = "PENDING";
-      state.loadingGetAllBiro = true;
+      state.loadingGetAllBiroItHc = true;
     },
-    GET_SUCCESS(state, dataAllBiro) {
+    GET_SUCCESS(state, dataAllBiroItHc) {
       state.requestStatus = "SUCCESS";
-      state.loadingGetAllBiro = false;
-      state.dataAllBiro = dataAllBiro;
+      state.loadingGetAllBiroItHc = false;
+      state.dataAllBiroItHc = dataAllBiroItHc;
     },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveAllBiro) {
+    GET_ACTIVE_DATA_UPDATE(state, dataActiveAllBiroItHc) {
       state.requestActiveStatus = "IDLE";
-      state.dataActiveAllBiro = dataActiveAllBiro;
+      state.dataActiveAllBiroItHc = dataActiveAllBiroItHc;
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingGetAllBiro = false;
+      state.loadingGetAllBiroItHc = false;
       state.errorMsg = error;
-      state.dataAllBiro = [];
-      state.dataActiveAllBiro = [];
+      state.dataAllBiroItHc = [];
+      state.dataActiveAllBiroItHc = [];
     },
 
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";
-      state.loadingPostPatchAllBiro = true;
+      state.loadingPostPatchAllBiroItHc = true;
     },
     POST_PATCH_SUCCESS(state) {
       state.requestStatus = "SUCCESS";
-      state.loadingPostPatchAllBiro = false;
+      state.loadingPostPatchAllBiroItHc = false;
     },
     POST_PATCH_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingPostPatchAllBiro = false;
+      state.loadingPostPatchAllBiroItHc = false;
       state.errorMsg = error;
     },
     SET_EDITTED_ITEM(state, payload) {
@@ -226,4 +226,4 @@ const allBiro = {
   },
 };
 
-export default allBiro
+export default allBiroItHc

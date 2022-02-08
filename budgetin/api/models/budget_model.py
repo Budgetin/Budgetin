@@ -6,7 +6,7 @@ from api.models.abstract_model import TimestampModel, UserTrackModel
 class Budget(SoftDeleteModel, TimestampModel, UserTrackModel):
     #related_name buat backward join (dari table ProjectDetail)
     project_detail = models.ForeignKey('ProjectDetail', on_delete=models.CASCADE, related_name='budget')
-    coa = models.ForeignKey('Coa', on_delete=models.CASCADE)
+    coa = models.ForeignKey('Coa', on_delete=models.CASCADE, null=True)
     expense_type = models.CharField(max_length=200)
     planning_q1 = models.BigIntegerField(default = 0, blank = True)
     planning_q2 = models.BigIntegerField(default = 0, blank = True)

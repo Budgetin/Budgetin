@@ -2,6 +2,17 @@
   <v-app id="list-planning">
     <v-container class="list-planning__container outer-container">
       <v-row no-gutters>
+                <v-tabs v-model="tab" color="primary" align-with-title>
+                    <v-tabs-slider color="grey"></v-tabs-slider>
+                    <v-tab
+                        v-for="item in items"
+                        :key="item">
+                        {{ item }}
+                    </v-tab>
+                </v-tabs>
+            </v-row>
+            <v-divider></v-divider>
+      <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
           <v-subheader class="list-planning__header">List Planning</v-subheader>
         </v-col>
@@ -52,8 +63,13 @@
                     no-gutters
                     class="list-planning__btn"
                   >
-                    <v-btn rounded color="primary" @click="gotoListPlanning"> Add Planning </v-btn>
+                    <v-btn rounded color="primary" @click="onAdd"> Add Planning </v-btn>
+                    <v-btn rounded color="primary" @click="onExport">
+                          <v-icon left> mdi-export-variant </v-icon>
+                          Export Data
+                      </v-btn>
                   </v-col>
+                  
                 </v-row>
               </v-toolbar-title>
             </template>
@@ -62,7 +78,8 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'AddListPlanning'
+                  name: 'EditListPlanning',
+                  params: { id: item.id },
                 }"
               >
                 <v-tooltip bottom>
@@ -83,6 +100,16 @@
             </template>
           </v-data-table>
         </v-col>
+      </v-row>
+
+      <v-row no-gutters>
+          <v-dialog v-model="dialogChoose" persistent width="40rem">
+              <form-choose-project-type
+              @newClicked="onNewClick"
+              @existingClicked="onExistingClick"
+              @cancelClicked="onCancel">
+              </form-choose-project-type>
+          </v-dialog>
       </v-row>
 
       <v-row no-gutters>
@@ -108,18 +135,21 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import FormPlanning from "@/components/ListPlanning/FormPlanning";
 import ColumnOption from "@/components/ListPlanning/ColumnOption";
+import FormChooseProjectType from "@/components/ListPlanning/FormChooseProjectType"
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
 export default {
   name: "ListPlanning",
-  components: {FormPlanning,SuccessErrorAlert,ColumnOption,BinaryYesNoChip},
+  components: {SuccessErrorAlert,ColumnOption,FormChooseProjectType,BinaryYesNoChip},
   watch: {},
   data: () => ({
     dialog: false,
+    dialogChoose: false,
     isEdit: false,
     search: "",
+    tab: null,
+    items: ['Active', 'Inactive'],
     dataTable: {
       selectedHeader: [],
       Listheader: [
@@ -296,7 +326,7 @@ export default {
       this.$store.commit("listPlanning/SET_EDITTED_ITEM", item);
     },
     onCancel() {
-      this.dialog = false;
+      this.dialogChoose = false;
     },
     onClose(e) {
       this.dataTable.selectedHeader.splice(0, 2);
@@ -347,8 +377,17 @@ export default {
     onAlertOk() {
       this.alert.show = false;
     },
-    gotoListPlanning() {
-      return this.$router.push("/listPlanning/0/edit");
+    onExport() {
+
+    },
+    onAdd() {
+            this.dialogChoose = !this.dialogChoose;
+    },
+    onNewClick(){
+      return this.$router.push("/listPlanning/new");
+    },
+    onExistingClick(){
+      return this.$router.push("/listPlanning/existing");
     }
   },
 };
@@ -357,6 +396,13 @@ export default {
 <style>
 button {
   min-width: 2rem;
+}
+
+table > tbody > tr:hover td:nth-child(1),
+table > tbody > tr:hover td:nth-child(2),
+table > tbody > tr:hover td:nth-child(3),
+table > tbody > tr:hover td:nth-child(4){
+  background: #EEEEEE;
 }
 
 table > tbody > tr > td:nth-child(1),
@@ -422,7 +468,7 @@ table > thead > tr > th:nth-child(4) {
     text-align: end;
 
     button {
-      margin: 10px 32px;
+      margin: 10px 10px;
     }
   }
 
