@@ -17,7 +17,9 @@
       style="margin: auto 0px"
     >
       <!-- <span class="text-caption">photo</span> -->
-      <span class="white--text text-h6">{{ userInitial }}</span>
+      <!-- v-if="userInitial=='Admin'" -->
+      <!-- <span class="white--text text-h6" >{{ getInitial }}</span> -->
+      <span class="white--text text-h6" v-if="userInitial!='Admin'">{{ userInitial }}</span>
     </v-avatar>
 
     <v-btn icon style="margin: auto 0px" @click="logout">
@@ -31,15 +33,24 @@
 import { mapState,mapActions } from "vuex";
 export default {
   name: "AppBar",
+  created(){
+    this.getInitial();
+  },
   computed: {
     ...mapState("breadcrumbs", ["links"]),
     ...mapState("login", ["userInitial"]),
   },
   methods: {
-    ...mapActions("login", ["logOut"]),
+    ...mapActions("login", ["logOut","setInitial"]),
     logout() {
+      console.log("masuk logout")
       this.logOut();
     },
+    getInitial(){
+      if(this.userInitial=="Admin"){
+        this.setInitial();
+      };
+    }
   },
 };
 </script>

@@ -87,6 +87,7 @@ export default {
       errorMsg: "",
       showPassword: false,
       loading: false,
+      initial:"",
       alert: {
         show: false,
         success: null,
@@ -95,13 +96,26 @@ export default {
       },
     };
   },
+  created() {
+    // this.checkAuth();
+  },
   methods: {
-   ...mapActions("login", ["postLogin"]),
+    ...mapActions("login", ["postLogin", "setInitial"]),
+    checkAuth() {
+      this.setInitial().then(() => {
+        this.initial = JSON.parse(
+        JSON.stringify(this.$store.state.login.userInitial))
+        console.log(this.initial);
+        if (this.initial != "Admin") {
+          this.$router.go(-1);
+        }
+      });
+    },
     handleLogin() {
       // //console.log("called");
       this.errorMsg = "";
       this.$refs.form.validate();
-      this.valid = false
+      this.valid = false;
       if (this.username && this.password) {
         this.loading = true;
         const payload = {
@@ -163,7 +177,7 @@ export default {
   background: conic-gradient(from -10deg, #004da9, #a1cff3, #004da9);
 }
 
-.v-btn{
+.v-btn {
   width: 98% !important;
 }
 </style>
