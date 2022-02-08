@@ -1,8 +1,9 @@
 <template>
   <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
     <v-card>
+
       <v-card-title>
-        Pick Project Type
+        Plan for...
         <v-spacer></v-spacer>
         <v-btn icon small @click="onCancel">
           <v-icon color="primary"> mdi-close </v-icon>
@@ -10,28 +11,16 @@
       </v-card-title>
 
       <v-card-text>
-        <v-row no-gutters>
-          <v-col cols="12" align="center" style="font-size:20px;">
-            <v-btn-toggle
-            v-model="chosenProjectType"
-            rounded
-            mandatory
-            light
-            color="deep-purple accent-3"
-            >
-          <v-btn v-for="pt in dataProjectType" :key="pt.name" :value="pt.name">
-            {{pt.name}}
-          </v-btn>
-        </v-btn-toggle>
+        <v-row no-gutters align="center">
+          <v-col cols="6" class="mt-2">
+            <v-btn rounded color="primary" @click="onNewClick"> New Project </v-btn>
+          </v-col>
+          <v-col cols="6" class="mt-2">
+            <v-btn rounded color="primary" @click="onExistingClick"> Existing Project </v-btn>
           </v-col>
         </v-row>
-
-        <v-col cols="12" align="center" class="mt-2">
-            <v-btn rounded color="primary" @click="onNextClick"> Next </v-btn>
-          </v-col>
       </v-card-text>
     </v-card>
-
   </v-form>
 </template>
 
@@ -40,29 +29,26 @@ import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   name: "FormChooseProjectType",
   created() {
-    this.getAllProjectType();
+    //this.getAllProjectType();
   },
-  data: () => ({
-    chosenProjectType: ""
-  }),
+  data: () => ({}),
   computed: {
-    ...mapState("projectType", ["loadingGetListPlanning",
-      "dataProjectType"
-    ]),
+    // ...mapState("projectType", ["loadingGetListPlanning",
+    //   "dataProjectType"
+    // ]),
     errorMsg() {
       return this.$store.state.source.errorMsg;
     },
   },
   methods: {
-    ...mapActions("projectType", [
-      "getAllProjectType"
-    ]),
-    onNextClick() {
-      if(this.chosenProjectType == "Carry Forward" || this.chosenProjectType == "Regular"){
-        this.$emit("existingClicked");
-      }else{
-        this.$emit("newClicked");
-      }
+    // ...mapActions("projectType", [
+    //   "getAllProjectType"
+    // ]),
+    onNewClick(){
+      this.$emit("newClicked");
+    },
+    onExistingClick() {
+      this.$emit("existingClicked");
     },
     onCancel(){
       console.log(this.dataProjectType);
