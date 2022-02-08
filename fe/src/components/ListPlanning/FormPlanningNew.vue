@@ -67,7 +67,7 @@
           <v-col cols="4">
               <div>
                 <v-select
-                  v-model="valueNew"
+                  v-model="getProjectType"
                   :items="dataProjectType"
                   item-text="name"
                   item-value="id"
@@ -271,7 +271,7 @@
             </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="rcc"
+              v-model="getRCC"
               outlined
               dense
               :disabled="true"
@@ -515,13 +515,18 @@ import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   name: "FormAddPlanning",
   props: ["form", "isView", "isNew"],
+  //mixins: [formatting],
   created() {
-    this.getFromActiveAPI();
+    this.getListActivePlanning();
     this.getAllProjectType();
     this.getAllBiro();
     this.getMasterProduct();
     this.getMasterCoa();
   },
+  // mounted(){
+  //   this.selectedType = this.valueNew;
+  //   console.log(this.selectedType);
+  // },
   data: () => ({
     validation: {
       hasUpdated: false,
@@ -533,8 +538,6 @@ export default {
       ],
     },
     budgets: [],
-    planning_nominal: 0,
-    rcc: ""
   }),
   computed: {
     ...mapState("listPlanning", [
@@ -565,25 +568,33 @@ export default {
     errorMsg() {
       return this.$store.state.source.errorMsg;
     },
+    getProjectType(){
+      return this.dataProjectType.find((x)=> x.name=="New");
+    },
+    getRCC(){
+      if(this.form.biro.id && this.form.biro.rcc != null){
+        return this.form.biro.rcc;
+      }else{
+        return "-";
+      }
+    },
     nominal:{
       // getter
       get: function() {
         if(this.form.minimum_item_origin){
-          this.form.minimum_item_origin = this.form.minimum_item_origin.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-          this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
-        }
+          this.form.minimum_item_origin = this.numberWithDots(this.form.minimum_item_origin)
           return this.form.minimum_item_origin;
+        }
       },
       // setter
       set: function(newValue) {
-        this.form.minimum_item_origin = newValue.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-        this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        this.form.minimum_item_origin = this.numberWithDots(newValue)
       }
     }
   },
   methods: {
     ...mapActions("listPlanning", [
-      "getFromActiveAPI"
+      "getListActivePlanning"
     ]),
     ...mapActions("projectType", [
       "getAllProjectType"
@@ -593,9 +604,6 @@ export default {
     ]),
     ...mapActions("masterProduct", [
       "getMasterProduct"
-    ]),
-    ...mapActions("listPlanning", [
-      "getFromActiveAPI"
     ]),
     ...mapActions("masterCoa", [
       "getMasterCoa"
@@ -612,20 +620,27 @@ export default {
       let validate = this.$refs.form.validate();
       //let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
       if (validate) {
+        let tempBudgets = this.budgets;
+        tempBudgets.forEach(element => {
+          element.coa = element.coa.id;
+          element.expense_type = element.expense_type.label;
+          delete element.planning_nominal;
+        });
+
         const payload = {
-            itfam_id : this.form.planning,
+            itfam_id : this.form.itfam_id,
             project_name : this.form.project_name,
             project_description : this.form.project_description,
-            biro : this.form.biro,
+            biro : this.form.biro.id,
             start_year : this.form.start_year,
             end_year : this.form.end_year,
             total_investment_value : this.form.total_investment_value,
-            product : this.form.product,
-            is_tech : this.form.is_tech,
-            planning : this.form.planning,
-            project_type : this.form.project_type,
+            product : this.form.product.id,
+            is_tech : this.form.is_tech.id = 1 ? true : false,
+            planning : this.form.planning.id,
+            project_type : this.getProjectType.id,
             dcsp_id : this.form.dcsp_id,
-            budget: this.budgets
+            budget: tempBudgets
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }
@@ -640,7 +655,7 @@ export default {
           planning_q4 : "",
           planning_nominal : ""
       });
-    }
+    },
   },
 };
 </script>
