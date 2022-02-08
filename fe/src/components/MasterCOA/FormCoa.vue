@@ -126,9 +126,11 @@
 </template>
 
 <script>
+import formatting from "@/mixins/formatting";
 export default {
   name: "FormCoa",
   props: ["form", "isView", "isNew"],
+  mixins: [formatting],
   data: () => ({
     validation: {
       required: [
@@ -150,15 +152,18 @@ export default {
       // getter
       get: function() {
         if(this.form.minimum_item_origin){
-          this.form.minimum_item_origin = this.form.minimum_item_origin.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-          this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
-        }
+          this.form.minimum_item_origin = this.numberWithDots(this.form.minimum_item_origin)
           return this.form.minimum_item_origin;
+
+        //  this.form.minimum_item_origin = this.form.minimum_item_origin.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
+        //  this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        }
       },
       // setter
       set: function(newValue) {
-        this.form.minimum_item_origin = newValue.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-        this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        this.form.minimum_item_origin = this.numberWithDots(newValue)
+        // this.form.minimum_item_origin = newValue.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
+        // this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
       }
     }
   },

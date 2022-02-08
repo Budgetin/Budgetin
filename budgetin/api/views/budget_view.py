@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from api.models import Budget
 from api.serializers import BudgetSerializer, BudgetResponseSerializer
@@ -22,7 +23,6 @@ class BudgetViewSet(viewsets.ModelViewSet):
             
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
-        
     
     def retrieve(self, request, *args, **kwargs):
         budget = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 

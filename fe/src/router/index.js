@@ -128,10 +128,14 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.guest)) {
-    if (store.getters.isAuthenticated) {
-      return;
-    }
-    next();
+    store.dispatch('login/setInitial').then(()=>{
+      console.log(store.getters['login/isAuthenticated'])
+      if (store.getters['login/isAuthenticated'] != 'Admin') {
+          next("/coa");
+          return;
+        }
+        next();
+      })
   } else {
     next();
   }

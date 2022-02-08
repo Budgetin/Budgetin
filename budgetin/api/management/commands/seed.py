@@ -62,3 +62,4 @@ class Command(BaseCommand):
         self.seed_strategy()
         self.seed_coa()
         self.seed_product()
+        self.seed_user_dev()
