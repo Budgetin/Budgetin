@@ -21,18 +21,16 @@ class CoaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        queryset = Coa.objects.all()
+        queryset = Coa.objects.select_related('updated_by', 'created_by').all()
         for coa in queryset:
             coa.format_timestamp("%d %B %Y")
-            coa.format_created_updated_by()
             
         serializer = CoaResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        coa =  Coa.objects.get(pk=kwargs['pk'])
+        coa =  Coa.objects.select_related('updated_by', 'created_by').get(pk=kwargs['pk'])
         coa.format_timestamp("%d %B %Y")
-        coa.format_created_updated_by()
         
         serializer = CoaResponseSerializer(coa, many=False)
         return Response(serializer.data)

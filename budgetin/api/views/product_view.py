@@ -25,18 +25,16 @@ class ProductViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        queryset = Product.objects.all().select_related('strategy')
+        queryset = Product.objects.select_related('strategy', 'created_by', 'updated_by').all()
         for product in queryset:
             product.format_timestamp("%d %B %Y")
-            product.format_created_updated_by()
 
         serializer = ProductResponseSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        product = Product.objects.select_related('strategy').get(pk=kwargs['pk'])
+        product = Product.objects.select_related('strategy', 'created_by', 'updated_by').get(pk=kwargs['pk'])
         product.format_timestamp("%d %B %Y")
-        product.format_created_updated_by()
         
         serializer = ProductResponseSerializer(product, many=False)
         return Response(serializer.data)

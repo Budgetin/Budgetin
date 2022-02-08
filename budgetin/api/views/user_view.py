@@ -28,7 +28,6 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = User.objects.all()
         for user in queryset:
             user.format_timestamp("%d %B %Y")
-            user.format_created_updated_by()
         
         serializer = UserResponseSerializer(queryset, many=True)
         return Response(serializer.data)
@@ -36,7 +35,6 @@ class UserViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         user = User.objects.get(pk=kwargs['pk'])
         user.format_timestamp("%d %B %Y")
-        user.format_created_updated_by()
         
         serializer = UserResponseSerializer(user, many=False)
         return Response(serializer.data)

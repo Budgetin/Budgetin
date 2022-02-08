@@ -89,22 +89,18 @@ class PlanningViewSet(viewsets.ModelViewSet):
     serializer_class = PlanningSerializer
 
     def list(self, request, *args, **kwargs):
-        send_email('','',[])
-        # queryset = Planning.objects.all()
-        # for planning in queryset:
-        #     planning.format_duedate("%Y-%m-%d")
-        #     planning.format_timestamp("%d %B %Y")
-        #     planning.format_created_updated_by()
-        
-        # serializer = PlanningResponseSerializer(queryset, many=True)
-        # return Response(serializer.data)
-        return Response('bambang')
+        queryset = Planning.objects.select_related('updated_by', 'created_by').all()
+        for planning in queryset:
+            planning.format_duedate("%Y-%m-%d")
+            planning.format_timestamp("%d %B %Y")
+
+        serializer = PlanningResponseSerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        planning = Planning.objects.get(pk=kwargs['pk'])
+        planning = Planning.objects.select_related('updated_by', 'created_by').get(pk=kwargs['pk'])
         planning.format_duedate("%Y-%m-%d")
         planning.format_timestamp("%d %B %Y")
-        planning.format_created_updated_by()        
         
         serializer = PlanningResponseSerializer(planning, many=False)
         return Response(serializer.data)

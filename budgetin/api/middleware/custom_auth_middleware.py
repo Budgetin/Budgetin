@@ -1,5 +1,5 @@
 from api.utils.jwt import decode_token
-
+from api.models import User
 
 class CustomAuthMiddleware(object):
     def __init__(self, get_response):
@@ -14,15 +14,8 @@ class CustomAuthMiddleware(object):
         if token:
             user = decode_token(token)
             if user:
-                request.custom_user = user
+                request.custom_user = User.objects.get(pk=user['id'])
         else: #DEBT. delete this else block
-            request.custom_user = {
-                "id": 1,
-                "username": "u067014",
-                "display_name": "Harve Louis Marcello",
-                "role": "Admin",
-                "eselon": "S7B",
-                "initial": "HLM"
-            }
+            request.custom_user = User.objects.first()
                 
         return None

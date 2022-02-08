@@ -56,8 +56,8 @@ class BudgetResponseSerializer(serializers.ModelSerializer):
     planning_nominal = serializers.SerializerMethodField()
     is_budget = serializers.SerializerMethodField()
     project_detail = ProjectDetailSerializer()
-    created_by = serializers.CharField()
-    updated_by = serializers.CharField()
+    created_by = serializers.SerializerMethodField()
+    updated_by = serializers.SerializerMethodField()
     class Meta:
         model = Budget
         fields = ['id', 'is_budget', 'expense_type', 'planning_nominal', 'planning_q1', 'planning_q2', 'planning_q3', 'planning_q4', 
@@ -74,3 +74,13 @@ class BudgetResponseSerializer(serializers.ModelSerializer):
     
     def get_is_budget(self, budget):
         return 1 if budget.expense_type != "" else 0
+
+    def get_created_by(self, obj):
+        if obj.created_by:
+            return obj.created_by.display_name
+        return None
+
+    def get_updated_by(self, obj):
+        if obj.updated_by:
+            return obj.updated_by.display_name
+        return None
