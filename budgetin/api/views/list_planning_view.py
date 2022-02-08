@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from api.models import Project, Biro, Product, ProjectDetail, Planning, ProjectType, Budget, Coa
+from api.models import Project, Biro, Product, ProjectDetail, Planning, ProjectType, Budget, Coa, User
 
 class CreateListPlanning(APIView):
 
@@ -13,6 +13,8 @@ class CreateListPlanning(APIView):
         # PERTAMA INSERT DULU KE DB
         # AMBIL IDNYA BARU BIKIN ITFAM ID
         # UPDATE DI DB ITFAM YG SUDAH TERISI
+        
+        user = User.objects.get(pk=request.custom_user['id'])
         project_data = {
             'itfam_id' : data['itfam_id'],
             'project_name' : data['project_name'],
@@ -23,7 +25,7 @@ class CreateListPlanning(APIView):
             'total_investment_value' : data['total_investment_value'],
             'product' : Product.all_object.get(pk=data['product']),
             'is_tech' : data['is_tech'],
-            'created_by' : request.custom_user['id']
+            'created_by' : user
         }
         project_data.pop('itfam_id')
         project, _ = Project.objects.update_or_create(itfam_id = data['itfam_id'], defaults = project_data)
@@ -35,7 +37,7 @@ class CreateListPlanning(APIView):
             project = project,
             project_type = ProjectType.objects.get(pk=data['project_type']),
             dcsp_id = data['dcsp_id'],
-            created_by = request.custom_user['id']
+            created_by = user
         )
         parsed_project_detail.save()
 
@@ -44,7 +46,7 @@ class CreateListPlanning(APIView):
         if not 'budget' in data:
             parsed_budget = Budget(
                 project_detail = parsed_project_detail,
-                created_by = request.custom_user['id']
+                created_by = user
             )
         else:
             for budget in data['budget']:
@@ -56,7 +58,7 @@ class CreateListPlanning(APIView):
                     planning_q2 = budget['planning_q2'],
                     planning_q3 = budget['planning_q3'],
                     planning_q4 = budget['planning_q4'],
-                    created_by = request.custom_user['id']
+                    created_by = user
                 )
         parsed_budget.save()
         return Response({"message":"List Planning Saved"},status=201)
