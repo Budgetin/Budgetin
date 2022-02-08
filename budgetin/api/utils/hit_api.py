@@ -101,6 +101,7 @@ def get_ithc_employee_info(username):
             if group_id:
                 group_manager_id = employee[0]['sub_group']['group']['manager_employee']
             divisi_id = employee[0]['sub_group']['group']['divisi']['id']
+            initial = employee[0]['initial']
             return {
                 'employee_id' : employee_id,
                 'eselon': eselon,
@@ -112,6 +113,7 @@ def get_ithc_employee_info(username):
                 'group_id' : group_id,
                 'group_manager_id' : group_manager_id,
                 'divisi_id' : divisi_id,
+                'initial': initial,
             }
     raise EmployeeNotFoundException()
 
