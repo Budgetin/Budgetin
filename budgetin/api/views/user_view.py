@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
+from api.permissions import IsAuthenticated, IsAdmin
 from api.models import User
 from api.serializers import UserSerializer, UserResponseSerializer
 from api.utils.auditlog import AuditLog
@@ -17,10 +18,12 @@ def is_duplicate_user(username):
 def is_duplicate_user_update(id, username):
     if User.objects.filter(username=username).exclude(pk=id):
         raise ValidationException
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
+    permission_classes = [IsAuthenticated]
+    
     def list(self, request, *args, **kwargs):
         queryset = User.objects.all()
         for user in queryset:

@@ -1,5 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
+import router from "@/router/index.js"
 
 const ENDPOINT = "/api/user/";
 
@@ -214,6 +215,9 @@ const masterUser = {
       state.errorMsg = error;
       state.dataMasterUser = [];
       state.dataActiveMasterUser = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
     // post / patch related
@@ -229,6 +233,9 @@ const masterUser = {
       state.requestStatus = "ERROR";
       state.loadingPostPatchMasterUser = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
     SET_EDITTED_ITEM(state, payload) {
       state.edittedItem = payload;

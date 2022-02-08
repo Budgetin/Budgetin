@@ -1,6 +1,7 @@
 from rest_framework import viewsets 
 from rest_framework.response import Response
 
+from api.permissions import IsAuthenticated, IsAdmin
 from api.models import Strategy
 from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
@@ -15,10 +16,11 @@ def is_duplicate_create(name):
 def is_duplicate(id, name):
     if Strategy.objects.filter(name=name).exclude(pk=id):
         raise ValidationException
+
 class StrategyViewSet(viewsets.ModelViewSet):
     queryset = Strategy.objects.all()
     serializer_class = StrategySerializer
-
+    permission_classes = [IsAuthenticated]
     
     def list(self, request, *args, **kwargs):
         queryset = Strategy.objects.all()
