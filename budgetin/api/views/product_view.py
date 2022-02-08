@@ -15,7 +15,7 @@ def is_product_duplicate(product_id, product_code, product_name):
         raise ValidationException
 
 def is_product_duplicate_create(product_code, product_name):
-    if Product.objects.filter(product_code=product_code).exclude(product_name=product_name) or Product.objects.filter(product_name=product_name).exclude(product_code=product_code):
+    if Product.objects.filter(product_code=product_code) or Product.objects.filter(product_name=product_name):
         raise ValidationException
 
 
@@ -40,6 +40,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
         is_product_duplicate_create(request.data['product_code'],request.data['product_name'])
         product = super().create(request, *args, **kwargs)

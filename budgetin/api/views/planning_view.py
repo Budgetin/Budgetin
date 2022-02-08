@@ -107,6 +107,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
+        request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
         planning = super().create(request, *args, **kwargs)
         
