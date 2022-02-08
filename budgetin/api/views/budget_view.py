@@ -48,10 +48,47 @@ class BudgetViewSet(viewsets.ModelViewSet):
         return budget
 
     def destroy(self, request, *args, **kwargs):
-        request.data['updated_by'] = request.custom_user['id']                       
-        budget = super().destroy(request, *args, **kwargs)
-        AuditLog.Save(budget, request, ActionEnum.DELETE, TableEnum.BUDGET)
-        return budget
+        request.data['updated_by'] = request.custom_user['id']
+        request.data['is_active'] = False
+        budget = super().update(request, *args, **kwargs)
+        AuditLog.Save(budget, request, ActionEnum.UPDATE, TableEnum.BUDGET)
+        
+        return Response({"message" : "Budget deactivated"})
+
+    @action(detail=True, methods=['post'])
+    def restore(self, request, pk=None):
+        request.data['updated_by'] = request.custom_user['id']
+        request.data['is_active'] = True
+        budget = super().update(request, [], {'pk':pk})
+        AuditLog.Save(budget, request, ActionEnum.UPDATE, TableEnum.BUDGET)
+        
+        return Response({"message" : "Budget re-activated"})
+    
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
+                                                'project_detail__project', 'project_detail__project_type', 
+                                                'project_detail__project__biro', 'project_detail__project__product', 
+                                                'project_detail__project__product__strategy', 'updated_by', 'created_by'
+                                                ).filter(is_active=True)
+        for budget in budgets:
+            budget.format_timestamp("%d %B %Y")
+
+        serializer = BudgetResponseSerializer(budgets, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def inactive(self, request):
+        budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
+                                                'project_detail__project', 'project_detail__project_type', 
+                                                'project_detail__project__biro', 'project_detail__project__product', 
+                                                'project_detail__project__product__strategy', 'updated_by', 'created_by'
+                                                ).filter(is_active=False)
+        for budget in budgets:
+            budget.format_timestamp("%d %B %Y")
+
+        serializer = BudgetResponseSerializer(budgets, many=True)
+        return Response(serializer.data)
 
     def list_for_export():
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
