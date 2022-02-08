@@ -13,6 +13,7 @@
                 @cancelClicked="onCancel"
                 @submitClicked="onSubmit"
                 @okClicked="onOK"
+                @deleteClicked="onDelete"
                 class="view-list-project__detail">
                 </form-list-project>
             </v-row>
@@ -90,7 +91,6 @@ export default {
                 product_name: "",
                 product_code: "",
                 strategy: "",
-                option: "",
             },
             project_detail: [
                 {
@@ -215,6 +215,15 @@ export default {
             .catch((error) => {
                 // console.log("Masuk Save Error");
                 this.onSaveError(error);
+            });
+        },
+        onDelete() {
+            this.deleteListProjectById(this.$route.params.id)
+            .then(() => {
+                this.onDeleteSuccess();
+            })
+            .catch((error) => {
+                this.onDeleteError(error);
             });
         },
         onSaveSuccess() {

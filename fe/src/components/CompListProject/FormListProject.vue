@@ -6,6 +6,13 @@
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
+      <a-popconfirm
+        title="Are you sure you want to cancel this project?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="$emit('deleteClicked')">
+        <v-icon color="error" v-if="!isNew"> mdi-delete </v-icon>
+      </a-popconfirm>
     </v-card-title>
 
     <v-card-text>
@@ -392,7 +399,6 @@ export default {
       if (validate) {
         const payload = {
           id: this.form.id,
-          itfam_id: this.form.itfam_id,
           project_name: this.form.project_name,
           project_description: this.form.project_description,
           product: this.form.product.id,

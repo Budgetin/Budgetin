@@ -1,7 +1,7 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/biro/ithc";
+const ENDPOINT = "/api/ithc/biro";
 
 const allBiroItHc = {
   namespaced: true,

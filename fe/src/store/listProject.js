@@ -16,6 +16,9 @@ const listProject = {
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
     edittedItem: null,
+    loadingDeleteItem:false,
+    deleteStatus: "IDLE",
+    deleteItem: [],
     edittedItemHistories: [],
     requestHistoriesStatus:"IDLE",
     loadingGetEdittedItemHistories: false,
@@ -124,6 +127,23 @@ const listProject = {
             }
             reject(errorMsg);
             commit("POST_PATCH_ERROR", error.response.data);
+          });
+      });
+    },
+    deleteListProjectById({ commit }, id) {
+      commit("SET_LOADING_DELETE_ITEM", true);
+      return new Promise((resolve, reject) => {
+        getAPI
+          .delete(ENDPOINT + `${id}/`)
+          .then((response) => {
+            const data = response.data;
+            commit("SET_DELETE_ITEM", data);
+            resolve(data);
+            store.dispatch("listProject/getFromAPI");
+          })
+          .catch((error) => {
+            commit("DELETE_ERROR", error);
+            reject(error);
           });
       });
     },
