@@ -57,11 +57,15 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_softdelete',
+    'django_filters',
     'api.apps.ApiConfig'
 ]
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler.custom_exception_handler'
+    'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler.custom_exception_handler',
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
 
 MIDDLEWARE = [

@@ -53,7 +53,6 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 
 class BudgetResponseSerializer(serializers.ModelSerializer):
     coa = serializers.SerializerMethodField()
-    minimum_item_origin = serializers.SerializerMethodField()
     planning_nominal = serializers.SerializerMethodField()
     is_budget = serializers.SerializerMethodField()
     project_detail = ProjectDetailSerializer()
@@ -72,11 +71,6 @@ class BudgetResponseSerializer(serializers.ModelSerializer):
             return budget.coa.name
         return None
 
-    def get_minimum_item_origin(self, budget):
-        if budget.coa:
-            return budget.coa.minimum_item_origin
-        return None
-    
     def get_planning_nominal(self, budget):
         return budget.planning_q1 + budget.planning_q2 + budget.planning_q3 + budget.planning_q4
     
