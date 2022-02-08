@@ -6,15 +6,23 @@ from api.serializers import ProjectSerializer, ProjectResponseSerializer, Projec
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
+def get_filtered_queryset(request, queryset):
+    planning = request.query_params.get('planning')
+    if planning:
+        queryset = queryset.filter(project_detail__planning=planning)
+        
+    return queryset
+
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = Project.objects.select_related('biro', 'product', 'product__strategy', 'updated_by', 'created_by').all()
+        queryset = Project.objects.select_related('biro', 'product', 'product__strategy', 'updated_by', 'created_by').all()            
+        queryset = get_filtered_queryset(request, queryset)
+            
         for project in queryset:
             project.format_timestamp("%d %B %Y")
-            
         serializer = ProjectResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
