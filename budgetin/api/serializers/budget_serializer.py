@@ -53,24 +53,42 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 
 class BudgetResponseSerializer(serializers.ModelSerializer):
     coa = serializers.SerializerMethodField()
+    minimum_item_origin = serializers.SerializerMethodField()
     planning_nominal = serializers.SerializerMethodField()
     is_budget = serializers.SerializerMethodField()
     project_detail = ProjectDetailSerializer()
-    created_by = serializers.CharField()
-    updated_by = serializers.CharField()
+    created_by = serializers.SerializerMethodField()
+    updated_by = serializers.SerializerMethodField()
     class Meta:
         model = Budget
         fields = ['id', 'is_budget', 'expense_type', 'planning_nominal', 'planning_q1', 'planning_q2', 'planning_q3', 'planning_q4', 
                   'realization_jan', 'realization_feb', 'realization_mar', 'realization_apr', 'realization_may',
                   'realization_jun', 'realization_jul', 'realization_aug', 'realization_sep', 'realization_oct',
                   'realization_nov', 'realization_dec', 'switching_in', 'switching_out', 'top_up', 'returns',
-                  'allocate', 'coa', 'project_detail', 'created_by', 'updated_by', 'created_at', 'updated_at']
+                  'allocate', 'coa', 'minimum_item_origin', 'project_detail', 'created_by', 'updated_by', 'created_at', 'updated_at']
         
     def get_coa(self, budget):
-        return budget.coa.name
+        if budget.coa:
+            return budget.coa.name
+        return None
+
+    def get_minimum_item_origin(self, budget):
+        if budget.coa:
+            return budget.coa.minimum_item_origin
+        return None
     
     def get_planning_nominal(self, budget):
         return budget.planning_q1 + budget.planning_q2 + budget.planning_q3 + budget.planning_q4
     
     def get_is_budget(self, budget):
         return 1 if budget.expense_type != "" else 0
+
+    def get_created_by(self, budget):
+        if budget.created_by:
+            return budget.created_by.display_name
+        return None
+
+    def get_updated_by(self, budget):
+        if budget.updated_by:
+            return budget.updated_by.display_name
+        return None

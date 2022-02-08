@@ -28,7 +28,6 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = User.objects.all()
         for user in queryset:
             user.format_timestamp("%d %B %Y")
-            user.format_created_updated_by()
         
         serializer = UserResponseSerializer(queryset, many=True)
         return Response(serializer.data)
@@ -36,7 +35,6 @@ class UserViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         user = User.objects.get(pk=kwargs['pk'])
         user.format_timestamp("%d %B %Y")
-        user.format_created_updated_by()
         
         serializer = UserResponseSerializer(user, many=False)
         return Response(serializer.data)
@@ -46,6 +44,7 @@ class UserViewSet(viewsets.ModelViewSet):
         employee_info = get_ithc_employee_info(request.data['username'])
         request.data['employee_id'] = employee_info['employee_id']
         request.data['display_name'] = employee_info['display_name']
+        request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
         user = super().create(request, *args, **kwargs)
         AuditLog.Save(user, request, ActionEnum.CREATE, TableEnum.USER)

@@ -11,4 +11,3 @@ class User(TimestampModel, UserTrackModel, SoftDeleteModel):
     eselon = models.CharField(max_length=10, blank=True, null=True)
     role = models.CharField(max_length=100, default='user')
     is_active = models.BooleanField(default=True)
-    created_by = models.BigIntegerField(null=True, blank=True)

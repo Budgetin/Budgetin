@@ -8,7 +8,7 @@ const SECONDENDPOINT = "/api/logout/";
 const login = {
   namespaced: true,
   state: {
-    userInitial: "Admin",
+    userInitial: "",
     loadingGetLogout: false, // for loading table
     loadingPostPatchLogin: false, // for loading post/patch
     dataLogin: [], // for v-data-table
@@ -18,7 +18,7 @@ const login = {
     loadingGetInitial: false,
   },
   getters: {
-    isAuthenticated: state => !!state.userInitial,
+    isAuthenticated: state => state.userInitial,
   },
   actions: {
     logOut({ commit }) {
@@ -62,7 +62,6 @@ const login = {
             resolve(response);
           })
           .catch((error) => {
-            console.log(error);
             let errorMsg = `Please recheck your input or try again later`;
             commit("POST_PATCH_ERROR", errorMsg);
             reject(errorMsg);
@@ -90,16 +89,12 @@ const login = {
       state.requestStatus = "SUCCESS";
       state.loadingGetInitial = false;
       state.userInitial = initial;
-      console.log(state.userInitial);
     },
     GET_INITIAL_ERROR(state, error) {
       state.requestStatus = "ERROR";
       state.loadingGetInitial = false;
       state.errorMsg = error;
-      state.userInitial = "Admin";
-      if (error.response.status == "401") {
-        router.push({ name: "Login" });
-      }
+      state.userInitial = "";
     },
 
     // post / patch related
@@ -115,7 +110,7 @@ const login = {
     POST_PATCH_ERROR(state, error) {
       state.postPatchStatus = "ERROR";
       state.loadingPostPatchLogin = false;
-      state.userInitial = "Admin";
+      state.userInitial = "";
       state.errorMsg = error;
     },
   },

@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 from api.models import Project
-from api.serializers import ProjectSerializer, ProjectResponseSerializer, ProjectDetailSerializer
+from api.serializers import ProjectSerializer, ProjectResponseSerializer, ProjectResponseDetailSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
@@ -11,7 +11,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = Project.objects.select_related('biro', 'product').all()
+        queryset = Project.objects.select_related('biro', 'product', 'product__strategy', 'updated_by', 'created_by').all()
         for project in queryset:
             project.format_timestamp("%d %B %Y")
             
@@ -19,13 +19,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        project = Project.objects.select_related('biro', 'product').get(pk=kwargs['pk'])
+        project = Project.objects.select_related('biro', 'product', 'product__strategy', 'updated_by', 'created_by').prefetch_related(
+                'project_detail', 'project_detail__planning', 'project_detail__project', 'project_detail__project_type'
+            ).get(pk=kwargs['pk'])
         project.format_timestamp("%d %B %Y")
             
-        serializer = ProjectDetailSerializer(project, many=False)
+        serializer = ProjectResponseDetailSerializer(project, many=False)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
         project = super().create(request, *args, **kwargs)
         AuditLog.Save(project, request, ActionEnum.CREATE, TableEnum.PROJECT)

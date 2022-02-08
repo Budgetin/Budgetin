@@ -9,7 +9,7 @@ from api.utils.enum import ActionEnum,TableEnum
 from api.exceptions import ValidationException
 
 def is_duplicate_coa_create(name, hyperion_name):
-    if Coa.objects.filter(name=name).exclude(hyperion_name=hyperion_name) or Coa.objects.filter(hyperion_name=hyperion_name).exclude(name=name):
+    if Coa.objects.filter(name=name) or Coa.objects.filter(hyperion_name=hyperion_name):
         raise ValidationException
 
 def is_duplicate_coa(id, name, hyperion_name):
@@ -18,27 +18,26 @@ def is_duplicate_coa(id, name, hyperion_name):
 class CoaViewSet(viewsets.ModelViewSet):
     queryset = Coa.objects.all()
     serializer_class = CoaSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        queryset = Coa.objects.all()
+        queryset = Coa.objects.select_related('updated_by', 'created_by').all()
         for coa in queryset:
             coa.format_timestamp("%d %B %Y")
-            coa.format_created_updated_by()
             
         serializer = CoaResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        coa =  Coa.objects.get(pk=kwargs['pk'])
+        coa =  Coa.objects.select_related('updated_by', 'created_by').get(pk=kwargs['pk'])
         coa.format_timestamp("%d %B %Y")
-        coa.format_created_updated_by()
         
         serializer = CoaResponseSerializer(coa, many=False)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         request.data['created_by'] = request.custom_user['id']
+        request.data['updated_by'] = request.custom_user['id']
         is_duplicate_coa_create(request.data['name'],request.data['hyperion_name'])
         coa = super().create(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.CREATE, TableEnum.COA)

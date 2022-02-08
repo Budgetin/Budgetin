@@ -20,6 +20,7 @@ class Command(BaseCommand):
 
         for data in data_list:
             data['pk'] = data.pop('id')
+            data['created_by'] = User.objects.get(pk=data.pop('created_by'))
             Strategy.objects.get_or_create(pk=data['pk'], defaults=data)
         self.comment("Seeding Strategy")
 
@@ -38,6 +39,7 @@ class Command(BaseCommand):
             data_list = json.load(f)
         for data in data_list:
             data['pk'] = data.pop('id')
+            data['created_by'] = User.objects.get(pk=data.pop('created_by'))
             Coa.objects.get_or_create(pk=data['pk'], defaults=data)
         self.comment("Seeding COA")
 
@@ -46,6 +48,7 @@ class Command(BaseCommand):
             data_list = json.load(f)
         for data in data_list:
             data['pk'] = data.pop('id')
+            data['created_by'] = User.objects.get(pk=data.pop('created_by'))
             Product.all_object.get_or_create(pk=data['pk'], defaults=data)
         self.comment("Seeding Product")
 
@@ -54,8 +57,9 @@ class Command(BaseCommand):
                           comment)+self.style.SUCCESS('OK'))
 
     def handle(self, *args, **options):
+        self.seed_user_dev()
         self.seed_project_type()
         self.seed_strategy()
-        self.seed_user_dev()
         self.seed_coa()
         self.seed_product()
+        self.seed_user_dev()

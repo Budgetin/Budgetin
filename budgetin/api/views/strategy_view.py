@@ -23,23 +23,22 @@ class StrategyViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     
     def list(self, request, *args, **kwargs):
-        queryset = Strategy.objects.all()
+        queryset = Strategy.objects.select_related('updated_by','created_by').all()
         for strategy in queryset:
             strategy.format_timestamp("%d %B %Y")
-            strategy.format_created_updated_by()
         
         serializer = StrategyResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        strategy = Strategy.objects.get(pk=kwargs['pk'])
+        strategy = Strategy.objects.select_related('updated_by','created_by').get(pk=kwargs['pk'])
         strategy.format_timestamp("%d %B %Y")
-        strategy.format_created_updated_by()
         
         serializer = StrategyResponseSerializer(strategy, many=False)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
+        request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
         is_duplicate_create(request.data['name'])
         strategy = super().create(request, *args, **kwargs)

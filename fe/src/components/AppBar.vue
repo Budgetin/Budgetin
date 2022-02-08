@@ -19,7 +19,7 @@
       <!-- <span class="text-caption">photo</span> -->
       <!-- v-if="userInitial=='Admin'" -->
       <!-- <span class="white--text text-h6" >{{ getInitial }}</span> -->
-      <span class="white--text text-h6" v-if="userInitial!='Admin'">{{ userInitial }}</span>
+      <span class="white--text text-h6" v-if="userInitial">{{ userInitial }}</span>
     </v-avatar>
 
     <v-btn icon style="margin: auto 0px" @click="logout">
@@ -43,11 +43,10 @@ export default {
   methods: {
     ...mapActions("login", ["logOut","setInitial"]),
     logout() {
-      console.log("masuk logout")
       this.logOut();
     },
     getInitial(){
-      if(this.userInitial=="Admin"){
+      if(!this.userInitial){
         this.setInitial();
       };
     }

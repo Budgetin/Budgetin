@@ -38,7 +38,9 @@ class BudgetSerializer(serializers.ModelSerializer):
         exclude = ['is_deleted', 'deleted_at', 'created_at', 'updated_at', 'created_by', 'updated_by']
         
     def get_coa(self, budget):
-        return budget.coa.name
+        if budget.coa:
+            return budget.coa.name
+        return ''
     
     def get_year(self, budget):
         return budget.project_detail.planning.year        
@@ -63,12 +65,22 @@ class ProjectResponseSerializer(serializers.ModelSerializer):
         model = Project
         fields = fields = ['id', 'created_by', 'updated_by', 'created_at', 'updated_at', 'itfam_id', 'project_name', 'project_description', 'start_year', 'end_year', 'is_tech', 'total_investment_value', 'biro', 'product']
 
-class ProjectDetailSerializer(serializers.ModelSerializer):
+class ProjectResponseDetailSerializer(serializers.ModelSerializer):
     product = ProductSerializer(many=False)
     biro = BiroSerializer(many=False)
     project_detail = ProjectDetailSerializer(many=True)
-    created_by = serializers.CharField()
-    updated_by = serializers.CharField()
+    created_by = serializers.SerializerMethodField()
+    updated_by = serializers.SerializerMethodField()
     class Meta:
         model = Project
         fields = ['id', 'created_by', 'updated_by', 'created_at', 'updated_at', 'itfam_id', 'project_name', 'project_description', 'start_year', 'end_year', 'is_tech', 'total_investment_value', 'biro', 'product', 'project_detail']
+
+    def get_created_by(self, obj):
+        if obj.created_by:
+            return obj.created_by.display_name
+        return None
+
+    def get_updated_by(self, obj):
+        if obj.updated_by:
+            return obj.updated_by.display_name
+        return None

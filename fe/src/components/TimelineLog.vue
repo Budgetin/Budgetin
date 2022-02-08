@@ -95,7 +95,6 @@ export default {
   },
   components: { ItemLogMasterCoa,ItemLogMasterProduct,ItemLogMasterStrategy,ItemLogMasterUser,ItemLogStartPlanning,ItemLogMonitorPlanning },
   created() {
-    // console.log(items)
   },
   methods: {
     getColor(action) {
