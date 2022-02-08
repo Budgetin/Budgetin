@@ -1,7 +1,8 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/budget/";
+const LIST_PLANNING_ENDPOINT = "/api/list_planning/";
+const BUDGET_ENDPOINT = "/api/budget/";
 const PLANNING_ENPOINT = "/api/planning/"
 
 const listPlanning = {
@@ -23,6 +24,10 @@ const listPlanning = {
     value: (state) => state.value
   },
   actions: {
+    
+//==Page ListPlanning.vue
+
+    //Get List Budget Planning 
     getListPlanning() {
       if (store.state.listPlanning.requestStatus !== "SUCCESS")
         store.dispatch("listPlanning/getFromAPI");
@@ -30,7 +35,7 @@ const listPlanning = {
     getFromAPI({ commit }) {
       commit("GET_INIT");
       getAPI
-        .get(ENDPOINT)
+        .get(BUDGET_ENDPOINT)
         .then((response) => {
           const cleanData = response.data
           const sorted = cleanData.sort((a, b) =>
@@ -42,14 +47,15 @@ const listPlanning = {
           commit("GET_ERROR", error);
         });
     },
+
     getListActivePlanning() {
-      if (store.state.listPlanning.requestStatus !== "SUCCESS")
+      if (store.state.listPlanning.requestActiveStatus !== "SUCCESS")
         store.dispatch("listPlanning/getFromActiveAPI");
     },
     getFromActiveAPI({ commit }) {
       commit("GET_INIT");
       getAPI
-        .get(PLANNING_ENPOINT)
+        .get(PLANNING_ENPOINT + "active")
         .then((response) => {
           const cleanData = response.data
           const sorted = cleanData.sort((a, b) =>
@@ -61,13 +67,14 @@ const listPlanning = {
           commit("GET_ERROR", error);
         });
     },
+    
     getListPlanningById({ commit }, id) {
       // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
       return new Promise((resolve, reject) => {
         getAPI
-          .get(ENDPOINT + `${id}/`)
+          .get(BUDGET_ENDPOINT + `${id}/`)
           .then((response) => {
             const data = response.data;
             commit("SET_EDITTED_ITEM", data);
@@ -79,11 +86,12 @@ const listPlanning = {
           });
       });
     },
+
     postListPlanning({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
-          .post(ENDPOINT, payload)
+          .post(BUDGET_ENDPOINT, payload)
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
@@ -111,17 +119,16 @@ const listPlanning = {
           });
       });
     },
-    patchListPlanning({ commit }, payload) {
+
+    postNewPlanning({ commit }, payload) {
       commit("POST_PATCH_INIT");
-      const url = `${ENDPOINT}${payload.id}/`;
       return new Promise((resolve, reject) => {
         getAPI
-          .patch(url, payload)
+          .post(LIST_PLANNING_ENDPOINT, payload)
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listPlanning/getFromAPI");
-            // store.dispatch("masterCategory/getFromAPI");
+            //store.dispatch("listPlanning/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -136,45 +143,49 @@ const listPlanning = {
                   break;
 
                 default:
-                  errorMsg += `${error.response.statusText}: Please recheck your input or try again later`;
+                  errorMsg += `Please recheck your input or try again later`;
                   break;
               }
             }
+            commit("POST_PATCH_ERROR", errorMsg);
             reject(errorMsg);
-            commit("POST_PATCH_ERROR", error.response.data);
           });
       });
     },
-    // getEdittedItemHistories({ commit }) {
-    //   const itemID = store.state.listPlanning.edittedItem.id;
-    //   if (!itemID) return;
-    //   getAPI
-    //     .get(ENDPOINT + `${itemID}/histories/`)
-    //     .then((response) => {
-    //       commit("SET_LOADING_GET_EDITTED_ITEM", false);
-    //       commit("SET_EDITTED_ITEM_HISTORIES", response.data);
-    //     })
-    //     .catch((error) => {
-    //       commit("GET_ERROR", error.response.data);
-    //     });
-    // },
-    // getActiveListPlanning({ commit }) {
-    //   if (store.state.listPlanning.requestActiveStatus !== "SUCCESS")
+
+    // patchListPlanning({ commit }, payload) {
+    //   commit("POST_PATCH_INIT");
+    //   const url = `${BUDGET_ENDPOINT}${payload.id}/`;
+    //   return new Promise((resolve, reject) => {
     //     getAPI
-    //       .get(ENDPOINT + "?filter{status}=1")
+    //       .patch(url, payload)
     //       .then((response) => {
-    //         const cleanData = response.data.Plannings.map((data) => {
-    //           return {
-    //             id: data.id,
-    //             Planning_name: data.Planning_name,
-    //             status: String(data.status),
-    //           };
-    //         });
-    //         commit("GET_ACTIVE_DATA_UPDATE", cleanData);
+    //         resolve(response);
+    //         commit("POST_PATCH_SUCCESS");
+    //         store.dispatch("listPlanning/getFromAPI");
+    //         // store.dispatch("masterCategory/getFromAPI");
     //       })
     //       .catch((error) => {
-    //         commit("GET_ERROR", error);
+    //         let errorMsg =
+    //           "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
+    //         if (error.response) {
+    //           errorMsg = "";
+    //           switch (error.response.status) {
+    //             case 400:
+    //               if (error.response.data.hasOwnProperty("Planning_name")) {
+    //                 errorMsg += error.response.data.Planning_name;
+    //               }
+    //               break;
+
+    //             default:
+    //               errorMsg += `${error.response.statusText}: Please recheck your input or try again later`;
+    //               break;
+    //           }
+    //         }
+    //         reject(errorMsg);
+    //         commit("POST_PATCH_ERROR", error.response.data);
     //       });
+    //   });
     // },
   },
   mutations: {
@@ -206,11 +217,11 @@ const listPlanning = {
       state.loadingPostPatchListPlanning = true;
     },
     POST_PATCH_SUCCESS(state) {
-      state.requestStatus = "SUCCESS";
+      state.postPatchStatus = "SUCCESS";
       state.loadingPostPatchListPlanning = false;
     },
     POST_PATCH_ERROR(state, error) {
-      state.requestStatus = "ERROR";
+      state.postPatchStatus = "ERROR";
       state.loadingPostPatchListPlanning = false;
       state.errorMsg = error;
     },

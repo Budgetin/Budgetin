@@ -1,8 +1,8 @@
 <template>
   <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
     <v-card>
-      <v-card-title class="mb-5">
-        Add New Planning
+      <v-card-title>
+        Pick Project Type
         <v-spacer></v-spacer>
         <v-btn icon small @click="onCancel">
           <v-icon color="primary"> mdi-close </v-icon>
@@ -10,25 +10,23 @@
       </v-card-title>
 
       <v-card-text>
-        <!-- Judul -->
         <v-row no-gutters>
-          <v-col cols="12" style="font-size:20px;">
-            <strong> Pick Project Type </strong>
-          </v-col>
-        </v-row>
-
-        <v-btn-toggle
-          v-model="chosenProjectType"
-          color="deep-purple accent-3"
-          group
-          >
+          <v-col cols="12" align="center" style="font-size:20px;">
+            <v-btn-toggle
+            v-model="chosenProjectType"
+            rounded
+            mandatory
+            light
+            color="deep-purple accent-3"
+            >
           <v-btn v-for="pt in dataProjectType" :key="pt.name" :value="pt.name">
             {{pt.name}}
           </v-btn>
         </v-btn-toggle>
+          </v-col>
+        </v-row>
 
-        
-        <v-col cols="12" style="text-align:right;">
+        <v-col cols="12" align="center" class="mt-2">
             <v-btn rounded color="primary" @click="onNextClick"> Next </v-btn>
           </v-col>
       </v-card-text>
@@ -48,7 +46,7 @@ export default {
     chosenProjectType: ""
   }),
   computed: {
-    ...mapState("projectType", [
+    ...mapState("projectType", ["loadingGetListPlanning",
       "dataProjectType"
     ]),
     errorMsg() {
@@ -67,6 +65,7 @@ export default {
       }
     },
     onCancel(){
+      console.log(this.dataProjectType);
       this.$emit("cancelClicked");
     }
   },

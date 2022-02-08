@@ -6,8 +6,6 @@
         <v-container>
           <form-planning-new
             :form="form"
-            @editClicked="onEdit"
-            @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
           ></form-planning-new>
@@ -44,45 +42,17 @@ export default {
   name: "ListPlanningNew",
   components: { FormPlanningNew,SuccessErrorAlert},
   created() {
-    //this.getEdittedItem();
+
   },
   methods: {
-    ...mapActions("listPlanningAdd", [
-      "postListPlanning",
-      "getListPlanningById",
+    ...mapActions("listPlanning", [
+      "postNewPlanning",
     ]),
-    getEdittedItem() {
-      this.getActivePlanning();
-      this.setActivePlanning();
-      console.log(this.activePlanning);
-      // this.getListPlanningById(this.$route.params.id).then(() => {
-      //   this.setForm();
-      // });
-    },
-    setForm() {
-      this.form = JSON.parse(
-        JSON.stringify(this.$store.state.listPlanning.edittedItem)
-      );
-      console.log(this.activePlanning);
-    },
-    setActivePlanning() {
-      this.activePlanning = JSON.parse(
-        JSON.stringify(this.$store.state.activePlanning.dataActivePlanning)
-      );
-    },
-    onEdit() {
-      this.isView = false;
-    },
-    onOK() {
+    onCancel() {
       this.$router.go(-1);
     },
-    onCancel() {
-      this.isView = true;
-      this.setForm();
-    },
     onSubmit(e) {
-      //this.patchListPlanning(e)
-      this.postListPlanning(e)
+      this.postNewPlanning(e)
       .then(() => {
           this.onSaveSuccess();
         })
@@ -104,8 +74,6 @@ export default {
     },
     onAlertOk() {
       this.alert.show = false;
-      this.isView = true;
-      //this.getEdittedItem();
     },
   },
   data: () => ({

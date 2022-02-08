@@ -8,6 +8,7 @@ const projectType = {
   state: {
     loadingGetListPlanning: false, // for loading table
     dataProjectType: [], 
+    
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
   },
@@ -55,7 +56,6 @@ const projectType = {
       state.requestStatus = "SUCCESS";
       state.loadingGetListPlanning = false;
       state.dataProjectType = dataProjectType;
-      console.log(state.dataProjectType);
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
