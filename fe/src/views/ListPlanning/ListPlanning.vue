@@ -103,7 +103,7 @@
       </v-row>
 
       <v-row no-gutters>
-          <v-dialog v-model="dialogChoose" persistent width="30rem">
+          <v-dialog v-model="dialogChoose" persistent width="25rem">
               <form-choose-project-type
               @newClicked="onNewClick"
               @existingClicked="onExistingClick"
