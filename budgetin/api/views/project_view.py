@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 from api.models import Project
-from api.serializers import ProjectSerializer, ProjectResponseSerializer, ProjectDetailSerializer
+from api.serializers import ProjectSerializer, ProjectResponseSerializer, ProjectResponseDetailSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
@@ -24,7 +24,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             ).get(pk=kwargs['pk'])
         project.format_timestamp("%d %B %Y")
             
-        serializer = ProjectDetailSerializer(project, many=False)
+        serializer = ProjectResponseDetailSerializer(project, many=False)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):

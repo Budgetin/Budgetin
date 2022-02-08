@@ -38,7 +38,9 @@ class BudgetSerializer(serializers.ModelSerializer):
         exclude = ['is_deleted', 'deleted_at', 'created_at', 'updated_at', 'created_by', 'updated_by']
         
     def get_coa(self, budget):
-        return budget.coa.name
+        if budget.coa:
+            return budget.coa.name
+        return ''
     
     def get_year(self, budget):
         return budget.project_detail.planning.year        
@@ -63,7 +65,7 @@ class ProjectResponseSerializer(serializers.ModelSerializer):
         model = Project
         fields = fields = ['id', 'created_by', 'updated_by', 'created_at', 'updated_at', 'itfam_id', 'project_name', 'project_description', 'start_year', 'end_year', 'is_tech', 'total_investment_value', 'biro', 'product']
 
-class ProjectDetailSerializer(serializers.ModelSerializer):
+class ProjectResponseDetailSerializer(serializers.ModelSerializer):
     product = ProductSerializer(many=False)
     biro = BiroSerializer(many=False)
     project_detail = ProjectDetailSerializer(many=True)
