@@ -38,15 +38,15 @@
               sm="6">
               <div class="StartPlanning__field">
                 <v-select
-                  v-model="form.is_active"
-                  :items="statusInfoPlanning"
-                  item-text="label"
-                  item-value="id"
-                  placeholder="Choose Active/Inactive"
-                  outlined
-                  return-object
-                  :disabled="isView"
-                  :rules="validation.statusRule">
+                v-model="form.is_active"
+                :items="statusInfoPlanning"
+                item-text="label"
+                item-value="id"
+                placeholder="Choose Active/Inactive"
+                outlined
+                return-object
+                :disabled="isView"
+                :rules="validation.statusRule">
                 </v-select>
               </div>
             </v-col>
@@ -95,15 +95,15 @@
               sm="6">
               <div class="StartPlanning__field">
                 <v-select
-                  v-model="form.notification"
-                  :items="statusNotification"
-                  item-text="label"
-                  item-value="id"
-                  placeholder="Choose Yes/No"
-                  outlined
-                  return-object
-                  :disabled="isView"
-                  :rules="validation.notifRule">
+                v-model="form.notification"
+                :items="statusNotification"
+                item-text="label"
+                item-value="id"
+                placeholder="Choose Yes/No"
+                outlined
+                return-object
+                :disabled="isView"
+                :rules="validation.notifRule">
                 </v-select>
               </div>
             </v-col>
@@ -117,7 +117,7 @@
               <v-col no-gutters>
                 <div class="sendTo">
                 <v-select
-                :items="dataAllBiro"
+                :items="dataAllBiroItHc"
                 v-model="selected"
                 item-text="code"
                 item-value="id"
@@ -230,7 +230,7 @@ export default {
   computed: {
     ...mapState("statusInfo", ["statusInfoPlanning"]),
     ...mapState("statusInfo", ["statusNotification"]),
-    ...mapState("allBiro", ["getAllBiro", "dataAllBiro"]),
+    ...mapState("allBiroItHc", ["getAllBiroItHc", "dataAllBiroItHc"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
@@ -239,8 +239,8 @@ export default {
       return this.$store.state.source.errorMsg;
     },
     icon () {
-      if (this.selected.length === this.dataAllBiro.length ) return "mdi-close-box";
-      if (this.selected.length != this.dataAllBiro.length ) return "mdi-minus-box";
+      if (this.selected.length === this.dataAllBiroItHc.length ) return "mdi-close-box";
+      if (this.selected.length != this.dataAllBiroItHc.length ) return "mdi-minus-box";
       return 'mdi-checkbox-blank-outline'
     },
   },
@@ -285,11 +285,11 @@ export default {
     },
     toggle () {
       this.$nextTick(() => {
-        if (this.selected.length === this.dataAllBiro.length) {
+        if (this.selected.length === this.dataAllBiroItHc.length) {
           this.selected = [];
           console.log("Masuk ALL");
         } else {
-          this.selected = this.dataAllBiro.slice();
+          this.selected = this.dataAllBiroItHc.slice();
           this.selectAll = [];
           for(let i=0; i < this.selected.length; i++) {
             this.selectAll.push(this.selected[i].id);

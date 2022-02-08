@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import Index from "@/views/Index";
+import Index from "@/views/Index"
+import store from "@/store";
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -87,8 +89,13 @@ const routes = [
       },
       {
         path: '/listPlanning/new',
-        name: 'AddListPlanning',
-        component: () => import("@/views/ListPlanning/AddListPlanning"),
+        name: 'ListPlanningNew',
+        component: () => import("@/views/ListPlanning/ListPlanningNew"),
+      },
+      {
+        path: '/listPlanning/existing',
+        name: 'ListPlanningExisting',
+        component: () => import("@/views/ListPlanning/ListPlanningExisting"),
       },
       {
         path: '/listPlanning/:id/view',
@@ -100,6 +107,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
+    meta: { guest: true },
     component: () => import("@/views/Login")
   },
   {
@@ -117,5 +125,17 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.guest)) {
+    if (store.getters.isAuthenticated) {
+      return;
+    }
+    next();
+  } else {
+    next();
+  }
+});
+
 
 export default router

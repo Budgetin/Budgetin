@@ -37,7 +37,6 @@ const masterCoa = {
       getAPI
         .get(ENDPOINT)
         .then((response) => {
-          console.log(response)
           const cleanData = response.data
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
@@ -188,7 +187,6 @@ const masterCoa = {
       state.dataActiveMasterCoa = dataActiveMasterCoa;
     },
     GET_ERROR(state, error) {
-      console.log(error.response)
       state.requestStatus = "ERROR";
       state.loadingGetMasterCoa = false;
       state.errorMsg = error;

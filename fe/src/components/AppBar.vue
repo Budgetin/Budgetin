@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar class="bg-grey" prominent flat app dense>
+  <v-app-bar id="app-bar" class="bg-grey" prominent flat app dense>
     <v-toolbar-title>
       <v-breadcrumbs
         :items="links"
@@ -17,10 +17,12 @@
       style="margin: auto 0px"
     >
       <!-- <span class="text-caption">photo</span> -->
-      <span class="white--text text-h6">FNA</span>
+      <!-- v-if="userInitial=='Admin'" -->
+      <!-- <span class="white--text text-h6" >{{ getInitial }}</span> -->
+      <span class="white--text text-h6" v-if="userInitial!='Admin'">{{ userInitial }}</span>
     </v-avatar>
 
-    <v-btn icon style="margin: auto 0px">
+    <v-btn icon style="margin: auto 0px" @click="logout">
       <v-icon color="red">mdi-logout</v-icon>
     </v-btn>
   </v-app-bar>
@@ -28,15 +30,29 @@
 
 <script>
 // import formatting from "@/mixins/formatting";
-import { mapState } from "vuex";
+import { mapState,mapActions } from "vuex";
 export default {
   name: "AppBar",
+  created(){
+    this.getInitial();
+  },
   computed: {
     ...mapState("breadcrumbs", ["links"]),
+    ...mapState("login", ["userInitial"]),
   },
-  // mixins: [formatting],
+  methods: {
+    ...mapActions("login", ["logOut","setInitial"]),
+    logout() {
+      console.log("masuk logout")
+      this.logOut();
+    },
+    getInitial(){
+      if(this.userInitial=="Admin"){
+        this.setInitial();
+      };
+    }
+  },
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

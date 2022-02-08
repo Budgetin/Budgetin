@@ -1,39 +1,55 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
+import router from "@/router/index.js";
 
 const ENDPOINT = "/api/login/";
-const SECONDENDPOINT = "/api/logout/"
+const SECONDENDPOINT = "/api/logout/";
 
 const login = {
   namespaced: true,
   state: {
-    loadingGetLogin: false, // for loading table
+    userInitial: "Admin",
+    loadingGetLogout: false, // for loading table
     loadingPostPatchLogin: false, // for loading post/patch
     dataLogin: [], // for v-data-table
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
+    loadingGetInitial: false,
   },
   getters: {
-    value: (state) => state.value
+    isAuthenticated: state => !!state.userInitial,
   },
   actions: {
-    logOut() {
-      if (store.state.login.requestStatus !== "SUCCESS")
-        store.dispatch("login/setLogout");
-    },
-    setLogout({ commit }) {
-      console.log("logout")
+    logOut({ commit }) {
       commit("GET_INIT");
-      getAPI
-        .get(SECONDENDPOINT)
-        .then((response) => {
-          console.log(response);
-          commit("GET_SUCCESS");
-        })
-        .catch((error) => {
-          commit("GET_ERROR", error);
-        });
+      return new Promise((resolve, reject) => {
+        getAPI
+          .get(SECONDENDPOINT)
+          .then((response) => {
+            commit("GET_SUCCESS");
+            resolve(response);
+          })
+          .catch((error) => {
+            commit("GET_ERROR", error);
+            reject(error);
+          });
+      });
+    },
+
+    setInitial({ commit }) {
+      return new Promise((resolve, reject) => {
+        getAPI
+          .get(ENDPOINT + "user/")
+          .then((response) => {
+            commit("GET_INITIAL_SUCCESS", response.data.initial);
+            resolve(response);
+          })
+          .catch((error) => {
+            commit("GET_INITIAL_ERROR", error);
+            reject(error);
+          });
+      });
     },
 
     postLogin({ commit }, payload) {
@@ -42,27 +58,12 @@ const login = {
         getAPI
           .post(ENDPOINT, payload)
           .then((response) => {
-            console.log(response)
+            commit("POST_PATCH_SUCCESS", response.data.initial);
             resolve(response);
           })
           .catch((error) => {
-            console.log(error)
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  // if (error.response.data.hasOwnProperty("login_name")) {
-                  //   errorMsg += error.response.data.login_name;
-                  // }
-                  break;
-
-                default:
-                  errorMsg += `Please recheck your input or try again later`;
-                  break;
-              }
-            }
+            console.log(error);
+            let errorMsg = `Please recheck your input or try again later`;
             commit("POST_PATCH_ERROR", errorMsg);
             reject(errorMsg);
           });
@@ -72,30 +73,49 @@ const login = {
   mutations: {
     GET_INIT(state) {
       state.requestStatus = "PENDING";
-      state.loadingGetLogin = true;
+      state.loadingGetLogout = true;
     },
     GET_SUCCESS(state) {
       state.requestStatus = "SUCCESS";
-      state.loadingGetLogin = false;
+      state.loadingGetLogout = false;
+      router.push({ name: "Login" });
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingGetLogin = false;
+      state.loadingGetLogout = false;
       state.errorMsg = error;
+    },
+
+    GET_INITIAL_SUCCESS(state, initial) {
+      state.requestStatus = "SUCCESS";
+      state.loadingGetInitial = false;
+      state.userInitial = initial;
+      console.log(state.userInitial);
+    },
+    GET_INITIAL_ERROR(state, error) {
+      state.requestStatus = "ERROR";
+      state.loadingGetInitial = false;
+      state.errorMsg = error;
+      state.userInitial = "Admin";
+      if (error.response.status == "401") {
+        router.push({ name: "Login" });
+      }
     },
 
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";
-      state.loadingPostPatchMasterlogin = true;
+      state.loadingPostPatchLogin = true;
     },
-    POST_PATCH_SUCCESS(state) {
-      state.requestStatus = "SUCCESS";
-      state.loadingPostPatchMasterlogin = false;
+    POST_PATCH_SUCCESS(state, initial) {
+      state.postPatchStatus = "SUCCESS";
+      state.loadingPostPatchLogin = false;
+      state.userInitial = initial;
     },
     POST_PATCH_ERROR(state, error) {
-      state.requestStatus = "ERROR";
-      state.loadingPostPatchMasterlogin = false;
+      state.postPatchStatus = "ERROR";
+      state.loadingPostPatchLogin = false;
+      state.userInitial = "Admin";
       state.errorMsg = error;
     },
   },

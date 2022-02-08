@@ -7,7 +7,7 @@
                 :form="form"
                 :isView="isView"
                 :dataStartPlanning="dataStartPlanning"
-                :dataAllBiro="dataAllBiro"
+                :dataAllBiroItHc="dataAllBiroItHc"
                 @editClicked="onEdit"
                 @cancelClicked="onCancel"
                 @submitClicked="onSubmit"
@@ -85,7 +85,7 @@ export default {
 
     computed: {
         ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
-        ...mapState("allBiro", ["loadingGetAllBiro", "dataAllBiro"]),
+        ...mapState("allBiroItHc", ["loadingGetAllBiroItHc", "dataAllBiroItHc"]),
     },
 
     methods: {

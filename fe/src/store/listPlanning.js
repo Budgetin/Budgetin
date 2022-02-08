@@ -2,6 +2,7 @@ import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
 const ENDPOINT = "/api/budget/";
+const PLANNING_ENPOINT = "/api/planning/"
 
 const listPlanning = {
   namespaced: true,
@@ -36,6 +37,25 @@ const listPlanning = {
             a.update_at > b.update_at ? 1 : -1
           );
           commit("GET_SUCCESS", sorted);
+        })
+        .catch((error) => {
+          commit("GET_ERROR", error);
+        });
+    },
+    getListActivePlanning() {
+      if (store.state.listPlanning.requestStatus !== "SUCCESS")
+        store.dispatch("listPlanning/getFromActiveAPI");
+    },
+    getFromActiveAPI({ commit }) {
+      commit("GET_INIT");
+      getAPI
+        .get(PLANNING_ENPOINT)
+        .then((response) => {
+          const cleanData = response.data
+          const sorted = cleanData.sort((a, b) =>
+            a.update_at > b.update_at ? 1 : -1
+          );
+          commit("GET_ACTIVE_DATA_UPDATE", sorted);
         })
         .catch((error) => {
           commit("GET_ERROR", error);

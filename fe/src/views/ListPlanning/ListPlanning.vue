@@ -63,7 +63,7 @@
                     no-gutters
                     class="list-planning__btn"
                   >
-                    <v-btn rounded color="primary" @click="gotoListPlanning"> Add Planning </v-btn>
+                    <v-btn rounded color="primary" @click="onAdd"> Add Planning </v-btn>
                     <v-btn rounded color="primary" @click="onExport">
                           <v-icon left> mdi-export-variant </v-icon>
                           Export Data
@@ -103,6 +103,16 @@
       </v-row>
 
       <v-row no-gutters>
+          <v-dialog v-model="dialogChoose" persistent width="40rem">
+              <form-choose-project-type
+              @newClicked="onNewClick"
+              @existingClicked="onExistingClick"
+              @cancelClicked="onCancel">
+              </form-choose-project-type>
+          </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
         <v-dialog v-model="dialog" scrollable persistent width="37.5rem">
           <column-option
             :data="dataTable.Listheader"
@@ -126,14 +136,16 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import ColumnOption from "@/components/ListPlanning/ColumnOption";
+import FormChooseProjectType from "@/components/ListPlanning/FormChooseProjectType"
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
 export default {
   name: "ListPlanning",
-  components: {SuccessErrorAlert,ColumnOption,BinaryYesNoChip},
+  components: {SuccessErrorAlert,ColumnOption,FormChooseProjectType,BinaryYesNoChip},
   watch: {},
   data: () => ({
     dialog: false,
+    dialogChoose: false,
     isEdit: false,
     search: "",
     tab: null,
@@ -305,7 +317,6 @@ export default {
     },
     setColumn(list) {
       this.$store.commit("choosedColumn/SET_LIST", list);
-      console.log(this.listColumn);
     },
     chooseColumn() {
       //this.dataTable.selectedHeader.splice(0, 2);
@@ -315,7 +326,7 @@ export default {
       this.$store.commit("listPlanning/SET_EDITTED_ITEM", item);
     },
     onCancel() {
-      this.dialog = false;
+      this.dialogChoose = false;
     },
     onClose(e) {
       this.dataTable.selectedHeader.splice(0, 2);
@@ -366,8 +377,17 @@ export default {
     onAlertOk() {
       this.alert.show = false;
     },
-    gotoListPlanning() {
+    onExport() {
+
+    },
+    onAdd() {
+            this.dialogChoose = !this.dialogChoose;
+    },
+    onNewClick(){
       return this.$router.push("/listPlanning/new");
+    },
+    onExistingClick(){
+      return this.$router.push("/listPlanning/existing");
     }
   },
 };
@@ -376,6 +396,13 @@ export default {
 <style>
 button {
   min-width: 2rem;
+}
+
+table > tbody > tr:hover td:nth-child(1),
+table > tbody > tr:hover td:nth-child(2),
+table > tbody > tr:hover td:nth-child(3),
+table > tbody > tr:hover td:nth-child(4){
+  background: #EEEEEE;
 }
 
 table > tbody > tr > td:nth-child(1),

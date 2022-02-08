@@ -168,9 +168,6 @@ export default {
         },
       ]);
     },
-    logout(){
-      this.logOut();
-    },
     onAdd() {
       this.dialog = !this.dialog;
     },
