@@ -50,9 +50,11 @@ import FormCoa from "@/components/MasterCOA/FormCoa";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 import TimelineLog from "@/components/TimelineLog";
 
+
 export default {
   name: "EditMasterCoa",
   components: {TimelineLog,FormCoa,SuccessErrorAlert},
+  
   created() {
     this.getEdittedItem();
     this.getHistoryItem();

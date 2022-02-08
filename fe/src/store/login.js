@@ -18,7 +18,7 @@ const login = {
     loadingGetInitial: false,
   },
   getters: {
-    isAuthenticated: state => !!state.userInitial,
+    isAuthenticated: state => state.userInitial,
   },
   actions: {
     logOut({ commit }) {
@@ -90,7 +90,6 @@ const login = {
       state.requestStatus = "SUCCESS";
       state.loadingGetInitial = false;
       state.userInitial = initial;
-      console.log(state.userInitial);
     },
     GET_INITIAL_ERROR(state, error) {
       state.requestStatus = "ERROR";
