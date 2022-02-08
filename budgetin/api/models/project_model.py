@@ -13,3 +13,7 @@ class Project(SoftDeleteModel, TimestampModel, UserTrackModel):
     total_investment_value = models.BigIntegerField()
     product = models.ForeignKey('Product',on_delete=models.CASCADE)
     is_tech = models.BooleanField(default=False)
+
+    def generate_itfamid(self):
+        self.itfam_id = str(self.start_year) + str(self.id).zfill(8)
+        self.save()

@@ -15,13 +15,14 @@ class CustomAuthMiddleware(object):
             user = decode_token(token)
             if user:
                 request.custom_user = user
-            else: # DEBT. Delete this else block
-                request.custom_user = {
-                    "username": "u067014",
-                    "display_name": "Harve Louis Marcello",
-                    "role": "Admin",
-                    "eselon": "S7B",
-                    "initial": "HLM"
-                }
-        
+        else: #DEBT. delete this else block
+            request.custom_user = {
+                "id": 1,
+                "username": "u067014",
+                "display_name": "Harve Louis Marcello",
+                "role": "Admin",
+                "eselon": "S7B",
+                "initial": "HLM"
+            }
+                
         return None
