@@ -94,7 +94,6 @@ const listProject = {
       });
     },
     patchListProject({ commit }, payload) {
-      console.log("Payload ID: "+payload.id);
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
       return new Promise((resolve, reject) => {

@@ -66,7 +66,6 @@ export default {
   methods: {
     onClose() {
       this.$emit("closeClicked", this.selected);
-      console.log(this.selected);
     },
     toggle() {
       this.$nextTick(() => {

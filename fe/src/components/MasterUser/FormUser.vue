@@ -124,8 +124,6 @@ export default {
           role: this.form.role,
           is_active: this.form.status,
         };
-        // console.log(this.form.name.username);
-        // console.log(payload)
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
         this.$refs.form.reset()
         this.form.name=""

@@ -97,23 +97,11 @@ export default {
     };
   },
   created() {
-    // this.checkAuth();
   },
   methods: {
     ...mapActions("login", ["postLogin", "setInitial"]),
-    checkAuth() {
-      this.setInitial().then(() => {
-        this.initial = JSON.parse(
-        JSON.stringify(this.$store.state.login.userInitial))
-        console.log(this.initial);
-        if (this.initial != "Admin") {
-          this.$router.go(-1);
-        }
-      });
-    },
     handleLogin() {
-      // //console.log("called");
-      this.errorMsg = "";
+      // //console. = "";
       this.$refs.form.validate();
       this.valid = false;
       if (this.username && this.password) {
@@ -146,7 +134,6 @@ export default {
       }
     },
     onSubmitError(error) {
-      console.log(error);
       this.alert.show = true;
       this.alert.success = false;
       this.alert.title = "Submit Failed";

@@ -176,26 +176,4 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
-
-// router.beforeEach((to, from, next) => {
-//     console.log(store.getters['login/isAuthenticated'])
-//       if (store.getters['login/isAuthenticated'] == 'Admin') {
-//         next();
-//         // return;
-//       }
-
-//     store.dispatch('login/setInitial').then(()=>{
-//       console.log(store.getters['login/isAuthenticated'])
-//     //   if(store.getters['login/isAuthenticated']){
-//     //     if (store.getters['login/isAuthenticated'] != 'Admin') {
-//     //         next("/coa");
-//     //
-//     //       }
-//     //   }
-//       });
-//  }
-// else {
-//     next();
-//   }
-
 export default router;

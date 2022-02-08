@@ -43,7 +43,6 @@ export default {
   methods: {
     ...mapActions("login", ["logOut","setInitial"]),
     logout() {
-      console.log("masuk logout")
       this.logOut();
     },
     getInitial(){
