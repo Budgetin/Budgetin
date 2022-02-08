@@ -22,7 +22,7 @@ def is_product_duplicate_create(product_code, product_name):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.all_object.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         queryset = Product.objects.select_related('strategy', 'created_by', 'updated_by').all()

@@ -12,12 +12,12 @@ class WebsiteUser(HttpUser):
         # })
         pass
     
-    # GET COA
-    # @task(1)
-    # def coa(self):
-    #     self.client.get("/api/coa/")
+    # # GET COA
+    @task(1)
+    def coa(self):
+        self.client.get("/api/coa/")
         
-    # # GET Strategy
+    # GET Strategy
     # @task(2)
     # def strategy(self):
     #     self.client.get("/api/strategy/")
@@ -43,18 +43,14 @@ class WebsiteUser(HttpUser):
     # def product(self):
     #     self.client.get("/api/product/")
 
-    @task(8)
-    def project(self):
-        self.client.get("/api/project/")
-
-    # @task(9)
-    # def projectdetail(self):
-    #     self.client.get("/api/project_detail/")
+    # @task(8)
+    # def project(self):
+    #     self.client.get("/api/project/")
     
-    # @task(10)
+    # @task(9)
     # def projecttyle(self):
     #     self.client.get("/api/project_type/")
 
-    # @task(11)
+    # @task(10)
     # def user(self):
     #     self.client.get("/api/user/")
