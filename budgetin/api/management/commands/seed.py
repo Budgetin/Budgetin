@@ -59,3 +59,4 @@ class Command(BaseCommand):
         self.seed_user_dev()
         self.seed_coa()
         self.seed_product()
+        self.seed_user_dev()

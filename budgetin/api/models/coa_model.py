@@ -8,6 +8,6 @@ from api.models.user_model import User
 class Coa(SoftDeleteModel, TimestampModel, UserTrackModel):
     name = models.CharField(max_length=200)
     definition = models.CharField(max_length=1000, blank=True, null=True)
-    hyperion_name = models.CharField(max_length=200)
-    is_capex = models.BooleanField(default=False)
+    hyperion_name = models.CharField(max_length=200, blank=True, null=True)
+    is_capex = models.BooleanField(default=False, blank=True)
     minimum_item_origin = models.BigIntegerField(blank=True, null=True)

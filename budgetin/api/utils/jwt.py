@@ -1,8 +1,8 @@
 import jwt
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.conf import settings
-
+from django.utils import timezone
 
 def generate_token(id, username, role, eselon, initial):
     payload = {
@@ -11,8 +11,8 @@ def generate_token(id, username, role, eselon, initial):
         "role": role,
         "eselon": eselon,
         "initial": initial,
-        "iat": datetime.now(),
-        "exp": datetime.now() + timedelta(minutes=1),
+        "iat": timezone.now(),
+        "exp": timezone.now() + timedelta(hours=8),
     }
     encoded_jwt = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
     return encoded_jwt

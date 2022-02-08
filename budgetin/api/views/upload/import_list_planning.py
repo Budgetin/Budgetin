@@ -70,17 +70,15 @@ def get_product_code_and_name(product):
     return product_code, product_name
     
 def get_or_create_project(request, data, biro, product):
-    itfam_id = '20210102' #DEBT
     project_name = data['Project Name']
     project_description = data['Project Description']
     start_year = data['Tahun'] if math.isnan(data['Tahun Mulai']) else data['Tahun Mulai']
-    end_year = data['Tahun Selesai']
+    end_year = data['Tahun'] if math.isnan(data['Tahun Selesai']) else data['Tahun Selesai']
     total_investment_value = data['Total Investment']
     product = product
     is_tech = data['Tech/Non Tech']
     
-    return Project.objects.get_or_create(itfam_id=itfam_id, defaults={
-        'project_name': project_name,
+    project, created = Project.objects.get_or_create(project_name=project_name, defaults={
         'project_description': project_description,
         'start_year': start_year,
         'end_year': end_year,
@@ -90,6 +88,9 @@ def get_or_create_project(request, data, biro, product):
         'is_tech': True if is_tech == 'Tech' else False,
         'created_by': request.custom_user['id']
     })
+    project.generate_itfamid()
+    
+    return project, created
 
 def get_or_create_planning(request, year):
     return Planning.objects.get_or_create(year=year, defaults={

@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from api.models import Budget
 from api.serializers import BudgetSerializer, BudgetResponseSerializer
@@ -16,14 +17,12 @@ class BudgetViewSet(viewsets.ModelViewSet):
                                                 'project_detail__project', 'project_detail__project_type', 
                                                 'project_detail__project__biro', 'project_detail__project__product', 
                                                 'project_detail__project__product__strategy').all()
-        
         for budget in budgets:
             budget.format_timestamp("%d %B %Y")
             budget.format_created_updated_by()
             
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
-        
     
     def retrieve(self, request, *args, **kwargs):
         budget = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 

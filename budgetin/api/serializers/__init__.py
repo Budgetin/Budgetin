@@ -6,7 +6,7 @@ from .monitoring_serializer import MonitoringSerializer
 from .planning_serializer import PlanningSerializer, PlanningResponseSerializer, ActivePlanningSerializer
 from .product_serializer import ProductSerializer, ProductResponseSerializer
 from .project_detail_serializer import ProjectDetailSerializer
-from .project_serializer import ProjectSerializer, ProjectResponseSerializer
+from .project_serializer import ProjectSerializer, ProjectResponseSerializer, ProjectDetailSerializer
 from .project_type_serializer import ProjectTypeSerializer
 from .strategy_serializer import StrategySerializer, StrategyResponseSerializer
 from .user_serializer import UserSerializer, UserResponseSerializer

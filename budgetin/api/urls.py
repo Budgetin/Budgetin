@@ -5,7 +5,7 @@ from api import views
 app_name = 'api'
 
 urlpatterns = [
-    path('biro/ithc', views.BiroIthcView.as_view()),
+    path('ithc/biro/', views.BiroIthcView.as_view()),
     path('login/', views.LoginView.as_view()),
     path('login/user/', views.LoginUserView.as_view()),
     path('logout/', views.LogoutView.as_view()),
