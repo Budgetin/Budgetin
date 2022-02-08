@@ -1,5 +1,3 @@
-from django_filters import rest_framework as filters
-from django.forms.models import model_to_dict
 from rest_framework import viewsets
 from rest_framework.response import Response
 
@@ -7,7 +5,6 @@ from api.models import Project
 from api.serializers import ProjectSerializer, ProjectResponseSerializer, ProjectResponseDetailSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.filter.project_filter import ProjectFilter
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
@@ -15,12 +12,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = Project.objects.select_related('biro', 'product', 'product__strategy', 'updated_by', 'created_by').all()
-        # for project in queryset:
-        #     project.format_timestamp("%d %B %Y")
+        for project in queryset:
+            project.format_timestamp("%d %B %Y")
             
-        # serializer = ProjectResponseSerializer(queryset, many=True)
-        # return Response(serializer.data)
-        return Response(model_to_dict(ProjectFilter(request.GET, queryset)))
+        serializer = ProjectResponseSerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
         project = Project.objects.select_related('biro', 'product', 'product__strategy', 'updated_by', 'created_by').prefetch_related(
