@@ -96,9 +96,6 @@ const login = {
       state.loadingGetInitial = false;
       state.errorMsg = error;
       state.userInitial = "Admin";
-      if (error.response.status == "401") {
-        router.push({ name: "Login" });
-      }
     },
 
     // post / patch related

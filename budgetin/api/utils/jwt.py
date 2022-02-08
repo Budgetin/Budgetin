@@ -12,7 +12,7 @@ def generate_token(id, username, role, eselon, initial):
         "eselon": eselon,
         "initial": initial,
         "iat": timezone.now(),
-        "exp": timezone.now() + timedelta(hours=8),
+        "exp": timezone.now() + timedelta(seconds=8),
     }
     encoded_jwt = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
     return encoded_jwt

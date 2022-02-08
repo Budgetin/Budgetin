@@ -107,7 +107,29 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    meta: { guest: true },
+    beforeEnter: (to, from, next) => {
+      try{
+        // if (store.getters['login/isAuthenticated'] != 'Admin') {
+        // store.dispatch('login/setInitial').then(()=>{
+          console.log(store.getters['login/isAuthenticated'])
+          if (store.getters['login/isAuthenticated'] == 'Admin') {
+            next();
+            return;
+          } else {
+            router.go(-1);
+            return;
+          }
+          // }).catch(err => {
+          //     next();
+          //     return;
+          //   });
+          // }
+      }catch(e){
+        ("masuk e")
+        next();
+        return;
+      }
+    },
     component: () => import("@/views/Login")
   },
   {
@@ -126,20 +148,26 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.matched.some((record) => record.meta.guest)) {
-    store.dispatch('login/setInitial').then(()=>{
-      console.log(store.getters['login/isAuthenticated'])
-      if (store.getters['login/isAuthenticated'] != 'Admin') {
-          next("/coa");
-          return;
-        }
-        next();
-      })
-  } else {
-    next();
-  }
-});
+// router.beforeEach((to, from, next) => {
+//     console.log(store.getters['login/isAuthenticated'])
+//       if (store.getters['login/isAuthenticated'] == 'Admin') {
+//         next();
+//         // return;
+//       }
+
+//     store.dispatch('login/setInitial').then(()=>{
+//       console.log(store.getters['login/isAuthenticated'])
+//     //   if(store.getters['login/isAuthenticated']){
+//     //     if (store.getters['login/isAuthenticated'] != 'Admin') {
+//     //         next("/coa");
+//     //         
+//     //       }
+//     //   }
+//       });
+  //  } 
+// else {
+//     next();
+//   }
 
 
 export default router
