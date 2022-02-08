@@ -68,10 +68,14 @@ class BudgetResponseSerializer(serializers.ModelSerializer):
                   'allocate', 'coa', 'minimum_item_origin', 'project_detail', 'created_by', 'updated_by', 'created_at', 'updated_at']
         
     def get_coa(self, budget):
-        return budget.coa.name
+        if budget.coa:
+            return budget.coa.name
+        return None
 
     def get_minimum_item_origin(self, budget):
-        return budget.coa.minimum_item_origin
+        if budget.coa:
+            return budget.coa.minimum_item_origin
+        return None
     
     def get_planning_nominal(self, budget):
         return budget.planning_q1 + budget.planning_q2 + budget.planning_q3 + budget.planning_q4
