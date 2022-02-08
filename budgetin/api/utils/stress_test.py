@@ -39,13 +39,13 @@ class WebsiteUser(HttpUser):
     # def planning(self):
     #     self.client.get("/api/planning/")
     
-    @task(7)
-    def product(self):
-        self.client.get("/api/product/")
+    # @task(7)
+    # def product(self):
+    #     self.client.get("/api/product/")
 
-    # @task(8)
-    # def project(self):
-    #     self.client.get("/api/project/")
+    @task(8)
+    def project(self):
+        self.client.get("/api/project/")
 
     # @task(9)
     # def projectdetail(self):
