@@ -15,16 +15,6 @@ class CustomAuthMiddleware(object):
             user = decode_token(token)
             if user:
                 request.custom_user = user
-<<<<<<< Updated upstream
-        else: #DEBT. delete this else block
-            request.custom_user = {
-                "id": 1,
-                "username": "u067014",
-                "role": "Admin",
-                "eselon": "S7B",
-                "initial": "HLM",
-            }
-=======
         # else: #DEBT. delete this else block
         #     request.custom_user = {
         #         "id": 1,
@@ -34,6 +24,5 @@ class CustomAuthMiddleware(object):
         #         "eselon": "S7B",
         #         "initial": "HLM"
         #     }
->>>>>>> Stashed changes
                 
         return None

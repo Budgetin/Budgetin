@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <sidebar />
+    <sidebar v-if="routing!='Login'"/>
     <v-main>
-      <app-bar />
+      <app-bar v-if="routing!='Login'"/>
       <router-view class="bg-grey"></router-view>
     </v-main>
   </v-app>
@@ -21,8 +21,9 @@ export default {
     Sidebar,
     AppBar,
   },
-  computed: {
-  },
+  computed : {
+      routing : function(){ return this.$route.name}
+    },
   methods: {
   },
 };
