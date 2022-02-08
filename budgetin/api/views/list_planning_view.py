@@ -17,7 +17,9 @@ class CreateListPlanning(APIView):
                 end_year = request.data['end_year'],
                 total_investment_value = request.data['total_investment_value'],
                 product_id = request.data['product'],
-                is_tech = request.data['is_tech']
+                is_tech = request.data['is_tech'],
+                created_by_id = request.custom_user['id'],
+                updated_by_id = request.custom_user['id']
             )
             project.generate_itfamid()
         else:
@@ -41,6 +43,8 @@ class CreateListPlanning(APIView):
                 planning_q2 = budget['planning_q2'],
                 planning_q3 = budget['planning_q3'],
                 planning_q4 = budget['planning_q4'],
+                created_by_id = request.custom_user['id'],
+                updated_by_id = request.custom_user['id']
             )
             
         return Response(model_to_dict(project))
