@@ -2,11 +2,6 @@ from rest_framework import serializers
 
 from api.models import Project, Product, Biro, ProjectDetail, Planning, Budget
 
-class ProjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Project
-        fields = '__all__'
-
 class ProductSerializer(serializers.ModelSerializer):
     strategy = serializers.SerializerMethodField()
     class Meta:
@@ -55,6 +50,13 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
         
     def get_project_type(self, project_detail):
         return project_detail.project_type.name
+
+class ProjectSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(many=False)
+    biro = BiroSerializer(many=False)
+    class Meta:
+        model = Project
+        fields = fields = ['id', 'created_by', 'updated_by', 'created_at', 'updated_at', 'itfam_id', 'project_name', 'project_description', 'start_year', 'end_year', 'is_tech', 'total_investment_value', 'biro', 'product']
 
 class ProjectResponseSerializer(serializers.ModelSerializer):
     product = ProductSerializer(many=False)

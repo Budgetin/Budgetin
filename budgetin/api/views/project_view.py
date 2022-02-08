@@ -15,7 +15,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         for project in queryset:
             project.format_timestamp("%d %B %Y")
             
-        serializer = ProjectResponseSerializer(queryset, many=True)
+        serializer = ProjectSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
