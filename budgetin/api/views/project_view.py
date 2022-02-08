@@ -11,7 +11,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = Project.objects.select_related('biro', 'product').all()
+        queryset = Project.objects.select_related('biro', 'product', 'product__strategy').all()
         for project in queryset:
             project.format_timestamp("%d %B %Y")
             
@@ -19,7 +19,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        project = Project.objects.select_related('biro', 'product').get(pk=kwargs['pk'])
+        project = Project.objects.select_related('biro', 'product', 'product__strategy').prefetch_related(
+                'project_detail', 'project_detail__planning', 'project_detail__project', 'project_detail__project_type'
+            ).get(pk=kwargs['pk'])
         project.format_timestamp("%d %B %Y")
             
         serializer = ProjectDetailSerializer(project, many=False)
