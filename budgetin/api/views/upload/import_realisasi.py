@@ -1,3 +1,4 @@
+from django.forms import model_to_dict
 import pandas
 import math
 
@@ -5,16 +6,18 @@ from django.db import transaction
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
-from api.exceptions import SheetNotFoundException
+from api.exceptions import SheetNotFoundException, NotFoundException
+from django.db.models.base import ObjectDoesNotExist
 
-from api.models import Coa, ProjectDetail, Budget
+from api.models import Coa, ProjectDetail, Budget, Planning
 
-def update_db(data):
+def update_db(index, data):
     dcsp_id = data.pop('BID').split('-')[0]
-    coa = get_coa(data.pop('COA'))
-    project_detail = get_project_detail(dcsp_id)
-    budget_object = get_budget(project_detail, coa)
-    # UPDATE THE DATA #
+    coa = get_coa(index, data.pop('COA'))
+    planning = get_planning(index, data.pop('Tahun'))
+    project_detail = get_project_detail(index, dcsp_id, planning)
+    budget_object = get_budget(index, project_detail, coa)
+
     budget_object.update(
         allocate = is_nan(data['Allocate']),
         returns = is_nan(data['Return']),
@@ -35,14 +38,30 @@ def update_db(data):
         realization_dec = is_nan(data['Dec']),
     )
 
-def get_coa(coa_name):
-    return Coa.objects.get(name=coa_name)
+def get_coa(index, coa_name):
+    try:
+        return Coa.objects.get(name=coa_name)
+    except ObjectDoesNotExist:
+        raise NotFoundException("COA with name "+str(coa_name)+" on line "+str(index))
+    
 
-def get_project_detail(dcsp_id):
-    return ProjectDetail.objects.filter(dcsp_id = dcsp_id).get()
+def get_project_detail(index, dcsp_id, planning):
+    try:
+        return ProjectDetail.objects.filter(planning = planning).filter(dcsp_id = dcsp_id).get()
+    except ObjectDoesNotExist:
+        raise NotFoundException("Project Detail with dcsp_id "+dcsp_id +" and year "+ str(model_to_dict(planning)['year'])+" on line "+str(index))
 
-def get_budget(project_detail, coa):
-    return Budget.objects.filter(project_detail=project_detail).filter(coa=coa)
+def get_planning(index, year):
+    try:
+        return Planning.objects.filter(year = year).get()
+    except ObjectDoesNotExist:
+        raise NotFoundException("Planning with year "+ str(year)+" on line "+str(index))
+
+def get_budget(index, project_detail, coa):
+    try:
+        return Budget.objects.filter(project_detail=project_detail).filter(coa=coa)
+    except ObjectDoesNotExist:
+        raise NotFoundException("Budget"+" on line "+str(index))
 
 def is_nan(data):
     return 0 if math.isnan(data) else data
@@ -58,8 +77,7 @@ class ImportRealisasi(APIView):
         except ValueError:
             raise SheetNotFoundException('Realisasi')
         
-        
         for index, row in df.iterrows():
-            update_db(row)
+            update_db((index+1), row)
             
         return Response(status=204)
