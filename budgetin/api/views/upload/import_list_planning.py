@@ -130,7 +130,7 @@ class ImportListPlanning(APIView):
     @transaction.atomic
     def post(self, request, format=None):
         file_obj = request.FILES['file'].read()
-        df = pandas.read_excel(file_obj)
+        df = pandas.read_excel(file_obj, sheet_name='Planning')
         
         create_update_all_biro()
         
