@@ -40,7 +40,7 @@ import FormPlanningNew from "@/components/ListPlanning/FormPlanningNew";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
   name: "ListPlanningNew",
-  components: { FormPlanningNew,SuccessErrorAlert},
+  components: {FormPlanningNew,SuccessErrorAlert},
   created() {
 
   },

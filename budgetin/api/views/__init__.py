@@ -17,6 +17,7 @@ from .excel_import_view import ImportExcelView
 from .export.export_list_planning import ExportListPlanning
 from .export.export_list_project import ExportListProject
 from .upload.import_list_planning import ImportListPlanning
+from .upload.import_realisasi import ImportRealisasi
 from .biro_ithc_view import BiroIthcView
 from .biro_view import BiroViewSet
 from .list_planning_view import CreateListPlanning

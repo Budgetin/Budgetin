@@ -12,6 +12,13 @@
 
       <v-card-text>
         <v-row no-gutters align="center">
+          <v-col cols="12" class="mt-2" align="center">
+            <img :src="require('../../assets/account.png')" width="200rem" />
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-card-text>
+        <v-row no-gutters align="center">
           <v-col cols="6" class="mt-2">
             <v-btn rounded color="primary" @click="onNewClick"> New Project </v-btn>
           </v-col>

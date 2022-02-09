@@ -1,27 +1,19 @@
 <template>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
-  <v-card>
-    <v-card-title class="mb-5">
-      {{ cardTitle }} Planning
-      <v-spacer></v-spacer>
-    </v-card-title>
-  
-    <v-card-text>
-        <!-- Judul -->
-        <v-row no-gutters>
-          <v-col cols="12" style="font-size:16px">
-            <strong> Project Detail </strong>
-          </v-col>
-        </v-row>
-
-        <br>
-        <!-- Nama nama -->
+        <h1 style="font-weight:bold;">Create Planning for Existing Project</h1>
+        <v-card>
+          <v-card-title>
+              <strong> Project Information </strong>
+        </v-card-title>
+          <v-card-text>
+        <v-divider></v-divider><br>
+        <!-- Project Name -->
         <v-row no-gutters>
           <v-col cols="4">
             For <strong class="red--text">*</strong>
           </v-col>
           <v-col cols="4">
-            Project ID <strong class="red--text">*</strong>
+            Project ID
           </v-col>
           <v-col cols="4">
             Project Type <strong class="red--text">*</strong>
@@ -63,9 +55,8 @@
               v-model="form.dcsp_id"
               outlined
               dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              :disabled="true"
+              placeholder="Auto Input"
               class="mr-2"
             >
             </v-text-field>
@@ -74,7 +65,7 @@
               <div>
                 <v-select
                   v-model="form.project_type"
-                  :items="dataProjectType"
+                  :items="dataProjectTypeExisting"
                   item-text="name"
                   item-value="id"
                   placeholder="Type"
@@ -88,21 +79,6 @@
             </v-col>
           
         </v-row>
-          </v-card-text>
-        </v-card>
-
-        <br>
-        <v-card>
-          <v-card-text>
-
-        <v-row no-gutters>
-          <v-col cols="12" style="font-size:16px">
-            <strong> Project </strong>
-          </v-col>
-        </v-row>
-
-        <br>
-        <!-- Project Name -->
         <v-row no-gutters>
           <v-col cols="12">
             Project Name <strong class="red--text">*</strong>
@@ -110,16 +86,21 @@
         </v-row>
         <v-row no-gutters>
           <v-col cols="12">
-            <v-text-field
-              v-model="form.project_name"
-              outlined
-              dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
-            >
-            </v-text-field>
-          </v-col>
+              <v-combobox
+                hide-selected
+                v-model="form.project"
+                :items="dataListProject"
+                item-text="project_name"
+                item-value="id"
+                placeholder="Search Project..."
+                outlined
+                return-object
+                :rules="validation.required"
+                class="mr-2"
+                :dense=true
+                @change="onSelectProject">
+              </v-combobox>
+            </v-col>
         </v-row>
 
         <!-- Project Description -->
@@ -135,9 +116,8 @@
               outlined
               dense
               rows=4
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              readonly
+              placeholder="-"
             >
             </v-textarea>
           </v-col>
@@ -149,13 +129,13 @@
             ID-ITFAM
           </v-col>
           <v-col cols="3">
-            Start Year <strong class="red--text">*</strong>
+            Start Year
           </v-col>
           <v-col cols="3">
             End Year
           </v-col>
           <v-col cols="3">
-            Total Investment Value <strong class="red--text">*</strong>
+            Total Investment Value
           </v-col>
         </v-row>
 
@@ -166,9 +146,8 @@
               v-model="form.itfam_id"
               outlined
               dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              readonly
+              placeholder="-"
               class="mr-2"
             >
             </v-text-field>
@@ -178,9 +157,8 @@
               v-model="form.start_year"
               outlined
               dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              readonly
+              placeholder="-"
               class="mr-2"
             >
             </v-text-field>
@@ -190,9 +168,8 @@
               v-model="form.end_year"
               outlined
               dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              readonly
+              placeholder="-"
               class="mr-2"
             >
             </v-text-field>
@@ -202,9 +179,8 @@
               v-model="form.total_investment_value"
               outlined
               dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              readonly
+              placeholder="-"
             >
             </v-text-field>
           </v-col>
@@ -213,13 +189,13 @@
         <!-- Nama nama -->
         <v-row no-gutters>
           <v-col cols="3">
-            Tech/Non-Tech <strong class="red--text">*</strong>
+            Tech/Non-Tech
           </v-col>
           <v-col cols="3">
             Product 
           </v-col>
           <v-col cols="3">
-            Biro <strong class="red--text">*</strong>
+            Biro
           </v-col>
           <v-col cols="3">
             RCC
@@ -229,106 +205,103 @@
         <!-- Kolom kolom -->
         <v-row no-gutters >
           <v-col cols="3">
-            <v-text-field
+              <v-text-field
               v-model="form.is_tech"
               outlined
               dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              readonly
+              placeholder="-"
               class="mr-2"
             >
             </v-text-field>
-          </v-col>
-          <v-col cols="3"> 
-            <v-text-field
+            </v-col>
+          <v-col cols="3">
+              <v-text-field
               v-model="form.product"
               outlined
               dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              readonly
+              placeholder="-"
               class="mr-2"
             >
             </v-text-field>
-          </v-col>
+            </v-col>
           <v-col cols="3">
-            <v-text-field
+              <v-text-field
               v-model="form.biro"
               outlined
               dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              readonly
+              placeholder="-"
               class="mr-2"
             >
             </v-text-field>
-          </v-col>
+            </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="form.biro"
+              v-model="form.rcc"
               outlined
               dense
-              :disabled="isView"
-              placeholder="Input Here"
+              readonly
+              placeholder="-"
             >
             </v-text-field>
           </v-col>
         </v-row>
         </v-card-text>
         </v-card>
-
-        <br>
-
-        <v-card>
-          <v-card-text>
-        <v-row no-gutters>
-          <v-col cols="12" style="font-size:16px">
-            <strong> Budget </strong>
-          </v-col>
-        </v-row>
-        </v-card-text>
-        </v-card>
-
-        <br>
-
         <!-- List Budget -->
 
-        <div v-for="budget in budgets" :key="budget.name">
+        <div v-for="(budget, index) in budgets" :key="budget.name">
+          <br>
           <v-card>
+            <v-card-title>
+              <strong> Budget {{'#' + (index + 1)}}</strong>
+            <v-spacer></v-spacer>
+            <v-btn icon small @click="popBudgetByIndex(index)">
+              <v-icon color="primary"> mdi-close </v-icon>
+            </v-btn>
+            </v-card-title>
           <v-card-text>
+        
+        <v-divider></v-divider><br>
+        
         <!-- Nama nama -->
         <v-row no-gutters>
           <v-col cols="3">
             COA <strong class="red--text">*</strong>
           </v-col>
           <v-col cols="3">
-            CAPEX/OPEX
+            Expense Type
           </v-col>
         </v-row>
 
         <!-- Kolom kolom -->
         <v-row no-gutters >
           <v-col cols="3">
-            <v-text-field
-              v-model="budget.coa"
-              outlined
-              dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
-              class="mr-2"
-            >
-            </v-text-field>
-          </v-col>
-          <v-col cols="3"> 
+              <div>
+                <v-select
+                  v-model="budget.coa"
+                  :items="dataMasterCoa"
+                  item-text="name"
+                  item-value="id"
+                  placeholder="Select"
+                  outlined
+                  return-object
+                  :rules="validation.required"
+                  class="mr-2"
+                  :dense=true
+                  @input="onInput(budget)">
+                </v-select>
+              </div>
+            </v-col>
+          <v-col cols="3">
             <v-text-field
               v-model="budget.expense_type"
               outlined
               dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              :disabled="true"
+              placeholder="Auto Input"
             >
             </v-text-field>
           </v-col>
@@ -358,9 +331,11 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              suffix="IDR"
+              :rules="validation.targetRule"
+              placeholder="Plan for Q1"
               class="mr-2"
+              @input="onInput(budget)"
             >
             </v-text-field>
           </v-col>
@@ -370,9 +345,11 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              suffix="IDR"
+              :rules="validation.targetRule"
+              placeholder="Plan for Q2"
               class="mr-2"
+              @input="onInput(budget)"
             >
             </v-text-field>
           </v-col>
@@ -382,9 +359,11 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              suffix="IDR"
+              :rules="validation.targetRule"
+              placeholder="Plan for Q3"
               class="mr-2"
+              @input="onInput(budget)"
             >
             </v-text-field>
           </v-col>
@@ -394,8 +373,10 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
+              suffix="IDR"
+              :rules="validation.targetRule"
+              placeholder="Plan for Q4"
+              @input="onInput(budget)"
             >
             </v-text-field>
           </v-col>
@@ -429,20 +410,22 @@
           </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="planning_nominal"
+              v-model="budget.planning_nominal"
               outlined
               dense
               :disabled=true
               placeholder="Planning Total"
+              suffix="IDR"
+              @change="onInput(budget);"
             >
             </v-text-field>
           </v-col>
         </v-row>
         </v-card-text>
         </v-card>
-        <br>
         </div>
 
+        <br>
         <v-card>
           <v-card-text>
           <v-row no-gutters>
@@ -457,11 +440,10 @@
               outlined
               class="primary--text"
               @click="$emit('cancelClicked')"
-              v-if="!isView"
             >
               Cancel
             </v-btn>
-            <v-btn rounded class="primary ml-3" type="submit" v-if="!isView">
+            <v-btn rounded class="primary ml-3" type="submit">
               Save
             </v-btn>
             </v-col>
@@ -502,15 +484,22 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
+import formatting from "@/mixins/formatting";
 export default {
-  name: "FormAddPlanning",
+  name: "FormPlanningExisting",
   props: ["form", "isView", "isNew"],
+  mixins: [formatting],
   created() {
-    this.getFromActiveAPI();
-    this.getAllProjectType();
+    this.getListProject();
+    this.getListActivePlanning();
+    this.getExistingProjectType();
+    this.getAllBiro();
+    this.getMasterProduct();
+    this.getMasterCoa();
   },
   data: () => ({
     validation: {
+      hasUpdated: false,
       required: [
         (v) => !!v || "This field is required"
       ],
@@ -521,11 +510,26 @@ export default {
     budgets: [],
   }),
   computed: {
+    ...mapState("listProject", [
+      "dataListProject"
+    ]),
     ...mapState("listPlanning", [
       "dataActiveListPlanning"
     ]),
     ...mapState("projectType", [
-      "dataProjectType"
+      "dataProjectTypeExisting"
+    ]),
+    ...mapState("statusInfo", [
+      "statusTechNonTech"
+    ]),
+    ...mapState("allBiro", [
+      "dataAllBiro"
+    ]),
+    ...mapState("masterProduct", [
+      "dataMasterProduct"
+    ]),
+    ...mapState("masterCoa", [
+      "dataMasterCoa"
     ]),
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
@@ -533,47 +537,132 @@ export default {
     errorMsg() {
       return this.$store.state.source.errorMsg;
     },
+    getRCC(){
+      if(this.form.biro.id && this.form.biro.rcc != null){
+        return this.form.biro.rcc;
+      }else{
+        return "-";
+      }
+    },
     nominal:{
       // getter
       get: function() {
         if(this.form.minimum_item_origin){
-          this.form.minimum_item_origin = this.form.minimum_item_origin.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-          this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
-        }
+          this.form.minimum_item_origin = this.numberWithDots(this.form.minimum_item_origin)
           return this.form.minimum_item_origin;
+        }
       },
       // setter
       set: function(newValue) {
-        this.form.minimum_item_origin = newValue.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-        this.form.minimum_item_origin = this.form.minimum_item_origin.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        this.form.minimum_item_origin = this.numberWithDots(newValue)
       }
     }
   },
   methods: {
+    ...mapActions("listProject", [
+      "getListProject"
+    ]),
     ...mapActions("listPlanning", [
-      "getFromActiveAPI"
+      "getListActivePlanning"
     ]),
     ...mapActions("projectType", [
-      "getAllProjectType"
+      "getExistingProjectType"
     ]),
+    ...mapActions("allBiro", [
+      "getAllBiro"
+    ]),
+    ...mapActions("masterProduct", [
+      "getMasterProduct"
+    ]),
+    ...mapActions("masterCoa", [
+      "getMasterCoa"
+    ]),
+    onSelectProject(){
+      console.log(this.form.project.id);
+      if(this.form.project.id){
+        this.form.project_description = this.form.project.project_description;
+        this.form.itfam_id = this.form.project.itfam_id;
+        this.form.start_year = this.form.project.start_year;
+        this.form.end_year = this.form.project.end_year;
+        this.form.total_investment_value = this.form.project.total_investment_value;
+        this.form.is_tech = this.form.project.is_tech == true ? "Tech" : "Non-Tech";
+        this.form.product = this.form.project.product.product_code;
+        this.form.biro = this.form.project.biro.code;
+        this.form.rcc = this.form.project.biro.rcc;
+      } else{
+        this.form.project_description = "";
+        this.form.itfam_id = "";
+        this.form.start_year = "";
+        this.form.end_year = "";
+        this.form.total_investment_value = "";
+        this.form.is_tech = "";
+        this.form.product = "";
+        this.form.biro = "";
+        this.form.rcc = "";
+      }
+      
+    },
+    onInput(budget){
+      if(budget.planning_q1){
+        budget.planning_q1 = this.numberWithDots(budget.planning_q1);
+      }
+      if(budget.planning_q2){
+        budget.planning_q2 = this.numberWithDots(budget.planning_q2);
+      }
+      if(budget.planning_q3){
+        budget.planning_q3 = this.numberWithDots(budget.planning_q3);
+      }
+      if(budget.planning_q4){
+        budget.planning_q4 = this.numberWithDots(budget.planning_q4);
+      }
+      budget.planning_nominal = parseInt(budget.planning_q1.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
+      parseInt(budget.planning_q2.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
+      parseInt(budget.planning_q3.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
+      parseInt(budget.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+
+      budget.planning_nominal = this.numberWithDots(budget.planning_nominal);
+
+      if(budget.coa){
+        if(budget.coa.is_capex && parseInt(budget.planning_nominal.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) >= budget.coa.minimum_item_origin){
+          budget.expense_type = "CAPEX"
+        }else{
+          budget.expense_type = "OPEX"
+        }
+      }
+      
+
+    },
+    popBudgetByIndex(index){
+      this.budgets.splice(index,1);
+    },
     onSubmit() {
       let validate = this.$refs.form.validate();
       //let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
       if (validate) {
+        const tempBudgets = JSON.parse(JSON.stringify(this.budgets)); //make a temporary budget object
+        tempBudgets.forEach(element => {
+          element.planning_q1 = parseInt(element.planning_q1.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+          element.planning_q2 = parseInt(element.planning_q2.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+          element.planning_q3 = parseInt(element.planning_q3.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+          element.planning_q4 = parseInt(element.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+          element.coa = element.coa.id;
+          delete element.planning_nominal;
+        });
+
         const payload = {
-            itfam_id : this.form.planning,
+            itfam_id : this.form.itfam_id,
             project_name : this.form.project_name,
             project_description : this.form.project_description,
-            biro : this.form.biro,
+            biro : this.form.biro.id,
             start_year : this.form.start_year,
             end_year : this.form.end_year,
             total_investment_value : this.form.total_investment_value,
-            product : this.form.product,
-            is_tech : this.form.is_tech,
-            planning : this.form.planning,
-            project_type : this.form.project_type,
+            product : this.form.product.id,
+            is_tech : this.form.is_tech.id = 1 ? true : false,
+            planning : this.form.planning.id,
+            project_type : this.getProjectType.id,
             dcsp_id : this.form.dcsp_id,
-            budget: this.budgets
+            budget: tempBudgets
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
       }
@@ -585,9 +674,10 @@ export default {
           planning_q1 : "",
           planning_q2 : "",
           planning_q3 : "",
-          planning_q4 : ""
+          planning_q4 : "",
+          planning_nominal : ""
       });
-    }
+    },
   },
 };
 </script>
