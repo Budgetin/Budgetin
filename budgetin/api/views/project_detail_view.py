@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 
 from api.models.project_detail_model import ProjectDetail
 from api.models.user_model import User
-from api.serializers import ProjectDetailSerializer
+from api.serializers import ProjectDetailSerializer, ProjectDetailResponseSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 from rest_framework.decorators import action
 from copy import deepcopy
@@ -30,7 +30,7 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
             project_detail.planning.format_timestamp("%d %B %Y")
             project_detail.planning.format_duedate("%d %B %Y")
         
-        serializer = ProjectDetailSerializer(queryset, many=True)
+        serializer = ProjectDetailResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
@@ -40,7 +40,7 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
         project_detail.format_timestamp("%d %B %Y")
         project_detail.planning.format_timestamp("%d %B %Y")
         project_detail.planning.format_duedate("%d %B %Y")
-        serializer = ProjectDetailSerializer(project_detail, many=False)
+        serializer = ProjectDetailResponseSerializer(project_detail, many=False)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):

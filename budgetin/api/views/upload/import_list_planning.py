@@ -11,6 +11,7 @@ from datetime import datetime
 from api.models import Biro, Coa, Product, Strategy, Project, Planning, ProjectDetail, ProjectType, Budget
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import ProjectTypeEnum
+from api.exceptions import PlanningSheetNotFoundException
 
 
 def create_update_all_biro():
@@ -130,12 +131,14 @@ class ImportListPlanning(APIView):
     @transaction.atomic
     def post(self, request, format=None):
         file_obj = request.FILES['file'].read()
-        df = pandas.read_excel(file_obj)
+        try:
+            df = pandas.read_excel(file_obj, sheet_name='Planning')
+        except ValueError:
+            raise PlanningSheetNotFoundException()
         
         create_update_all_biro()
         
         for index, row in df.iterrows():
-            print(index)
             insert_to_db(request, row)
             
         return Response(status=204)
