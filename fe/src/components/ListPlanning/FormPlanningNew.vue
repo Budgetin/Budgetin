@@ -1,6 +1,6 @@
 <template>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
-        <h1 style="font-weight:bold;">New Planning</h1>
+        <h1 style="font-weight:bold;">Create Planning for New Project</h1>
   <v-card>  
     <v-card-title>
               <strong> Project Detail</strong>
@@ -512,7 +512,7 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import formatting from "@/mixins/formatting";
 export default {
-  name: "FormAddPlanning",
+  name: "FormPlanningNew",
   props: ["form", "isView", "isNew"],
   mixins: [formatting],
   created() {
@@ -522,10 +522,6 @@ export default {
     this.getMasterProduct();
     this.getMasterCoa();
   },
-  // mounted(){
-  //   this.selectedType = this.valueNew;
-  //   console.log(this.selectedType);
-  // },
   data: () => ({
     validation: {
       hasUpdated: false,
@@ -547,9 +543,6 @@ export default {
     ]),
     ...mapState("statusInfo", [
       "statusTechNonTech"
-      ]),
-    ...mapGetters("projectType", [
-      "valueNew"
     ]),
     ...mapState("allBiro", [
       "dataAllBiro"

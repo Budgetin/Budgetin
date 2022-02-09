@@ -2,8 +2,7 @@ const choosedColumn = {
     namespaced: true,
     state: {
       listColumn: [
-        { text: "Actions", value: "actions", align: "center", sortable: false, width: "4.55rem" },
-        { text: "For", value: "planning.year", width: "5rem" }
+        { text: "For", value: "planning.year", width: "5rem" },
       ],
     },
     getters: {

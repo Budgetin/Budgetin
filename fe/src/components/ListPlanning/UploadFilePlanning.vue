@@ -1,9 +1,8 @@
 <template>
   <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
     <v-card>
-
       <v-card-title>
-        Plan for...
+        Upload File
         <v-spacer></v-spacer>
         <v-btn icon small @click="onCancel">
           <v-icon color="primary"> mdi-close </v-icon>
@@ -12,18 +11,16 @@
 
       <v-card-text>
         <v-row no-gutters align="center">
-          <v-col cols="12" class="mt-2" align="center">
-            <img :src="require('../../assets/account.png')" width="200rem" />
+          <v-col cols="12" class="mt-2">
+            <a href="ImportTemplate.xlsx" download
+              >Download Template Planning</a
+            >
+            <!-- <v-btn text @click="downloadTemplate" class="primary--text">Download Template Planning </v-btn> -->
           </v-col>
         </v-row>
-      </v-card-text>
-      <v-card-text>
         <v-row no-gutters align="center">
-          <v-col cols="6" class="mt-2">
-            <v-btn rounded color="primary" @click="onNewClick"> New Project </v-btn>
-          </v-col>
-          <v-col cols="6" class="mt-2">
-            <v-btn rounded color="primary" @click="onExistingClick"> Existing Project </v-btn>
+          <v-col cols="12" class="mt-2">
+            <v-file-input show-size label="File input"></v-file-input>
           </v-col>
         </v-row>
       </v-card-text>
@@ -32,13 +29,16 @@
 </template>
 
 <script>
+// import template from "@/assets/ImportTemplate.xlsx"
 import { mapState, mapActions, mapGetters } from "vuex";
 export default {
-  name: "FormChooseProjectType",
+  name: "UploadFilePlanning",
   created() {
     //this.getAllProjectType();
   },
-  data: () => ({}),
+  data: () => ({
+    // item:template
+  }),
   computed: {
     // ...mapState("projectType", ["loadingGetListPlanning",
     //   "dataProjectType"
@@ -48,26 +48,15 @@ export default {
     },
   },
   methods: {
-    // ...mapActions("projectType", [
-    //   "getAllProjectType"
-    // ]),
-    onNewClick(){
-      this.$emit("newClicked");
-    },
-    onExistingClick() {
-      this.$emit("existingClicked");
-    },
-    onCancel(){
+    onCancel() {
       console.log(this.dataProjectType);
       this.$emit("cancelClicked");
-    }
+    },
   },
 };
 </script>
 
-
 <style lang="scss" scopped>
-
 .v-card__text {
   color: unset !important;
 }
@@ -82,7 +71,7 @@ button {
 </style>
 
 <style>
-  .FormPlanning__checkbox{
-    align-content:flex-start
-  }
+.FormPlanning__checkbox {
+  align-content: flex-start;
+}
 </style>
