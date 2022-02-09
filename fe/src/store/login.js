@@ -58,8 +58,15 @@ const login = {
         getAPI
           .post(ENDPOINT, payload)
           .then((response) => {
-            commit("POST_PATCH_SUCCESS", response.data.initial);
-            resolve(response);
+            if(response.data.role=="Admin"){
+              commit("POST_PATCH_SUCCESS", response.data.initial);
+              resolve(response);
+            }
+            else{
+              let errorMsg = `Please recheck your input or try again later`;
+              commit("POST_PATCH_ERROR", errorMsg);
+              reject(errorMsg);
+            }
           })
           .catch((error) => {
             let errorMsg = `Please recheck your input or try again later`;

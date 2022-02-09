@@ -368,7 +368,8 @@
               :rules="validation.required"
               placeholder="Plan for Q1"
               class="mr-2"
-              @change="onQ1toQ4Changed(budget)"
+              @input="onQ1toQ4Changed(budget,index)"
+              
             >
             </v-text-field>
           </v-col>
@@ -608,12 +609,17 @@ export default {
     ...mapActions("masterCoa", [
       "getMasterCoa"
     ]),
-    onQ1toQ4Changed(budget){
-      if(budget.planning_q1 != "" && budget.planning_q2 != "" && budget.planning_q3 != "" && budget.planning_q4 != ""){
-        budget.planning_nominal = parseInt(budget.planning_q1.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
-        parseInt(budget.planning_q2.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
-        parseInt(budget.planning_q3.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
-        parseInt(budget.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+    onQ1toQ4Changed(budget,index){
+      console.log(budget)
+      console.log(index)
+      if(budget.planning_q1 != "" ){
+       budget.planning_q1= budget.planning_q1.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," )
+
+      // if(budget.planning_q1 != "" && budget.planning_q2 != "" && budget.planning_q3 != "" && budget.planning_q4 != ""){
+        // budget.planning_nominal = parseInt(budget.planning_q1.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
+        // parseInt(budget.planning_q2.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
+        // parseInt(budget.planning_q3.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
+        // parseInt(budget.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
       }
     },
     onSubmit() {
