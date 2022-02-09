@@ -31,7 +31,6 @@ class CreateListPlanning(APIView):
         # Project Detail
         project_detail, _ = ProjectDetail.objects.update_or_create(planning_id=request.data['planning'], project=project, defaults={
             'project_type_id': request.data['project_type'],
-            'dcsp_id': request.data['dcsp_id'] if 'dcsp_id' in request.data else None
         })
         
         # Budget
