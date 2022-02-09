@@ -2,13 +2,10 @@
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
         <h1 style="font-weight:bold;">New Planning</h1>
   <v-card>  
+    <v-card-title>
+              <strong> Project Detail</strong>
+    </v-card-title>
     <v-card-text>
-        <!-- Judul -->
-        <v-row no-gutters>
-          <v-col cols="12" style="font-size:18px">
-            <strong> Project Detail </strong>
-          </v-col>
-        </v-row>
         <v-divider></v-divider><br>
         <!-- Nama nama -->
         <v-row no-gutters>
@@ -88,13 +85,10 @@
 
         <br>
         <v-card>
+          <v-card-title>
+              <strong> Project</strong>
+        </v-card-title>
           <v-card-text>
-
-        <v-row no-gutters>
-          <v-col cols="12" style="font-size:18px">
-            <strong> Project </strong>
-          </v-col>
-        </v-row>
         <v-divider></v-divider><br>
         <!-- Project Name -->
         <v-row no-gutters>
@@ -287,12 +281,15 @@
         <div v-for="(budget, index) in budgets" :key="budget.name">
           <br>
           <v-card>
+            <v-card-title>
+              <strong> Budget {{'#' + (index + 1)}}</strong>
+            <v-spacer></v-spacer>
+            <v-btn icon small @click="popBudgetByIndex(index)">
+              <v-icon color="primary"> mdi-close </v-icon>
+            </v-btn>
+            </v-card-title>
           <v-card-text>
-        <v-row no-gutters>
-          <v-col cols="12" style="font-size:18px">
-            <strong> Budget {{'#' + (index + 1)}}</strong>
-          </v-col>
-        </v-row>
+        
         <v-divider></v-divider><br>
         
         <!-- Nama nama -->
@@ -301,7 +298,7 @@
             COA <strong class="red--text">*</strong>
           </v-col>
           <v-col cols="3">
-            CAPEX/OPEX
+            Expense Type
           </v-col>
         </v-row>
 
@@ -319,26 +316,21 @@
                   return-object
                   :rules="validation.required"
                   class="mr-2"
-                  :dense=true>
+                  :dense=true
+                  @input="onInput(budget)">
                 </v-select>
               </div>
             </v-col>
           <v-col cols="3">
-              <div>
-                <v-select
-                  v-model="budget.expense_type"
-                  :items="statusCAPEXOPEX"
-                  item-text="label"
-                  item-value="id"
-                  placeholder="Select"
-                  outlined
-                  return-object
-                  :rules="validation.required"
-                  class="mr-2"
-                  :dense=true>
-                </v-select>
-              </div>
-            </v-col>
+            <v-text-field
+              v-model="budget.expense_type"
+              outlined
+              dense
+              :disabled="true"
+              placeholder="Auto Input"
+            >
+            </v-text-field>
+          </v-col>
         </v-row>
 
         <!-- Nama nama -->
@@ -365,11 +357,11 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
+              suffix="IDR"
+              :rules="validation.targetRule"
               placeholder="Plan for Q1"
               class="mr-2"
-              @input="onQ1toQ4Changed(budget,index)"
-              
+              @input="onInput(budget)"
             >
             </v-text-field>
           </v-col>
@@ -379,10 +371,11 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
+              suffix="IDR"
+              :rules="validation.targetRule"
               placeholder="Plan for Q2"
               class="mr-2"
-              @change="onQ1toQ4Changed(budget)"
+              @input="onInput(budget)"
             >
             </v-text-field>
           </v-col>
@@ -392,10 +385,11 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
+              suffix="IDR"
+              :rules="validation.targetRule"
               placeholder="Plan for Q3"
               class="mr-2"
-              @change="onQ1toQ4Changed(budget)"
+              @input="onInput(budget)"
             >
             </v-text-field>
           </v-col>
@@ -405,9 +399,10 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
+              suffix="IDR"
+              :rules="validation.targetRule"
               placeholder="Plan for Q4"
-              @change="onQ1toQ4Changed(budget)"
+              @input="onInput(budget)"
             >
             </v-text-field>
           </v-col>
@@ -446,6 +441,8 @@
               dense
               :disabled=true
               placeholder="Planning Total"
+              suffix="IDR"
+              @change="onInput(budget);"
             >
             </v-text-field>
           </v-col>
@@ -513,10 +510,11 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
+import formatting from "@/mixins/formatting";
 export default {
   name: "FormAddPlanning",
   props: ["form", "isView", "isNew"],
-  //mixins: [formatting],
+  mixins: [formatting],
   created() {
     this.getListActivePlanning();
     this.getAllProjectType();
@@ -548,8 +546,7 @@ export default {
       "dataProjectType"
     ]),
     ...mapState("statusInfo", [
-      "statusTechNonTech",
-      "statusCAPEXOPEX"
+      "statusTechNonTech"
       ]),
     ...mapGetters("projectType", [
       "valueNew"
@@ -609,27 +606,50 @@ export default {
     ...mapActions("masterCoa", [
       "getMasterCoa"
     ]),
-    onQ1toQ4Changed(budget,index){
-      console.log(budget)
-      console.log(index)
-      if(budget.planning_q1 != "" ){
-       budget.planning_q1= budget.planning_q1.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," )
-
-      // if(budget.planning_q1 != "" && budget.planning_q2 != "" && budget.planning_q3 != "" && budget.planning_q4 != ""){
-        // budget.planning_nominal = parseInt(budget.planning_q1.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
-        // parseInt(budget.planning_q2.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
-        // parseInt(budget.planning_q3.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
-        // parseInt(budget.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+    onInput(budget){
+      if(budget.planning_q1){
+        budget.planning_q1 = this.numberWithDots(budget.planning_q1);
       }
+      if(budget.planning_q2){
+        budget.planning_q2 = this.numberWithDots(budget.planning_q2);
+      }
+      if(budget.planning_q3){
+        budget.planning_q3 = this.numberWithDots(budget.planning_q3);
+      }
+      if(budget.planning_q4){
+        budget.planning_q4 = this.numberWithDots(budget.planning_q4);
+      }
+      budget.planning_nominal = parseInt(budget.planning_q1.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
+      parseInt(budget.planning_q2.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
+      parseInt(budget.planning_q3.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
+      parseInt(budget.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+
+      budget.planning_nominal = this.numberWithDots(budget.planning_nominal);
+
+      if(budget.coa){
+        if(budget.coa.is_capex && parseInt(budget.planning_nominal.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) >= budget.coa.minimum_item_origin){
+          budget.expense_type = "CAPEX"
+        }else{
+          budget.expense_type = "OPEX"
+        }
+      }
+      
+
+    },
+    popBudgetByIndex(index){
+      this.budgets.splice(index,1);
     },
     onSubmit() {
       let validate = this.$refs.form.validate();
       //let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
       if (validate) {
-        let tempBudgets = this.budgets;
+        const tempBudgets = JSON.parse(JSON.stringify(this.budgets)); //make a temporary budget object
         tempBudgets.forEach(element => {
+          element.planning_q1 = parseInt(element.planning_q1.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+          element.planning_q2 = parseInt(element.planning_q2.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+          element.planning_q3 = parseInt(element.planning_q3.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
+          element.planning_q4 = parseInt(element.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
           element.coa = element.coa.id;
-          element.expense_type = element.expense_type.label;
           delete element.planning_nominal;
         });
 
