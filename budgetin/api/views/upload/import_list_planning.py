@@ -24,8 +24,6 @@ Validasi
  - Budget planning pada tahun yang sama harus memiliki Project Type yang sama
 '''
 
-###
-
 def create_update_all_biro():
     biros = get_all_biro('manager_employee,sub_group,sub_group.group,manager_employee,sub_group.manager_employee,sub_group.group.manager_employee')
     for biro in biros:
