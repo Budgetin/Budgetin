@@ -1,10 +1,13 @@
 from django.forms import model_to_dict
+from django.db import transaction
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from api.models import Project, Biro, Product, ProjectDetail, Planning, ProjectType, Budget, Coa, User
+
+from api.models import Project, ProjectDetail, Budget
 
 class CreateListPlanning(APIView):
 
+    @transaction.atomic
     def post(self, request):
         
         # Project
@@ -33,18 +36,17 @@ class CreateListPlanning(APIView):
         
         # Budget
         if len(request.data['budget']) == 0:
-            Budget.objects.create(project_detail=project_detail)
+            Budget.objects.create(project_detail=project_detail, coa=None)
         for budget in request.data['budget']:
-            Budget.objects.create(
-                project_detail = project_detail,
-                coa_id = budget['coa'],
-                expense_type = budget['expense_type'],
-                planning_q1 = budget['planning_q1'],
-                planning_q2 = budget['planning_q2'],
-                planning_q3 = budget['planning_q3'],
-                planning_q4 = budget['planning_q4'],
-                created_by_id = request.custom_user['id'],
-                updated_by_id = request.custom_user['id']
-            )
+            Budget.objects.update_or_create(project_detail=project_detail, coa=None, defaults={
+                'coa_id': budget['coa'],
+                'expense_type': budget['expense_type'],
+                'planning_q1': budget['planning_q1'],
+                'planning_q2': budget['planning_q2'],
+                'planning_q3':budget['planning_q3'],
+                'planning_q4': budget['planning_q4'],
+                'created_by_id': request.custom_user['id'],
+                'updated_by_id': request.custom_user['id']
+            })
             
         return Response(model_to_dict(project))
