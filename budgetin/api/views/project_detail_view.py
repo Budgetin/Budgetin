@@ -23,17 +23,19 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectDetailSerializer
 
     def list(self, request, *args, **kwargs):
-        project_detail = super().list(request, *args, **kwargs)
-        for each in project_detail.data:
-            each['created_at'] = timestamp_to_strdateformat(each['created_at'], "%d %B %Y")
-            each['updated_at'] = timestamp_to_strdateformat(each['updated_at'], "%d %B %Y")
-        return project_detail
+        queryset = ProjectDetail.objects.all()
+        for project_detail in queryset:
+            project_detail.format_timestamp("%d %B %Y")
+        
+        serializer = ProjectDetailSerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        project_detail = super().retrieve(request, *args, **kwargs)
-        project_detail.data['created_at'] = timestamp_to_strdateformat(project_detail.data['created_at'], "%d %B %Y")
-        project_detail.data['updated_at'] = timestamp_to_strdateformat(project_detail.data['updated_at'], "%d %B %Y")
-        return project_detail
+        project_detail = ProjectDetail.objects.get(pk=kwargs['pk'])
+        project_detail.format_timestamp("%d %B %Y")
+        
+        serializer = ProjectDetailSerializer(project_detail, many=False)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
