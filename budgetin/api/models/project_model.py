@@ -15,5 +15,5 @@ class Project(SoftDeleteModel, TimestampModel, UserTrackModel):
     is_tech = models.BooleanField(default=False)
 
     def generate_itfamid(self):
-        self.itfam_id = str(self.start_year) + str(self.id).zfill(8)
+        self.itfam_id = str(self.start_year) + str(self.id).zfill(7)
         self.save()
