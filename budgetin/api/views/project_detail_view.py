@@ -23,17 +23,23 @@ class ProjectDetailViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectDetailSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = ProjectDetail.objects.all()
+        queryset = ProjectDetail.objects.select_related('project_type', 'created_by', 'updated_by', 'planning', 
+                                                        'planning__created_by', 'planning__updated_by').all()
         for project_detail in queryset:
             project_detail.format_timestamp("%d %B %Y")
+            project_detail.planning.format_timestamp("%d %B %Y")
+            project_detail.planning.format_duedate("%d %B %Y")
         
         serializer = ProjectDetailSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        project_detail = ProjectDetail.objects.get(pk=kwargs['pk'])
+        project_detail = ProjectDetail.objects.select_related('project_type', 'created_by', 'updated_by', 'planning', 
+                                                        'planning__created_by', 'planning__updated_by'
+                                                    ).get(pk=kwargs['pk'])
         project_detail.format_timestamp("%d %B %Y")
-        
+        project_detail.planning.format_timestamp("%d %B %Y")
+        project_detail.planning.format_duedate("%d %B %Y")
         serializer = ProjectDetailSerializer(project_detail, many=False)
         return Response(serializer.data)
 
