@@ -1,4 +1,3 @@
-from tracemalloc import start
 import pandas
 import math
 
@@ -10,9 +9,7 @@ from datetime import datetime
 
 from api.models import Biro, Coa, Product, Strategy, Project, Planning, ProjectDetail, ProjectType, Budget
 from api.utils.hit_api import get_all_biro
-from api.utils.enum import ProjectTypeEnum
-from api.exceptions import PlanningSheetNotFoundException, ImportValidationException
-
+from api.exceptions import SheetNotFoundException, ImportValidationException
 
 '''
 Validasi
@@ -197,7 +194,7 @@ class ImportListPlanning(APIView):
         try:
             df = pandas.read_excel(file_obj, sheet_name='Planning')
         except ValueError:
-            raise PlanningSheetNotFoundException()
+            raise SheetNotFoundException('Planning')
         
         create_update_all_biro()
         

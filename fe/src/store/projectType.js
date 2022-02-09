@@ -8,20 +8,13 @@ const projectType = {
   state: {
     loadingGetListPlanning: false, // for loading table
     dataProjectType: [], 
-    
+    dataProjectTypeExisting: [], 
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    requestStatusExisting: "IDLE",
     errorMsg: null,
   },
   getters: {
-    valueNew: (state) => {let value = state.dataProjectType.find((x)=> x.name="New")
-      return value;
-    },
-    valueCarryForward: (state) => {let value = state.dataProjectType.find((x)=> x.name="Carry Forward")
-      return value;
-    },
-    valueReguler: (state) => {let value = state.dataProjectType.find((x)=> x.name="Regular")
-      return value;
-    }
+    
   },
   actions: {
     getAllProjectType() {
@@ -44,6 +37,30 @@ const projectType = {
         });
       });
     },
+    getExistingProjectType() {
+      if (store.state.projectType.requestStatusExisting !== "SUCCESS")
+        store.dispatch("projectType/getExistingAPI");
+    },
+    getExistingAPI({ commit }) {
+      commit("GET_EXISTING_INIT");
+      return new Promise((resolve, reject) => {
+      getAPI
+        .get(ENDPOINT)
+        .then((response) => {
+          const cleanData = response.data
+          var index = cleanData.findIndex(function(o){
+            return o.name === 'New';
+          });
+          if (index !== -1) cleanData.splice(index, 1);
+          commit("GET_EXISTING_SUCCESS", cleanData);
+          resolve(response);
+        })
+        .catch((error) => {
+          commit("GET_EXISTING_ERROR", error);
+          reject(errorMsg);
+        });
+      });
+    },
   },
 
   mutations: {
@@ -62,6 +79,21 @@ const projectType = {
       state.loadingGetListPlanning = false;
       state.errorMsg = error;
       state.dataProjectType = [];
+    },
+    GET_EXISTING_INIT(state) {
+      state.requestStatusExisting = "PENDING";
+      state.loadingGetListPlanning = true;
+    },
+    GET_EXISTING_SUCCESS(state, dataProjectTypeExisting) {
+      state.requestStatusExisting = "SUCCESS";
+      state.loadingGetListPlanning = false;
+      state.dataProjectTypeExisting = dataProjectTypeExisting;
+    },
+    GET_EXISTING_ERROR(state, error) {
+      state.requestStatusExisting = "ERROR";
+      state.loadingGetListPlanning = false;
+      state.errorMsg = error;
+      state.dataProjectTypeExisting = [];
     },
   },
 };

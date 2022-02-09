@@ -33,6 +33,7 @@ class PlanningSerializer(serializers.ModelSerializer):
 class BudgetSerializer(serializers.ModelSerializer):
     coa = serializers.SerializerMethodField()
     year = serializers.SerializerMethodField()
+    planning_nominal = serializers.SerializerMethodField()
     class Meta:
         model = Budget
         exclude = ['is_deleted', 'deleted_at', 'created_at', 'updated_at', 'created_by', 'updated_by']
@@ -43,7 +44,10 @@ class BudgetSerializer(serializers.ModelSerializer):
         return ''
     
     def get_year(self, budget):
-        return budget.project_detail.planning.year        
+        return budget.project_detail.planning.year 
+
+    def get_planning_nominal(self, budget):
+        return budget.planning_q1 + budget.planning_q2 + budget.planning_q3 + budget.planning_q4      
         
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
