@@ -5,6 +5,11 @@ from api.serializers import PlanningResponseSerializer
 
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectDetail
+        fields = '__all__'
+        
+class ProjectDetailResponseSerializer(serializers.ModelSerializer):
     project_type = serializers.SerializerMethodField()
     created_by = serializers.SerializerMethodField()
     updated_by = serializers.SerializerMethodField()
