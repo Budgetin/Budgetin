@@ -64,7 +64,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "List Planning has been saved successfully";
+      this.alert.subtitle = "Budget has been saved successfully";
     },
     onSaveError(error) {
       this.alert.show = true;

@@ -1,6 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
-
+import router from "@/router/index.js"
 const ENDPOINT = "/api/planning/";
 
 const startPlanning = {
@@ -168,6 +168,9 @@ const startPlanning = {
       state.errorMsg = error;
       state.dataStartPlanning = [];
       state.dataActiveStartPlanning = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
     // post / patch related
@@ -183,6 +186,9 @@ const startPlanning = {
       state.requestStatus = "ERROR";
       state.loadingPostPatchStartPlanning = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
     SET_EDITTED_ITEM(state, payload) {
       state.edittedItem = payload;

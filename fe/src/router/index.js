@@ -99,22 +99,22 @@ const routes = [
         component: () => import("@/views/ListProject/ViewListBudgetRealization"),
       },
       {
-        path: "listPlanning",
+        path: "listBudget",
         name: "ListPlanning",
         component: () => import("@/views/ListPlanning/ListPlanning"),
       },
       {
-        path: "/listPlanning/new",
+        path: "/listBudget/new",
         name: "ListPlanningNew",
         component: () => import("@/views/ListPlanning/ListPlanningNew"),
       },
       {
-        path: "/listPlanning/existing",
+        path: "/listBudget/existing",
         name: "ListPlanningExisting",
         component: () => import("@/views/ListPlanning/ListPlanningExisting"),
       },
       {
-        path: "/listPlanning/:id/view",
+        path: "/listBudget/:id/view",
         name: "EditListPlanning",
         component: () => import("@/views/ListPlanning/EditListPlanning"),
       },

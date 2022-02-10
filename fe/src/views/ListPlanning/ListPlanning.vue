@@ -14,7 +14,7 @@
             <v-divider></v-divider>
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          <v-subheader class="list-planning__header">List Planning</v-subheader>
+          <v-subheader class="list-planning__header">List Budget</v-subheader>
         </v-col>
       </v-row>
 
@@ -368,7 +368,7 @@ export default {
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
-          text: "List Planning",
+          text: "List Budget",
           link: true,
           exact: true,
           disabled: false,
