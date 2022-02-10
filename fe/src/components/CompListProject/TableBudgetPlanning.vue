@@ -7,9 +7,28 @@
     <v-row no-gutters>
       <v-col>
         <v-data-table
-          :headers="dataTable.budgetPlanningHeaders"
-          :loading="status"
-          :items="budgetItem">
+        :headers="dataTable.budgetPlanningHeaders"
+        :loading="status"
+        :items="budgetItem">
+          <template v-slot:[`item.actions`]="{ item }">
+            <!-- EDIT BUDGET PLANNING -->
+            <router-link
+                style="text-decoration: none"
+                :to="{
+                    name: 'ViewListBudgetPlanning',
+                    params: { id: item.id },
+                }">
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                            mdi-eye
+                        </v-icon>
+                    </template>
+                    <span>View/Edit</span>
+                </v-tooltip>
+            </router-link>
+          </template>
+
         </v-data-table>
       </v-col>
     </v-row>
@@ -95,11 +114,13 @@ export default {
 
     dataTable: {
       budgetPlanningHeaders: [
+        { text: "Action", value: "actions", align: "center", sortable: false, width: "5%"},
+        { text: "ID", value: "id", width: "7%" },
         { text: "Year", value: "year", width: "8%" },
         // { text: "Strategy", value: "product.strategy.name", width: "25%" },
         { text: "COA", value: "coa", width: "15%" },
         { text: "CAPEX/OPEX", value: "expense_type", width: "10%" },
-        { text: "Budget This Year", value: "allocate", width: "15%" },
+        { text: "Budget This Year", value: "planning_nominal", width: "15%" },
         { text: "Q1", value: "planning_q1", width: "10%" },
         { text: "Q2", value: "planning_q2", width: "10%" },
         { text: "Q3", value: "planning_q3", width: "10%" },
@@ -111,14 +132,14 @@ export default {
   mounted() {
     this.showItem = this.budgetPlanning.project_detail;
 
-    console.log(this.showItem);
+    // console.log(this.showItem);
     this.budgetItem = [];
     for (let i = 0; i < this.showItem.length; i++) {
         for (let j = 0; j < this.showItem[i].budget.length; j++) {
             this.budgetItem.push(this.showItem[i].budget[j]);
         }
     }
-    console.log(this.budgetItem);
+    // console.log(this.budgetItem);
   },
   created() {},
 
@@ -130,6 +151,9 @@ export default {
   methods: {
     onOK() {
       return this.$router.go(-1);
+    },
+    onEdit(item) {
+      this.$store.commit("listProject/SET_EDITTED_ITEM", item);
     },
   },
 };

@@ -239,11 +239,9 @@ export default {
         },
         onMonitor(item) {
             this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
-            console.log("MonitorItem: "+item);
         },
         onEdit(item) {
             this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
-            console.log(item);
         },
         onOK() {
             return this.$router.go(-1);

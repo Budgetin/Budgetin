@@ -6,6 +6,13 @@
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
+      <a-popconfirm
+        title="Are you sure you want to cancel this project?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="$emit('deleteClicked')">
+        <v-icon color="error" v-if="!isNew"> mdi-delete </v-icon>
+      </a-popconfirm>
     </v-card-title>
 
     <v-card-text>
@@ -317,19 +324,21 @@
 
 <script>
 import { mapState } from "vuex";
+import formatting from "@/mixins/formatting";
 export default {
   name: "FormListProject",
   props: ["form", "isNew", "isView"],
+  mixins: [formatting],
 
-  watch: {
-    menu (val) {
-      val && setTimeout(() => (this.activePicker = 'YEAR'))
-    },
-  },
+  // watch: {
+  //   menu (val) {
+  //     val && setTimeout(() => (this.activePicker = 'YEAR'))
+  //   },
+  // },
   data: () => ({
-    activePicker: 'YEAR',
+    // activePicker: 'YEAR',
     // date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 4),
-    menu: false,
+    // menu: false,
 
     validation: {
       required: [
@@ -359,23 +368,19 @@ export default {
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
-
     nominal: {
       // getter
       get: function() {
-        if(this.form.total_investment_value) {
-          this.form.total_investment_value = this.form.total_investment_value.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-          this.form.total_investment_value = this.form.total_investment_value.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        if(this.form.total_investment_value){
+          this.form.total_investment_value = this.numberWithDots(this.form.total_investment_value)
+          return this.form.total_investment_value;
         }
-        return this.form.total_investment_value;
       },
       // setter
       set: function(newValue) {
-        this.form.total_investment_value = newValue.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-        this.form.total_investment_value = this.form.total_investment_value.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        this.form.total_investment_value = this.numberWithDots(newValue)
       }
     },
-
     label: {
       get: function() {
         return this.form.is_tech ? "Tech" : "Non-Tech";
@@ -392,7 +397,6 @@ export default {
       if (validate) {
         const payload = {
           id: this.form.id,
-          itfam_id: this.form.itfam_id,
           project_name: this.form.project_name,
           project_description: this.form.project_description,
           product: this.form.product.id,
@@ -402,8 +406,6 @@ export default {
           biro: this.form.biro.id,
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
-        console.log(this.form.total_investment_value);
-        console.log(payload);
         this.$refs.form.reset();
       }
     },

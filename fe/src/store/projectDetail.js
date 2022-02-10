@@ -1,16 +1,16 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 
-const ENDPOINT = "/api/project/";
+const ENDPOINT = "api/project_detail/";
 
-const listProject = {
+const projectDetail = {
   namespaced: true,
   state: {
-    loadingGetListProject: false, // for loading table
+    loadingGetProjectDetail: false, // for loading table
     loadingGetEdittedItem: false,
-    loadingPostPatchListProject: false, // for loading post/patch
-    dataListProject: [], // for v-data-table
-    dataActiveListProject: [], //for dropdown
+    loadingPostPatchProjectDetail: false, // for loading post/patch
+    dataProjectDetail: [], // for v-data-table
+    dataActiveProjectDetail: [], //for dropdown
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
@@ -27,9 +27,9 @@ const listProject = {
     value: (state) => state.value
   },
   actions: {
-    getListProject() {
-      if (store.state.listProject.requestStatus !== "SUCCESS")
-        store.dispatch("listProject/getFromAPI");
+    getProjectDetail() {
+      if (store.state.projectDetail.requestStatus !== "SUCCESS")
+        store.dispatch("projectDetail/getFromAPI");
     },
     getFromAPI({ commit }) {
       commit("GET_INIT");
@@ -46,7 +46,7 @@ const listProject = {
           commit("GET_ERROR", error);
         });
     },
-    getListProjectById({ commit }, id) {
+    getProjectDetailById({ commit }, id) {
       // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
@@ -64,7 +64,7 @@ const listProject = {
           });
       });
     },
-    postListProject({ commit }, payload) {
+    postProjectDetail({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
@@ -72,7 +72,7 @@ const listProject = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listProject/getFromAPI");
+            store.dispatch("projectDetail/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -96,7 +96,7 @@ const listProject = {
           });
       });
     },
-    patchListProject({ commit }, payload) {
+    patchProjectDetail({ commit }, payload) {
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
       return new Promise((resolve, reject) => {
@@ -105,7 +105,7 @@ const listProject = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listProject/getFromAPI");
+            store.dispatch("projectDetail/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -129,7 +129,7 @@ const listProject = {
           });
       });
     },
-    deleteListProjectById({ commit }, id) {
+    deleteProjectDetailById({ commit }, id) {
       commit("SET_LOADING_DELETE_ITEM", true);
       return new Promise((resolve, reject) => {
         getAPI
@@ -138,7 +138,7 @@ const listProject = {
             const data = response.data;
             commit("SET_DELETE_ITEM", data);
             resolve(data);
-            store.dispatch("listProject/getFromAPI");
+            store.dispatch("projectDetail/getFromAPI");
           })
           .catch((error) => {
             commit("DELETE_ERROR", error);
@@ -170,37 +170,37 @@ const listProject = {
     // get related
     GET_INIT(state) {
       state.requestStatus = "PENDING";
-      state.loadingGetListProject = true;
+      state.loadingGetProjectDetail = true;
     },
-    GET_SUCCESS(state, dataListProject) {
+    GET_SUCCESS(state, dataProjectDetail) {
       state.requestStatus = "SUCCESS";
-      state.loadingGetListProject = false;
-      state.dataListProject = dataListProject;
+      state.loadingGetProjectDetail = false;
+      state.dataProjectDetail = dataProjectDetail;
     },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveListProject) {
+    GET_ACTIVE_DATA_UPDATE(state, dataActiveProjectDetail) {
       state.requestActiveStatus = "IDLE";
-      state.dataActiveListProject = dataActiveListProject;
+      state.dataActiveProjectDetail = dataActiveProjectDetail;
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingGetListProject = false;
+      state.loadingGetProjectDetail = false;
       state.errorMsg = error;
-      state.dataListProject = [];
-      state.dataActiveListProject = [];
+      state.dataProjectDetail = [];
+      state.dataActiveProjectDetail = [];
     },
 
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";
-      state.loadingPostPatchListProject = true;
+      state.loadingPostPatchProjectDetail = true;
     },
     POST_PATCH_SUCCESS(state) {
       state.requestStatus = "SUCCESS";
-      state.loadingPostPatchListProject = false;
+      state.loadingPostPatchProjectDetail = false;
     },
     POST_PATCH_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingPostPatchListProject = false;
+      state.loadingPostPatchProjectDetail = false;
       state.errorMsg = error;
     },
     SET_EDITTED_ITEM(state, payload) {
@@ -231,4 +231,4 @@ const listProject = {
   },
 };
 
-export default listProject
+export default projectDetail
