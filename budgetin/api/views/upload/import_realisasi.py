@@ -6,7 +6,7 @@ from django.db import transaction
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
-from api.exceptions import SheetNotFoundException, NotFoundException
+from api.exceptions import SheetNotFoundException, NotFoundException, ImportValidationException
 from django.db.models.base import ObjectDoesNotExist
 
 from api.models import Coa, ProjectDetail, Budget, Planning
@@ -17,26 +17,28 @@ def update_db(index, data):
     planning = get_planning(index, data.pop('Tahun'))
     project_detail = get_project_detail(index, dcsp_id, planning)
     budget_object = get_budget(index, project_detail, coa)
-
-    budget_object.update(
-        allocate = is_nan(data['Allocate']),
-        returns = is_nan(data['Return']),
-        top_up = is_nan(data['Top Up']),
-        switching_in = is_nan(data['Switching In']),
-        switching_out = is_nan(data['Switching Out']),
-        realization_jan = is_nan(data['Jan']),
-        realization_feb = is_nan(data['Feb']),
-        realization_mar = is_nan(data['Mar']),
-        realization_apr = is_nan(data['Apr']),
-        realization_may = is_nan(data['May']),
-        realization_jun = is_nan(data['Jun']),
-        realization_jul = is_nan(data['Jul']),
-        realization_aug = is_nan(data['Aug']),
-        realization_sep = is_nan(data['Sep']),
-        realization_oct = is_nan(data['Oct']),
-        realization_nov = is_nan(data['Nov']),
-        realization_dec = is_nan(data['Dec']),
-    )
+    try:
+        budget_object.update(
+            allocate = is_nan(data['Allocate']),
+            returns = is_nan(data['Return']),
+            top_up = is_nan(data['Top Up']),
+            switching_in = is_nan(data['Switching In']),
+            switching_out = is_nan(data['Switching Out']),
+            realization_jan = is_nan(data['Jan']),
+            realization_feb = is_nan(data['Feb']),
+            realization_mar = is_nan(data['Mar']),
+            realization_apr = is_nan(data['Apr']),
+            realization_may = is_nan(data['May']),
+            realization_jun = is_nan(data['Jun']),
+            realization_jul = is_nan(data['Jul']),
+            realization_aug = is_nan(data['Aug']),
+            realization_sep = is_nan(data['Sep']),
+            realization_oct = is_nan(data['Oct']),
+            realization_nov = is_nan(data['Nov']),
+            realization_dec = is_nan(data['Dec']),
+        )
+    except TypeError:
+        raise ImportValidationException("Wrong input type on line " + str(index))
 
 def get_coa(index, coa_name):
     try:
@@ -44,7 +46,6 @@ def get_coa(index, coa_name):
     except ObjectDoesNotExist:
         raise NotFoundException("COA with name "+str(coa_name)+" on line "+str(index))
     
-
 def get_project_detail(index, dcsp_id, planning):
     try:
         return ProjectDetail.objects.filter(planning = planning).filter(dcsp_id = dcsp_id).get()
@@ -78,6 +79,6 @@ class ImportRealisasi(APIView):
             raise SheetNotFoundException('Realisasi')
         
         for index, row in df.iterrows():
-            update_db((index+1), row)
+            update_db((index+2), row)
             
         return Response(status=204)
