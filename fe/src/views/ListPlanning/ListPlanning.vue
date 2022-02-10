@@ -66,7 +66,7 @@
                     <v-btn rounded color="primary" @click="onInputOption"> Add Planning </v-btn>
                     <v-btn rounded color="primary" @click="onExport">
                           <v-icon left> mdi-export-variant </v-icon>
-                          Export Data
+                          Download
                       </v-btn>
                   </v-col>
                   
@@ -115,7 +115,8 @@
       <v-row no-gutters>
         <v-dialog v-model="dialogUpload" persistent width="25rem">
           <upload-file-planning
-          @cancelClicked="onCancel">
+            @cancelClicked="onCancel"
+            @uploadClicked="upload">
           </upload-file-planning>
         </v-dialog>
       </v-row>
@@ -319,7 +320,7 @@ export default {
     ...mapState("choosedColumn", ["listColumn"]),
   },
   methods: {
-    ...mapActions("listPlanning", ["getListPlanning", "postListPlanning"]),
+    ...mapActions("listPlanning", ["getListPlanning", "postListPlanning","importPlanning"]),
     getSelectedHeader() {
       if (this.listColumn.length == 1) {
         this.dataTable.selectedHeader = [].concat(this.dataTable.Listheader);
@@ -390,7 +391,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "List Source has been saved successfully";
+      this.alert.subtitle = "Planning has been saved successfully";
     },
     onSaveError(error) {
       this.dialog = false;
@@ -401,6 +402,19 @@ export default {
     },
     onAlertOk() {
       this.alert.show = false;
+    },
+    upload(data){
+      this.importPlanning(data)
+        .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.dialog = false;
+          this.alert.show = true;
+          this.alert.success = false;
+          this.alert.title = "Upload Failed";
+          this.alert.subtitle = error.message;
+        });
     },
     onExport() {
 

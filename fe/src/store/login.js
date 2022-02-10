@@ -31,6 +31,7 @@ const login = {
             resolve(response);
           })
           .catch((error) => {
+            console.log(error.message)
             commit("GET_ERROR", error);
             reject(error);
           });

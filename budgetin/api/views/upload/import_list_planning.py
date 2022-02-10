@@ -193,10 +193,10 @@ class ImportListPlanning(APIView):
             df = pandas.read_excel(file_obj, sheet_name='Planning')
         except ValueError:
             raise SheetNotFoundException('Planning')
+        # create_update_all_biro()
         
-        create_update_all_biro()
-        
-        for index, row in df.iterrows():
-            insert_to_db(request, row)
+        # for index, row in df.iterrows():
+        #     insert_to_db(request, row)
+        # raise SheetNotFoundException('Success')
             
         return Response(status=204)
