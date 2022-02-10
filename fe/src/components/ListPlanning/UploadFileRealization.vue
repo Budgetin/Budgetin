@@ -11,7 +11,7 @@
     <v-card-text>
       <v-row no-gutters align="center">
         <v-col cols="12" class="mt-2">
-          <a href="Template Planning.xlsx" download>Download Template Planning</a>
+          <a href="Template Realisasi.xlsx" download>Download Template Realization</a>
           <!-- <v-btn text @click="downloadTemplate" class="primary--text">Download Template Planning </v-btn> -->
         </v-col>
       </v-row>
@@ -22,7 +22,7 @@
               :rules="validation.uploadRule"
               accept=".xlsx"
               show-size
-              label="Upload Planning"
+              label="Upload Realisasi"
               v-model="files"
             ></v-file-input>
           </v-col>
@@ -43,7 +43,7 @@
 // import template from "@/assets/ImportTemplate.xlsx"
 import { mapState, mapActions, mapGetters } from "vuex";
 export default {
-  name: "UploadFilePlanning",
+  name: "UploadFileRealization",
   created() {
     //this.getAllProjectType();
   },

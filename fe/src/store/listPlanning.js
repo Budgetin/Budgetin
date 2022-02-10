@@ -5,6 +5,7 @@ const LIST_PLANNING_ENDPOINT = "/api/list_planning/";
 const BUDGET_ENDPOINT = "/api/budget/";
 const PLANNING_ENPOINT = "/api/planning/"
 const UPLOAD_PLANNING = "/api/import/list_planning/"
+const UPLOAD_REALIZATION = "/api/import/realisasi/"
 
 const listPlanning = {
   namespaced: true,
@@ -173,9 +174,27 @@ const listPlanning = {
             reject(err);
             commit("SET_UPLOAD_ERROR", err.message);
             commit("SET_LOADING", false);
+          });
+      });
+    },
 
 
-            // commit("HANDLE_POST_ADD_ERROR", error.response.data);
+    importRealization({ commit }, data) {
+      commit("SET_LOADING", true);
+      let formData = new FormData();
+      formData.append("file", data.files);
+
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(UPLOAD_REALIZATION, formData)
+          .then((res) => {
+            resolve(res);
+            commit("SET_LOADING", false);
+          })
+          .catch((err) => {
+            reject(err);
+            commit("SET_UPLOAD_ERROR", err.message);
+            commit("SET_LOADING", false);
           });
       });
     },
