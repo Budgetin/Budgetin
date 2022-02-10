@@ -63,10 +63,10 @@
                     no-gutters
                     class="list-planning__btn"
                   >
-                    <v-btn rounded color="primary" @click="onAdd"> Add Planning </v-btn>
+                    <v-btn rounded color="primary" @click="onInputOption"> Add Planning </v-btn>
                     <v-btn rounded color="primary" @click="onExport">
                           <v-icon left> mdi-export-variant </v-icon>
-                          Export Data
+                          Download
                       </v-btn>
                   </v-col>
                   
@@ -113,6 +113,40 @@
       </v-row>
 
       <v-row no-gutters>
+        <v-dialog v-model="dialogUpload" persistent width="25rem">
+          <upload-file-planning
+            @cancelClicked="onCancel"
+            @uploadClicked="upload">
+          </upload-file-planning>
+        </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
+          <v-dialog v-model="inputOption" persistent width="25rem">
+            <v-card>
+              <v-card-title>
+                How to Input
+                <v-spacer></v-spacer>
+                <v-btn icon small @click="onCancel">
+                  <v-icon color="primary"> mdi-close </v-icon>
+                </v-btn>
+              </v-card-title>
+
+              <v-card-text>
+                <v-row no-gutters align="center">
+                  <v-col cols="6" class="mt-2">
+                    <v-btn rounded color="primary" @click="onUpload"> Upload Excel </v-btn>
+                  </v-col>
+                  <v-col cols="6" class="mt-2">
+                    <v-btn rounded color="primary" @click="onAdd"> Input Form </v-btn>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
         <v-dialog v-model="dialog" scrollable persistent width="37.5rem">
           <column-option
             :data="dataTable.Listheader"
@@ -137,15 +171,18 @@
 import { mapState, mapActions } from "vuex";
 import ColumnOption from "@/components/ListPlanning/ColumnOption";
 import FormChooseProjectType from "@/components/ListPlanning/FormChooseProjectType"
-import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import UploadFilePlanning from "@/components/ListPlanning/UploadFilePlanning"
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
 export default {
   name: "ListPlanning",
-  components: {SuccessErrorAlert,ColumnOption,FormChooseProjectType,BinaryYesNoChip},
+  components: {SuccessErrorAlert,ColumnOption,FormChooseProjectType,BinaryYesNoChip,UploadFilePlanning},
   watch: {},
   data: () => ({
     dialog: false,
     dialogChoose: false,
+    dialogUpload: false,
+    inputOption : false,
     isEdit: false,
     search: "",
     tab: null,
@@ -155,6 +192,7 @@ export default {
       Listheader: [
         { text: "Project ID", value: "project_detail.dcsp_id", width: "7rem" },
         { text: "Project Name", value: "project_detail.project.project_name", width: "8rem" },
+        { text: "Biro", value: "project_detail.project.biro.code", width: "5rem" },
         { text: "ID ITFAM", value: "project_detail.project.itfam_id", width: "7rem" },
         {
           text: "Project Description",
@@ -169,7 +207,6 @@ export default {
         },
         { text: "RCC", value: "project_detail.project.biro.rcc", width: "5rem" },
         { text: "Project Type", value: "project_detail.project_type", width: "9rem" },
-        { text: "Biro", value: "project_detail.project.biro.code", width: "5rem" },
         { text: "Is Budget", value: "is_budget", width: "7rem" },
         { text: "COA", value: "coa", width: "5rem" },
         {
@@ -283,18 +320,11 @@ export default {
     ...mapState("choosedColumn", ["listColumn"]),
   },
   methods: {
-    ...mapActions("listPlanning", ["getListPlanning", "postListPlanning"]),
+    ...mapActions("listPlanning", ["getListPlanning", "postListPlanning","importPlanning"]),
     getSelectedHeader() {
-      if (this.listColumn.length == 2) {
+      if (this.listColumn.length == 1) {
         this.dataTable.selectedHeader = [].concat(this.dataTable.Listheader);
         this.dataTable.selectedHeader.splice(0, 0, {
-          text: "Actions",
-          value: "actions",
-          align: "center",
-          sortable: false,
-          width: "4.55rem",
-        });
-        this.dataTable.selectedHeader.splice(1, 0, {
           text: "For",
           value: "project_detail.planning.year",
           width: "5rem",
@@ -327,23 +357,19 @@ export default {
     },
     onCancel() {
       this.dialogChoose = false;
+      this.inputOption = false;
+      this.dialogUpload = false;
+      
     },
     onClose(e) {
-      this.dataTable.selectedHeader.splice(0, 2);
+      this.dataTable.selectedHeader.splice(0, 1);
       this.dialog = false;
       if (e.length > 0) {
         this.dataTable.selectedHeader = [];
         for (let i = 0; i < e.length; i++) {
           this.dataTable.selectedHeader.push(e[i]);
         }
-        this.dataTable.selectedHeader.splice(0, 0, {
-          text: "Actions",
-          value: "actions",
-          align: "center",
-          sortable: false,
-          width: "4.55rem",
-        });
-        this.dataTable.selectedHeader.splice(1, 0, {
+        this.dataTable.selectedHeader.splice(0, 1, {
           text: "For",
           value: "project_detail.planning.year",
           width: "5rem",
@@ -365,7 +391,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "List Source has been saved successfully";
+      this.alert.subtitle = "Planning has been saved successfully";
     },
     onSaveError(error) {
       this.dialog = false;
@@ -377,11 +403,35 @@ export default {
     onAlertOk() {
       this.alert.show = false;
     },
+    upload(data){
+      this.importPlanning(data)
+        .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.dialog = false;
+          this.alert.show = true;
+          this.alert.success = false;
+          this.alert.title = "Upload Failed";
+          this.alert.subtitle = error.message;
+        });
+    },
     onExport() {
 
     },
+    onUpload(){
+      this.dialogUpload = true;
+      this.inputOption = false;
+    },
+
+    onInputOption(){
+      this.inputOption = true;
+
+    },
     onAdd() {
-            this.dialogChoose = !this.dialogChoose;
+      this.dialogChoose = !this.dialogChoose;
+      this.inputOption = false;
+      this.dialogUpload = false;
     },
     onNewClick(){
       return this.$router.push("/listPlanning/new");
@@ -421,7 +471,7 @@ table > tbody > tr > td:nth-child(2),
 table > thead > tr > th:nth-child(2) {
   position: sticky !important;
   position: -webkit-sticky !important;
-  left: 4.55rem;
+  left: 5rem;
   z-index: 9;
   background: white;
 }
@@ -432,7 +482,7 @@ table > tbody > tr > td:nth-child(3),
 table > thead > tr > th:nth-child(3) {
   position: sticky !important;
   position: -webkit-sticky !important;
-  left: 9.55rem;
+  left:12rem;
   z-index: 9;
   background: white;
 }
@@ -443,7 +493,7 @@ table > tbody > tr > td:nth-child(4),
 table > thead > tr > th:nth-child(4) {
   position: sticky !important;
   position: -webkit-sticky !important;
-  left: 16.55rem;
+  left: 20rem;
   z-index: 9;
   background: white;
 }

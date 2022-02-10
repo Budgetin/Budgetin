@@ -4,10 +4,13 @@ import { getAPI } from "@/plugins/axios-api.js";
 const LIST_PLANNING_ENDPOINT = "/api/list_planning/";
 const BUDGET_ENDPOINT = "/api/budget/";
 const PLANNING_ENPOINT = "/api/planning/"
+const UPLOAD_PLANNING = "/api/import/list_planning/"
 
 const listPlanning = {
   namespaced: true,
   state: {
+    isLoading : false, //for loading when import planning
+    errorMessage : "",
     loadingGetListPlanning: false, // for loading table
     loadingGetEdittedItem: false,
     loadingPostPatchListPlanning: false, // for loading post/patch
@@ -153,6 +156,29 @@ const listPlanning = {
       });
     },
 
+
+    importPlanning({ commit }, data) {
+      commit("SET_LOADING", true);
+      let formData = new FormData();
+      formData.append("file", data.files);
+
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(UPLOAD_PLANNING, formData)
+          .then((res) => {
+            resolve(res);
+            commit("SET_LOADING", false);
+          })
+          .catch((err) => {
+            reject(err);
+            commit("SET_UPLOAD_ERROR", err.message);
+            commit("SET_LOADING", false);
+
+
+            // commit("HANDLE_POST_ADD_ERROR", error.response.data);
+          });
+      });
+    },
     // patchListPlanning({ commit }, payload) {
     //   commit("POST_PATCH_INIT");
     //   const url = `${BUDGET_ENDPOINT}${payload.id}/`;
@@ -189,6 +215,14 @@ const listPlanning = {
     // },
   },
   mutations: {
+    // import related
+    SET_LOADING(state, data) {
+      state.isLoading = data;
+    },
+    SET_UPLOAD_ERROR(state,message){
+      state.errorMessage = message
+    },
+
     // get related
     GET_INIT(state) {
       state.requestStatus = "PENDING";
