@@ -12,7 +12,7 @@
       <v-form ref="form" class="EditProjectDetail__form" lazy-validation @submit.prevent="onSubmit">
         <v-row no-gutters>
           <!-- YEAR -->
-            <v-col cols="6"> Year
+            <v-col cols="12"> Year
                 <div class="EditProjectDetail__field">
                     <v-text-field
                     v-model="form.planning.year"
@@ -27,7 +27,7 @@
 
         <!-- PROJECT ID -->
         <v-row no-gutters>
-          <v-col cols="6"> Project ID
+          <v-col cols="12"> Project ID
               <div class="EditProjectDetail__field">
                 <v-text-field
                   v-model="form.dcsp_id"
@@ -42,7 +42,7 @@
 
         <!-- STATUS -->
         <v-row no-gutters>
-          <v-col cols="6"> Status
+          <v-col cols="12"> Status
               <div class="EditProjectDetail__field">
                 <v-select
                 v-model="form.planning.is_active"
@@ -61,7 +61,7 @@
 
         <!-- DUE DATE -->  
         <v-row no-gutters>
-          <v-col cols="6"> Due Date
+          <v-col cols="12"> Due Date
               <div class="EditProjectDetail__field">
                 <v-text-field
                   v-model="form.planning.due_date"
@@ -76,7 +76,7 @@
 
         <!-- PROJECT TYPE CARRY FORWARD/REGULAR -->
         <v-row no-gutters v-if="form.project_type != 'New'">
-          <v-col cols="6"> Project Type <strong class="red--text">*</strong>
+          <v-col cols="12"> Project Type <strong class="red--text">*</strong>
               <div class="EditProjectDetail__field">
                 <v-select
                 v-model="form.project_type"
@@ -96,7 +96,7 @@
 
         <!-- PROJECT TYPE NEW -->
         <v-row no-gutters v-if="form.project_type == 'New'">
-          <v-col cols="6"> Project Type <strong class="red--text">*</strong>
+          <v-col cols="12"> Project Type <strong class="red--text">*</strong>
               <div class="EditProjectDetail__field">
                 <v-select
                 v-model="form.project_type"
@@ -177,12 +177,6 @@ export default {
     errorMsg() {
       return this.$store.state.source.errorMsg;
     },
-    // getProjectType(){
-    //   return this.dataProjectType.find((x)=> x.name=="New");
-    // },
-    // isActive() {
-    //   return this.form.planning.is_active ? "Active" : "Inactive";
-    // },
   },
 
 //   mounted(){

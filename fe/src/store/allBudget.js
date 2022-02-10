@@ -150,7 +150,7 @@ const allBudget = {
       commit("SET_REQUEST_STATUS"); 
       return new Promise((resolve, reject) => {
       getAPI
-        .get("/api/auditlog?table=project&entity=" + `${id}`)
+        .get("/api/auditlog?table=budget&entity=" + `${id}`)
         .then((response) => {
           const data = response.data;
           const sorted = data.sort((a, b) =>
@@ -227,6 +227,22 @@ const allBudget = {
     },
     ON_CHANGE_PAGING(state, payload) {
       state.current = payload;
+    },
+
+    // delete item
+    SET_DELETE_ITEM(state, payload) {
+      state.deleteItem = payload;
+    },
+    SET_LOADING_DELETE_ITEM(state, payload) {
+      state.loadingDeleteItem = payload;
+    },
+    DELETE_ERROR(state, error) {
+      state.deleteStatus = "ERROR";
+      state.loadingDeleteItem = false;
+      state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
   },
 };

@@ -58,6 +58,24 @@
                 :data="item"
               />
             </template>
+            <template v-if="item.table == 'budget'">
+              <item-log-budget-planning
+                :data="item"
+              />
+              <item-log-budget-realization
+                :data="item"
+              />
+            </template>
+            <template v-if="item.table == 'project_detail'">
+              <item-log-list-project-detail
+                :data="item"
+              />
+            </template>
+            <template v-if="item.table == 'project'">
+              <item-log-list-project
+                :data="item"
+              />
+            </template>
             <v-row class="mt-1">
               <div>
                 <strong>
@@ -79,6 +97,10 @@ import ItemLogMasterStrategy from "@/components/MasterStrategy/ItemLogMasterStra
 import ItemLogMasterUser from "@/components/MasterUser/ItemLogMasterUser"
 import ItemLogStartPlanning from "@/components/CompStartPlanning/ItemLogStartPlanning"
 import ItemLogMonitorPlanning from "@/components/CompStartPlanning/ItemLogMonitorPlanning"
+import ItemLogListProjectDetail from "@/components/CompListProject/ItemLogListProjectDetail"
+import ItemLogBudgetPlanning from "@/components/CompListProject/ItemLogBudgetPlanning"
+import ItemLogBudgetRealization from '@/components/CompListProject/ItemLogBudgetRealization'
+import ItemLogListProject from '@/components/CompListProject/ItemLogListProject'
 
 // import formatting from "@/mixins/formatting";
 export default {
@@ -93,7 +115,7 @@ export default {
       default: false,
     },
   },
-  components: { ItemLogMasterCoa,ItemLogMasterProduct,ItemLogMasterStrategy,ItemLogMasterUser,ItemLogStartPlanning,ItemLogMonitorPlanning },
+  components: { ItemLogMasterCoa,ItemLogMasterProduct,ItemLogMasterStrategy,ItemLogMasterUser,ItemLogStartPlanning,ItemLogMonitorPlanning,ItemLogBudgetPlanning,ItemLogBudgetRealization,ItemLogListProjectDetail,ItemLogListProject },
   created() {
   },
   methods: {

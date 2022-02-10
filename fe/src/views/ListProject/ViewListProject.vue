@@ -1,52 +1,67 @@
 <template>
-    <v-app id="view-list-project">
-        <!-- VIEW LIST PROJECT -->
-        <v-container>
-            <v-row no-gutters>
-                <form-list-project
-                :form="form"
-                :isView="isView"
-                :dataListProject="dataListProject"
-                :dataAllBiro="dataAllBiro"
-                :dataMasterProduct="dataMasterProduct"
-                @editClicked="onEdit"
-                @cancelClicked="onCancel"
-                @submitClicked="onSubmit"
-                @okClicked="onOK"
-                class="view-list-project__detail">
-                </form-list-project>
-            </v-row>
+    <!-- VIEW LIST PROJECT -->
+    <v-container>
+        <v-row no-gutters>
+            <form-list-project
+            :form="form"
+            :isView="isView"
+            :dataListProject="dataListProject"
+            :dataAllBiro="dataAllBiro"
+            :dataMasterProduct="dataMasterProduct"
+            @logHistoryClicked="onLogHistory"
+            @editClicked="onEdit"
+            @cancelClicked="onCancel"
+            @submitClicked="onSubmit"
+            @okClicked="onOK"
+            class="view-list-project__detail">
+            </form-list-project>
+        </v-row>
 
+        <v-row no-gutters>
             <v-card class="view-list-project__table">
                 <table-project-details
                 :projectDetail="projectDetail"
                 v-if="projectDetail.project_detail">
                 </table-project-details>
             </v-card>
+        </v-row>
 
+        <v-row no-gutters>
             <v-card class="view-list-project__table">
                 <table-budget-planning
                 :budgetPlanning="budgetPlanning"
                 v-if="budgetPlanning.project_detail">
                 </table-budget-planning>
             </v-card>
+        </v-row>
 
+        <v-row no-gutters>
             <v-card class="view-list-project__table">
                 <table-budget-realization
                 :budgetRealization="budgetRealization"
                 v-if="budgetRealization.project_detail">
                 </table-budget-realization>
             </v-card>
+        </v-row>
 
-            <success-error-alert
-            :success="alert.success"
-            :show="alert.show"
-            :title="alert.title"
-            :subtitle="alert.subtitle"
-            @okClicked="onAlertOk"
-            />
-        </v-container>
-    </v-app>
+        <v-row no-gutters>
+            <v-dialog v-model="dialog"  width="40rem">
+                <timeline-log
+                :items="itemsHistory"
+                v-if="itemsHistory"
+                @cancelClicked="onCancelHistory">
+                </timeline-log>
+            </v-dialog>
+        </v-row>
+
+        <success-error-alert
+        :success="alert.success"
+        :show="alert.show"
+        :title="alert.title"
+        :subtitle="alert.subtitle"
+        @okClicked="onAlertOk"
+        />
+    </v-container>
 </template>
 
 <script>
@@ -56,13 +71,16 @@ import TableProjectDetails from '@/components/CompListProject/TableProjectDetail
 import TableBudgetPlanning from '@/components/CompListProject/TableBudgetPlanning';
 import TableBudgetRealization from '@/components/CompListProject/TableBudgetRealization';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import TimelineLog from "@/components/TimelineLog";
 export default {
     name: "ViewListProject",
     components: {
-        FormListProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization, SuccessErrorAlert,
+        FormListProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization, SuccessErrorAlert, TimelineLog
     },
     data: () => ({
+        dialog: false,
         isView: true,
+        itemsHistory: null,
         projectDetail: [],
         budgetPlanning: [],
         budgetRealization: [],
@@ -127,7 +145,8 @@ export default {
                             top_up: "",
                             returns: "",
                             allocate: "",
-                            coa: ""
+                            coa: "",
+                            is_active: "",
                         },
                     ]
                 },
@@ -143,6 +162,7 @@ export default {
     }),
     created() {
         this.getDetailItem();
+        this.getHistoryItem();
         this.setBreadcrumbs();
         this.getMasterProduct();
         this.getAllBiro();
@@ -153,7 +173,7 @@ export default {
         ...mapState("masterProduct", ["loadingGetMasterProduct", "dataMasterProduct"]),
     },
     methods: {
-        ...mapActions("listProject", ["patchListProject", "getListProjectById"]),
+        ...mapActions("listProject", ["patchListProject", "getListProjectById", "getHistory"]),
         ...mapActions("masterProduct", ["getMasterProduct"]),
         ...mapActions("allBiro", ["getAllBiro"]),
 
@@ -194,9 +214,24 @@ export default {
                 JSON.stringify(this.$store.state.listProject.edittedItem)
             );
         },
+        getHistoryItem() {
+            console.log("Masuk getHistoryItem");
+            this.getHistory(this.$route.params.id).then(() => {
+                // console.log("Masuk getHistory");
+                this.itemsHistory = JSON.parse(
+                    JSON.stringify(this.$store.state.listProject.edittedItemHistories));
+                    console.log("Masuk JSON getHistory");
+            });
+        },
         onEdit() {
             this.isView = false;
             this.setBreadcrumbs();
+        },
+        onLogHistory() {
+            this.dialog = !this.dialog;
+        },
+        onCancelHistory() {
+            this.dialog = false;
         },
         onCancel() {
             this.isView = true;
@@ -212,15 +247,6 @@ export default {
                 this.onSaveError(error);
             });
         },
-        // onDelete() {
-        //     this.deleteListProjectById(this.$route.params.id)
-        //     .then(() => {
-        //         this.onDeleteSuccess();
-        //     })
-        //     .catch((error) => {
-        //         this.onDeleteError(error);
-        //     });
-        // },
         onSaveSuccess() {
             this.dialog = false;
             this.alert.show = true;
@@ -254,47 +280,45 @@ export default {
 .data-table {
     margin: 40px;
 }
-#view-list-project {
-    .view-list-project__header {
-        padding-left: 32px;
-        font-size: 1.25rem;
-        font-weight: 600;
+.view-list-project__header {
+    padding-left: 32px;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+.view-list-project__detail {
+    border-radius: 8px;
+    margin: 1% auto !important;
+    padding-right: 3% !important;
+    width: 97%;
+}
+.view-list-project__table {
+    border-radius: 8px;
+    margin: 1% auto !important;
+    width: 97%;
+}
+.view-list-project__input {
+    padding: 10px 32px;
+}
+.view-list-project__btn {
+    text-align: end;
+    button {
+        margin: 10px 32px;
     }
-    .view-list-project__detail {
-        border-radius: 8px;
-        margin: 1% auto !important;
-        padding-right: 3% !important;
-        width: 97%;
-    }
-    .view-list-project__table {
-        border-radius: 8px;
-        margin: 1% auto !important;
-        width: 97%;
-    }
-    .view-list-project__input {
-        padding: 10px 32px;
-    }
-    .view-list-project__btn {
-        text-align: end;
-        button {
-            margin: 10px 32px;
-        }
-    }
-    .view-list-project__container {
-        padding: 24px 0px;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        border-radius: 8px;
-        max-height: 90%;
-    }
-    .view-list-project__outer-container {
-        width: 90% !important;
-        margin: 1% auto !important;
-        background-color: white;
-        padding: 24px 0px;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        border-radius: 8px;
-        max-height: 90%;
-    }
+}
+.view-list-project__container {
+    padding: 24px 0px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 8px;
+    max-height: 90%;
+}
+.view-list-project__outer-container {
+    width: 90% !important;
+    margin: 1% auto !important;
+    background-color: white;
+    padding: 24px 0px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 8px;
+    max-height: 90%;
 }
 @media only screen and (max-width: 600px) {
 /* For mobile phones */

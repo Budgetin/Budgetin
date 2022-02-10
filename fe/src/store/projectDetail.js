@@ -150,7 +150,7 @@ const projectDetail = {
       commit("SET_REQUEST_STATUS"); 
       return new Promise((resolve, reject) => {
       getAPI
-        .get("/api/auditlog?table=project&entity=" + `${id}`)
+        .get("/api/auditlog?table=project_detail&entity=" + `${id}`)
         .then((response) => {
           const data = response.data;
           const sorted = data.sort((a, b) =>

@@ -94,6 +94,11 @@ const routes = [
         component: () => import("@/views/ListProject/ViewListBudgetPlanning"),
       },
       {
+        path: "/listProject/:id/viewBudgetRealization",
+        name: "ViewListBudgetRealization",
+        component: () => import("@/views/ListProject/ViewListBudgetRealization"),
+      },
+      {
         path: "listPlanning",
         name: "ListPlanning",
         component: () => import("@/views/ListPlanning/ListPlanning"),

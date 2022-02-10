@@ -7,9 +7,31 @@
     <v-row no-gutters>
       <v-col>
         <v-data-table
-          :headers="dataTable.budgetRealizationHeaders"
-          :loading="status"
-          :items="budgetItem">
+        :headers="dataTable.budgetRealizationHeaders"
+        :loading="status"
+        :items="budgetItem">
+          <template v-slot:[`item.actions`]="{ item }">
+            <!-- EDIT BUDGET REALIZATION -->
+            <router-link
+                style="text-decoration: none"
+                :to="{
+                    name: 'ViewListBudgetRealization',
+                    params: { id: item.id },
+                }">
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                            mdi-eye
+                        </v-icon>
+                    </template>
+                    <span>View/Edit</span>
+                </v-tooltip>
+            </router-link>
+          </template>
+
+          <template v-slot:[`item.is_active`]="{ item }">
+              <binary-status-chip :boolean="item.is_active"></binary-status-chip>
+          </template>
         </v-data-table>
       </v-col>
     </v-row>
@@ -18,8 +40,10 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
+import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
 export default {
     name: "TableBudgetRealization",
+    components: {BinaryStatusChip},
     props: ["budgetRealization"],
     data: () => ({
         isView: true,
@@ -87,6 +111,7 @@ export default {
                             returns: "",
                             allocate: "",
                             coa: "",
+                            is_active: ""
                         },
                     ],
                 },
@@ -95,26 +120,28 @@ export default {
 
         dataTable: {
             budgetRealizationHeaders: [
-                { text: "Year", value: "year", width: "10%" },
-                { text: "COA", value: "coa", width: "15%" },
-                { text: "CAPEX/OPEX", value: "expense_type", width: "10%" },
-                { text: "Allocate", value: "allocate", width: "15%", align: "start" },
-                { text: "Top Up", value: "top_up", width: "15%" },
-                { text: "Return", value: "returns", width: "15%" },
-                { text: "Switching In", value: "switching_in", width: "15%" },
-                { text: "Switching Out", value: "switching_out", width: "15%" },
-                { text: "January", value: "realization_jan", width: "15%" },
-                { text: "February", value: "realization_feb", width: "15%" },
-                { text: "March", value: "realization_mar", width: "15%" },
-                { text: "April", value: "realization_apr", width: "15%" },
-                { text: "May", value: "realization_may", width: "15%" },
-                { text: "June", value: "realization_jun", width: "15%" },
-                { text: "July", value: "realization_jul", width: "15%" },
-                { text: "August", value: "realization_aug", width: "15%" },
-                { text: "September", value: "realization_sep", width: "15%" },
-                { text: "October", value: "realization_oct", width: "15%" },
-                { text: "November", value: "realization_nov", width: "15%" },
-                { text: "December", value: "realization_dec", width: "15%" },
+                { text: "Action", value: "actions", align: "center", sortable: false},
+                { text: "Year", value: "year"},
+                { text: "Budget Status", value: "is_active"},
+                { text: "COA", value: "coa"},
+                { text: "CAPEX/OPEX", value: "expense_type"},
+                { text: "Allocate", value: "allocate"},
+                { text: "Top Up", value: "top_up"},
+                { text: "Return", value: "returns"},
+                { text: "Switching In", value: "switching_in"},
+                { text: "Switching Out", value: "switching_out"},
+                { text: "January", value: "realization_jan"},
+                { text: "February", value: "realization_feb"},
+                { text: "March", value: "realization_mar"},
+                { text: "April", value: "realization_apr"},
+                { text: "May", value: "realization_may"},
+                { text: "June", value: "realization_jun"},
+                { text: "July", value: "realization_jul"},
+                { text: "August", value: "realization_aug"},
+                { text: "September", value: "realization_sep"},
+                { text: "October", value: "realization_oct"},
+                { text: "November", value: "realization_nov"},
+                { text: "December", value: "realization_dec"},
             ],
         },
     }),
@@ -131,9 +158,6 @@ export default {
         }
         // console.log(this.budgetItem);
     },
-    created() {
-
-    },
 
     computed: {
         status: function () {
@@ -143,6 +167,9 @@ export default {
     methods: {
         onOK() {
             return this.$router.go(-1);
+        },
+        onEdit(item) {
+          this.$store.commit("listProject/SET_EDITTED_ITEM", item);
         },
     },
 };

@@ -1,18 +1,18 @@
 <template>
     <v-container>
         <v-row no-gutters>
-            <!-- VIEW PLANNING -->
-            <form-start-planning
+            <!-- VIEW LIST BUDGET REALIZATION -->
+            <form-edit-budget-realization
             :form="form"
             :isView="isView"
-            :dataStartPlanning="dataStartPlanning"
-            :dataAllBiroItHc="dataAllBiroItHc"
+            :dataAllBudget="dataAllBudget"
+            :dataMasterCoa="dataMasterCoa"
             @editClicked="onEdit"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
             @okClicked="onOK"
-            class="view-planning__detail">
-            </form-start-planning>
+            class="view-list-budget-realization__detail">
+            </form-edit-budget-realization>
             
             <!-- LOG HISTORY -->
             <v-col xs="12" sm="6" md="6" lg="5">
@@ -37,35 +37,61 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
-import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import FormEditBudgetRealization from '@/components/CompListProject/FormEditBudgetRealization';
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import TimelineLog from "@/components/TimelineLog";
 export default {
-    name: "ViewPlanning",
+    name: "ViewListBudgetRealization",
     components: {
-        FormStartPlanning, SuccessErrorAlert, TimelineLog
+        FormEditBudgetRealization, SuccessErrorAlert, TimelineLog
     },
     data: () => ({
         isView: true,
         itemsHistory: null,
         form: {
-            id: "",
-            year: "",
-            is_active: {
-                id: "",
-                label: ""
-            },
+            allocate: "",
+            coa: "",
+            created_at: "",
             created_by: "",
-            updated_by: "",
+            expense_type: "",
+            id: "",
+            is_active: "",
+            is_budget: "",
+            planning_nominal: "",
+            planning_q1: "",
+            planning_q2: "",
+            planning_q3: "",
+            planning_q4: "",
+            realization_apr: "",
+            realization_aug: "",
+            realization_dec: "",
+            realization_feb: "",
+            realization_jan: "",
+            realization_jul: "",
+            realization_jun: "",
+            realization_mar: "",
+            realization_may: "",
+            realization_nov: "",
+            realization_oct: "",
+            realization_sep: "",
+            returns: "",
+            switching_in: "",
+            switching_out: "",
+            top_up: "",
             updated_at: "",
-            due_date: "",
-            notification: {
+            updated_by: "",
+            project_detail: {
+                dcsp_id: "",
                 id: "",
-                label: ""   
-            },
-            biros: [],
-            body: "",
+                planning: {
+                    due_date: "",
+                    id: "",
+                    is_active: "",
+                    year: "",
+               }
+            }
         },
+
         alert: {
             show: false,
             success: null,
@@ -73,31 +99,30 @@ export default {
             subtitle: null,
         },
     }),
-
     created() {
-        this.getEdittedItem();
+        this.getDetailItem();
         this.getHistoryItem();
         this.setBreadcrumbs();
+        this.getMasterCoa();
     },
-
     computed: {
-        ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
-        ...mapState("allBiroItHc", ["loadingGetAllBiroItHc", "dataAllBiroItHc"]),
+        ...mapState("allBudget", ["loadingGetAllBudget", "dataAllBudget"]),
+        ...mapState("masterCoa", ["dataMasterCoa"]),
     },
-
     methods: {
-        ...mapActions("startPlanning", ["patchStartPlanning", "getStartPlanningById", "getHistory"]),
+        ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById", "getHistory"]),
+        ...mapActions("masterCoa", ["getMasterCoa"]),
         
         setBreadcrumbs() {
-            let param = this.isView ? "View Planning" : "Edit Planning";
+            let param = this.isView ? "View Budget Realization" : "Edit Budget Realization";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "Start Planning",
+                    text: "List Project",
                     link: true,
                     exact: true,
                     disabled: false,
                     to: {
-                        name: "StartPlanning",
+                        name: "ListProject",
                     },
                 },
                 {
@@ -106,30 +131,23 @@ export default {
                 },
             ]);
         },
-
         getHistoryItem() {
-            // console.log("Masuk getHistoryItem");
             this.getHistory(this.$route.params.id).then(() => {
-                // console.log("Masuk getHistory");
                 this.itemsHistory = JSON.parse(
-                    JSON.stringify(this.$store.state.startPlanning.edittedItemHistories));
-                    // console.log("Masuk JSON getHistory");
+                    JSON.stringify(this.$store.state.allBudget.edittedItemHistories));
             });
         },
-        getEdittedItem() {
-            this.getStartPlanningById(this.$route.params.id).then(() => {
+        getDetailItem() {
+            this.getAllBudgetById(this.$route.params.id).then(() => {
                 this.setForm();
             });
         },
         setForm() {
-            // console.log("Masuk Set Form");
             this.form = JSON.parse(
-                JSON.stringify(this.$store.state.startPlanning.edittedItem)
+                JSON.stringify(this.$store.state.allBudget.edittedItem)
             );
-            // console.log(this.form);
         },
         onEdit() {
-            // console.log("Masuk on Edit");
             this.isView = false;
             this.setBreadcrumbs();
         },
@@ -139,26 +157,22 @@ export default {
             this.setBreadcrumbs();
         },
         onSubmit(e) {
-            this.patchStartPlanning(e)
+            this.patchAllBudget(e)
             .then(() => {
-                // console.log("Masuk Save Success");
                 this.onSaveSuccess();
             })
             .catch((error) => {
-                // console.log("Masuk Save Error");
                 this.onSaveError(error);
             });
         },
         onSaveSuccess() {
-            // console.log("Masuk Save Success LAGI");
             this.dialog = false;
             this.alert.show = true;
             this.alert.success = true;
             this.alert.title = "Save Success";
-            this.alert.subtitle = "Edit Planning Data has been saved successfully";
+            this.alert.subtitle = "Edit Budget Realization has been saved successfully";
         },
         onSaveError(error) {
-            // console.log("Masuk Save Error LAGI");
             this.dialog = false;
             this.alert.show = true;
             this.alert.success = false;
@@ -168,7 +182,7 @@ export default {
         onAlertOk() {
             this.alert.show = false;
             this.isView = true;
-            this.getEdittedItem();
+            this.getDetailItem();
             this.getHistoryItem();
         },
         onOK() {
@@ -185,7 +199,7 @@ export default {
 .data-table {
     margin: 40px;
 }
-.view-planning__header {
+.view-list-budget-realization__header {
     padding-top: 32px;
     padding-bottom: 32px;
     padding-left: 32px;
@@ -193,40 +207,40 @@ export default {
     font-weight: 600;
     min-width: 80%;
 }
-.view-planning__detail {
+.view-list-budget-realization__detail {
     border-radius: 8px;
     margin: 1% auto !important;
     width: 50%;
     height: 90%;
 }
-.view-planning__input {
+.view-list-budget-realization__input {
     padding: 10px 32px;
 }
-.view-planning__btn {
+.view-list-budget-realization__btn {
     text-align: end;
     button {
         margin: 10px 32px;
     }
 }
-.view-planning__container {
+.view-list-budget-realization__container {
     padding: 24px 0px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 8px;
     max-height: 90%;
 }
-.view-planning__cardText {
+.view-list-budget-realization__cardText {
     flex-grow: 4;
     max-height: 90%;
     overflow-y: scroll;
 }
-.view-planning__field {
+.view-list-budget-realization__field {
     min-width: 150px;
 }
 
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
-#view-planning {
-    .view-planning__btn {
+#view-list-budget-realization {
+    .view-list-budget-realization__btn {
         text-align: center;
         padding: 0px 32px;
 
@@ -235,7 +249,7 @@ export default {
             margin: 0px 0px 32px 0px;
         }
     }
-    .view-planning__card {
+    .view-list-budget-realization__card {
         flex-direction: column;
         button {
         width: 16rem !important;

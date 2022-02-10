@@ -38,6 +38,8 @@ export default {
 #master-user,
 #master-strategy,
 #start-planning,
+#monitor-planning,
+#list-project,
 #login-form
 {
   font-family: "Nunito", sans-serif !important;

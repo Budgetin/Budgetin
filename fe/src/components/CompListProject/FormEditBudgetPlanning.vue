@@ -6,6 +6,14 @@
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
+
+      <a-popconfirm
+      title="Are you sure you want to cancel this budget?"
+      ok-text="Yes"
+      cancel-text="No"
+      @confirm="$emit('deleteClicked')">
+        <v-icon color="error" v-if="!isNew"> mdi-delete </v-icon>
+      </a-popconfirm>
     </v-card-title>
 
     <v-card-text>

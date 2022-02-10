@@ -1,38 +1,28 @@
 <template>
-    <v-app id="view-status-monitoring">
-        <v-container>
-            <v-row no-gutters>
-                <!-- MONITOR PLANNING -->
-                <form-monitor-planning
-                :form="form"
-                :isView="isView"
-                :dataMonitorPlanning="dataMonitorPlanning"
-                @editClicked="onEdit"
-                @cancelClicked="onCancel"
-                @submitClicked="onSubmit"
-                @okClicked="onOK"
-                class="view-status-monitoring__detail">
-                </form-monitor-planning>
+    <v-container>
+        <v-row no-gutters>
+            <!-- MONITOR PLANNING -->
+            <form-monitor-planning
+            :form="form"
+            :isView="isView"
+            :dataMonitorPlanning="dataMonitorPlanning"
+            @editClicked="onEdit"
+            @cancelClicked="onCancel"
+            @submitClicked="onSubmit"
+            @okClicked="onOK"
+            class="view-status-monitoring__detail">
+            </form-monitor-planning>
 
-                <!-- LOG HISTORY -->
-                <v-col xs="12" sm="6" md="6" lg="5">
-                    <v-container>
-                        <timeline-log
-                            :items="itemsHistory"
-                            v-if="itemsHistory">
-                        </timeline-log>
-                    </v-container>
-                </v-col>
-
-                <!-- <form-log-history
-                :form="form"
-                @editClicked="onEdit"
-                @cancelClicked="onCancel"
-                @submitClicked="onSubmit"
-                class="view-status-monitoring__logHistory">
-                </form-log-history> -->
-            </v-row>
-        </v-container>
+            <!-- LOG HISTORY -->
+            <v-col xs="12" sm="6" md="6" lg="5">
+                <v-container>
+                    <timeline-log
+                        :items="itemsHistory"
+                        v-if="itemsHistory">
+                    </timeline-log>
+                </v-container>
+            </v-col>
+        </v-row>
 
         <success-error-alert
         :success="alert.success"
@@ -41,7 +31,7 @@
         :subtitle="alert.subtitle"
         @okClicked="onAlertOk"
         />
-    </v-app>
+    </v-container>
 </template>
 
 <script>
@@ -197,52 +187,49 @@ export default {
 .data-table {
     margin: 40px;
 }
-
-#view-status-monitoring {
-    .view-status-monitoring__header {
-        padding-top: 32px;
-        padding-bottom: 32px;
-        padding-left: 32px;
-        font-size: 1.25rem;
-        font-weight: 600;
-        min-width: 80%;
+.view-status-monitoring__header {
+    padding-top: 32px;
+    padding-bottom: 32px;
+    padding-left: 32px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    min-width: 80%;
+}
+.view-status-monitoring__detail {
+    border-radius: 8px;
+    margin: 1% auto !important;
+    width: 50%;
+    height: 90%;
+}
+.view-status-monitoring__input {
+    padding: 10px 32px;
+}
+.view-status-monitoring__btn {
+    text-align: end;
+    button {
+        margin: 10px 32px;
     }
-    .view-status-monitoring__detail {
-        border-radius: 8px;
-        margin: 1% auto !important;
-        width: 50%;
-        height: 90%;
-    }
-    .view-status-monitoring__input {
-        padding: 10px 32px;
-    }
-    .view-status-monitoring__btn {
-        text-align: end;
-        button {
-            margin: 10px 32px;
-        }
-    }
-    .view-status-monitoring__container {
-        padding: 24px 0px;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        border-radius: 8px;
-        max-height: 90%;
-    }
-    .view-status-monitoring__cardText {
-        flex-grow: 4;
-        max-height: 90%;
-        overflow-y: scroll;
-    }
-    .view-status-monitoring__logHistory {
-        border-radius: 8px;
-        margin: 1% auto !important;
-        width: 40%;
-        max-height: 600px;
-        overflow-y: scroll;
-    }
-    .view-status-monitoring__field {
-        min-width: 150px;
-    }
+}
+.view-status-monitoring__container {
+    padding: 24px 0px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 8px;
+    max-height: 90%;
+}
+.view-status-monitoring__cardText {
+    flex-grow: 4;
+    max-height: 90%;
+    overflow-y: scroll;
+}
+.view-status-monitoring__logHistory {
+    border-radius: 8px;
+    margin: 1% auto !important;
+    width: 40%;
+    max-height: 600px;
+    overflow-y: scroll;
+}
+.view-status-monitoring__field {
+    min-width: 150px;
 }
 
 @media only screen and (max-width: 600px) {
