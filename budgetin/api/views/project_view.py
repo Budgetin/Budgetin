@@ -17,7 +17,7 @@ def get_filtered_queryset(request, queryset):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    # permission_classes = [IsAuthenticated, IsAdmin] #DEBT. Uncomment this line
 
     def list(self, request, *args, **kwargs):
         queryset = Project.objects.select_related('biro', 'product', 'product__strategy', 'updated_by', 'created_by').all()            
