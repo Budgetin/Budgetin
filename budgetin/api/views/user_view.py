@@ -22,7 +22,7 @@ def is_duplicate_user_update(id, username):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdmin]
     
     def list(self, request, *args, **kwargs):
         queryset = User.objects.all()

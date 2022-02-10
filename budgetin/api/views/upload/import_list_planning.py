@@ -14,7 +14,7 @@ from api.utils.enum import ActionEnum, TableEnum
 from api.exceptions import SheetNotFoundException, ImportValidationException
 
 '''
-Validasi
+Validasi Import Planning
  - Harus ada sheet 'Planning'
  - Format Kolom Product -> Product Code - Product Name. 
    - Product Name ga boleh kosong
