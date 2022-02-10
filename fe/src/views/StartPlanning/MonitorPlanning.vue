@@ -146,10 +146,7 @@ export default {
         },
         
         getEdittedItem() {
-            console.log("Masuk Editted Item");
-
             this.getMonitorPlanningById(this.$route.params.id).then(() => {
-                console.log("ParamID: "+this.$route.params.id);
             
             this.monitorData = JSON.parse(
                 JSON.stringify(this.$store.state.monitorPlanning.edittedItem))
@@ -191,7 +188,6 @@ export default {
         
         onEdit(item) {
             this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
-            console.log(item);
         },
         onOK() {
             return this.$router.go(-1);

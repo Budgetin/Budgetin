@@ -13,6 +13,25 @@
                     <template v-slot:[`item.planning.is_active`]="{ item }">
                         <binary-status-chip :boolean="item.planning.is_active"></binary-status-chip>
                     </template>
+
+                    <template v-slot:[`item.actions`]="{ item }">
+                        <!-- EDIT PROJECT DETAIL -->
+                        <router-link
+                            style="text-decoration: none"
+                            :to="{
+                                name: 'ViewListProjectDetail',
+                                params: { id: item.id },
+                            }">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                                        mdi-eye
+                                    </v-icon>
+                                </template>
+                                <span>View/Edit</span>
+                            </v-tooltip>
+                        </router-link>
+                    </template>
                 </v-data-table> 
             </v-col>
         </v-row>
@@ -29,6 +48,8 @@ export default {
         BinaryStatusChip
     },
     data: () => ({
+        dialog: false,
+        isEdit: false,
         isView: true,
         showItem: [],
         form: {
@@ -99,9 +120,10 @@ export default {
             ]
         },
 
-
         dataTable: {
             projectDetailsHeaders: [
+                { text: "Action", value: "actions", align: "center", sortable: false, width: "5%"},
+                { text: "ID", value: "id", width: "7%" },
                 { text: "Year", value: "planning.year", width: "10%" },
                 { text: "Project ID", value: "dcsp_id", width: "15%" },
                 { text: "Status", value: "planning.is_active", width: "20%" },
@@ -113,20 +135,21 @@ export default {
 
     mounted(){
         this.showItem = this.projectDetail.project_detail;
-        console.log(this.showItem);
+        // console.log("SHOW ITEM");
+        // console.log(this.showItem);
     },
-    created() {
-    },
-
     computed: {
        status: function() {
            return this.projectDetail.project_detail ? false : true
-       }
+       },
     },
     methods: {
         onOK() {
             return this.$router.go(-1);
-        }
+        },
+        onEdit(item) {
+            this.$store.commit("listProject/SET_EDITTED_ITEM", item);
+        },
     }
 }
 </script>

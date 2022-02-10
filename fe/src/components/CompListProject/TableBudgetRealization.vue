@@ -122,14 +122,14 @@ export default {
     mounted() {
         this.showItem = this.budgetRealization.project_detail;
 
-        console.log(this.showItem);
+        // console.log(this.showItem);
         this.budgetItem = [];
         for (let i = 0; i < this.showItem.length; i++) {
             for (let j = 0; j < this.showItem[i].budget.length; j++) {
                 this.budgetItem.push(this.showItem[i].budget[j]);
             }
         }
-        console.log(this.budgetItem);
+        // console.log(this.budgetItem);
     },
     created() {
 

@@ -13,7 +13,6 @@
                 @cancelClicked="onCancel"
                 @submitClicked="onSubmit"
                 @okClicked="onOK"
-                @deleteClicked="onDelete"
                 class="view-list-project__detail">
                 </form-list-project>
             </v-row>
@@ -60,7 +59,7 @@ import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
     name: "ViewListProject",
     components: {
-        FormListProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization, SuccessErrorAlert
+        FormListProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization, SuccessErrorAlert,
     },
     data: () => ({
         isView: true,
@@ -159,7 +158,7 @@ export default {
         ...mapActions("allBiro", ["getAllBiro"]),
 
         setBreadcrumbs() {
-            let param = this.isView ? "View Project Detail" : "Edit Project Detail";
+            let param = this.isView ? "View Project" : "Edit Project Detail";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
                     text: "List of Projects",
@@ -196,7 +195,6 @@ export default {
             );
         },
         onEdit() {
-            // console.log("Masuk on Edit");
             this.isView = false;
             this.setBreadcrumbs();
         },
@@ -206,36 +204,31 @@ export default {
             this.setBreadcrumbs();
         },
         onSubmit(e) {
-            console.log(e);
             this.patchListProject(e)
             .then(() => {
-                // console.log("Masuk Save Success");
                 this.onSaveSuccess();
             })
             .catch((error) => {
-                // console.log("Masuk Save Error");
                 this.onSaveError(error);
             });
         },
-        onDelete() {
-            this.deleteListProjectById(this.$route.params.id)
-            .then(() => {
-                this.onDeleteSuccess();
-            })
-            .catch((error) => {
-                this.onDeleteError(error);
-            });
-        },
+        // onDelete() {
+        //     this.deleteListProjectById(this.$route.params.id)
+        //     .then(() => {
+        //         this.onDeleteSuccess();
+        //     })
+        //     .catch((error) => {
+        //         this.onDeleteError(error);
+        //     });
+        // },
         onSaveSuccess() {
-            // console.log("Masuk Save Success LAGI");
             this.dialog = false;
             this.alert.show = true;
             this.alert.success = true;
             this.alert.title = "Save Success";
-            this.alert.subtitle = "Edit Project Detail has been saved successfully";
+            this.alert.subtitle = "Edit Project has been saved successfully";
         },
         onSaveError(error) {
-            // console.log("Masuk Save Error LAGI");
             this.dialog = false;
             this.alert.show = true;
             this.alert.success = false;

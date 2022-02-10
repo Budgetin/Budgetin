@@ -1,29 +1,29 @@
 <template>
-    <v-app id="view-planning">
+    <v-app id="view-list-project-detail">
         <v-container>
             <v-row no-gutters>
-                <!-- VIEW PLANNING -->
-                <form-start-planning
+                <!-- VIEW LIST PROJECT DETAIL -->
+                <form-edit-project-detail
                 :form="form"
                 :isView="isView"
-                :dataStartPlanning="dataStartPlanning"
-                :dataAllBiroItHc="dataAllBiroItHc"
+                :dataProjectDetail="dataProjectDetail"
+                :dataProjectType="dataProjectType"
                 @editClicked="onEdit"
                 @cancelClicked="onCancel"
                 @submitClicked="onSubmit"
                 @okClicked="onOK"
-                class="view-planning__detail">
-                </form-start-planning>
+                class="view-list-project-detail__detail">
+                </form-edit-project-detail>
                 
                 <!-- LOG HISTORY -->
-                <v-col xs="12" sm="6" md="6" lg="5">
+                <!-- <v-col xs="12" sm="6" md="6" lg="5">
                     <v-container>
                         <timeline-log
                             :items="itemsHistory"
                             v-if="itemsHistory">
                         </timeline-log>
                     </v-container>
-                </v-col>
+                </v-col> -->
             </v-row>
 
             <success-error-alert
@@ -39,35 +39,39 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormStartPlanning from '@/components/CompStartPlanning/FormStartPlanning';
-import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import FormEditProjectDetail from '@/components/CompListProject/FormEditProjectDetail';
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import TimelineLog from "@/components/TimelineLog";
 export default {
-    name: "ViewPlanning",
+    name: "ViewListProjectDetail",
     components: {
-        FormStartPlanning, SuccessErrorAlert, TimelineLog
+        FormEditProjectDetail, SuccessErrorAlert, TimelineLog
     },
     data: () => ({
         isView: true,
         itemsHistory: null,
         form: {
-            id: "",
-            year: "",
-            is_active: {
-                id: "",
-                label: ""
-            },
+            created_at: "",
             created_by: "",
-            updated_by: "",
-            updated_at: "",
-            due_date: "",
-            notification: {
+            dcsp_id: "",
+            deleted_at: "",
+            id: "",
+            is_deleted: false,
+            planning: {
                 id: "",
-                label: ""   
+                is_active: "",
+                notification: "",
+                created_by: "",
+                updated_by: "",
+                year: "",
+                due_date:""
             },
-            biros: [],
-            body: "",
+            project: "",
+            project_type: "",
+            updated_at: "",
+            updated_by: ""
         },
+
         alert: {
             show: false,
             success: null,
@@ -75,31 +79,30 @@ export default {
             subtitle: null,
         },
     }),
-
     created() {
-        this.getEdittedItem();
-        this.getHistoryItem();
+        this.getDetailItem();
+        // this.getHistoryItem();
         this.setBreadcrumbs();
+        this.getAllProjectType();
     },
-
     computed: {
-        ...mapState("startPlanning", ["loadingGetStartPlanning", "dataStartPlanning"]),
-        ...mapState("allBiroItHc", ["loadingGetAllBiroItHc", "dataAllBiroItHc"]),
+        ...mapState("projectDetail", ["loadingGetProjectDetail", "dataProjectDetail"]),
+        ...mapState("projectType", ["dataProjectType"]),
     },
-
     methods: {
-        ...mapActions("startPlanning", ["patchStartPlanning", "getStartPlanningById", "getHistory"]),
+        ...mapActions("projectDetail", ["patchProjectDetail", "getProjectDetailById"]),
+        ...mapActions("projectType", ["getAllProjectType"]),
         
         setBreadcrumbs() {
-            let param = this.isView ? "View Planning" : "Edit Planning";
+            let param = this.isView ? "View Project Detail" : "Edit Project Detail";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "Start Planning",
+                    text: "List Project",
                     link: true,
                     exact: true,
                     disabled: false,
                     to: {
-                        name: "StartPlanning",
+                        name: "ListProject",
                     },
                 },
                 {
@@ -108,30 +111,23 @@ export default {
                 },
             ]);
         },
-
-        getHistoryItem() {
-            // console.log("Masuk getHistoryItem");
-            this.getHistory(this.$route.params.id).then(() => {
-                // console.log("Masuk getHistory");
-                this.itemsHistory = JSON.parse(
-                    JSON.stringify(this.$store.state.startPlanning.edittedItemHistories));
-                    // console.log("Masuk JSON getHistory");
-            });
-        },
-        getEdittedItem() {
-            this.getStartPlanningById(this.$route.params.id).then(() => {
+        // getHistoryItem() {
+        //     this.getHistory(this.$route.params.id).then(() => {
+        //         this.itemsHistory = JSON.parse(
+        //             JSON.stringify(this.$store.state.listProject.edittedItemHistories));
+        //     });
+        // },
+        getDetailItem() {
+            this.getProjectDetailById(this.$route.params.id).then(() => { 
                 this.setForm();
             });
         },
         setForm() {
-            // console.log("Masuk Set Form");
             this.form = JSON.parse(
-                JSON.stringify(this.$store.state.startPlanning.edittedItem)
+                JSON.stringify(this.$store.state.projectDetail.edittedItem)
             );
-            // console.log(this.form);
         },
         onEdit() {
-            // console.log("Masuk on Edit");
             this.isView = false;
             this.setBreadcrumbs();
         },
@@ -141,26 +137,22 @@ export default {
             this.setBreadcrumbs();
         },
         onSubmit(e) {
-            this.patchStartPlanning(e)
+            this.patchProjectDetail(e)
             .then(() => {
-                // console.log("Masuk Save Success");
                 this.onSaveSuccess();
             })
             .catch((error) => {
-                // console.log("Masuk Save Error");
                 this.onSaveError(error);
             });
         },
         onSaveSuccess() {
-            // console.log("Masuk Save Success LAGI");
             this.dialog = false;
             this.alert.show = true;
             this.alert.success = true;
             this.alert.title = "Save Success";
-            this.alert.subtitle = "Edit Planning Data has been saved successfully";
+            this.alert.subtitle = "Edit Project Detail has been saved successfully";
         },
         onSaveError(error) {
-            // console.log("Masuk Save Error LAGI");
             this.dialog = false;
             this.alert.show = true;
             this.alert.success = false;
@@ -170,8 +162,8 @@ export default {
         onAlertOk() {
             this.alert.show = false;
             this.isView = true;
-            this.getEdittedItem();
-            this.getHistoryItem();
+            this.getDetailItem();
+            // this.getHistoryItem();
         },
         onOK() {
             return this.$router.go(-1);
@@ -188,8 +180,8 @@ export default {
     margin: 40px;
 }
 
-#view-planning {
-    .view-planning__header {
+#view-list-project-detail {
+    .view-list-project-detail__header {
         padding-top: 32px;
         padding-bottom: 32px;
         padding-left: 32px;
@@ -197,41 +189,41 @@ export default {
         font-weight: 600;
         min-width: 80%;
     }
-    .view-planning__detail {
+    .view-list-project-detail__detail {
         border-radius: 8px;
         margin: 1% auto !important;
         width: 50%;
         height: 90%;
     }
-    .view-planning__input {
+    .view-list-project-detail__input {
         padding: 10px 32px;
     }
-    .view-planning__btn {
+    .view-list-project-detail__btn {
         text-align: end;
         button {
             margin: 10px 32px;
         }
     }
-    .view-planning__container {
+    .view-list-project-detail__container {
         padding: 24px 0px;
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         border-radius: 8px;
         max-height: 90%;
     }
-    .view-planning__cardText {
+    .view-list-project-detail__cardText {
         flex-grow: 4;
         max-height: 90%;
         overflow-y: scroll;
     }
-    .view-planning__field {
+    .view-list-project-detail__field {
         min-width: 150px;
     }
 }
 
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
-#view-planning {
-    .view-planning__btn {
+#view-list-project-detail {
+    .view-list-project-detail__btn {
         text-align: center;
         padding: 0px 32px;
 
@@ -240,7 +232,7 @@ export default {
             margin: 0px 0px 32px 0px;
         }
     }
-    .view-planning__card {
+    .view-list-project-detail__card {
         flex-direction: column;
         button {
         width: 16rem !important;

@@ -260,7 +260,7 @@ export default {
             body: this.form.body ? this.form.body : 0,
           };
           this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
-          console.log(this.selectAll);
+          // console.log(this.selectAll);
         } else {
           const payload = {
             id: this.form.id,
@@ -272,7 +272,7 @@ export default {
             body: this.form.body ? this.form.body : 0,
           };
           this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
-          console.log(this.selected);
+          // console.log(this.selected);
         };
         this.$refs.form.reset();
       }
@@ -287,7 +287,6 @@ export default {
       this.$nextTick(() => {
         if (this.selected.length === this.dataAllBiroItHc.length) {
           this.selected = [];
-          console.log("Masuk ALL");
         } else {
           this.selected = this.dataAllBiroItHc.slice();
           this.selectAll = [];

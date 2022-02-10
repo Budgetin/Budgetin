@@ -324,19 +324,21 @@
 
 <script>
 import { mapState } from "vuex";
+import formatting from "@/mixins/formatting";
 export default {
   name: "FormListProject",
   props: ["form", "isNew", "isView"],
+  mixins: [formatting],
 
-  watch: {
-    menu (val) {
-      val && setTimeout(() => (this.activePicker = 'YEAR'))
-    },
-  },
+  // watch: {
+  //   menu (val) {
+  //     val && setTimeout(() => (this.activePicker = 'YEAR'))
+  //   },
+  // },
   data: () => ({
-    activePicker: 'YEAR',
+    // activePicker: 'YEAR',
     // date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 4),
-    menu: false,
+    // menu: false,
 
     validation: {
       required: [
@@ -366,23 +368,19 @@ export default {
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
-
     nominal: {
       // getter
       get: function() {
-        if(this.form.total_investment_value) {
-          this.form.total_investment_value = this.form.total_investment_value.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-          this.form.total_investment_value = this.form.total_investment_value.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        if(this.form.total_investment_value){
+          this.form.total_investment_value = this.numberWithDots(this.form.total_investment_value)
+          return this.form.total_investment_value;
         }
-        return this.form.total_investment_value;
       },
       // setter
       set: function(newValue) {
-        this.form.total_investment_value = newValue.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-        this.form.total_investment_value = this.form.total_investment_value.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        this.form.total_investment_value = this.numberWithDots(newValue)
       }
     },
-
     label: {
       get: function() {
         return this.form.is_tech ? "Tech" : "Non-Tech";
@@ -408,8 +406,6 @@ export default {
           biro: this.form.biro.id,
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
-        console.log(this.form.total_investment_value);
-        console.log(payload);
         this.$refs.form.reset();
       }
     },
