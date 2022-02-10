@@ -52,6 +52,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         is_duplicate_user_update(kwargs['pk'], request.data['username'])
+        request.data['updated_by'] = request.custom_user['id']
         user = super().update(request, *args, **kwargs)
         AuditLog.Save(user, request, ActionEnum.UPDATE, TableEnum.USER)
         return user
