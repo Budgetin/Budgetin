@@ -97,7 +97,7 @@ export default {
         search: "",
         dataTable: {
             headers: [
-                { text: "Action", value: "actions", align: "center", sortable: false, width: "7%"},
+                { text: "Action", value: "actions", align: "center", sortable: false, width: "5%"},
                 { text: "ID", value: "id", width: "7%" },
                 { text: "ID ITFAM", value: "itfam_id", width: "10%", align: "start" },
                 { text: "Project Name", value: "project_name", width: "25%" },
@@ -138,8 +138,6 @@ export default {
     created() {
         this.getListProject();
         this.setBreadcrumbs();
-        console.log("LIST PROJECT");
-        console.log(this.dataListProject);
     },
 
     computed: {
@@ -163,10 +161,6 @@ export default {
                 },
             ]);
         },
-
-        onExport() {
-
-        },
         onCancel() {
             this.dialog = false;
         },
@@ -175,7 +169,6 @@ export default {
         },
         onEdit(item) {
             this.$store.commit("listProject/SET_EDITTED_ITEM", item);
-            console.log(item);
         },
         onOK() {
             return this.$router.go(-1);

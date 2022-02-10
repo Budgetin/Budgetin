@@ -17,6 +17,8 @@ import allBiro from "./allBiro"
 import allBiroItHc from "./allBiroItHc"
 import listPlanning from "./listPlanning"
 import listProject from "./listProject"
+import projectDetail from "./projectDetail"
+import allBudget from "./allBudget"
 import projectType from "./projectType"
 
 Vue.use(Vuex)
@@ -46,6 +48,8 @@ export default new Vuex.Store({
     allBiroItHc,
     listPlanning,
     listProject,
+    projectDetail,
+    allBudget,
     choosedColumn,
     projectType,
   },

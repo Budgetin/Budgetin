@@ -63,6 +63,7 @@
                     no-gutters
                     class="list-planning__btn"
                   >
+                    <v-btn rounded color="primary" @click="onUpdateRealization">Update Realization </v-btn>
                     <v-btn rounded color="primary" @click="onInputOption"> Add Planning </v-btn>
                     <v-btn rounded color="primary" @click="onExport">
                           <v-icon left> mdi-export-variant </v-icon>
@@ -116,9 +117,39 @@
         <v-dialog v-model="dialogUpload" persistent width="25rem">
           <upload-file-planning
             @cancelClicked="onCancel"
-            @uploadClicked="upload">
+            @uploadClicked="uploadPlanning">
           </upload-file-planning>
         </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-dialog v-model="dialogUpdateRealization" persistent width="25rem">
+          <upload-file-realization
+            @cancelClicked="onCancel"
+            @uploadClicked="uploadRealization">
+          </upload-file-realization>
+        </v-dialog>
+      </v-row>
+
+            <v-row no-gutters>
+          <v-dialog v-model="isLoading" persistent width="25rem">
+            <v-card >
+              <v-card-title class="d-flex justify-center">
+                Loading
+              </v-card-title>
+
+              <v-card-text>
+                <v-row no-gutters class="d-flex justify-center">
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="purple"
+                    indeterminate
+                  ></v-progress-circular>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
       </v-row>
 
       <v-row no-gutters>
@@ -172,14 +203,16 @@ import { mapState, mapActions } from "vuex";
 import ColumnOption from "@/components/ListPlanning/ColumnOption";
 import FormChooseProjectType from "@/components/ListPlanning/FormChooseProjectType"
 import UploadFilePlanning from "@/components/ListPlanning/UploadFilePlanning"
+import UploadFileRealization from "@/components/ListPlanning/UploadFileRealization"
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
 export default {
   name: "ListPlanning",
-  components: {SuccessErrorAlert,ColumnOption,FormChooseProjectType,BinaryYesNoChip,UploadFilePlanning},
+  components: {SuccessErrorAlert,ColumnOption,FormChooseProjectType,BinaryYesNoChip,UploadFilePlanning,UploadFileRealization},
   watch: {},
   data: () => ({
     dialog: false,
+    dialogUpdateRealization :false,
     dialogChoose: false,
     dialogUpload: false,
     inputOption : false,
@@ -316,11 +349,11 @@ export default {
     this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("listPlanning", ["loadingGetListPlanning", "dataListPlanning"]),
+    ...mapState("listPlanning", ["loadingGetListPlanning", "dataListPlanning","isLoading"]),
     ...mapState("choosedColumn", ["listColumn"]),
   },
   methods: {
-    ...mapActions("listPlanning", ["getListPlanning", "postListPlanning","importPlanning"]),
+    ...mapActions("listPlanning", ["getListPlanning", "postListPlanning","importPlanning","importRealization"]),
     getSelectedHeader() {
       if (this.listColumn.length == 1) {
         this.dataTable.selectedHeader = [].concat(this.dataTable.Listheader);
@@ -359,6 +392,7 @@ export default {
       this.dialogChoose = false;
       this.inputOption = false;
       this.dialogUpload = false;
+      this.dialogUpdateRealization = false;
       
     },
     onClose(e) {
@@ -403,8 +437,21 @@ export default {
     onAlertOk() {
       this.alert.show = false;
     },
-    upload(data){
+    uploadPlanning(data){
       this.importPlanning(data)
+        .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.dialog = false;
+          this.alert.show = true;
+          this.alert.success = false;
+          this.alert.title = "Upload Failed";
+          this.alert.subtitle = error.message;
+        });
+    },
+    uploadRealization(data){
+      this.importRealization(data)
         .then(() => {
           this.onSaveSuccess();
         })
@@ -426,8 +473,12 @@ export default {
 
     onInputOption(){
       this.inputOption = true;
-
     },
+
+    onUpdateRealization(){
+      this.dialogUpdateRealization = true;
+    },
+
     onAdd() {
       this.dialogChoose = !this.dialogChoose;
       this.inputOption = false;

@@ -155,14 +155,11 @@ export default {
             this.setBreadcrumbs();
         },
         onSubmit(e) {
-            console.log(e);
             this.patchMonitorPlanning(e)
             .then(() => {
-                console.log("Masuk Save Success");
                 this.onSaveSuccess();
             })
             .catch((error) => {
-                console.log("Masuk Save Error");
                 this.onSaveError(error);
             });
         },
