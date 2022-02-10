@@ -54,7 +54,7 @@ def get_imo_d_employee():
                 }
                 data.append(employee_json)
         return data
-    raise NotFoundException()
+    raise NotFoundException('IMO Employee')
 
 
 #Get All Biro
@@ -71,7 +71,7 @@ def get_all_biro(params=''):
         biro = [b for b in res.json() if b['is_deleted'] == False]
         if biro:
             return biro
-    raise NotFoundException()
+    raise NotFoundException('Biro')
 
 
 #Get Employee Information
