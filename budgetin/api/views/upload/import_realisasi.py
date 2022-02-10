@@ -7,11 +7,13 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from api.exceptions import SheetNotFoundException, NotFoundException, ImportValidationException
+from api.utils.enum import ActionEnum, TableEnum
+from api.utils.auditlog import AuditLog
 from django.db.models.base import ObjectDoesNotExist
 
 from api.models import Coa, ProjectDetail, Budget, Planning
 
-def update_db(index, data):
+def update_db(request, index, data):
     dcsp_id = data.pop('BID').split('-')[0]
     coa = get_coa(index, data.pop('COA'))
     planning = get_planning(index, data.pop('Tahun'))
@@ -39,6 +41,7 @@ def update_db(index, data):
         )
     except TypeError:
         raise ImportValidationException("Wrong input type on line " + str(index))
+    AuditLog.Save(budget_object.get(), request, ActionEnum.UPDATE, TableEnum.BUDGET)
 
 def get_coa(index, coa_name):
     try:
@@ -79,6 +82,6 @@ class ImportRealisasi(APIView):
             raise SheetNotFoundException('Realisasi')
         
         for index, row in df.iterrows():
-            update_db((index+2), row)
+            update_db(request, (index+2), row)
             
         return Response(status=204)
