@@ -1,5 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
+import router from "@/router/index.js"
 
 const ENDPOINT = "/api/ithc/biro";
 
@@ -185,6 +186,9 @@ const allBiroItHc = {
       state.errorMsg = error;
       state.dataAllBiroItHc = [];
       state.dataActiveAllBiroItHc = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
     // post / patch related
@@ -200,6 +204,9 @@ const allBiroItHc = {
       state.requestStatus = "ERROR";
       state.loadingPostPatchAllBiroItHc = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
     SET_EDITTED_ITEM(state, payload) {
       state.edittedItem = payload;

@@ -1,6 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
-
+import router from "@/router/index.js"
 const ENDPOINT = "/api/user/imo/";
 
 const masterEmployee = {
@@ -71,6 +71,9 @@ const masterEmployee = {
       state.errorMsg = error;
       state.dataMasterEmployee = [];
       state.dataActiveMasterEmployee = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
   },
 };

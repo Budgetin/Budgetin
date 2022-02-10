@@ -1,6 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
-
+import router from "@/router/index.js"
 const ENDPOINT = "/api/project_type/";
 
 const projectType = {
@@ -79,6 +79,9 @@ const projectType = {
       state.loadingGetListPlanning = false;
       state.errorMsg = error;
       state.dataProjectType = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
     GET_EXISTING_INIT(state) {
       state.requestStatusExisting = "PENDING";
@@ -94,6 +97,9 @@ const projectType = {
       state.loadingGetListPlanning = false;
       state.errorMsg = error;
       state.dataProjectTypeExisting = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
   },
 };

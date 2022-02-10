@@ -75,13 +75,13 @@ export default {
         search: "",
         dataTable: {
             headers: [
-                { text: "Group", value: "biro.group_code", width: "15%" },
-                { text: "Sub-Group", value: "biro.sub_group_code", width: "15%" },
-                { text: "Biro", value: "biro.code", width: "15%" },
-                { text: "PIC", value: "pic_initial", width: "15%" },
-                { text: "Updated Date", value: "updated_at", width: "20%" },
-                { text: "Status", value: "monitoring_status", width: "17%" },
-                { text: "Action", value: "actions", align: "center", sortable: false, width: "10%"},
+                { text: "Group", value: "biro.group_code"},
+                { text: "Sub-Group", value: "biro.sub_group_code"},
+                { text: "Biro", value: "biro.code"},
+                { text: "PIC", value: "pic_initial"},
+                { text: "Updated Date", value: "updated_at"},
+                { text: "Status", value: "monitoring_status"},
+                { text: "Action", value: "actions", align: "center", sortable: false},
             ],
         },
 

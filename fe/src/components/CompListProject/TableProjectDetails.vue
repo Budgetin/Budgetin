@@ -122,13 +122,13 @@ export default {
 
         dataTable: {
             projectDetailsHeaders: [
-                { text: "Action", value: "actions", align: "center", sortable: false, width: "5%"},
-                { text: "ID", value: "id", width: "7%" },
-                { text: "Year", value: "planning.year", width: "10%" },
-                { text: "Project ID", value: "dcsp_id", width: "15%" },
-                { text: "Status", value: "planning.is_active", width: "20%" },
-                { text: "Due Date", value: "planning.due_date", width: "20%" },
-                { text: "Project Type", value: "project_type", width: "25%" },
+                { text: "Action", value: "actions", align: "center", sortable: false},
+                { text: "ID", value: "id"},
+                { text: "Year", value: "planning.year"},
+                { text: "Project ID", value: "dcsp_id"},
+                { text: "Status", value: "planning.is_active"},
+                { text: "Due Date", value: "planning.due_date"},
+                { text: "Project Type", value: "project_type"},
             ],
         },
     }),

@@ -1,6 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
-
+import router from "@/router/index.js"
 const LIST_PLANNING_ENDPOINT = "/api/budget/list_planning/";
 const BUDGET_ENDPOINT = "/api/budget/";
 const PLANNING_ENPOINT = "/api/planning/"
@@ -261,8 +261,11 @@ const listPlanning = {
     SET_LOADING(state, data) {
       state.isLoading = data;
     },
-    SET_UPLOAD_ERROR(state,message){
-      state.errorMessage = message
+    SET_UPLOAD_ERROR(state,error){
+      state.errorMessage = error
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
     // get related
@@ -294,6 +297,9 @@ const listPlanning = {
       state.errorMsg = error;
       state.dataListPlanning = [];
       state.dataActiveListPlanning = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
     GET_INACTIVE_ERROR(state, error) {
       state.requestInactiveStatus = "ERROR";
@@ -316,6 +322,9 @@ const listPlanning = {
       state.postPatchStatus = "ERROR";
       state.loadingPostPatchListPlanning = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
     SET_EDITTED_ITEM(state, payload) {
       state.edittedItem = payload;

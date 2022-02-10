@@ -96,7 +96,7 @@ export default {
                 { text: "ID", value: "id"},
                 { text: "ID ITFAM", value: "itfam_id"},
                 { text: "Project Name", value: "project_name"},
-                { text: "Project Description", value: "project_description", width: "35%" },
+                { text: "Project Description", value: "project_description" },
                 { text: "RCC", value: "biro.rcc"},
                 { text: "Biro", value: "biro.code"},
                 { text: "Product Code", value: "product.product_code"},

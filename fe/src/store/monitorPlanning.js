@@ -1,6 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
-
+import router from "@/router/index.js"
 const ENDPOINT = "/api/monitoring/";
 
 const monitorPlanning = {
@@ -184,6 +184,9 @@ const monitorPlanning = {
       state.errorMsg = error;
       state.dataMonitorPlanning = [];
       state.dataActiveMonitorPlanning = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
     // post / patch related
@@ -199,6 +202,9 @@ const monitorPlanning = {
       state.requestStatus = "ERROR";
       state.loadingPostPatchMonitorPlanning = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
     SET_EDITTED_ITEM(state, payload) {
       state.edittedItem = payload;
