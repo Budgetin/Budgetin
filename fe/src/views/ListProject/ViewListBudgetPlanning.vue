@@ -12,6 +12,7 @@
             @submitClicked="onSubmit"
             @okClicked="onOK"
             @deleteClicked="onDelete"
+            @restoreClicked="onRestore"
             class="view-list-budget-planning__detail">
             </form-edit-budget-planning>
             
@@ -40,6 +41,14 @@
         :title="delete_alert.title"
         :subtitle="delete_alert.subtitle"
         @okClicked="onAlertDeleteOk"
+        />
+
+        <success-error-alert
+        :success="restore_alert.success"
+        :show="restore_alert.show"
+        :title="restore_alert.title"
+        :subtitle="restore_alert.subtitle"
+        @okClicked="onAlertRestoreOk"
         />
     </v-container>
 </template>
@@ -113,6 +122,12 @@ export default {
             title: null,
             subtitle: null,
         },
+        restore_alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
     }),
     created() {
         this.getDetailItem();
@@ -125,7 +140,7 @@ export default {
         ...mapState("masterCoa", ["dataMasterCoa"]),
     },
     methods: {
-        ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById", "getHistory", "deleteAllBudgetById"]),
+        ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById", "getHistory", "deleteAllBudgetById", "restoreAllBudgetById"]),
         ...mapActions("masterCoa", ["getMasterCoa"]),
         
         setBreadcrumbs() {
@@ -166,13 +181,22 @@ export default {
             this.isView = false;
             this.setBreadcrumbs();
         },
-        onDelete(){
+        onDelete() {
             this.deleteAllBudgetById(this.$route.params.id)
             .then(() => {
                 this.onDeleteSuccess();
             })
             .catch((error) => {
                 this.onDeleteError(error);
+            });
+        },
+        onRestore() {
+            this.restoreAllBudgetById(this.$route.params.id)
+            .then(() => {
+                this.onRestoreSuccess();
+            })
+            .catch((error) => {
+                this.onRestoreError(error);
             });
         },
         onCancel() {
@@ -224,6 +248,22 @@ export default {
             this.delete_alert.success = false;
             this.delete_alert.title = "Failed to cancel";
             this.delete_alert.subtitle = error;
+        },
+        onAlertRestoreOk() {
+            this.restore_alert.show = false;
+            this.$router.go(-1);
+        },
+        onRestoreSuccess() {
+            this.restore_alert.show = true;
+            this.restore_alert.success = true;
+            this.restore_alert.title = "Restore Success";
+            this.restore_alert.subtitle = "Budget has been restored";
+        },
+        onRestoreError(error) {
+            this.restore_alert.show = true;
+            this.restore_alert.success = false;
+            this.restore_alert.title = "Failed to restore";
+            this.restore_alert.subtitle = error;
         },
         onOK() {
             return this.$router.go(-1);

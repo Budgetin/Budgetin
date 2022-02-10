@@ -19,6 +19,9 @@ const allBudget = {
     loadingDeleteItem:false,
     deleteStatus: "IDLE",
     deleteItem: [],
+    loadingRestoreItem:false,
+    restoreStatus: "IDLE",
+    restoreItem: [],
     edittedItemHistories: [],
     requestHistoriesStatus:"IDLE",
     loadingGetEdittedItemHistories: false,
@@ -146,6 +149,23 @@ const allBudget = {
           });
       });
     },
+    restoreAllBudgetById({ commit }, id) {
+      commit("SET_LOADING_RESTORE_ITEM", true);
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(ENDPOINT + `${id}/` + "restore/")
+          .then((response) => {
+            const data = response.data;
+            commit("SET_RESTORE_ITEM", data);
+            resolve(data);
+            store.dispatch("allBudget/getFromAPI");
+          })
+          .catch((error) => {
+            commit("RESTORE_ERROR", error);
+            reject(error);
+          });
+      });
+    },
     getHistory({ commit }, id) {
       commit("SET_REQUEST_STATUS"); 
       return new Promise((resolve, reject) => {
@@ -239,6 +259,22 @@ const allBudget = {
     DELETE_ERROR(state, error) {
       state.deleteStatus = "ERROR";
       state.loadingDeleteItem = false;
+      state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // restore item
+    SET_RESTORE_ITEM(state, payload) {
+      state.restoreItem = payload;
+    },
+    SET_LOADING_RESTORE_ITEM(state, payload) {
+      state.loadingRestoreItem = payload;
+    },
+    RESTORE_ERROR(state, error) {
+      state.restoreStatus = "ERROR";
+      state.loadingRestoreItem = false;
       state.errorMsg = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
