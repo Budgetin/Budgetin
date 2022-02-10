@@ -4,14 +4,11 @@
       <!-- edit form -->
       <v-col xs="12" sm="10" md="10" lg="10">
         <v-container>
-          <form-edit-planning
+          <form-budget-existing
             :form="form"
-            :isView="isView"
-            @editClicked="onEdit"
-            @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-edit-planning>
+          ></form-budget-existing>
         </v-container>
       </v-col>
 
@@ -39,42 +36,24 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormEditPlanning from "@/components/ListPlanning/FormEditPlanning";
+import FormBudgetExisting from "@/components/ListBudget/FormBudgetExisting";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "EditListPlanning",
-  components: { FormEditPlanning,SuccessErrorAlert},
+  name: "ListBudgetExisting",
+  components: {FormBudgetExisting,SuccessErrorAlert},
   created() {
-    this.getEdittedItem();
+
   },
   methods: {
-    ...mapActions("listPlanning", [
-      "patchListPlanning",
-      "getListPlanningById",
+    ...mapActions("listBudget", [
+      "postNewBudget",
     ]),
-    getEdittedItem() {
-        this.getListPlanningById(this.$route.params.id).then(() => {
-        this.setForm();
-      });
-    },
-    setForm() {
-      this.form = JSON.parse(
-        JSON.stringify(this.$store.state.listPlanning.edittedItem)
-      );
-    },
-    onEdit() {
-      this.isView = false;
-    },
-    onOK() {
+    onCancel() {
       this.$router.go(-1);
     },
-    onCancel() {
-      this.isView = true;
-      this.setForm();
-    },
     onSubmit(e) {
-      this.patchListPlanning(e)
-        .then(() => {
+      this.postNewBudget(e)
+      .then(() => {
           this.onSaveSuccess();
         })
         .catch((error) => {
@@ -95,76 +74,45 @@ export default {
     },
     onAlertOk() {
       this.alert.show = false;
-      this.isView = true;
-      this.getEdittedItem();
+      this.$router.go(-1);
     },
   },
   data: () => ({
     isView: true,
+    activeBudget: [],
     form: {
-    id: "",
-    is_budget: "",
-    expense_type: "",
-    planning_nominal: "",
-    planning_q1: "",
-    planning_q2: "",
-    planning_q3: "",
-    planning_q4: "",
-    realization_jan: "",
-    realization_feb: "",
-    realization_mar: "",
-    realization_apr: "",
-    realization_may: "",
-    realization_jun: "",
-    realization_jul: "",
-    realization_aug: "",
-    realization_sep: "",
-    realization_oct: "",
-    realization_nov: "",
-    realization_dec: "",
-    switching_in: "",
-    switching_out: "",
-    top_up: "",
-    returns: "",
-    allocate: "",
-    coa: "",
-    project_detail: {
-        id: "",
-        dcsp_id: "",
-        planning: {
-            id: "",
-            year: "",
-            due_date: "",
-            is_active: ""
-        },
-        project: {
-            id: "",
-            project_name: "",
-            project_description: "",
-            itfam_id: "",
-            is_tech: "",
-            start_year: "",
-            end_year: "",
-            total_investment_value: "",
-            product: {
-                id: "",
-                product_code: "",
-                strategy: ""
+        project : "",
+        project_name : "",
+        project_description : "",
+        biro : "",
+        rcc : "",
+        start_year : "",
+        end_year : "",
+        total_investment_value : "",
+        product : "",
+        is_tech : "",
+        planning : "",
+        project_type : "",
+        dcsp_id : "",
+        budget:[
+            {
+                coa : "",
+                expense_type : "",
+                planning_q1 : "",
+                planning_q2 : "",
+                planning_q3 : "",
+                planning_q4 : ""
             },
-            biro: {
-                id: "",
-                code: "",
-                name: "",
-                rcc: ""
-            }
-        },
-        project_type: ""
+            {
+                coa : "",
+                expense_type : "",
+                planning_q2 : "",
+                planning_q1 : "",
+                planning_q3 : "",
+                planning_q4 : ""
+            },
+        ]
     },
-    created_by: "",
-    updated_by: "",
-    created_at: "",
-    updated_at: ""
-},
     alert: {
       show: false,
       success: null,
@@ -176,21 +124,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#list-planning {
+#list-budget {
   width: 80%;
   margin: 0px auto;
 
-  .list-planning__header {
+  .list-budget__header {
     padding-left: 32px;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .list-planning__input {
+  .list-budget__input {
     padding: 10px 32px;
   }
 
-  .list-planning__btn {
+  .list-budget__btn {
     text-align: end;
 
     button {
@@ -198,14 +146,14 @@ export default {
     }
   }
 
-  .list-planning__container {
+  .list-budget__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 8px;
   }
 
-  .list-planning__card {
+  .list-budget__card {
     button {
       width: 8rem;
     }
@@ -214,8 +162,8 @@ export default {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #list-planning {
-    .list-planning__btn {
+  #list-budget {
+    .list-budget__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -224,7 +172,7 @@ export default {
         margin: 0px 0px 32px 0px;
       }
     }
-    .list-planning__card {
+    .list-budget__card {
       flex-direction: column;
       button {
         width: 16rem !important;

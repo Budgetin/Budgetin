@@ -1,10 +1,10 @@
 <template>
-  <v-app id="list-planning">
-    <v-container class="list-planning__container outer-container">
+  <v-app id="list-budget">
+    <v-container class="list-budget__container outer-container">
       <v-row no-gutters>
-        <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          <v-header class="list-planning__header">Budget Planning</v-header>
-        </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+              <v-subheader class="list-budget__header">List of Budgets</v-subheader>
+          </v-col>
         <v-tabs 
           v-model="tab" 
           color="blue" 
@@ -31,8 +31,8 @@
           <!---------------------------- ACTIVE ---------------------------->
 
           <v-data-table
-            :items="dataListPlanning"
-            :loading="loadingGetListPlanning"
+            :items="dataListBudget"
+            :loading="loadingGetListBudget"
             :headers="listColumn"
             :search="search"
             v-if="tab==0"
@@ -42,7 +42,7 @@
                 <v-row class="mb-5" no-gutters>
                   <v-col cols="12" xs="12" sm="6" md="3" lg="3" no-gutters>
                     <v-text-field
-                      class="list-planning__input"
+                      class="list-budget__input"
                       v-model="search"
                       append-icon="mdi-magnify"
                       label="Search"
@@ -72,7 +72,7 @@
                     md="8"
                     lg="8"
                     no-gutters
-                    class="list-planning__btn"
+                    class="list-budget__btn"
                   >
                     <v-btn rounded color="primary" @click="onUpdateRealization">Update Realization </v-btn>
                     <v-btn rounded color="primary" @click="onInputOption"> Add Budget </v-btn>
@@ -115,8 +115,8 @@
           <!---------------------------- INACTIVE ---------------------------->
 
           <v-data-table
-            :items="dataListInactivePlanning"
-            :loading="loadingGetListInactivePlanning"
+            :items="dataListInactiveBudget"
+            :loading="loadingGetListInactiveBudget"
             :headers="listColumn"
             :search="search"
             v-if="tab==1"
@@ -126,7 +126,7 @@
                 <v-row class="mb-5" no-gutters>
                   <v-col cols="12" xs="12" sm="6" md="3" lg="3" no-gutters>
                     <v-text-field
-                      class="list-planning__input"
+                      class="list-budget__input"
                       v-model="search"
                       append-icon="mdi-magnify"
                       label="Search"
@@ -156,7 +156,7 @@
                     md="8"
                     lg="8"
                     no-gutters
-                    class="list-planning__btn"
+                    class="list-budget__btn"
                   >
                     <v-btn rounded color="primary" @click="onUpdateRealization" v-if="tab==0">Update Realization </v-btn>
                     <v-btn rounded color="primary" @click="onInputOption" v-if="tab==0"> Add Budget </v-btn>
@@ -210,10 +210,10 @@
 
       <v-row no-gutters>
         <v-dialog v-model="dialogUpload" persistent width="25rem">
-          <upload-file-planning
+          <upload-file-budget
             @cancelClicked="onCancel"
-            @uploadClicked="uploadPlanning">
-          </upload-file-planning>
+            @uploadClicked="uploadBudget">
+          </upload-file-budget>
         </v-dialog>
       </v-row>
 
@@ -295,15 +295,15 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import ColumnOption from "@/components/ListPlanning/ColumnOption";
-import FormChooseProjectType from "@/components/ListPlanning/FormChooseProjectType"
-import UploadFilePlanning from "@/components/ListPlanning/UploadFilePlanning"
-import UploadFileRealization from "@/components/ListPlanning/UploadFileRealization"
+import ColumnOption from "@/components/ListBudget/ColumnOption";
+import FormChooseProjectType from "@/components/ListBudget/FormChooseProjectType"
+import UploadFileBudget from "@/components/ListBudget/UploadFileBudget"
+import UploadFileRealization from "@/components/ListBudget/UploadFileRealization"
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
 export default {
-  name: "ListPlanning",
-  components: {SuccessErrorAlert,ColumnOption,FormChooseProjectType,BinaryYesNoChip,UploadFilePlanning,UploadFileRealization},
+  name: "ListBudget",
+  components: {SuccessErrorAlert,ColumnOption,FormChooseProjectType,BinaryYesNoChip,UploadFileBudget,UploadFileRealization},
   watch: {},
   data: () => ({
     dialog: false,
@@ -351,7 +351,7 @@ export default {
         },
         {
           text: "Budget This Year",
-          value: "planning_nominal",
+          value: "budget_nominal",
           width: "9rem",
         },
         { text: "Planning Q1", value: "planning_q1", width: "5rem" },
@@ -451,17 +451,17 @@ export default {
     },
   }),
   created() {
-    this.getListPlanning();
-    this.getListInactivePlanning();
+    this.getListBudget();
+    this.getListInactiveBudget();
     this.getSelectedHeader();
     this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("listPlanning", ["loadingGetListPlanning", "loadingGetListInactivePlanning", "dataListPlanning", "dataListInactivePlanning", "isLoading"]),
+    ...mapState("listBudget", ["loadingGetListBudget", "loadingGetListInactiveBudget", "dataListBudget", "dataListInactiveBudget", "isLoading"]),
     ...mapState("choosedColumn", ["listColumn"]),
   },
   methods: {
-    ...mapActions("listPlanning", ["getListPlanning", "getListInactivePlanning", "postListPlanning","importPlanning","importRealization"]),
+    ...mapActions("listBudget", ["getListBudget", "getListInactiveBudget", "postListBudget","importBudget","importRealization"]),
     getSelectedHeader() {
       if (this.listColumn.length == 1) {
         this.dataTable.selectedHeader = [].concat(this.dataTable.Listheader);
@@ -476,12 +476,12 @@ export default {
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
-          text: "List Planning",
+          text: "List Budget",
           link: true,
           exact: true,
           disabled: false,
           to: {
-            name: "ListPlanning",
+            name: "ListBudget",
           },
         }
       ]);
@@ -494,7 +494,7 @@ export default {
       this.dialog = !this.dialog;
     },
     onEdit(item) {
-      this.$store.commit("listPlanning/SET_EDITTED_ITEM", item);
+      this.$store.commit("listBudget/SET_EDITTED_ITEM", item);
     },
     onCancel() {
       this.dialogChoose = false;
@@ -524,7 +524,7 @@ export default {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "Planning has been saved successfully";
+      this.alert.subtitle = "Budget has been saved successfully";
     },
     onSaveError(error) {
       this.dialog = false;
@@ -536,8 +536,8 @@ export default {
     onAlertOk() {
       this.alert.show = false;
     },
-    uploadPlanning(data){
-      this.importPlanning(data)
+    uploadBudget(data){
+      this.importBudget(data)
         .then(() => {
           this.onSaveSuccess();
         })
@@ -584,10 +584,10 @@ export default {
       this.dialogUpload = false;
     },
     onNewClick(){
-      return this.$router.push("/listPlanning/new");
+      return this.$router.push("/listBudget/new");
     },
     onExistingClick(){
-      return this.$router.push("/listPlanning/existing");
+      return this.$router.push("/listBudget/existing");
     },
     onTabChange(){
       console.log(this.tab);
@@ -656,18 +656,18 @@ table > thead > tr > th:nth-child(4) {
 </style>
 
 <style lang="scss" scoped>
-#list-planning {
-  .list-planning__header {
+#list-budget {
+  .list-budget__header {
     padding-left: 32px;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .list-planning__input {
+  .list-budget__input {
     padding: 10px 32px;
   }
 
-  .list-planning__btn {
+  .list-budget__btn {
     text-align: end;
 
     button {
@@ -675,7 +675,7 @@ table > thead > tr > th:nth-child(4) {
     }
   }
 
-  .list-planning__container {
+  .list-budget__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -685,8 +685,8 @@ table > thead > tr > th:nth-child(4) {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #list-planning {
-    .list-planning__btn {
+  #list-budget {
+    .list-budget__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -695,7 +695,7 @@ table > thead > tr > th:nth-child(4) {
         margin: 0px 0px 32px 0px;
       }
     }
-    .list-planning__card {
+    .list-budget__card {
       flex-direction: column;
       button {
         width: 16rem !important;

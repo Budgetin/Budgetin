@@ -100,23 +100,23 @@ const routes = [
       },
       {
         path: "listBudget",
-        name: "ListPlanning",
-        component: () => import("@/views/ListPlanning/ListPlanning"),
+        name: "ListBudget",
+        component: () => import("@/views/ListBudget/ListBudget"),
       },
       {
         path: "/listBudget/new",
-        name: "ListPlanningNew",
-        component: () => import("@/views/ListPlanning/ListPlanningNew"),
+        name: "ListBudgetNew",
+        component: () => import("@/views/ListBudget/ListBudgetNew"),
       },
       {
         path: "/listBudget/existing",
-        name: "ListPlanningExisting",
-        component: () => import("@/views/ListPlanning/ListPlanningExisting"),
+        name: "ListBudgetExisting",
+        component: () => import("@/views/ListBudget/ListBudgetExisting"),
       },
       {
         path: "/listBudget/:id/view",
         name: "EditListPlanning",
-        component: () => import("@/views/ListPlanning/EditListPlanning"),
+        component: () => import("@/views/ListBudget/EditListPlanning"),
       },
       {
         path: "/login",

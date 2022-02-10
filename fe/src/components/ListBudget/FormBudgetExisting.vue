@@ -25,7 +25,7 @@
               <div>
                 <v-select
                   v-model="form.planning"
-                  :items="dataActiveListPlanning"
+                  :items="dataActiveListBudget"
                   item-text="year"
                   item-value="id"
                   placeholder="Year"
@@ -538,12 +538,12 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import formatting from "@/mixins/formatting";
 export default {
-  name: "FormPlanningExisting",
+  name: "FormBudgetExisting",
   props: ["form", "isView", "isNew"],
   mixins: [formatting],
   created() {
     this.getListProject();
-    this.getListActivePlanning();
+    this.getListActiveBudget();
     this.getAllProjectType();
     this.getAllBiro();
     this.getMasterProduct();
@@ -582,8 +582,8 @@ export default {
       "dataListProject",
       "edittedItem"
     ]),
-    ...mapState("listPlanning", [
-      "dataActiveListPlanning"
+    ...mapState("listBudget", [
+      "dataActiveListBudget"
     ]),
     ...mapState("projectType", [
       "dataProjectType",
@@ -635,8 +635,8 @@ export default {
       "getListProject",
       "getListProjectById"
     ]),
-    ...mapActions("listPlanning", [
-      "getListActivePlanning"
+    ...mapActions("listBudget", [
+      "getListActiveBudget"
     ]),
     ...mapActions("projectType", [
       "getAllProjectType",

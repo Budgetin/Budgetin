@@ -4,11 +4,14 @@
       <!-- edit form -->
       <v-col xs="12" sm="10" md="10" lg="10">
         <v-container>
-          <form-planning-new
+          <form-edit-planning
             :form="form"
+            :isView="isView"
+            @editClicked="onEdit"
+            @okClicked="onOK"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-planning-new>
+          ></form-edit-planning>
         </v-container>
       </v-col>
 
@@ -36,24 +39,42 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormPlanningNew from "@/components/ListPlanning/FormPlanningNew";
+import FormEditPlanning from "@/components/ListBudget/FormEditPlanning";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "ListPlanningNew",
-  components: {FormPlanningNew,SuccessErrorAlert},
+  name: "EditListPlanning",
+  components: { FormEditPlanning,SuccessErrorAlert},
   created() {
-
+    this.getEdittedItem();
   },
   methods: {
     ...mapActions("listPlanning", [
-      "postNewPlanning",
+      "patchListPlanning",
+      "getListPlanningById",
     ]),
-    onCancel() {
+    getEdittedItem() {
+        this.getListPlanningById(this.$route.params.id).then(() => {
+        this.setForm();
+      });
+    },
+    setForm() {
+      this.form = JSON.parse(
+        JSON.stringify(this.$store.state.listPlanning.edittedItem)
+      );
+    },
+    onEdit() {
+      this.isView = false;
+    },
+    onOK() {
       this.$router.go(-1);
     },
+    onCancel() {
+      this.isView = true;
+      this.setForm();
+    },
     onSubmit(e) {
-      this.postNewPlanning(e)
-      .then(() => {
+      this.patchListPlanning(e)
+        .then(() => {
           this.onSaveSuccess();
         })
         .catch((error) => {
@@ -74,44 +95,76 @@ export default {
     },
     onAlertOk() {
       this.alert.show = false;
-      this.$router.go(-1);
+      this.isView = true;
+      this.getEdittedItem();
     },
   },
   data: () => ({
     isView: true,
-    activePlanning: [],
     form: {
-        itfam_id : "",
-        project_name : "",
-        project_description : "",
-        biro : "",
-        start_year : "",
-        end_year : "",
-        total_investment_value : "",
-        product : "",
-        is_tech : "",
-        planning : "",
-        project_type : "",
-        dcsp_id : "",
-        budget:[
-            {
-                coa : "",
-                expense_type : "",
-                planning_q1 : "",
-                planning_q2 : "",
-                planning_q3 : "",
-                planning_q4 : ""
+    id: "",
+    is_budget: "",
+    expense_type: "",
+    planning_nominal: "",
+    planning_q1: "",
+    planning_q2: "",
+    planning_q3: "",
+    planning_q4: "",
+    realization_jan: "",
+    realization_feb: "",
+    realization_mar: "",
+    realization_apr: "",
+    realization_may: "",
+    realization_jun: "",
+    realization_jul: "",
+    realization_aug: "",
+    realization_sep: "",
+    realization_oct: "",
+    realization_nov: "",
+    realization_dec: "",
+    switching_in: "",
+    switching_out: "",
+    top_up: "",
+    returns: "",
+    allocate: "",
+    coa: "",
+    project_detail: {
+        id: "",
+        dcsp_id: "",
+        planning: {
+            id: "",
+            year: "",
+            due_date: "",
+            is_active: ""
+        },
+        project: {
+            id: "",
+            project_name: "",
+            project_description: "",
+            itfam_id: "",
+            is_tech: "",
+            start_year: "",
+            end_year: "",
+            total_investment_value: "",
+            product: {
+                id: "",
+                product_code: "",
+                strategy: ""
             },
-            {
-                coa : "",
-                expense_type : "",
-                planning_q2 : "",
-                planning_q1 : "",
-                planning_q3 : "",
-                planning_q4 : ""
-            },
-        ]
+            biro: {
+                id: "",
+                code: "",
+                name: "",
+                rcc: ""
+            }
+        },
+        project_type: ""
     },
+    created_by: "",
+    updated_by: "",
+    created_at: "",
+    updated_at: ""
+},
     alert: {
       show: false,
       success: null,

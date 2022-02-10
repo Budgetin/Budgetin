@@ -7,18 +7,18 @@ const PLANNING_ENPOINT = "/api/planning/"
 const UPLOAD_PLANNING = "/api/import/list_planning/"
 const UPLOAD_REALIZATION = "/api/import/realisasi/"
 
-const listPlanning = {
+const listBudget = {
   namespaced: true,
   state: {
     isLoading : false, //for loading when import planning
     errorMessage : "",
-    loadingGetListPlanning: false, // for loading table
-    loadingGetListInactivePlanning: false, // for loading table
+    loadingGetListBudget: false, // for loading table
+    loadingGetListInactiveBudget: false, // for loading table
     loadingGetEdittedItem: false,
-    loadingPostPatchListPlanning: false, // for loading post/patch
-    dataListPlanning: [], // for v-data-table
-    dataListInactivePlanning: [], // for v-data-table
-    dataActiveListPlanning: [], //for dropdown
+    loadingPostPatchListBudget: false, // for loading post/patch
+    dataListBudget: [], // for v-data-table
+    dataListInactiveBudget: [], // for v-data-table
+    dataActiveListBudget: [], //for dropdown
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     requestInactiveStatus: "IDLE", //listplanning inactive
     requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
@@ -32,12 +32,12 @@ const listPlanning = {
   },
   actions: {
     
-//==Page ListPlanning.vue
+//==Page ListBudget.vue
 
-    //Get List Budget Planning (Active)
-    getListPlanning() {
-      if (store.state.listPlanning.requestStatus !== "SUCCESS")
-        store.dispatch("listPlanning/getFromAPI");
+    //Get List Budget (Active)
+    getListBudget() {
+      if (store.state.listBudget.requestStatus !== "SUCCESS")
+        store.dispatch("listBudget/getFromAPI");
     },
     getFromAPI({ commit }) {
       commit("GET_INIT");
@@ -55,9 +55,9 @@ const listPlanning = {
         });
     },
 
-    getListInactivePlanning() {
-      if (store.state.listPlanning.requestInactiveStatus !== "SUCCESS")
-        store.dispatch("listPlanning/getFromInactiveAPI");
+    getListInactiveBudget() {
+      if (store.state.listBudget.requestInactiveStatus !== "SUCCESS")
+        store.dispatch("listBudget/getFromInactiveAPI");
     },
     getFromInactiveAPI({ commit }) {
       commit("GET_INACTIVE_INIT");
@@ -75,9 +75,9 @@ const listPlanning = {
         });
     },
 
-    getListActivePlanning() {
-      if (store.state.listPlanning.requestActiveStatus !== "SUCCESS")
-        store.dispatch("listPlanning/getFromActiveAPI");
+    getListActiveBudget() {
+      if (store.state.listBudget.requestActiveStatus !== "SUCCESS")
+        store.dispatch("listBudget/getFromActiveAPI");
     },
     getFromActiveAPI({ commit }) {
       commit("GET_INIT");
@@ -95,7 +95,7 @@ const listPlanning = {
         });
     },
     
-    getListPlanningById({ commit }, id) {
+    getListBudgetById({ commit }, id) {
       // commit("SET_EDITTED_ITEM_HISTORIES", []);
       commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
@@ -114,7 +114,7 @@ const listPlanning = {
       });
     },
 
-    postListPlanning({ commit }, payload) {
+    postListBudget({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
@@ -122,7 +122,7 @@ const listPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listPlanning/getFromAPI");
+            store.dispatch("listBudget/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -131,8 +131,8 @@ const listPlanning = {
               errorMsg = "";
               switch (error.response.status) {
                 case 400:
-                  if (error.response.data.hasOwnProperty("Planning_name")) {
-                    errorMsg += error.response.data.Planning_name;
+                  if (error.response.data.hasOwnProperty("Budget_name")) {
+                    errorMsg += error.response.data.Budget_name;
                   }
                   break;
 
@@ -147,7 +147,7 @@ const listPlanning = {
       });
     },
 
-    postNewPlanning({ commit }, payload) {
+    postNewBudget({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
@@ -155,7 +155,7 @@ const listPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            //store.dispatch("listPlanning/getFromAPI");
+            //store.dispatch("listBudget/getFromAPI");
           })
           .catch((error) => {
             let errorMsg =
@@ -164,8 +164,8 @@ const listPlanning = {
               errorMsg = "";
               switch (error.response.status) {
                 case 400:
-                  if (error.response.data.hasOwnProperty("Planning_name")) {
-                    errorMsg += error.response.data.Planning_name;
+                  if (error.response.data.hasOwnProperty("Budget_name")) {
+                    errorMsg += error.response.data.Budget_name;
                   }
                   break;
 
@@ -181,7 +181,7 @@ const listPlanning = {
     },
 
 
-    importPlanning({ commit }, data) {
+    importBudget({ commit }, data) {
       commit("SET_LOADING", true);
       let formData = new FormData();
       formData.append("file", data.files);
@@ -221,7 +221,7 @@ const listPlanning = {
           });
       });
     },
-    // patchListPlanning({ commit }, payload) {
+    // patchListBudget({ commit }, payload) {
     //   commit("POST_PATCH_INIT");
     //   const url = `${BUDGET_ENDPOINT}${payload.id}/`;
     //   return new Promise((resolve, reject) => {
@@ -230,7 +230,7 @@ const listPlanning = {
     //       .then((response) => {
     //         resolve(response);
     //         commit("POST_PATCH_SUCCESS");
-    //         store.dispatch("listPlanning/getFromAPI");
+    //         store.dispatch("listBudget/getFromAPI");
     //         // store.dispatch("masterCategory/getFromAPI");
     //       })
     //       .catch((error) => {
@@ -240,8 +240,8 @@ const listPlanning = {
     //           errorMsg = "";
     //           switch (error.response.status) {
     //             case 400:
-    //               if (error.response.data.hasOwnProperty("Planning_name")) {
-    //                 errorMsg += error.response.data.Planning_name;
+    //               if (error.response.data.hasOwnProperty("Budget_name")) {
+    //                 errorMsg += error.response.data.Budget_name;
     //               }
     //               break;
 
@@ -271,56 +271,56 @@ const listPlanning = {
     // get related
     GET_INIT(state) {
       state.requestStatus = "PENDING";
-      state.loadingGetListPlanning = true;
+      state.loadingGetListBudget = true;
     },
-    GET_SUCCESS(state, dataListPlanning) {
+    GET_SUCCESS(state, dataListBudget) {
       state.requestStatus = "SUCCESS";
-      state.loadingGetListPlanning = false;
-      state.dataListPlanning = dataListPlanning;
+      state.loadingGetListBudget = false;
+      state.dataListBudget = dataListBudget;
     },
     GET_INACTIVE_INIT(state) {
       state.requestInactiveStatus = "PENDING";
-      state.loadingGetListPlanning = true;
+      state.loadingGetListBudget = true;
     },
-    GET_INACTIVE_SUCCESS(state, dataListInactivePlanning) {
+    GET_INACTIVE_SUCCESS(state, dataListInactiveBudget) {
       state.requestInactiveStatus = "SUCCESS";
-      state.loadingGetListInactivePlanning = false;
-      state.dataListInactivePlanning = dataListInactivePlanning;
+      state.loadingGetListInactiveBudget = false;
+      state.dataListInactiveBudget = dataListInactiveBudget;
     },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveListPlanning) {
+    GET_ACTIVE_DATA_UPDATE(state, dataActiveListBudget) {
       state.requestActiveStatus = "IDLE";
-      state.dataActiveListPlanning = dataActiveListPlanning;
+      state.dataActiveListBudget = dataActiveListBudget;
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
-      state.loadingGetListPlanning = false;
+      state.loadingGetListBudget = false;
       state.errorMsg = error;
-      state.dataListPlanning = [];
-      state.dataActiveListPlanning = [];
+      state.dataListBudget = [];
+      state.dataActiveListBudget = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
     },
     GET_INACTIVE_ERROR(state, error) {
       state.requestInactiveStatus = "ERROR";
-      state.loadingGetListInactivePlanning = false;
+      state.loadingGetListInactiveBudget = false;
       state.errorMsg = error;
-      state.dataListInactivePlanning = [];
-      state.dataActiveListPlanning = [];
+      state.dataListInactiveBudget = [];
+      state.dataActiveListBudget = [];
     },
 
     // post / patch related
     POST_PATCH_INIT(state) {
       state.postPatchStatus = "PENDING";
-      state.loadingPostPatchListPlanning = true;
+      state.loadingPostPatchListBudget = true;
     },
     POST_PATCH_SUCCESS(state) {
       state.postPatchStatus = "SUCCESS";
-      state.loadingPostPatchListPlanning = false;
+      state.loadingPostPatchListBudget = false;
     },
     POST_PATCH_ERROR(state, error) {
       state.postPatchStatus = "ERROR";
-      state.loadingPostPatchListPlanning = false;
+      state.loadingPostPatchListBudget = false;
       state.errorMsg = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
@@ -351,4 +351,4 @@ const listPlanning = {
   },
 };
 
-export default listPlanning;
+export default listBudget;

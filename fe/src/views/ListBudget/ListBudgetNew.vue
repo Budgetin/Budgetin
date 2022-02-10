@@ -4,11 +4,11 @@
       <!-- edit form -->
       <v-col xs="12" sm="10" md="10" lg="10">
         <v-container>
-          <form-planning-existing
+          <form-budget-new
             :form="form"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-          ></form-planning-existing>
+          ></form-budget-new>
         </v-container>
       </v-col>
 
@@ -36,23 +36,23 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormPlanningExisting from "@/components/ListPlanning/FormPlanningExisting";
+import FormBudgetNew from "@/components/ListBudget/FormBudgetNew";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
-  name: "ListPlanningExisting",
-  components: {FormPlanningExisting,SuccessErrorAlert},
+  name: "ListBudgetNew",
+  components: {FormBudgetNew,SuccessErrorAlert},
   created() {
 
   },
   methods: {
-    ...mapActions("listPlanning", [
-      "postNewPlanning",
+    ...mapActions("listBudget", [
+      "postNewBudget",
     ]),
     onCancel() {
       this.$router.go(-1);
     },
     onSubmit(e) {
-      this.postNewPlanning(e)
+      this.postNewBudget(e)
       .then(() => {
           this.onSaveSuccess();
         })
@@ -79,13 +79,12 @@ export default {
   },
   data: () => ({
     isView: true,
-    activePlanning: [],
+    activeBudget: [],
     form: {
-        project : "",
+        itfam_id : "",
         project_name : "",
         project_description : "",
         biro : "",
-        rcc : "",
         start_year : "",
         end_year : "",
         total_investment_value : "",
@@ -124,21 +123,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#list-planning {
+#list-budget {
   width: 80%;
   margin: 0px auto;
 
-  .list-planning__header {
+  .list-budget__header {
     padding-left: 32px;
     font-size: 1.25rem;
     font-weight: 600;
   }
 
-  .list-planning__input {
+  .list-budget__input {
     padding: 10px 32px;
   }
 
-  .list-planning__btn {
+  .list-budget__btn {
     text-align: end;
 
     button {
@@ -146,14 +145,14 @@ export default {
     }
   }
 
-  .list-planning__container {
+  .list-budget__container {
     padding: 24px 0px;
     // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 8px;
   }
 
-  .list-planning__card {
+  .list-budget__card {
     button {
       width: 8rem;
     }
@@ -162,8 +161,8 @@ export default {
 
 @media only screen and (max-width: 600px) {
   /* For mobile phones */
-  #list-planning {
-    .list-planning__btn {
+  #list-budget {
+    .list-budget__btn {
       text-align: center;
       padding: 0px 32px;
 
@@ -172,7 +171,7 @@ export default {
         margin: 0px 0px 32px 0px;
       }
     }
-    .list-planning__card {
+    .list-budget__card {
       flex-direction: column;
       button {
         width: 16rem !important;
