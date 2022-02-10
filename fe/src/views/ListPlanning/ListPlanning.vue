@@ -66,7 +66,6 @@
                     <v-btn rounded color="primary" @click="onUpdateRealization">Update Realization </v-btn>
                     <v-btn rounded color="primary" @click="onInputOption"> Add Planning </v-btn>
                     <v-btn rounded color="primary" @click="onExport">
-                          <v-icon left> mdi-export-variant </v-icon>
                           Download
                       </v-btn>
                   </v-col>
@@ -353,7 +352,7 @@ export default {
     ...mapState("choosedColumn", ["listColumn"]),
   },
   methods: {
-    ...mapActions("listPlanning", ["getListPlanning", "postListPlanning","importPlanning","importRealization"]),
+    ...mapActions("listPlanning", ["getListPlanning", "postListPlanning","importPlanning","importRealization","downloadBudget"]),
     getSelectedHeader() {
       if (this.listColumn.length == 1) {
         this.dataTable.selectedHeader = [].concat(this.dataTable.Listheader);
@@ -464,7 +463,17 @@ export default {
         });
     },
     onExport() {
-
+      this.downloadBudget()
+        .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.dialog = false;
+          this.alert.show = true;
+          this.alert.success = false;
+          this.alert.title = "Download Failed";
+          this.alert.subtitle = error.message;
+        });
     },
     onUpload(){
       this.dialogUpload = true;
