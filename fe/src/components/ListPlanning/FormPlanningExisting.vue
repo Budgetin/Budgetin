@@ -1,6 +1,6 @@
 <template>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
-        <h1 style="font-weight:bold;">Create Planning for Existing Project</h1>
+        <h1 style="font-weight:bold;">Create Budget Planning for Existing Project</h1>
         <v-card>
           <v-card-title>
               <strong> Project Information </strong>
@@ -570,10 +570,10 @@ export default {
         { text: "COA", value: "coa", width: "15%" },
         { text: "CAPEX/OPEX", value: "expense_type", width: "10%" },
         { text: "Budget This Year", value: "planning_nominal", width: "15%" },
-        { text: "Q1", value: "planning_q1", width: "12%" },
-        { text: "Q2", value: "planning_q2", width: "12%" },
-        { text: "Q3", value: "planning_q3", width: "12%" },
-        { text: "Q4", value: "planning_q4", width: "12%" },
+        { text: "Planning Q1", value: "planning_q1", width: "12%" },
+        { text: "Planning Q2", value: "planning_q2", width: "12%" },
+        { text: "Planning Q3", value: "planning_q3", width: "12%" },
+        { text: "Planning Q4", value: "planning_q4", width: "12%" },
       ],
     },
   }),
