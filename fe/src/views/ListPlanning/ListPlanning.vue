@@ -2,29 +2,40 @@
   <v-app id="list-planning">
     <v-container class="list-planning__container outer-container">
       <v-row no-gutters>
-                <v-tabs v-model="tab" color="primary" align-with-title>
-                    <v-tabs-slider color="grey"></v-tabs-slider>
-                    <v-tab
-                        v-for="item in items"
-                        :key="item">
-                        {{ item }}
-                    </v-tab>
-                </v-tabs>
-            </v-row>
-            <v-divider></v-divider>
-      <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          <v-subheader class="list-planning__header">List Budget</v-subheader>
+          <v-header class="list-planning__header">Budget Planning</v-header>
         </v-col>
+        <v-tabs 
+          v-model="tab" 
+          color="blue" 
+          centered
+          grow
+          @change="onTabChange"
+          >
+            <v-tab
+                v-for="item in items"
+                :key="item"
+                align="center">
+                {{ item }}
+            </v-tab>
+        </v-tabs>
       </v-row>
-
+      <v-row no-gutters>
+        
+      </v-row>
+            <v-divider></v-divider>
+      <br>
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+
+          <!---------------------------- ACTIVE ---------------------------->
+
           <v-data-table
             :items="dataListPlanning"
             :loading="loadingGetListPlanning"
             :headers="listColumn"
             :search="search"
+            v-if="tab==0"
           >
             <template v-slot:top>
               <v-toolbar-title>
@@ -64,8 +75,92 @@
                     class="list-planning__btn"
                   >
                     <v-btn rounded color="primary" @click="onUpdateRealization">Update Realization </v-btn>
-                    <v-btn rounded color="primary" @click="onInputOption"> Add Planning </v-btn>
+                    <v-btn rounded color="primary" @click="onInputOption"> Add Budget </v-btn>
                     <v-btn rounded color="primary" @click="onExport">
+                          Download
+                      </v-btn>
+                  </v-col>
+                  
+                </v-row>
+              </v-toolbar-title>
+            </template>
+
+            <template v-slot:[`item.actions`]="{ item }">
+              <router-link
+                style="text-decoration: none"
+                :to="{
+                  name: 'EditListPlanning',
+                  params: { id: item.id },
+                }"
+              >
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                      mdi-eye
+                    </v-icon>
+                  </template>
+                  <span>View/Edit</span>
+                </v-tooltip>
+              </router-link>
+            </template>
+            <template v-slot:[`item.is_budget`]="{ item }">
+                <binary-yes-no-chip :boolean="item.is_budget"> </binary-yes-no-chip>
+            </template>
+            <template v-slot:[`item.project_detail.project.is_tech`]="{ item }">
+                <binary-yes-no-chip :boolean="item.project_detail.project.is_tech"> </binary-yes-no-chip>
+            </template>
+          </v-data-table>
+
+          <!---------------------------- INACTIVE ---------------------------->
+
+          <v-data-table
+            :items="dataListInactivePlanning"
+            :loading="loadingGetListInactivePlanning"
+            :headers="listColumn"
+            :search="search"
+            v-if="tab==1"
+          >
+            <template v-slot:top>
+              <v-toolbar-title>
+                <v-row class="mb-5" no-gutters>
+                  <v-col cols="12" xs="12" sm="6" md="3" lg="3" no-gutters>
+                    <v-text-field
+                      class="list-planning__input"
+                      v-model="search"
+                      append-icon="mdi-magnify"
+                      label="Search"
+                      hide-details
+                    >
+                    </v-text-field>
+                  </v-col>
+
+                  <v-col
+                    cols="6"
+                    xs="6"
+                    sm="2"
+                    md="1"
+                    lg="1"
+                    no-gutters
+                    class="column__btn"
+                  >
+                    <v-btn class="mt-2" color="primary" @click="chooseColumn">
+                      <v-icon>mdi-table-column-plus-before</v-icon>
+                    </v-btn>
+                  </v-col>
+
+                  <v-col
+                    cols="12"
+                    xs="12"
+                    sm="6"
+                    md="8"
+                    lg="8"
+                    no-gutters
+                    class="list-planning__btn"
+                  >
+                    <v-btn rounded color="primary" @click="onUpdateRealization" v-if="tab==0">Update Realization </v-btn>
+                    <v-btn rounded color="primary" @click="onInputOption" v-if="tab==0"> Add Budget </v-btn>
+                    <v-btn rounded color="primary" @click="onExport" v-if="tab==0">
+                          <v-icon left> mdi-export-variant </v-icon>
                           Download
                       </v-btn>
                   </v-col>
@@ -258,10 +353,22 @@ export default {
           value: "planning_nominal",
           width: "9rem",
         },
-        { text: "Q1", value: "planning_q1", width: "5rem" },
-        { text: "Q2", value: "planning_q2", width: "5rem" },
-        { text: "Q3", value: "planning_q3", width: "5rem" },
-        { text: "Q4", value: "planning_q4", width: "5rem" },
+        { text: "Planning Q1", value: "planning_q1", width: "5rem" },
+        { text: "Planning Q2", value: "planning_q2", width: "5rem" },
+        { text: "Planning Q3", value: "planning_q3", width: "5rem" },
+        { text: "Planning Q4", value: "planning_q4", width: "5rem" },
+        { text: "Realization Jan", value: "realization_jan", width: "5rem" },
+        { text: "Realization Feb", value: "realization_feb", width: "5rem" },
+        { text: "Realization Mar", value: "realization_mar", width: "5rem" },
+        { text: "Realization Apr", value: "realization_apr", width: "5rem" },
+        { text: "Realization May", value: "realization_may", width: "5rem" },
+        { text: "Realization Jun", value: "realization_jun", width: "5rem" },
+        { text: "Realization Jul", value: "realization_jul", width: "5rem" },
+        { text: "Realization Aug", value: "realization_aug", width: "5rem" },
+        { text: "Realization Sep", value: "realization_sep", width: "5rem" },
+        { text: "Realization Oct", value: "realization_oct", width: "5rem" },
+        { text: "Realization Nov", value: "realization_nov", width: "5rem" },
+        { text: "Realization Dec", value: "realization_dec", width: "5rem" },
         {
           text: "Strategy",
           value: "project_detail.project.product.strategy",
@@ -344,11 +451,12 @@ export default {
   }),
   created() {
     this.getListPlanning();
+    this.getListInactivePlanning();
     this.getSelectedHeader();
     this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("listPlanning", ["loadingGetListPlanning", "dataListPlanning","isLoading"]),
+    ...mapState("listPlanning", ["loadingGetListPlanning", "loadingGetListInactivePlanning", "dataListPlanning", "dataListInactivePlanning", "isLoading"]),
     ...mapState("choosedColumn", ["listColumn"]),
   },
   methods: {
@@ -367,7 +475,7 @@ export default {
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
-          text: "List Budget",
+          text: "List Planning",
           link: true,
           exact: true,
           disabled: false,
@@ -409,15 +517,6 @@ export default {
         });
         this.setColumn(this.dataTable.selectedHeader);
       }
-    },
-    onSubmit(e) {
-      this.postListPlanning(e)
-        .then(() => {
-          this.onSaveSuccess();
-        })
-        .catch((error) => {
-          this.onSaveError(error);
-        });
     },
     onSaveSuccess() {
       this.dialog = false;
@@ -498,6 +597,9 @@ export default {
     },
     onExistingClick(){
       return this.$router.push("/listPlanning/existing");
+    },
+    onTabChange(){
+      console.log(this.tab);
     }
   },
 };
@@ -566,7 +668,7 @@ table > thead > tr > th:nth-child(4) {
 #list-planning {
   .list-planning__header {
     padding-left: 32px;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 600;
   }
 

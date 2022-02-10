@@ -1,6 +1,6 @@
 <template>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
-        <h1 style="font-weight:bold;">Create Planning for Existing Project</h1>
+        <h1 style="font-weight:bold;">Create Budget Planning for Existing Project</h1>
         <v-card>
           <v-card-title>
               <strong> Project Information </strong>
@@ -565,15 +565,15 @@ export default {
     projectTypeEnable: false,
     dataTable: {
       budgetPlanningHeaders: [
-        { text: "Action", value: "actions", align: "center", sortable: false},
-        { text: "Year", value: "year"},
-        { text: "COA", value: "coa"},
-        { text: "CAPEX/OPEX", value: "expense_type"},
-        { text: "Budget This Year", value: "planning_nominal"},
-        { text: "Q1", value: "planning_q1"},
-        { text: "Q2", value: "planning_q2"},
-        { text: "Q3", value: "planning_q3"},
-        { text: "Q4", value: "planning_q4"},
+        { text: "Action", value: "actions", align: "center", sortable: false, width: "3%"},
+        { text: "Year", value: "year", width: "9%" },
+        { text: "COA", value: "coa", width: "15%" },
+        { text: "CAPEX/OPEX", value: "expense_type", width: "10%" },
+        { text: "Budget This Year", value: "planning_nominal", width: "15%" },
+        { text: "Planning Q1", value: "planning_q1", width: "12%" },
+        { text: "Planning Q2", value: "planning_q2", width: "12%" },
+        { text: "Planning Q3", value: "planning_q3", width: "12%" },
+        { text: "Planning Q4", value: "planning_q4", width: "12%" },
       ],
     },
   }),

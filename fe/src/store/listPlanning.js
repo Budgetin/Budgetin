@@ -14,11 +14,14 @@ const listPlanning = {
     isLoading: false, //for loading when import planning
     errorMessage: "",
     loadingGetListPlanning: false, // for loading table
+    loadingGetListInactivePlanning: false, // for loading table
     loadingGetEdittedItem: false,
     loadingPostPatchListPlanning: false, // for loading post/patch
     dataListPlanning: [], // for v-data-table
+    dataListInactivePlanning: [], // for v-data-table
     dataActiveListPlanning: [], //for dropdown
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    requestInactiveStatus: "IDLE", //listplanning inactive
     requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
@@ -31,6 +34,7 @@ const listPlanning = {
   actions: {
     //==Page ListPlanning.vue
 
+    //Get List Budget Planning (Active)
     //Get List Budget Planning
     getListPlanning() {
       if (store.state.listPlanning.requestStatus !== "SUCCESS")
@@ -39,7 +43,7 @@ const listPlanning = {
     getFromAPI({ commit }) {
       commit("GET_INIT");
       getAPI
-        .get(BUDGET_ENDPOINT)
+        .get(BUDGET_ENDPOINT + "active/")
         .then((response) => {
           const cleanData = response.data;
           const sorted = cleanData.sort((a, b) =>
@@ -49,6 +53,26 @@ const listPlanning = {
         })
         .catch((error) => {
           commit("GET_ERROR", error);
+        });
+    },
+
+    getListInactivePlanning() {
+      if (store.state.listPlanning.requestInactiveStatus !== "SUCCESS")
+        store.dispatch("listPlanning/getFromInactiveAPI");
+    },
+    getFromInactiveAPI({ commit }) {
+      commit("GET_INACTIVE_INIT");
+      getAPI
+        .get(BUDGET_ENDPOINT + "inactive/")
+        .then((response) => {
+          const cleanData = response.data
+          const sorted = cleanData.sort((a, b) =>
+            a.update_at > b.update_at ? 1 : -1
+          );
+          commit("GET_INACTIVE_SUCCESS", sorted);
+        })
+        .catch((error) => {
+          commit("GET_INACTIVE_ERROR", error);
         });
     },
 
@@ -283,6 +307,15 @@ const listPlanning = {
       state.loadingGetListPlanning = false;
       state.dataListPlanning = dataListPlanning;
     },
+    GET_INACTIVE_INIT(state) {
+      state.requestInactiveStatus = "PENDING";
+      state.loadingGetListPlanning = true;
+    },
+    GET_INACTIVE_SUCCESS(state, dataListInactivePlanning) {
+      state.requestInactiveStatus = "SUCCESS";
+      state.loadingGetListInactivePlanning = false;
+      state.dataListInactivePlanning = dataListInactivePlanning;
+    },
     GET_ACTIVE_DATA_UPDATE(state, dataActiveListPlanning) {
       state.requestActiveStatus = "IDLE";
       state.dataActiveListPlanning = dataActiveListPlanning;
@@ -296,6 +329,13 @@ const listPlanning = {
       if (error.response.status == "401") {
         router.push({ name: "Login" });
       }
+    },
+    GET_INACTIVE_ERROR(state, error) {
+      state.requestInactiveStatus = "ERROR";
+      state.loadingGetListInactivePlanning = false;
+      state.errorMsg = error;
+      state.dataListInactivePlanning = [];
+      state.dataActiveListPlanning = [];
     },
 
     // post / patch related
