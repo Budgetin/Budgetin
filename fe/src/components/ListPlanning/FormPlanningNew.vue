@@ -233,34 +233,36 @@
             </v-col>
           <v-col cols="3">
               <div>
-                <v-select
-                  v-model="form.product"
-                  :items="dataMasterProduct"
-                  item-text="product_name"
-                  item-value="id"
-                  placeholder="Choose Product"
-                  outlined
-                  return-object
-                  :rules="validation.required"
-                  class="mr-2"
-                  :dense=true>
-                </v-select>
+                <v-combobox
+                hide-selected
+                v-model="form.product"
+                :items="dataMasterProduct"
+                item-text="product_name"
+                item-value="id"
+                placeholder="Choose Product"
+                outlined
+                return-object
+                :rules="validation.required"
+                class="mr-2"
+                :dense=true>
+              </v-combobox>
               </div>
             </v-col>
           <v-col cols="3">
               <div>
-                <v-select
-                  v-model="form.biro"
-                  :items="dataAllBiro"
-                  item-text="code"
-                  item-value="id"
-                  placeholder="Choose"
-                  outlined
-                  return-object
-                  :rules="validation.required"
-                  class="mr-2"
-                  :dense=true>
-                </v-select>
+                <v-combobox
+                hide-selected
+                v-model="form.biro"
+                :items="dataAllBiro"
+                item-text="code"
+                item-value="id"
+                placeholder="Choose"
+                outlined
+                return-object
+                :rules="validation.required"
+                class="mr-2"
+                :dense=true>
+              </v-combobox>
               </div>
             </v-col>
           <v-col cols="3">
@@ -306,19 +308,20 @@
         <v-row no-gutters >
           <v-col cols="3">
               <div>
-                <v-select
-                  v-model="budget.coa"
-                  :items="dataMasterCoa"
-                  item-text="name"
-                  item-value="id"
-                  placeholder="Select"
-                  outlined
-                  return-object
-                  :rules="validation.required"
-                  class="mr-2"
-                  :dense=true
-                  @input="onInput(budget)">
-                </v-select>
+                <v-combobox
+                hide-selected
+                v-model="budget.coa"
+                :items="dataMasterCoa"
+                item-text="name"
+                item-value="id"
+                placeholder="Select"
+                outlined
+                return-object
+                :rules="validation.required"
+                class="mr-2"
+                :dense=true
+                @input="onInput(budget)">
+              </v-combobox>
               </div>
             </v-col>
           <v-col cols="3">

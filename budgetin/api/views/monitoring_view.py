@@ -7,6 +7,7 @@ from api.models import Monitoring
 from api.serializers import MonitoringSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
+from api.permissions import IsAuthenticated, IsAdmin
 
 def construct_monitoring_dict(monitoring):
     monitoring_dict = model_to_dict(monitoring)
@@ -18,6 +19,7 @@ def construct_monitoring_dict(monitoring):
 class MonitoringViewSet(viewsets.ModelViewSet):
     queryset = Monitoring.objects.all()
     serializer_class = MonitoringSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
 
     def list(self, request, *args, **kwargs):
         parameter  = request.GET.get('planning')

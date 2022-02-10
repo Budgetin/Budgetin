@@ -74,6 +74,7 @@ export default {
     },
     onAlertOk() {
       this.alert.show = false;
+      this.$router.go(-1);
     },
   },
   data: () => ({

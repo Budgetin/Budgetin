@@ -12,12 +12,11 @@
           <v-col cols="4">
             For <strong class="red--text">*</strong>
           </v-col>
+          <v-spacer></v-spacer>
           <v-col cols="4">
             Project ID
           </v-col>
-          <v-col cols="4">
-            Project Type <strong class="red--text">*</strong>
-          </v-col>
+          
         </v-row>
 
         <!-- Kolom kolom -->
@@ -34,7 +33,8 @@
                   return-object
                   :rules="validation.required"
                   class="mr-2"
-                  :dense=true>
+                  :dense=true
+                  @change="onSelectProject">
                 </v-select>
               </div>
             </v-col>
@@ -50,6 +50,7 @@
             >
             </v-text-field>
           </v-col> -->
+          <v-spacer></v-spacer>
           <v-col cols="4"> 
             <v-text-field
               v-model="form.dcsp_id"
@@ -61,31 +62,17 @@
             >
             </v-text-field>
           </v-col>
-          <v-col cols="4">
-              <div>
-                <v-select
-                  v-model="form.project_type"
-                  :items="dataProjectTypeExisting"
-                  item-text="name"
-                  item-value="id"
-                  placeholder="Type"
-                  outlined
-                  return-object
-                  :rules="validation.required"
-                  class="mr-2"
-                  :dense=true>
-                </v-select>
-              </div>
-            </v-col>
-          
         </v-row>
         <v-row no-gutters>
-          <v-col cols="12">
+          <v-col cols="8">
             Project Name <strong class="red--text">*</strong>
+          </v-col>
+          <v-col cols="4">
+            Project Type <strong class="red--text">*</strong>
           </v-col>
         </v-row>
         <v-row no-gutters>
-          <v-col cols="12">
+          <v-col cols="8">
               <v-combobox
                 hide-selected
                 v-model="form.project"
@@ -95,11 +82,29 @@
                 placeholder="Search Project..."
                 outlined
                 return-object
+                :disabled="form.planning==''"
                 :rules="validation.required"
                 class="mr-2"
                 :dense=true
-                @change="onSelectProject">
+                @input="onSelectProject">
               </v-combobox>
+            </v-col>
+            <v-col cols="4">
+              <div>
+                <v-select
+                  v-model="form.project_type"
+                  :items="listProjectType"
+                  item-text="name"
+                  item-value="id"
+                  placeholder="Type"
+                  outlined
+                  return-object
+                  :rules="validation.required"
+                  class="mr-2"
+                  :dense=true
+                  :disabled="!projectTypeEnable">
+                </v-select>
+              </div>
             </v-col>
         </v-row>
 
@@ -118,6 +123,7 @@
               rows=4
               readonly
               placeholder="-"
+              :disabled="form.planning==''"
             >
             </v-textarea>
           </v-col>
@@ -149,6 +155,7 @@
               readonly
               placeholder="-"
               class="mr-2"
+              :disabled="form.planning==''"
             >
             </v-text-field>
           </v-col>
@@ -160,6 +167,7 @@
               readonly
               placeholder="-"
               class="mr-2"
+              :disabled="form.planning==''"
             >
             </v-text-field>
           </v-col>
@@ -171,6 +179,7 @@
               readonly
               placeholder="-"
               class="mr-2"
+              :disabled="form.planning==''"
             >
             </v-text-field>
           </v-col>
@@ -181,6 +190,7 @@
               dense
               readonly
               placeholder="-"
+              :disabled="form.planning==''"
             >
             </v-text-field>
           </v-col>
@@ -212,6 +222,7 @@
               readonly
               placeholder="-"
               class="mr-2"
+              :disabled="form.planning==''"
             >
             </v-text-field>
             </v-col>
@@ -223,6 +234,7 @@
               readonly
               placeholder="-"
               class="mr-2"
+              :disabled="form.planning==''"
             >
             </v-text-field>
             </v-col>
@@ -234,6 +246,7 @@
               readonly
               placeholder="-"
               class="mr-2"
+              :disabled="form.planning==''"
             >
             </v-text-field>
             </v-col>
@@ -244,6 +257,7 @@
               dense
               readonly
               placeholder="-"
+              :disabled="form.planning==''"
             >
             </v-text-field>
           </v-col>
@@ -251,12 +265,46 @@
         </v-card-text>
         </v-card>
         <!-- List Budget -->
+        <div v-if="budget_table.length > 0">
+        <br>
+        <v-card>
+          <v-card-title>
+            Budget List
+          </v-card-title>
+          <v-card-text>
+            <v-data-table
+            :headers="dataTable.budgetPlanningHeaders"
+            :loading="status"
+            :items="budget_table">
+              <template v-slot:[`item.actions`]="{ item }">
+                <!-- EDIT BUDGET PLANNING -->
+                <router-link
+                    style="text-decoration: none"
+                    :to="{
+                        name: 'ViewListBudgetPlanning',
+                        params: { id: item.id },
+                    }">
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on }">
+                            <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                                mdi-eye
+                            </v-icon>
+                        </template>
+                        <span>View/Edit</span>
+                    </v-tooltip>
+                </router-link>
+              </template>
+
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+        </div>
 
         <div v-for="(budget, index) in budgets" :key="budget.name">
           <br>
           <v-card>
             <v-card-title>
-              <strong> Budget {{'#' + (index + 1)}}</strong>
+              <strong> Budget {{'#' + (index + budget_table.length + 1)}}</strong>
             <v-spacer></v-spacer>
             <v-btn icon small @click="popBudgetByIndex(index)">
               <v-icon color="primary"> mdi-close </v-icon>
@@ -280,19 +328,20 @@
         <v-row no-gutters >
           <v-col cols="3">
               <div>
-                <v-select
-                  v-model="budget.coa"
-                  :items="dataMasterCoa"
-                  item-text="name"
-                  item-value="id"
-                  placeholder="Select"
-                  outlined
-                  return-object
-                  :rules="validation.required"
-                  class="mr-2"
-                  :dense=true
-                  @input="onInput(budget)">
-                </v-select>
+                <v-combobox
+                hide-selected
+                v-model="budget.coa"
+                :items="dataMasterCoa"
+                item-text="name"
+                item-value="id"
+                placeholder="Select"
+                outlined
+                return-object
+                :rules="validation.required"
+                class="mr-2"
+                :dense=true
+                @input="onInput(budget)">
+              </v-combobox>
               </div>
             </v-col>
           <v-col cols="3">
@@ -430,7 +479,10 @@
           <v-card-text>
           <v-row no-gutters>
             <v-col cols="6" align="left">
-              <v-btn rounded class="primary ml-3" @click="onAddNewBudget">
+              <v-btn 
+              rounded class="primary ml-3" 
+              @click="onAddNewBudget"
+              :disabled="form.planning==''">
                 Add Budget
               </v-btn>
             </v-col>
@@ -492,7 +544,7 @@ export default {
   created() {
     this.getListProject();
     this.getListActivePlanning();
-    this.getExistingProjectType();
+    this.getAllProjectType();
     this.getAllBiro();
     this.getMasterProduct();
     this.getMasterCoa();
@@ -508,16 +560,33 @@ export default {
       ],
     },
     budgets: [],
+    budget_table: [],
+    listProjectType: [],
+    projectTypeEnable: false,
+    dataTable: {
+      budgetPlanningHeaders: [
+        { text: "Action", value: "actions", align: "center", sortable: false, width: "3%"},
+        { text: "Year", value: "year", width: "9%" },
+        { text: "COA", value: "coa", width: "15%" },
+        { text: "CAPEX/OPEX", value: "expense_type", width: "10%" },
+        { text: "Budget This Year", value: "planning_nominal", width: "15%" },
+        { text: "Q1", value: "planning_q1", width: "12%" },
+        { text: "Q2", value: "planning_q2", width: "12%" },
+        { text: "Q3", value: "planning_q3", width: "12%" },
+        { text: "Q4", value: "planning_q4", width: "12%" },
+      ],
+    },
   }),
   computed: {
     ...mapState("listProject", [
-      "dataListProject"
+      "dataListProject",
+      "edittedItem"
     ]),
     ...mapState("listPlanning", [
       "dataActiveListPlanning"
     ]),
     ...mapState("projectType", [
-      "dataProjectTypeExisting"
+      "dataProjectType",
     ]),
     ...mapState("statusInfo", [
       "statusTechNonTech"
@@ -531,6 +600,9 @@ export default {
     ...mapState("masterCoa", [
       "dataMasterCoa"
     ]),
+    status: function () {
+      return this.budget_table ? false : true;
+    },
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
     },
@@ -560,13 +632,14 @@ export default {
   },
   methods: {
     ...mapActions("listProject", [
-      "getListProject"
+      "getListProject",
+      "getListProjectById"
     ]),
     ...mapActions("listPlanning", [
       "getListActivePlanning"
     ]),
     ...mapActions("projectType", [
-      "getExistingProjectType"
+      "getAllProjectType",
     ]),
     ...mapActions("allBiro", [
       "getAllBiro"
@@ -578,8 +651,8 @@ export default {
       "getMasterCoa"
     ]),
     onSelectProject(){
-      console.log(this.form.project.id);
-      if(this.form.project.id){
+      this.budgets = [];
+      if(this.form.project && this.form.project.id){
         this.form.project_description = this.form.project.project_description;
         this.form.itfam_id = this.form.project.itfam_id;
         this.form.start_year = this.form.project.start_year;
@@ -599,7 +672,38 @@ export default {
         this.form.product = "";
         this.form.biro = "";
         this.form.rcc = "";
+        this.form.project_type = "";
+        this.projectTypeEnable = false;
+        this.budget_table = [];
       }
+
+      if(this.form.project && this.form.project.id){
+        this.getListProjectById(this.form.project.id).then(() => {
+          var project_detail = this.edittedItem.project_detail.find((x)=> x.planning.id==this.form.planning.id);
+          if(project_detail){
+            this.projectTypeEnable = false;
+            const result = this.dataProjectType.filter((project_type) => {
+              return project_type.name == project_detail.project_type;
+            });
+            
+            this.listProjectType = JSON.parse(JSON.stringify(result));
+            this.form.project_type = this.listProjectType[0];
+            this.budget_table = project_detail.budget;
+
+          }else{
+            this.budget_table = [];
+            this.form.project_type = "";
+            this.projectTypeEnable = true;
+            const cleanData = JSON.parse(JSON.stringify(this.dataProjectType));
+            var index = cleanData.findIndex(function(o){
+              return o.name === 'New';
+            });
+            if (index !== -1) cleanData.splice(index, 1);
+            this.listProjectType = cleanData;
+          }
+        });
+      }
+
       
     },
     onInput(budget){
@@ -637,7 +741,6 @@ export default {
     },
     onSubmit() {
       let validate = this.$refs.form.validate();
-      //let nominal = parseInt(this.form.minimum_item_origin.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''))
       if (validate) {
         const tempBudgets = JSON.parse(JSON.stringify(this.budgets)); //make a temporary budget object
         tempBudgets.forEach(element => {
@@ -650,18 +753,9 @@ export default {
         });
 
         const payload = {
-            itfam_id : this.form.itfam_id,
-            project_name : this.form.project_name,
-            project_description : this.form.project_description,
-            biro : this.form.biro.id,
-            start_year : this.form.start_year,
-            end_year : this.form.end_year,
-            total_investment_value : this.form.total_investment_value,
-            product : this.form.product.id,
-            is_tech : this.form.is_tech.id = 1 ? true : false,
+            project_id : this.form.project.id,
             planning : this.form.planning.id,
-            project_type : this.getProjectType.id,
-            dcsp_id : this.form.dcsp_id,
+            project_type : this.form.project_type.id,
             budget: tempBudgets
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));

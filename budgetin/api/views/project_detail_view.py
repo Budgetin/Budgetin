@@ -1,19 +1,12 @@
-from django.forms import model_to_dict
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import action
 
 from api.models.project_detail_model import ProjectDetail
-from api.models.user_model import User
 from api.serializers import ProjectDetailSerializer, ProjectDetailResponseSerializer
-from api.utils.date_format import timestamp_to_strdateformat
-from rest_framework.decorators import action
-from copy import deepcopy
 
 from api.models import ProjectDetail
 from api.serializers import ProjectDetailSerializer
-from api.utils.date_format import timestamp_to_strdateformat
-
+from api.permissions import IsAuthenticated, IsAdmin
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 
@@ -21,6 +14,7 @@ from api.utils.enum import ActionEnum, TableEnum
 class ProjectDetailViewSet(viewsets.ModelViewSet):
     queryset = ProjectDetail.objects.all()
     serializer_class = ProjectDetailSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
 
     def list(self, request, *args, **kwargs):
         queryset = ProjectDetail.objects.select_related('project_type', 'created_by', 'updated_by', 'planning', 

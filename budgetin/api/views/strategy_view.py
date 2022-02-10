@@ -20,7 +20,7 @@ def is_duplicate(id, name):
 class StrategyViewSet(viewsets.ModelViewSet):
     queryset = Strategy.objects.all()
     serializer_class = StrategySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdmin]
     
     def list(self, request, *args, **kwargs):
         queryset = Strategy.objects.select_related('updated_by','created_by').all()
