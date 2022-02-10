@@ -1,11 +1,12 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
-import router from "@/router/index.js"
+import router from "@/router/index.js";
 const LIST_PLANNING_ENDPOINT = "/api/budget/list_planning/";
 const BUDGET_ENDPOINT = "/api/budget/";
-const PLANNING_ENPOINT = "/api/planning/"
-const UPLOAD_PLANNING = "/api/import/list_planning/"
-const UPLOAD_REALIZATION = "/api/import/realisasi/"
+const PLANNING_ENPOINT = "/api/planning/";
+const UPLOAD_PLANNING = "/api/import/list_planning/";
+const UPLOAD_REALIZATION = "/api/import/realisasi/";
+const DOWNLOAD_BUDGET = "/api/download_list_planning/";
 
 const listBudget = {
   namespaced: true,
@@ -28,7 +29,7 @@ const listBudget = {
     edittedItemHistories: [],
   },
   getters: {
-    value: (state) => state.value
+    value: (state) => state.value,
   },
   actions: {
     
@@ -44,7 +45,7 @@ const listBudget = {
       getAPI
         .get(BUDGET_ENDPOINT + "active/")
         .then((response) => {
-          const cleanData = response.data
+          const cleanData = response.data;
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
           );
@@ -84,7 +85,7 @@ const listBudget = {
       getAPI
         .get(PLANNING_ENPOINT + "active")
         .then((response) => {
-          const cleanData = response.data
+          const cleanData = response.data;
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
           );
@@ -201,7 +202,6 @@ const listBudget = {
       });
     },
 
-
     importRealization({ commit }, data) {
       commit("SET_LOADING", true);
       let formData = new FormData();
@@ -261,10 +261,10 @@ const listBudget = {
     SET_LOADING(state, data) {
       state.isLoading = data;
     },
-    SET_UPLOAD_ERROR(state,error){
-      state.errorMessage = error
-      if(error.response.status =="401"){
-        router.push({ name: 'Login'});
+    SET_UPLOAD_ERROR(state, error) {
+      state.errorMessage = error;
+      if (error.response.status == "401") {
+        router.push({ name: "Login" });
       }
     },
 
@@ -322,8 +322,8 @@ const listBudget = {
       state.postPatchStatus = "ERROR";
       state.loadingPostPatchListBudget = false;
       state.errorMsg = error;
-      if(error.response.status =="401"){
-        router.push({ name: 'Login'});
+      if (error.response.status == "401") {
+        router.push({ name: "Login" });
       }
     },
     SET_EDITTED_ITEM(state, payload) {
