@@ -57,7 +57,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return project
 
     def list_for_export():
-        queryset = Project.objects.all()
+        queryset = Project.objects.filter(is_active=True).all()
         for project in queryset:
             project.format_timestamp("%d %B %Y")
             
