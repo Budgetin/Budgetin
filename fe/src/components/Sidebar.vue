@@ -42,7 +42,7 @@
           <v-list-item-icon>
             <v-icon>mdi-folder-network </v-icon>
           </v-list-item-icon>
-          <v-list-item-title>List Project</v-list-item-title>
+          <v-list-item-title>Project List</v-list-item-title>
         </v-list-item>
         <v-list-group
           :value="true"

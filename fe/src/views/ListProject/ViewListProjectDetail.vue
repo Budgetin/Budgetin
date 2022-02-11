@@ -97,7 +97,7 @@ export default {
             let param = this.isView ? "View Project Detail" : "Edit Project Detail";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "List Project",
+                    text: "Project List",
                     link: true,
                     exact: true,
                     disabled: false,

@@ -94,7 +94,7 @@
                 v-model="planningNominal"
                 outlined
                 dense
-                :disabled="isView"
+                disabled
                 :rules="validation.targetRule">
                 </v-text-field>
               </div>
@@ -210,7 +210,7 @@ export default {
         (v) => !!v || "This field is required"
       ],
       targetRule: [
-        v => /^[0-9.,]+$/.test(v) || "This field is numbers only",
+        v => /^[0-9.,]+$/.test(v) ||"This field is numbers only",
       ],
     },
 

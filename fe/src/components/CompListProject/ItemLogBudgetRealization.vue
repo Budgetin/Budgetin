@@ -1,7 +1,7 @@
 <template>
     <v-container class="mt-5">
-        <!-- <v-row>COA: {{data.serialized_data.coa}}</v-row>
-        <v-row>Expense Type: {{data.serialized_data.expense_type}}</v-row> -->
+        <v-row>COA: {{data.serialized_data.coa}}</v-row>
+        <v-row>Expense Type: {{data.serialized_data.expense_type}}</v-row>
         <v-row>Allocate: {{data.serialized_data.allocate}}</v-row>
         <v-row>Top Up: {{data.serialized_data.top_up}}</v-row>
         <v-row>Return: {{data.serialized_data.return}}</v-row>
@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  name: "ItemLogBudgetPlanning",
+  name: "ItemLogBudgetRealization",
   props: ["data"],
   computed:{
 

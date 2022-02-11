@@ -58,10 +58,12 @@
                 :data="item"
               />
             </template>
-            <template v-if="item.table == 'budget'">
+            <template v-if="item.table == 'budgetPlanning'">
               <item-log-budget-planning
                 :data="item"
               />
+            </template>
+            <template v-if="item.table == 'budgetRealization'">
               <item-log-budget-realization
                 :data="item"
               />
@@ -117,6 +119,7 @@ export default {
   },
   components: { ItemLogMasterCoa,ItemLogMasterProduct,ItemLogMasterStrategy,ItemLogMasterUser,ItemLogStartPlanning,ItemLogMonitorPlanning,ItemLogBudgetPlanning,ItemLogBudgetRealization,ItemLogListProjectDetail,ItemLogListProject },
   created() {
+    
   },
   methods: {
     getColor(action) {

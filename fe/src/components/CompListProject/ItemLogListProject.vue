@@ -12,9 +12,11 @@
 </template>
 
 <script>
+import formatting from "@/mixins/formatting";
 export default {
   name: "ItemLogListProject",
   props: ["data"],
+  mixins: [formatting],
   computed:{
     getTech() {
         return this.data.serialized_data.is_tech == true ? "Tech" : "Non-Tech";

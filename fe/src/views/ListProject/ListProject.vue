@@ -14,7 +14,7 @@
             <v-divider></v-divider> -->
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <v-subheader class="list-project__header">List of Projects</v-subheader>
+                    <v-subheader class="list-project__header">Project List</v-subheader>
                 </v-col>
             </v-row>
 
@@ -22,6 +22,8 @@
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-data-table
                     :headers="dataTable.headers"
+                    fixed-header
+                    height="80vh"
                     :loading="loadingGetListProject"
                     :items="dataListProject"
                     :search="search">
@@ -93,16 +95,16 @@ export default {
         dataTable: {
             headers: [
                 { text: "Action", value: "actions", align: "center", sortable: false},
-                { text: "ID", value: "id"},
+                { text: "ID", value: "id", width: "4rem"},
                 { text: "ID ITFAM", value: "itfam_id"},
-                { text: "Project Name", value: "project_name"},
-                { text: "Project Description", value: "project_description" },
-                { text: "RCC", value: "biro.rcc"},
-                { text: "Biro", value: "biro.code"},
-                { text: "Product Code", value: "product.product_code"},
-                { text: "Product Name", value: "product.product_name"},
-                { text: "Start Year", value: "start_year"},
-                { text: "End Year", value: "end_year"},
+                { text: "Project Name", value: "project_name", width: "8rem"},
+                { text: "Project Description", value: "project_description", width: "10rem"},
+                { text: "RCC", value: "biro.rcc", width: "5rem"},
+                { text: "Biro", value: "biro.code", width: "5rem"},
+                { text: "Product Code", value: "product.product_code", width: "8rem"},
+                { text: "Product Name", value: "product.product_name", width: "8rem"},
+                { text: "Start Year", value: "start_year", width: "6rem"},
+                { text: "End Year", value: "end_year", width: "6rem"},
             ],
         },
 
@@ -141,10 +143,10 @@ export default {
         ...mapActions("listProject", ["getListProject"]),
 
         setBreadcrumbs() {
-            let param = this.isView ? "View Detail Project" : "Edit Project";
+            let param = this.isView ? "View Project Detail" : "Edit Project";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "List of Projects",
+                    text: "Project List",
                     link: true,
                     exact: true,
                     disabled: false,
@@ -169,6 +171,13 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+.v-data-table /deep/ .sticky-header {
+    position: sticky;
+    top: 0;
+}
+</style>
 
 <style lang="scss" scoped>
 .searchBar {

@@ -26,7 +26,7 @@
           </v-col>
 
           <!-- COA -->
-          <v-col cols="4"> COA <strong class="red--text">*</strong>
+          <v-col cols="4"> COA
               <div class="EditBudgetRealization__field">
                 <v-select
                 v-model="form.coa"
@@ -45,7 +45,7 @@
           </v-col>
 
           <!-- CAPEX/OPEX -->
-          <v-col cols="4"> Expense Type <strong class="red--text">*</strong>
+          <v-col cols="4"> Expense Type
               <div class="EditBudgetRealization__field">
                 <v-select
                 v-model="form.expense_type"
@@ -69,7 +69,7 @@
 
         <!-- ALLOCATE -->  
         <v-row no-gutters>
-          <v-col cols="4"> Allocate <strong class="red--text">*</strong>
+          <v-col cols="4"> Allocate
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -84,7 +84,7 @@
           </v-col>
 
           <!-- TOP UP -->
-          <v-col cols="4"> Top Up <strong class="red--text">*</strong>
+          <v-col cols="4"> Top Up
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -99,7 +99,7 @@
           </v-col>
 
           <!-- RETURN -->
-          <v-col cols="4"> Return <strong class="red--text">*</strong>
+          <v-col cols="4"> Return
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -116,7 +116,7 @@
 
         <!-- SWITCHING IN -->  
         <v-row no-gutters>
-          <v-col cols="4"> Switching In <strong class="red--text">*</strong>
+          <v-col cols="4"> Switching In
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -131,7 +131,7 @@
           </v-col>
 
           <!-- SWITCHING OUT -->
-          <v-col cols="4"> Switching Out <strong class="red--text">*</strong>
+          <v-col cols="4"> Switching Out
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -151,7 +151,7 @@
 
         <!-- JANUARY -->
         <v-row no-gutters>
-          <v-col cols="4"> January <strong class="red--text">*</strong>
+          <v-col cols="4"> January
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -166,7 +166,7 @@
           </v-col>
 
           <!-- FEBRUARY -->
-          <v-col cols="4"> February <strong class="red--text">*</strong>
+          <v-col cols="4"> February
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -181,7 +181,7 @@
           </v-col>
 
           <!-- MARCH -->
-          <v-col cols="4"> March <strong class="red--text">*</strong>
+          <v-col cols="4"> March
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -198,7 +198,7 @@
 
         <!-- APRIL -->
         <v-row no-gutters>
-          <v-col cols="4"> April <strong class="red--text">*</strong>
+          <v-col cols="4"> April
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -213,7 +213,7 @@
           </v-col>
 
           <!-- MAY -->
-          <v-col cols="4"> May <strong class="red--text">*</strong>
+          <v-col cols="4"> May
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -228,7 +228,7 @@
           </v-col>
 
           <!-- JUNE -->
-          <v-col cols="4"> June <strong class="red--text">*</strong>
+          <v-col cols="4"> June
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -245,7 +245,7 @@
 
         <!-- JULY -->
         <v-row no-gutters>
-          <v-col cols="4"> July <strong class="red--text">*</strong>
+          <v-col cols="4"> July
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -260,7 +260,7 @@
           </v-col>
 
           <!-- AUGUST -->
-          <v-col cols="4"> August <strong class="red--text">*</strong>
+          <v-col cols="4"> August
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -275,7 +275,7 @@
           </v-col>
 
           <!-- SEPTEMBER -->
-          <v-col cols="4"> September <strong class="red--text">*</strong>
+          <v-col cols="4"> September
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -292,7 +292,7 @@
 
         <!-- OCTOBER -->
         <v-row no-gutters>
-          <v-col cols="4"> October <strong class="red--text">*</strong>
+          <v-col cols="4"> October
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -307,7 +307,7 @@
           </v-col>
 
           <!-- NOVEMBER -->
-          <v-col cols="4"> November <strong class="red--text">*</strong>
+          <v-col cols="4"> November
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -322,7 +322,7 @@
           </v-col>
 
           <!-- DECEMBER -->
-          <v-col cols="4"> December <strong class="red--text">*</strong>
+          <v-col cols="4"> December
               <div class="EditBudgetRealization__field">
                 <v-text-field
                 suffix="IDR"
@@ -382,7 +382,7 @@ export default {
         (v) => !!v || "This field is required"
       ],
       targetRule: [
-        v => /^[0-9.,]+$/.test(v) || "This field is numbers only",
+        v => /(^[0-9.,]+$|^$|[null])/.test(v) || "This field is numbers only",
       ],
     },
 
