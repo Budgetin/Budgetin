@@ -1,6 +1,6 @@
 <template>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
-        <h1 style="font-weight:bold;">Create Planning for New Project</h1>
+        <h1 style="font-weight:bold;">Create Budget Planning for New Project</h1>
   <v-card>  
     <v-card-title>
               <strong> Project Detail</strong>
@@ -26,7 +26,7 @@
               <div>
                 <v-select
                   v-model="form.planning"
-                  :items="dataActiveListPlanning"
+                  :items="dataActiveListBudget"
                   item-text="year"
                   item-value="id"
                   placeholder="Year"
@@ -515,11 +515,11 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import formatting from "@/mixins/formatting";
 export default {
-  name: "FormPlanningNew",
+  name: "FormBudgetNew",
   props: ["form", "isView", "isNew"],
   mixins: [formatting],
   created() {
-    this.getListActivePlanning();
+    this.getListActiveBudget();
     this.getAllProjectType();
     this.getAllBiro();
     this.getMasterProduct();
@@ -538,8 +538,8 @@ export default {
     budgets: [],
   }),
   computed: {
-    ...mapState("listPlanning", [
-      "dataActiveListPlanning"
+    ...mapState("listBudget", [
+      "dataActiveListBudget"
     ]),
     ...mapState("projectType", [
       "dataProjectType"
@@ -587,8 +587,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions("listPlanning", [
-      "getListActivePlanning"
+    ...mapActions("listBudget", [
+      "getListActiveBudget"
     ]),
     ...mapActions("projectType", [
       "getAllProjectType"

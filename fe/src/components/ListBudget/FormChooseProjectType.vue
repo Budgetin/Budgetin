@@ -3,7 +3,7 @@
     <v-card>
 
       <v-card-title>
-        Plan for...
+        Plan Budget for...
         <v-spacer></v-spacer>
         <v-btn icon small @click="onCancel">
           <v-icon color="primary"> mdi-close </v-icon>

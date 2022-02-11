@@ -1,40 +1,56 @@
 <template>
-    <v-app id="view-list-budget-planning">
-        <v-container>
-            <v-row no-gutters>
-                <!-- VIEW LIST BUDGET PLANNING -->
-                <form-edit-budget-planning
-                :form="form"
-                :isView="isView"
-                :dataAllBudget="dataAllBudget"
-                :dataMasterCoa="dataMasterCoa"
-                @editClicked="onEdit"
-                @cancelClicked="onCancel"
-                @submitClicked="onSubmit"
-                @okClicked="onOK"
-                class="view-list-budget-planning__detail">
-                </form-edit-budget-planning>
-                
-                <!-- LOG HISTORY -->
-                <!-- <v-col xs="12" sm="6" md="6" lg="5">
-                    <v-container>
-                        <timeline-log
-                            :items="itemsHistory"
-                            v-if="itemsHistory">
-                        </timeline-log>
-                    </v-container>
-                </v-col> -->
-            </v-row>
+    <v-container>
+        <v-row no-gutters>
+            <!-- VIEW LIST BUDGET PLANNING -->
+            <form-edit-budget-planning
+            :form="form"
+            :isView="isView"
+            :dataAllBudget="dataAllBudget"
+            :dataMasterCoa="dataMasterCoa"
+            @editClicked="onEdit"
+            @cancelClicked="onCancel"
+            @submitClicked="onSubmit"
+            @okClicked="onOK"
+            @deleteClicked="onDelete"
+            @restoreClicked="onRestore"
+            class="view-list-budget-planning__detail">
+            </form-edit-budget-planning>
+            
+            <!-- LOG HISTORY -->
+            <v-col xs="12" sm="6" md="6" lg="5">
+                <v-container>
+                    <timeline-log
+                        :items="itemsHistory"
+                        v-if="itemsHistory">
+                    </timeline-log>
+                </v-container>
+            </v-col>
+        </v-row>
 
-            <success-error-alert
-            :success="alert.success"
-            :show="alert.show"
-            :title="alert.title"
-            :subtitle="alert.subtitle"
-            @okClicked="onAlertOk"
-            />
-        </v-container>
-    </v-app>
+        <success-error-alert
+        :success="alert.success"
+        :show="alert.show"
+        :title="alert.title"
+        :subtitle="alert.subtitle"
+        @okClicked="onAlertOk"
+        />
+
+        <success-error-alert
+        :success="delete_alert.success"
+        :show="delete_alert.show"
+        :title="delete_alert.title"
+        :subtitle="delete_alert.subtitle"
+        @okClicked="onAlertDeleteOk"
+        />
+
+        <success-error-alert
+        :success="restore_alert.success"
+        :show="restore_alert.show"
+        :title="restore_alert.title"
+        :subtitle="restore_alert.subtitle"
+        @okClicked="onAlertRestoreOk"
+        />
+    </v-container>
 </template>
 
 <script>
@@ -100,31 +116,31 @@ export default {
             title: null,
             subtitle: null,
         },
+        delete_alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
+        restore_alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
     }),
     created() {
         this.getDetailItem();
-        // this.getHistoryItem();
+        this.getHistoryItem();
         this.setBreadcrumbs();
         this.getMasterCoa();
     },
-    // mounted() {
-    //     this.showItem = this.budgetPlanning.project_detail;
-
-    //     console.log(this.showItem);
-    //     this.budgetItem = [];
-    //     for (let i = 0; i < this.showItem.length; i++) {
-    //         for (let j = 0; j < this.showItem[i].budget.length; j++) {
-    //             this.budgetItem.push(this.showItem[i].budget[j]);
-    //         }
-    //     }
-    //     console.log(this.budgetItem);
-    // },
     computed: {
         ...mapState("allBudget", ["loadingGetAllBudget", "dataAllBudget"]),
         ...mapState("masterCoa", ["dataMasterCoa"]),
     },
     methods: {
-        ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById"]),
+        ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById", "getHistory", "deleteAllBudgetById", "restoreAllBudgetById"]),
         ...mapActions("masterCoa", ["getMasterCoa"]),
         
         setBreadcrumbs() {
@@ -145,12 +161,12 @@ export default {
                 },
             ]);
         },
-        // getHistoryItem() {
-        //     this.getHistory(this.$route.params.id).then(() => {
-        //         this.itemsHistory = JSON.parse(
-        //             JSON.stringify(this.$store.state.listProject.edittedItemHistories));
-        //     });
-        // },
+        getHistoryItem() {
+            this.getHistory(this.$route.params.id).then(() => {
+                this.itemsHistory = JSON.parse(
+                    JSON.stringify(this.$store.state.allBudget.edittedItemHistories));
+            });
+        },
         getDetailItem() {
             this.getAllBudgetById(this.$route.params.id).then(() => {
                 this.setForm();
@@ -164,6 +180,24 @@ export default {
         onEdit() {
             this.isView = false;
             this.setBreadcrumbs();
+        },
+        onDelete() {
+            this.deleteAllBudgetById(this.$route.params.id)
+            .then(() => {
+                this.onDeleteSuccess();
+            })
+            .catch((error) => {
+                this.onDeleteError(error);
+            });
+        },
+        onRestore() {
+            this.restoreAllBudgetById(this.$route.params.id)
+            .then(() => {
+                this.onRestoreSuccess();
+            })
+            .catch((error) => {
+                this.onRestoreError(error);
+            });
         },
         onCancel() {
             this.isView = true;
@@ -197,7 +231,39 @@ export default {
             this.alert.show = false;
             this.isView = true;
             this.getDetailItem();
-            // this.getHistoryItem();
+            this.getHistoryItem();
+        },
+        onAlertDeleteOk() {
+            this.delete_alert.show = false;
+            this.$router.go(-1);
+        },
+        onDeleteSuccess() {
+            this.delete_alert.show = true;
+            this.delete_alert.success = true;
+            this.delete_alert.title = "Cancel Success";
+            this.delete_alert.subtitle = "Budget has been cancelled";
+        },
+        onDeleteError(error) {
+            this.delete_alert.show = true;
+            this.delete_alert.success = false;
+            this.delete_alert.title = "Failed to cancel";
+            this.delete_alert.subtitle = error;
+        },
+        onAlertRestoreOk() {
+            this.restore_alert.show = false;
+            this.$router.go(-1);
+        },
+        onRestoreSuccess() {
+            this.restore_alert.show = true;
+            this.restore_alert.success = true;
+            this.restore_alert.title = "Restore Success";
+            this.restore_alert.subtitle = "Budget has been restored";
+        },
+        onRestoreError(error) {
+            this.restore_alert.show = true;
+            this.restore_alert.success = false;
+            this.restore_alert.title = "Failed to restore";
+            this.restore_alert.subtitle = error;
         },
         onOK() {
             return this.$router.go(-1);
@@ -213,45 +279,42 @@ export default {
 .data-table {
     margin: 40px;
 }
-
-#view-list-budget-planning {
-    .view-list-budget-planning__header {
-        padding-top: 32px;
-        padding-bottom: 32px;
-        padding-left: 32px;
-        font-size: 1.25rem;
-        font-weight: 600;
-        min-width: 80%;
+.view-list-budget-planning__header {
+    padding-top: 32px;
+    padding-bottom: 32px;
+    padding-left: 32px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    min-width: 80%;
+}
+.view-list-budget-planning__detail {
+    border-radius: 8px;
+    margin: 1% auto !important;
+    width: 50%;
+    height: 90%;
+}
+.view-list-budget-planning__input {
+    padding: 10px 32px;
+}
+.view-list-budget-planning__btn {
+    text-align: end;
+    button {
+        margin: 10px 32px;
     }
-    .view-list-budget-planning__detail {
-        border-radius: 8px;
-        margin: 1% auto !important;
-        width: 50%;
-        height: 90%;
-    }
-    .view-list-budget-planning__input {
-        padding: 10px 32px;
-    }
-    .view-list-budget-planning__btn {
-        text-align: end;
-        button {
-            margin: 10px 32px;
-        }
-    }
-    .view-list-budget-planning__container {
-        padding: 24px 0px;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        border-radius: 8px;
-        max-height: 90%;
-    }
-    .view-list-budget-planning__cardText {
-        flex-grow: 4;
-        max-height: 90%;
-        overflow-y: scroll;
-    }
-    .view-list-budget-planning__field {
-        min-width: 150px;
-    }
+}
+.view-list-budget-planning__container {
+    padding: 24px 0px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 8px;
+    max-height: 90%;
+}
+.view-list-budget-planning__cardText {
+    flex-grow: 4;
+    max-height: 90%;
+    overflow-y: scroll;
+}
+.view-list-budget-planning__field {
+    min-width: 150px;
 }
 
 @media only screen and (max-width: 600px) {

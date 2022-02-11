@@ -1,6 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
-
+import router from "@/router/index.js"
 const ENDPOINT = "api/project_detail/";
 
 const projectDetail = {
@@ -150,7 +150,7 @@ const projectDetail = {
       commit("SET_REQUEST_STATUS"); 
       return new Promise((resolve, reject) => {
       getAPI
-        .get("/api/auditlog?table=project&entity=" + `${id}`)
+        .get("/api/auditlog?table=project_detail&entity=" + `${id}`)
         .then((response) => {
           const data = response.data;
           const sorted = data.sort((a, b) =>
@@ -187,6 +187,9 @@ const projectDetail = {
       state.errorMsg = error;
       state.dataProjectDetail = [];
       state.dataActiveProjectDetail = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
     // post / patch related
@@ -202,6 +205,9 @@ const projectDetail = {
       state.requestStatus = "ERROR";
       state.loadingPostPatchProjectDetail = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
     SET_EDITTED_ITEM(state, payload) {
       state.edittedItem = payload;

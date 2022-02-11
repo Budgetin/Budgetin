@@ -1,7 +1,7 @@
 <template>
     <v-app id="list-project">
         <v-container class="list-project__container outer-container">
-            <v-row no-gutters>
+            <!-- <v-row no-gutters>
                 <v-tabs v-model="tab" color="primary" align-with-title>
                     <v-tabs-slider color="grey"></v-tabs-slider>
                     <v-tab
@@ -11,8 +11,8 @@
                     </v-tab>
                 </v-tabs>
             </v-row>
-            <v-divider></v-divider>
-            <v-row no-gutters style="margin-top: 16px">
+            <v-divider></v-divider> -->
+            <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-subheader class="list-project__header">List of Projects</v-subheader>
                 </v-col>
@@ -20,15 +20,11 @@
 
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <!-- :loading="loadingGetProject"
-                    :items="dataProject" -->
-                    
                     <v-data-table
                     :headers="dataTable.headers"
                     :loading="loadingGetListProject"
                     :items="dataListProject"
-                    :search="search"
-                    class="data-table">
+                    :search="search">
                         <template v-slot:top>
                             <v-toolbar-title>
                                 <v-row class="mb-5" no-gutters>
@@ -45,12 +41,11 @@
                                         </v-row>
                                     </v-col>
 
-                                    <v-col no-gutters>
+                                    <!-- <v-col no-gutters>
                                         <v-btn color="primary" @click="onFilter" class="mt-4">
                                             <v-icon> mdi-filter-outline </v-icon>
                                         </v-btn>
-                                    </v-col>
-
+                                    </v-col> -->
                                 </v-row>
                             </v-toolbar-title>
                         </template>
@@ -97,17 +92,17 @@ export default {
         search: "",
         dataTable: {
             headers: [
-                { text: "Action", value: "actions", align: "center", sortable: false, width: "5%"},
-                { text: "ID", value: "id", width: "7%" },
-                { text: "ID ITFAM", value: "itfam_id", width: "10%", align: "start" },
-                { text: "Project Name", value: "project_name", width: "25%" },
-                { text: "Project Description", value: "project_description", width: "30%" },
-                { text: "RCC", value: "biro.rcc", width: "10%" },
-                { text: "Biro", value: "biro.code", width: "10%" },
-                { text: "Product Code", value: "product.product_code", width: "10%" },
-                { text: "Product Name", value: "product.product_name", width: "10%" },
-                { text: "Start Year", value: "start_year", width: "10%" },
-                { text: "End Year", value: "end_year", width: "10%" },
+                { text: "Action", value: "actions", align: "center", sortable: false},
+                { text: "ID", value: "id"},
+                { text: "ID ITFAM", value: "itfam_id"},
+                { text: "Project Name", value: "project_name"},
+                { text: "Project Description", value: "project_description" },
+                { text: "RCC", value: "biro.rcc"},
+                { text: "Biro", value: "biro.code"},
+                { text: "Product Code", value: "product.product_code"},
+                { text: "Product Name", value: "product.product_name"},
+                { text: "Start Year", value: "start_year"},
+                { text: "End Year", value: "end_year"},
             ],
         },
 
@@ -139,11 +134,9 @@ export default {
         this.getListProject();
         this.setBreadcrumbs();
     },
-
     computed: {
         ...mapState("listProject", ["loadingGetListProject", "dataListProject"]),
     },
-
     methods: {
         ...mapActions("listProject", ["getListProject"]),
 

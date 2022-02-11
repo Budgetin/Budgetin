@@ -3,16 +3,12 @@
     <v-card-title class="mb-5">
       {{ cardTitle }} Project Detail
       <v-spacer></v-spacer>
-      <v-btn v-if="isView" icon small @click="$emit('editClicked')">
+      <v-btn v-if="isView" icon small @click="$emit('editClicked')" class="mr-3">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
-      <a-popconfirm
-        title="Are you sure you want to cancel this project?"
-        ok-text="Yes"
-        cancel-text="No"
-        @confirm="$emit('deleteClicked')">
-        <v-icon color="error" v-if="!isNew"> mdi-delete </v-icon>
-      </a-popconfirm>
+      <v-btn v-if="isView" icon small @click="$emit('logHistoryClicked')" class="mr-3">
+        <v-icon color="primary"> mdi-history </v-icon>
+      </v-btn>
     </v-card-title>
 
     <v-card-text>
@@ -58,24 +54,9 @@
           <v-col cols="4" no-gutters> Product ID <strong class="red--text">*</strong>
             <!-- <v-col> -->
               <div class="ListProject__field">
-                <!-- <v-select
-                v-model="form.product"
-                :items="dataMasterProduct"
-                item-text="product_code"
-                item-value="id"
-                placeholder="Choose Product"
-                :disabled="isView"
-                dense
-                outlined
-                return-object
-                class="mr-3"
-                :rules="validation.required">
-                </v-select> -->
-
                 <v-text-field
                 v-model="form.product.product_code"
                 outlined
-                return-object
                 dense
                 disabled
                 class="mr-3">
@@ -101,16 +82,6 @@
                 class="mr-3"
                 :rules="validation.required">
                 </v-select>
-
-                <!-- <v-text-field
-                  v-model="form.product.product_name"
-                  outlined
-                  return-object
-                  dense
-                  :disabled="isView"
-                  class="mr-3"
-                  :rules="validation.required">
-                </v-text-field> -->
               </div>
             <!-- </v-col> -->
           </v-col>
@@ -166,14 +137,6 @@
                 class="mr-3"
                 :rules="validation.required">
                 </v-select>
-                <!-- <v-text-field
-                  v-model="form.biro.code"
-                  outlined
-                  return-object
-                  dense
-                  :disabled="isView"
-                  class="mr-3">
-                </v-text-field> -->
               </div>
             <!-- </v-col> -->
           </v-col>
@@ -195,14 +158,6 @@
                 class="mr-3"
                 :rules="validation.required">
                 </v-select>
-                <!-- <v-text-field
-                  v-model="label"
-                  outlined
-                  return-object
-                  dense
-                  :disabled="isView"
-                  class="mr-3">
-                </v-text-field> -->
               </div>
             <!-- </v-col> -->
           </v-col>
@@ -296,23 +251,25 @@
         <!-- BUTTONS -->
         <v-row no-gutters>
           <v-col cols="12" align="right">
-            <v-btn
+            <!-- <v-btn
               rounded
               outlined
-              class="primary--text ListProject__btn"
+              class="primary--text"
               @click="$emit('okClicked')"
-              v-if="isView">
+              v-if="isView"
+              style="min-width: 8rem;">
               OK
-            </v-btn>
+            </v-btn> -->
             <v-btn
               rounded
               outlined
-              class="primary--text ListProject__btn"
+              class="primary--text"
               @click="$emit('cancelClicked')"
-              v-if="!isView">
+              v-if="!isView"
+              style="min-width: 8rem;">
               Cancel
             </v-btn>
-            <v-btn rounded class="primary ml-3 ListProject__btn" type="submit" v-if="!isView">
+            <v-btn rounded class="primary ml-3" type="submit" v-if="!isView" style="min-width: 8rem;">
               Save
             </v-btn>
           </v-col>
@@ -389,9 +346,9 @@ export default {
   },
 
   methods: {
-    save (date) {
-      this.$refs.menu.save(date)
-    },
+    // save (date) {
+    //   this.$refs.menu.save(date)
+    // },
     onSubmit() {
       let validate = this.$refs.form.validate();
       if (validate) {

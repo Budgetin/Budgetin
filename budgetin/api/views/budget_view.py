@@ -38,12 +38,70 @@ class BudgetViewSet(viewsets.ModelViewSet):
         serializer = BudgetResponseSerializer(budget, many=False)
         return Response(serializer.data)
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
-        request.data['updated_by'] = request.custom_user['id']
-        request.data['created_by'] = request.custom_user['id']
-        budget = super().create(request, *args, **kwargs)
-        AuditLog.Save(budget, request, ActionEnum.CREATE, TableEnum.BUDGET)
-        return budget
+        # Project
+        if 'project_id' not in request.data:
+            project = Project.objects.create(
+                project_name = request.data['project_name'],
+                project_description = request.data['project_description'],
+                biro_id = request.data['biro'],
+                start_year = request.data['start_year'],
+                end_year = request.data['end_year'],
+                total_investment_value = request.data['total_investment_value'],
+                product_id = request.data['product'],
+                is_tech = request.data['is_tech'],
+                created_by_id = request.custom_user['id'],
+                updated_by_id = request.custom_user['id']
+            )
+
+            AuditLog.Save(project, request, ActionEnum.CREATE, TableEnum.PROJECT)
+            project.generate_itfamid()
+        else:
+            project = Project.objects.get(pk=request.data['project_id'])
+            
+        # Project Detail
+        project_detail, created = ProjectDetail.objects.update_or_create(planning_id=request.data['planning'], project=project, defaults={
+            'project_type_id': request.data['project_type']
+        })
+        
+        if created:
+            ProjectDetail.objects.filter(planning_id=request.data['planning']).filter(project=project).update( 
+                created_by_id = request.custom_user['id'],
+                updated_by_id = request.custom_user['id']
+            )
+            AuditLog.Save(project_detail, request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
+        else:
+            ProjectDetail.objects.filter(planning_id=request.data['planning']).filter(project=project).update(
+                updated_by_id = request.custom_user['id'])
+            AuditLog.Save(project_detail, request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
+           
+        # Budget
+        if len(request.data['budget']) == 0:
+            budget = Budget.objects.create(project_detail=project_detail, coa=None)
+            AuditLog.Save(budget, request, ActionEnum.CREATE, TableEnum.BUDGET)
+        for budget in request.data['budget']:
+            updated_budget, budget_created = Budget.objects.update_or_create(project_detail=project_detail, coa=None, defaults={
+                'coa_id': budget['coa'],
+                'expense_type': budget['expense_type'],
+                'planning_q1': budget['planning_q1'],
+                'planning_q2': budget['planning_q2'],
+                'planning_q3':budget['planning_q3'],
+                'planning_q4': budget['planning_q4']
+            })
+            if budget_created:
+                # print(Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).get())
+                Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(
+                created_by_id = request.custom_user['id'],
+                updated_by_id = request.custom_user['id']
+                )
+                AuditLog.Save(updated_budget, request, ActionEnum.CREATE, TableEnum.BUDGET)
+            else:
+                Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(updated_by_id = request.custom_user['id'])
+                
+                AuditLog.Save(updated_budget, request, ActionEnum.UPDATE, TableEnum.BUDGET)
+            
+        return Response(model_to_dict(project))
 
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
@@ -106,70 +164,6 @@ class BudgetViewSet(viewsets.ModelViewSet):
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
 
-    @transaction.atomic
-    @action(detail=False, methods=['post'])
-    def list_planning(self, request):
-        # Project
-        if 'project_id' not in request.data:
-            project = Project.objects.create(
-                project_name = request.data['project_name'],
-                project_description = request.data['project_description'],
-                biro_id = request.data['biro'],
-                start_year = request.data['start_year'],
-                end_year = request.data['end_year'],
-                total_investment_value = request.data['total_investment_value'],
-                product_id = request.data['product'],
-                is_tech = request.data['is_tech'],
-                created_by_id = request.custom_user['id'],
-                updated_by_id = request.custom_user['id']
-            )
-
-            AuditLog.Save(project, request, ActionEnum.CREATE, TableEnum.PROJECT)
-            project.generate_itfamid()
-        else:
-            project = Project.objects.get(pk=request.data['project_id'])
-            
-        # Project Detail
-        project_detail, created = ProjectDetail.objects.update_or_create(planning_id=request.data['planning'], project=project, defaults={
-            'project_type_id': request.data['project_type']
-        })
+    # @action(detail=False, methods=['post'])
+    # def list_planning(self, request):
         
-        if created:
-            ProjectDetail.objects.filter(planning_id=request.data['planning']).filter(project=project).update( 
-                created_by_id = request.custom_user['id'],
-                updated_by_id = request.custom_user['id']
-            )
-            AuditLog.Save(project_detail, request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
-        else:
-            ProjectDetail.objects.filter(planning_id=request.data['planning']).filter(project=project).update(
-                updated_by_id = request.custom_user['id'])
-            AuditLog.Save(project_detail, request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
-           
-
-        
-        # Budget
-        if len(request.data['budget']) == 0:
-            budget = Budget.objects.create(project_detail=project_detail, coa=None)
-            AuditLog.Save(budget, request, ActionEnum.CREATE, TableEnum.BUDGET)
-        for budget in request.data['budget']:
-            updated_budget, budget_created = Budget.objects.update_or_create(project_detail=project_detail, coa=None, defaults={
-                'coa_id': budget['coa'],
-                'expense_type': budget['expense_type'],
-                'planning_q1': budget['planning_q1'],
-                'planning_q2': budget['planning_q2'],
-                'planning_q3':budget['planning_q3'],
-                'planning_q4': budget['planning_q4']
-            })
-            if budget_created:
-                # print(Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).get())
-                Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(
-                created_by_id = request.custom_user['id'],
-                updated_by_id = request.custom_user['id']
-                )
-                AuditLog.Save(updated_budget, request, ActionEnum.CREATE, TableEnum.BUDGET)
-            else:
-                Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(updated_by_id = request.custom_user['id'])
-                
-                AuditLog.Save(updated_budget, request, ActionEnum.UPDATE, TableEnum.BUDGET)
-            
-        return Response(model_to_dict(project))

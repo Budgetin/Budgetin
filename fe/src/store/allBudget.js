@@ -1,6 +1,6 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
-
+import router from "@/router/index.js"
 const ENDPOINT = "api/budget/";
 
 const allBudget = {
@@ -19,6 +19,9 @@ const allBudget = {
     loadingDeleteItem:false,
     deleteStatus: "IDLE",
     deleteItem: [],
+    loadingRestoreItem:false,
+    restoreStatus: "IDLE",
+    restoreItem: [],
     edittedItemHistories: [],
     requestHistoriesStatus:"IDLE",
     loadingGetEdittedItemHistories: false,
@@ -146,11 +149,28 @@ const allBudget = {
           });
       });
     },
+    restoreAllBudgetById({ commit }, id) {
+      commit("SET_LOADING_RESTORE_ITEM", true);
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(ENDPOINT + `${id}/` + "restore/")
+          .then((response) => {
+            const data = response.data;
+            commit("SET_RESTORE_ITEM", data);
+            resolve(data);
+            store.dispatch("allBudget/getFromAPI");
+          })
+          .catch((error) => {
+            commit("RESTORE_ERROR", error);
+            reject(error);
+          });
+      });
+    },
     getHistory({ commit }, id) {
       commit("SET_REQUEST_STATUS"); 
       return new Promise((resolve, reject) => {
       getAPI
-        .get("/api/auditlog?table=project&entity=" + `${id}`)
+        .get("/api/auditlog?table=budget&entity=" + `${id}`)
         .then((response) => {
           const data = response.data;
           const sorted = data.sort((a, b) =>
@@ -187,6 +207,9 @@ const allBudget = {
       state.errorMsg = error;
       state.dataAllBudget = [];
       state.dataActiveAllBudget = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
     // post / patch related
@@ -202,6 +225,9 @@ const allBudget = {
       state.requestStatus = "ERROR";
       state.loadingPostPatchAllBudget = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
     SET_EDITTED_ITEM(state, payload) {
       state.edittedItem = payload;
@@ -227,6 +253,38 @@ const allBudget = {
     },
     ON_CHANGE_PAGING(state, payload) {
       state.current = payload;
+    },
+
+    // delete item
+    SET_DELETE_ITEM(state, payload) {
+      state.deleteItem = payload;
+    },
+    SET_LOADING_DELETE_ITEM(state, payload) {
+      state.loadingDeleteItem = payload;
+    },
+    DELETE_ERROR(state, error) {
+      state.deleteStatus = "ERROR";
+      state.loadingDeleteItem = false;
+      state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // restore item
+    SET_RESTORE_ITEM(state, payload) {
+      state.restoreItem = payload;
+    },
+    SET_LOADING_RESTORE_ITEM(state, payload) {
+      state.loadingRestoreItem = payload;
+    },
+    RESTORE_ERROR(state, error) {
+      state.restoreStatus = "ERROR";
+      state.loadingRestoreItem = false;
+      state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
   },
 };

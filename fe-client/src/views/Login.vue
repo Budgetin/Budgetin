@@ -60,13 +60,13 @@
             </div>
           </v-card>
         </v-row>
-        <success-error-alert
+        <!-- <success-error-alert
           :success="alert.success"
           :show="alert.show"
           :title="alert.title"
           :subtitle="alert.subtitle"
           @okClicked="onAlertOk"
-        />
+        /> -->
       </v-container>
     </v-main>
   </v-app>
@@ -74,11 +74,11 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+// import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 
 export default {
   name: "Login",
-  components: { SuccessErrorAlert },
+  // components: { SuccessErrorAlert },
   data() {
     return {
       valid: true,

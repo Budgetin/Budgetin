@@ -16,14 +16,14 @@
                 </form-edit-project-detail>
                 
                 <!-- LOG HISTORY -->
-                <!-- <v-col xs="12" sm="6" md="6" lg="5">
+                <v-col xs="12" sm="6" md="6" lg="5">
                     <v-container>
                         <timeline-log
                             :items="itemsHistory"
                             v-if="itemsHistory">
                         </timeline-log>
                     </v-container>
-                </v-col> -->
+                </v-col>
             </v-row>
 
             <success-error-alert
@@ -81,7 +81,7 @@ export default {
     }),
     created() {
         this.getDetailItem();
-        // this.getHistoryItem();
+        this.getHistoryItem();
         this.setBreadcrumbs();
         this.getAllProjectType();
     },
@@ -90,7 +90,7 @@ export default {
         ...mapState("projectType", ["dataProjectType"]),
     },
     methods: {
-        ...mapActions("projectDetail", ["patchProjectDetail", "getProjectDetailById"]),
+        ...mapActions("projectDetail", ["patchProjectDetail", "getProjectDetailById", "getHistory"]),
         ...mapActions("projectType", ["getAllProjectType"]),
         
         setBreadcrumbs() {
@@ -111,12 +111,12 @@ export default {
                 },
             ]);
         },
-        // getHistoryItem() {
-        //     this.getHistory(this.$route.params.id).then(() => {
-        //         this.itemsHistory = JSON.parse(
-        //             JSON.stringify(this.$store.state.listProject.edittedItemHistories));
-        //     });
-        // },
+        getHistoryItem() {
+            this.getHistory(this.$route.params.id).then(() => {
+                this.itemsHistory = JSON.parse(
+                    JSON.stringify(this.$store.state.projectDetail.edittedItemHistories));
+            });
+        },
         getDetailItem() {
             this.getProjectDetailById(this.$route.params.id).then(() => { 
                 this.setForm();
@@ -163,7 +163,7 @@ export default {
             this.alert.show = false;
             this.isView = true;
             this.getDetailItem();
-            // this.getHistoryItem();
+            this.getHistoryItem();
         },
         onOK() {
             return this.$router.go(-1);

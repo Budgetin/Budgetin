@@ -15,8 +15,7 @@
                     :headers="dataTable.headers"
                     :loading="loadingGetStartPlanning"
                     :items="dataStartPlanning"
-                    :search="search"
-                    class="data-table">
+                    :search="search">
                         <template v-slot:top>
                             <v-toolbar-title>
                                 <v-row class="mb-5" no-gutters>
@@ -131,14 +130,14 @@ export default {
         search: "",
         dataTable: {
             headers: [
-                { text: "ID", value: "id", width: "7%" },
-                { text: "Planning For", value: "year", width: "12%" },
-                { text: "Status", value: "is_active", width: "8%" },
-                { text: "Due Date", value: "due_date", width: "15%" },
-                { text: "Notification", value: "notification", width: "15%" },
-                { text: "Updated By", value: "updated_by", width: "15%" },
-                { text: "Updated Date", value: "updated_at", width: "15%" },
-                { text: "Action", value: "actions", align: "center", sortable: false, width: "15%"},
+                { text: "ID", value: "id" },
+                { text: "Planning For", value: "year"},
+                { text: "Status", value: "is_active"},
+                { text: "Due Date", value: "due_date"},
+                { text: "Notification", value: "notification" },
+                { text: "Updated By", value: "updated_by"},
+                { text: "Updated Date", value: "updated_at" },
+                { text: "Action", value: "actions", align: "center", sortable: false},
             ],
         },
         sortBy: 'id',

@@ -1,6 +1,6 @@
 <template>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
-        <h1 style="font-weight:bold;">Create Planning for Existing Project</h1>
+        <h1 style="font-weight:bold;">Create Budget Planning for Existing Project</h1>
         <v-card>
           <v-card-title>
               <strong> Project Information </strong>
@@ -12,7 +12,7 @@
           <v-col cols="4">
             For <strong class="red--text">*</strong>
           </v-col>
-          <v-spacer></v-spacer>
+          <!-- <v-spacer></v-spacer> -->
           <v-col cols="4">
             Project ID
           </v-col>
@@ -25,7 +25,7 @@
               <div>
                 <v-select
                   v-model="form.planning"
-                  :items="dataActiveListPlanning"
+                  :items="dataActiveListBudget"
                   item-text="year"
                   item-value="id"
                   placeholder="Year"
@@ -50,7 +50,7 @@
             >
             </v-text-field>
           </v-col> -->
-          <v-spacer></v-spacer>
+          <!-- <v-spacer></v-spacer> -->
           <v-col cols="4"> 
             <v-text-field
               v-model="form.dcsp_id"
@@ -538,12 +538,12 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import formatting from "@/mixins/formatting";
 export default {
-  name: "FormPlanningExisting",
+  name: "FormBudgetExisting",
   props: ["form", "isView", "isNew"],
   mixins: [formatting],
   created() {
     this.getListProject();
-    this.getListActivePlanning();
+    this.getListActiveBudget();
     this.getAllProjectType();
     this.getAllBiro();
     this.getMasterProduct();
@@ -570,10 +570,10 @@ export default {
         { text: "COA", value: "coa", width: "15%" },
         { text: "CAPEX/OPEX", value: "expense_type", width: "10%" },
         { text: "Budget This Year", value: "planning_nominal", width: "15%" },
-        { text: "Q1", value: "planning_q1", width: "12%" },
-        { text: "Q2", value: "planning_q2", width: "12%" },
-        { text: "Q3", value: "planning_q3", width: "12%" },
-        { text: "Q4", value: "planning_q4", width: "12%" },
+        { text: "Planning Q1", value: "planning_q1", width: "12%" },
+        { text: "Planning Q2", value: "planning_q2", width: "12%" },
+        { text: "Planning Q3", value: "planning_q3", width: "12%" },
+        { text: "Planning Q4", value: "planning_q4", width: "12%" },
       ],
     },
   }),
@@ -582,8 +582,8 @@ export default {
       "dataListProject",
       "edittedItem"
     ]),
-    ...mapState("listPlanning", [
-      "dataActiveListPlanning"
+    ...mapState("listBudget", [
+      "dataActiveListBudget"
     ]),
     ...mapState("projectType", [
       "dataProjectType",
@@ -635,8 +635,8 @@ export default {
       "getListProject",
       "getListProjectById"
     ]),
-    ...mapActions("listPlanning", [
-      "getListActivePlanning"
+    ...mapActions("listBudget", [
+      "getListActiveBudget"
     ]),
     ...mapActions("projectType", [
       "getAllProjectType",

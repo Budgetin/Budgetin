@@ -29,6 +29,9 @@
             </router-link>
           </template>
 
+          <template v-slot:[`item.is_active`]="{ item }">
+              <binary-status-chip :boolean="item.is_active"></binary-status-chip>
+          </template>
         </v-data-table>
       </v-col>
     </v-row>
@@ -37,8 +40,10 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
+import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
 export default {
   name: "TableBudgetPlanning",
+  components: {BinaryStatusChip},
   props: ["budgetPlanning"],
   data: () => ({
     isView: true,
@@ -106,6 +111,7 @@ export default {
               returns: "",
               allocate: "",
               coa: "",
+              is_active: "",
             },
           ],
         },
@@ -114,17 +120,18 @@ export default {
 
     dataTable: {
       budgetPlanningHeaders: [
-        { text: "Action", value: "actions", align: "center", sortable: false, width: "5%"},
-        { text: "ID", value: "id", width: "7%" },
-        { text: "Year", value: "year", width: "8%" },
+        { text: "Action", value: "actions", align: "center", sortable: false},
+        { text: "ID", value: "id"},
+        { text: "Year", value: "year"},
+        { text: "Budget Status", value: "is_active"},
         // { text: "Strategy", value: "product.strategy.name", width: "25%" },
-        { text: "COA", value: "coa", width: "15%" },
-        { text: "CAPEX/OPEX", value: "expense_type", width: "10%" },
-        { text: "Budget This Year", value: "planning_nominal", width: "15%" },
-        { text: "Q1", value: "planning_q1", width: "10%" },
-        { text: "Q2", value: "planning_q2", width: "10%" },
-        { text: "Q3", value: "planning_q3", width: "10%" },
-        { text: "Q4", value: "planning_q4", width: "10%" },
+        { text: "COA", value: "coa"},
+        { text: "CAPEX/OPEX", value: "expense_type"},
+        { text: "Budget This Year", value: "planning_nominal"},
+        { text: "Q1", value: "planning_q1"},
+        { text: "Q2", value: "planning_q2"},
+        { text: "Q3", value: "planning_q3"},
+        { text: "Q4", value: "planning_q4"},
       ],
     },
   }),
