@@ -210,7 +210,7 @@ export default {
         (v) => !!v || "This field is required"
       ],
       targetRule: [
-        v => /^[0-9.,]+$/.test(v) ||"This field is numbers only",
+        v => /(^[0-9.,]+$|^$|[null])/.test(v) || "This field is numbers only",
       ],
     },
 
