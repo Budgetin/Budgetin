@@ -597,9 +597,6 @@ export default {
     },
     onExistingClick(){
       return this.$router.push("/listBudget/existing");
-    },
-    onTabChange(){
-      console.log(this.tab);
     }
   },
 };
