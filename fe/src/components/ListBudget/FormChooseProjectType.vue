@@ -71,6 +71,7 @@ export default {
   padding:0.5rem;
   width: 10rem;
   cursor:pointer;
+  color: rgb(59, 82, 131);
 }
 
 .choose-project-type_box:hover{
@@ -80,6 +81,7 @@ export default {
   width: 10rem;
   font-weight: 700;
   cursor:pointer;
+  color: rgb(59, 82, 131);
 }
 </style>
 

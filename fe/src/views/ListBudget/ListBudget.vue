@@ -673,6 +673,7 @@ table > thead > tr > th:nth-child(4) {
   padding:0.5rem;
   width: 10rem;
   cursor:pointer;
+  color: rgb(59, 82, 131);
 }
 
 .choose-project-type_box:hover{
@@ -682,6 +683,7 @@ table > thead > tr > th:nth-child(4) {
   width: 10rem;
   font-weight: 700;
   cursor:pointer;
+  color: rgb(59, 82, 131);
 }
 
 
