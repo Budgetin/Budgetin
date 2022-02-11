@@ -12,7 +12,7 @@
                 </v-tabs>
             </v-row>
             <v-divider></v-divider> -->
-            <v-row no-gutters style="margin-top: 16px">
+            <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-subheader class="list-project__header">List of Projects</v-subheader>
                 </v-col>

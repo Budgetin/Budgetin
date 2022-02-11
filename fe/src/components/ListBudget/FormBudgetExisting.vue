@@ -12,7 +12,7 @@
           <v-col cols="4">
             For <strong class="red--text">*</strong>
           </v-col>
-          <v-spacer></v-spacer>
+          <!-- <v-spacer></v-spacer> -->
           <v-col cols="4">
             Project ID
           </v-col>
@@ -50,7 +50,7 @@
             >
             </v-text-field>
           </v-col> -->
-          <v-spacer></v-spacer>
+          <!-- <v-spacer></v-spacer> -->
           <v-col cols="4"> 
             <v-text-field
               v-model="form.dcsp_id"
