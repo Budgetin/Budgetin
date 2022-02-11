@@ -13,8 +13,7 @@
                     :headers="dataTable.headers"
                     :loading="loadingGetMonitorPlanning"
                     :items="monitorData"
-                    :search="search"
-                    class="data-table">
+                    :search="search">
                         <template v-slot:top>
                             <v-toolbar-title>
                                 <v-row class="mb-5" no-gutters>
