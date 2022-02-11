@@ -14,7 +14,7 @@ from api.utils.enum import ActionEnum, TableEnum
 class ProjectDetailViewSet(viewsets.ModelViewSet):
     queryset = ProjectDetail.objects.all()
     serializer_class = ProjectDetailSerializer
-    # permission_classes = [IsAuthenticated, IsAdmin] #DEBT. Uncomment this line
+    permission_classes = [IsAuthenticated, IsAdmin] #DEBT. Uncomment this line
 
     def list(self, request, *args, **kwargs):
         queryset = ProjectDetail.objects.select_related('project_type', 'created_by', 'updated_by', 'planning', 
