@@ -66,22 +66,20 @@ export default {
 
 <style>
 .choose-project-type_box{
-  border:3px aqua solid;
+  border:3px rgb(228, 228, 228) solid;
   border-radius:20px;
   padding:0.5rem;
   width: 10rem;
+  font-weight: 600;
   cursor:pointer;
-  color: rgb(59, 82, 131);
 }
 
 .choose-project-type_box:hover{
-  border:3px rgb(147, 177, 243) solid;
+  border:3px rgb(93, 158, 243) solid;
   border-radius:20px;
   padding:0.5rem;
   width: 10rem;
-  font-weight: 700;
   cursor:pointer;
-  color: rgb(59, 82, 131);
 }
 </style>
 

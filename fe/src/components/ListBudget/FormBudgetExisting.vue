@@ -16,7 +16,9 @@
           <v-col cols="4">
             Project ID
           </v-col>
-          
+          <v-col cols="4">
+            Project Type <strong class="red--text">*</strong>
+          </v-col>
         </v-row>
 
         <!-- Kolom kolom -->
@@ -38,6 +40,7 @@
                 </v-select>
               </div>
             </v-col>
+            
           <!-- <v-col cols="4">
             <v-text-field
               v-model="form.planning"
@@ -51,6 +54,7 @@
             </v-text-field>
           </v-col> -->
           <!-- <v-spacer></v-spacer> -->
+          
           <v-col cols="4"> 
             <v-text-field
               v-model="form.dcsp_id"
@@ -62,34 +66,7 @@
             >
             </v-text-field>
           </v-col>
-        </v-row>
-        <v-row no-gutters>
-          <v-col cols="8">
-            Project Name <strong class="red--text">*</strong>
-          </v-col>
           <v-col cols="4">
-            Project Type <strong class="red--text">*</strong>
-          </v-col>
-        </v-row>
-        <v-row no-gutters>
-          <v-col cols="8">
-              <v-combobox
-                hide-selected
-                v-model="form.project"
-                :items="dataListProject"
-                item-text="project_name"
-                item-value="id"
-                placeholder="Search Project..."
-                outlined
-                return-object
-                :disabled="form.planning==''"
-                :rules="validation.required"
-                class="mr-2"
-                :dense=true
-                @input="onSelectProject">
-              </v-combobox>
-            </v-col>
-            <v-col cols="4">
               <div>
                 <v-select
                   v-model="form.project_type"
@@ -107,6 +84,29 @@
               </div>
             </v-col>
         </v-row>
+        <v-row no-gutters>
+          <v-col cols="12">
+            Project Name <strong class="red--text">*</strong>
+          </v-col>
+        </v-row>
+        <v-row no-gutters>
+          <v-col cols="12">
+              <v-combobox
+                hide-selected
+                v-model="form.project"
+                :items="dataListProject"
+                item-text="project_name"
+                item-value="id"
+                placeholder="Search Project..."
+                outlined
+                return-object
+                :rules="validation.required"
+                class="mr-2"
+                :dense=true
+                @input="onSelectProject">
+              </v-combobox>
+          </v-col>
+        </v-row>
 
         <!-- Project Description -->
         <v-row no-gutters>
@@ -123,7 +123,6 @@
               rows=4
               readonly
               placeholder="-"
-              :disabled="form.planning==''"
             >
             </v-textarea>
           </v-col>
@@ -155,7 +154,6 @@
               readonly
               placeholder="-"
               class="mr-2"
-              :disabled="form.planning==''"
             >
             </v-text-field>
           </v-col>
@@ -167,7 +165,6 @@
               readonly
               placeholder="-"
               class="mr-2"
-              :disabled="form.planning==''"
             >
             </v-text-field>
           </v-col>
@@ -179,7 +176,6 @@
               readonly
               placeholder="-"
               class="mr-2"
-              :disabled="form.planning==''"
             >
             </v-text-field>
           </v-col>
@@ -190,7 +186,6 @@
               dense
               readonly
               placeholder="-"
-              :disabled="form.planning==''"
             >
             </v-text-field>
           </v-col>
@@ -222,7 +217,6 @@
               readonly
               placeholder="-"
               class="mr-2"
-              :disabled="form.planning==''"
             >
             </v-text-field>
             </v-col>
@@ -234,7 +228,6 @@
               readonly
               placeholder="-"
               class="mr-2"
-              :disabled="form.planning==''"
             >
             </v-text-field>
             </v-col>
@@ -246,7 +239,6 @@
               readonly
               placeholder="-"
               class="mr-2"
-              :disabled="form.planning==''"
             >
             </v-text-field>
             </v-col>
@@ -257,7 +249,6 @@
               dense
               readonly
               placeholder="-"
-              :disabled="form.planning==''"
             >
             </v-text-field>
           </v-col>
@@ -481,8 +472,7 @@
             <v-col cols="6" align="left">
               <v-btn 
               rounded class="primary ml-3" 
-              @click="onAddNewBudget"
-              :disabled="form.planning==''">
+              @click="onAddNewBudget">
                 Add Budget
               </v-btn>
             </v-col>
@@ -765,11 +755,11 @@ export default {
       this.budgets.push({
           coa : "",
           expense_type : "",
-          planning_q1 : "",
-          planning_q2 : "",
-          planning_q3 : "",
-          planning_q4 : "",
-          planning_nominal : ""
+          planning_q1 : "0",
+          planning_q2 : "0",
+          planning_q3 : "0",
+          planning_q4 : "0",
+          planning_nominal : "0"
       });
     },
   },
