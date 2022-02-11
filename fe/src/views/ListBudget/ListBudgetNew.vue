@@ -2,7 +2,7 @@
   <v-container>
     <v-row no-gutters justify="space-between">
       <!-- edit form -->
-      <v-col xs="12" sm="10" md="10" lg="10">
+      <v-col xs="12" sm="12" md="12" lg="12">
         <v-container>
           <form-budget-new
             :form="form"
