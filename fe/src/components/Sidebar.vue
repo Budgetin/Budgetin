@@ -20,7 +20,7 @@
       </v-list>
       <v-divider></v-divider>
       <v-list shaped>
-        <v-list-item link :to="'/'" replace>
+        <v-list-item replace>
           <v-list-item-icon>
             <v-icon>mdi-chart-scatter-plot</v-icon>
           </v-list-item-icon>
