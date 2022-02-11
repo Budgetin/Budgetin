@@ -2,7 +2,7 @@
     <v-app id="view-list-project-detail">
         <v-container>
             <v-row no-gutters>
-                <!-- VIEW LIST PROJECT DETAIL -->
+                <!-- VIEW Project List DETAIL -->
                 <form-edit-project-detail
                 :form="form"
                 :isView="isView"

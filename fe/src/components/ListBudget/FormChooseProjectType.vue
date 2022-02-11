@@ -11,19 +11,18 @@
       </v-card-title>
 
       <v-card-text>
-        <v-row no-gutters align="center">
-          <v-col cols="12" class="mt-2" align="center">
-            <img :src="require('../../assets/account.png')" width="200rem" />
+        <v-row >
+          <v-col cols="6" class="mt-2" >
+            <div class="choose-project-type_box" align="center" justify="center" @click="onNewClick">
+              <img :src="require('../../assets/new_project.png')" height="80rem" style="padding:0.2rem;"/><br>
+              New Project
+            </div>
           </v-col>
-        </v-row>
-      </v-card-text>
-      <v-card-text>
-        <v-row no-gutters align="center">
-          <v-col cols="6" class="mt-2">
-            <v-btn rounded color="primary" @click="onNewClick"> New Project </v-btn>
-          </v-col>
-          <v-col cols="6" class="mt-2">
-            <v-btn rounded color="primary" @click="onExistingClick"> Existing Project </v-btn>
+          <v-col cols="6" class="mt-2" align="center" justify="center">
+            <div class="choose-project-type_box" align="center" justify="center" @click="onExistingClick">
+              <img :src="require('../../assets/existing_project.png')" height="80rem" style="padding:0.2rem;"/><br>
+              Existing Project
+            </div>
           </v-col>
         </v-row>
       </v-card-text>
@@ -65,6 +64,26 @@ export default {
 };
 </script>
 
+<style>
+.choose-project-type_box{
+  border:3px aqua solid;
+  border-radius:20px;
+  padding:0.5rem;
+  width: 10rem;
+  cursor:pointer;
+  color: rgb(59, 82, 131);
+}
+
+.choose-project-type_box:hover{
+  border:3px rgb(147, 177, 243) solid;
+  border-radius:20px;
+  padding:0.5rem;
+  width: 10rem;
+  font-weight: 700;
+  cursor:pointer;
+  color: rgb(59, 82, 131);
+}
+</style>
 
 <style lang="scss" scopped>
 

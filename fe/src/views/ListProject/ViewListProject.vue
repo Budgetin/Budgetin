@@ -1,5 +1,5 @@
 <template>
-    <!-- VIEW LIST PROJECT -->
+    <!-- VIEW Project List -->
     <v-container>
         <v-row no-gutters>
             <form-list-project

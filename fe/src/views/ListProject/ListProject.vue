@@ -21,9 +21,9 @@
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-data-table
-                    :headers="dataTable.headers"
+                    height = "80vh"
                     fixed-header
-                    height="80vh"
+                    :headers="dataTable.headers"
                     :loading="loadingGetListProject"
                     :items="dataListProject"
                     :search="search">

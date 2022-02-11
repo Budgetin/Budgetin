@@ -5,15 +5,16 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from api.models import Budget, Project, ProjectDetail, User
+from api.models import Budget, Project, ProjectDetail
 from api.serializers import BudgetSerializer, BudgetResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.date_format import timestamp_to_strdateformat
+from api.permissions import IsAuthenticated, IsAdmin
 
 class BudgetViewSet(viewsets.ModelViewSet):
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
+    permission_classes = [IsAuthenticated, IsAdmin] #DEBT. Uncomment this line
     
     def list(self, request, *args, **kwargs):
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 

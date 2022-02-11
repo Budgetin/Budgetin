@@ -20,7 +20,7 @@
       </v-list>
       <v-divider></v-divider>
       <v-list shaped>
-        <v-list-item link :to="'/'" replace>
+        <v-list-item replace>
           <v-list-item-icon>
             <v-icon>mdi-chart-scatter-plot</v-icon>
           </v-list-item-icon>
@@ -36,7 +36,7 @@
           <v-list-item-icon>
             <v-icon>mdi-format-list-bulleted </v-icon>
           </v-list-item-icon>
-          <v-list-item-title>Budget Planning</v-list-item-title>
+          <v-list-item-title>List Budget</v-list-item-title>
         </v-list-item>
         <v-list-item link :to="'/listProject'" replace>
           <v-list-item-icon>
