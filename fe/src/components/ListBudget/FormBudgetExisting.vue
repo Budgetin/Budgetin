@@ -77,7 +77,6 @@
                   outlined
                   return-object
                   :rules="validation.required"
-                  class="mr-2"
                   :dense=true
                   :disabled="!projectTypeEnable">
                 </v-select>
@@ -101,7 +100,6 @@
                 outlined
                 return-object
                 :rules="validation.required"
-                class="mr-2"
                 :dense=true
                 @input="onSelectProject">
               </v-combobox>
