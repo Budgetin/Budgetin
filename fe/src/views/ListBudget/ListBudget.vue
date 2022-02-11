@@ -10,7 +10,6 @@
           color="blue" 
           centered
           grow
-          @change="onTabChange"
           >
             <v-tab
                 v-for="item in items"
@@ -256,14 +255,22 @@
                   <v-icon color="primary"> mdi-close </v-icon>
                 </v-btn>
               </v-card-title>
-
+              
               <v-card-text>
-                <v-row no-gutters align="center">
-                  <v-col cols="6" class="mt-2">
-                    <v-btn rounded color="primary" @click="onUpload"> Upload Excel </v-btn>
+                <v-row >
+                  <v-col cols="6" class="mt-2" >
+                    <div class="choose-project-type_box" align="center" justify="center" @click="onUpload">
+                      <img :src="require('../../assets/upload.png')" height="80rem" /><br>
+                      Upload Excel
+                      <!-- <v-btn rounded color="primary" @click="onUpload"> Upload Excel </v-btn> -->
+                    </div>
                   </v-col>
-                  <v-col cols="6" class="mt-2">
-                    <v-btn rounded color="primary" @click="onAdd"> Input Form </v-btn>
+                  <v-col cols="6" class="mt-2" align="center" justify="center">
+                    <div class="choose-project-type_box" align="center" justify="center" @click="onAdd">
+                      <img :src="require('../../assets/input_form.png')" height="80rem" style="padding:0.2rem;"/><br>
+                      Input Form
+                      <!-- <v-btn rounded color="primary" @click="onAdd"> Input Form </v-btn> -->
+                    </div>
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -659,6 +666,27 @@ table > thead > tr > th:nth-child(4) {
 table > thead > tr > th:nth-child(4) {
   z-index: 10;
 }
+
+.choose-project-type_box{
+  border:3px aqua solid;
+  border-radius:20px;
+  padding:0.5rem;
+  width: 10rem;
+  cursor:pointer;
+  color: rgb(59, 82, 131);
+}
+
+.choose-project-type_box:hover{
+  border:3px rgb(147, 177, 243) solid;
+  border-radius:20px;
+  padding:0.5rem;
+  width: 10rem;
+  font-weight: 700;
+  cursor:pointer;
+  color: rgb(59, 82, 131);
+}
+
+
 </style>
 
 <style lang="scss" scoped>
