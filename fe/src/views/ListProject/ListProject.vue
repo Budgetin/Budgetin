@@ -14,13 +14,15 @@
             <v-divider></v-divider> -->
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <v-subheader class="list-project__header">List of Projects</v-subheader>
+                    <v-subheader class="list-project__header">List Project</v-subheader>
                 </v-col>
             </v-row>
 
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
                     <v-data-table
+                    height = "80vh"
+                    fixed-header
                     :headers="dataTable.headers"
                     :loading="loadingGetListProject"
                     :items="dataListProject"
@@ -144,7 +146,7 @@ export default {
             let param = this.isView ? "View Detail Project" : "Edit Project";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "List of Projects",
+                    text: "List Project",
                     link: true,
                     exact: true,
                     disabled: false,

@@ -36,13 +36,13 @@
           <v-list-item-icon>
             <v-icon>mdi-format-list-bulleted </v-icon>
           </v-list-item-icon>
-          <v-list-item-title>Budget Planning</v-list-item-title>
+          <v-list-item-title>List Budget</v-list-item-title>
         </v-list-item>
         <v-list-item link :to="'/listProject'" replace>
           <v-list-item-icon>
             <v-icon>mdi-folder-network </v-icon>
           </v-list-item-icon>
-          <v-list-item-title>List Project</v-list-item-title>
+          <v-list-item-title>Project List</v-list-item-title>
         </v-list-item>
         <v-list-group
           :value="true"

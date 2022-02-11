@@ -3,7 +3,7 @@
     <v-container class="list-budget__container outer-container">
       <v-row no-gutters>
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-              <v-subheader class="list-budget__header">List of Budgets</v-subheader>
+              <v-subheader class="list-budget__header">Budget List</v-subheader>
           </v-col>
         <v-tabs 
           v-model="tab" 
@@ -475,7 +475,7 @@ export default {
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
-          text: "List Budget",
+          text: "Budget List",
           link: true,
           exact: true,
           disabled: false,
