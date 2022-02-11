@@ -600,10 +600,10 @@ export default {
       this.dialogUpload = false;
     },
     onNewClick(){
-      return this.$router.push("/listBudget/new");
+      return this.$router.push("/budgetList/new");
     },
     onExistingClick(){
-      return this.$router.push("/listBudget/existing");
+      return this.$router.push("/budgetList/existing");
     }
   },
 };
