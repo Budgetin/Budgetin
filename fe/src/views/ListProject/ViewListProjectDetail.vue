@@ -2,7 +2,7 @@
     <v-app id="view-list-project-detail">
         <v-container>
             <v-row no-gutters>
-                <!-- VIEW LIST PROJECT DETAIL -->
+                <!-- VIEW Project List DETAIL -->
                 <form-edit-project-detail
                 :form="form"
                 :isView="isView"
@@ -97,7 +97,7 @@ export default {
             let param = this.isView ? "View Project Detail" : "Edit Project Detail";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "List Project",
+                    text: "Project List",
                     link: true,
                     exact: true,
                     disabled: false,

@@ -54,13 +54,26 @@
           <v-col cols="4" no-gutters> Product ID <strong class="red--text">*</strong>
             <!-- <v-col> -->
               <div class="ListProject__field">
-                <v-text-field
+                <!-- <v-text-field
                 v-model="form.product.product_code"
                 outlined
                 dense
                 disabled
                 class="mr-3">
-                </v-text-field>
+                </v-text-field> -->
+                <v-select
+                v-model="form.product"
+                :items="dataMasterProduct"
+                item-text="product_code"
+                item-value="id"
+                placeholder="Choose Product"
+                disabled
+                dense
+                outlined
+                return-object
+                class="mr-3"
+                :rules="validation.required">
+                </v-select>
               </div>
             <!-- </v-col> -->
           </v-col>
@@ -108,14 +121,27 @@
           <v-col cols="2" no-gutters> RCC <strong class="red--text">*</strong>
             <!-- <v-col> -->
               <div class="ListProject__field">
-                <v-text-field
+                <!-- <v-text-field
                   v-model="form.biro.rcc"
                   outlined
                   return-object
                   dense
                   disabled
                   class="mr-3">
-                </v-text-field>
+                </v-text-field> -->
+                <v-select
+                v-model="form.biro"
+                :items="dataAllBiro"
+                item-text="rcc"
+                item-value="id"
+                placeholder="Choose Biro"
+                disabled
+                dense
+                outlined
+                return-object
+                class="mr-3"
+                :rules="validation.required">
+                </v-select>
               </div>
             <!-- </v-col> -->
           </v-col>

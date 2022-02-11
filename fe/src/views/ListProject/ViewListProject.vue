@@ -1,5 +1,5 @@
 <template>
-    <!-- VIEW LIST PROJECT -->
+    <!-- VIEW Project List -->
     <v-container>
         <v-row no-gutters>
             <form-list-project
@@ -181,7 +181,7 @@ export default {
             let param = this.isView ? "View Project" : "Edit Project Detail";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "List of Projects",
+                    text: "Project List",
                     link: true,
                     exact: true,
                     disabled: false,
@@ -215,12 +215,12 @@ export default {
             );
         },
         getHistoryItem() {
-            console.log("Masuk getHistoryItem");
+            // console.log("Masuk getHistoryItem");
             this.getHistory(this.$route.params.id).then(() => {
                 // console.log("Masuk getHistory");
                 this.itemsHistory = JSON.parse(
                     JSON.stringify(this.$store.state.listProject.edittedItemHistories));
-                    console.log("Masuk JSON getHistory");
+                    // console.log("Masuk JSON getHistory");
             });
         },
         onEdit() {

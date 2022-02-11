@@ -147,7 +147,7 @@ export default {
             let param = this.isView ? "View Budget Planning" : "Edit Budget Planning";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "List Project",
+                    text: "Project List",
                     link: true,
                     exact: true,
                     disabled: false,
@@ -165,6 +165,10 @@ export default {
             this.getHistory(this.$route.params.id).then(() => {
                 this.itemsHistory = JSON.parse(
                     JSON.stringify(this.$store.state.allBudget.edittedItemHistories));
+                for(let i=0; i<this.itemsHistory.length; i++) {
+                    this.itemsHistory[i].table = "budgetPlanning"
+                    // console.log(this.itemsHistory[i]);
+                }
             });
         },
         getDetailItem() {
