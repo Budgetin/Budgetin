@@ -94,7 +94,7 @@ export default {
         search: "",
         dataTable: {
             headers: [
-                { text: "Action", value: "actions", align: "center", sortable: false},
+                { text: "Action", value: "actions", align: "center", sortable: false, width: "4rem"},
                 { text: "ID", value: "id", width: "4rem"},
                 { text: "ID ITFAM", value: "itfam_id"},
                 { text: "Project Name", value: "project_name", width: "8rem"},
