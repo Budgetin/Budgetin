@@ -42,12 +42,29 @@ export default {
   name: "ListBudgetExisting",
   components: {FormBudgetExisting,SuccessErrorAlert},
   created() {
-
+    this.setBreadcrumbs();
   },
   methods: {
     ...mapActions("listBudget", [
       "postNewBudget",
     ]),
+    setBreadcrumbs() {
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Budget List",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "ListBudget",
+          },
+        },
+        {
+          text: "Add Budget for Existing Project",
+          disabled: true,
+        },
+      ]);
+    },
     onCancel() {
       this.$router.go(-1);
     },
