@@ -225,30 +225,6 @@ const routes = [
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);
         },
-        // beforeEnter: (to, from, next) => {
-        //   try {
-        //     store
-        //         .dispatch("login/setInitial")
-        //         .then(() => {
-        //           if (!store.getters["login/isAuthenticated"]) {
-        //             next();
-        //             return;
-        //           } else {
-        //             var url = to.params.redirectUrl.toString();
-        //             router.push(url);
-        //             return;
-        //           }
-        //         })
-        //         .catch((err) => {
-        //           next();
-        //           return;
-        //         });
-        //   } catch (e) {
-        //     ("masuk e");
-        //     next();
-        //     return;
-        //   }
-        // },
         component: () => import("@/views/Login"),
       },
     ],
@@ -261,6 +237,15 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
+  },
+  {
+    path: "*",
+    name: "404NotFound",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/404NotFound.vue"),
   },
 ];
 
