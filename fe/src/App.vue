@@ -70,9 +70,9 @@ export default {
   }
 }
 
-a{
-  background-color: white;
-}
+// a{
+//   background-color: white;
+// }
 
 .rounded-card{
     border-radius:100%;
