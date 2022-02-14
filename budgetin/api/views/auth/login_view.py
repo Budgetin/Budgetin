@@ -13,7 +13,7 @@ def get_user_info(username):
     users = User.objects.filter(username=username).values()
     if users:
         user = users[0]
-        if user["is_deleted"] == False:
+        if not user["is_deleted"] and user["is_active"]:
             display_name, initial, eselon = get_user_detail(username)
             return user['employee_id'], display_name, user['role'], initial, eselon
     
