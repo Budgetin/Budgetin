@@ -31,7 +31,6 @@ const login = {
             resolve(response);
           })
           .catch((error) => {
-            console.log(error.message)
             commit("GET_ERROR", error);
             reject(error);
           });
@@ -97,14 +96,12 @@ const login = {
       state.requestStatus = "SUCCESS";
       state.loadingGetInitial = false;
       state.userInitial = initial;
-      console.log('success');
     },
     GET_INITIAL_ERROR(state, error) {
       state.requestStatus = "ERROR";
       state.loadingGetInitial = false;
       state.errorMsg = error;
       state.userInitial = "";
-      console.log('false');
     },
 
     // post / patch related
