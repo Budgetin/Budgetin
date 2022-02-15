@@ -28,7 +28,6 @@ const listProject = {
   },
   actions: {
     getListProject() {
-      if (store.state.listProject.requestStatus !== "SUCCESS")
         store.dispatch("listProject/getFromAPI");
     },
     getFromAPI({ commit }) {
