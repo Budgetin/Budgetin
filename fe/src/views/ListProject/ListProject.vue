@@ -94,17 +94,17 @@ export default {
         search: "",
         dataTable: {
             headers: [
-                { text: "Action", value: "actions", align: "center", sortable: false, width: "3rem"},
+                { text: "Action", value: "actions", align: "center", sortable: false, width: "4rem"},
                 // { text: "ID", value: "id", width: "4rem"},
-                { text: "ID ITFAM", value: "itfam_id", width: "8rem"},
-                { text: "Project Name", value: "project_name", width: "14rem"},
+                { text: "ID ITFAM", value: "itfam_id"},
+                { text: "Project Name", value: "project_name"},
                 // { text: "Project Description", value: "project_description", width: "10rem"},
-                { text: "RCC", value: "biro.rcc", width: "5rem"},
-                { text: "Biro", value: "biro.code", width: "5rem"},
-                { text: "Product Code", value: "product.product_code", width: "8rem"},
-                { text: "Product Name", value: "product.product_name", width: "16rem"},
-                { text: "Start Year", value: "start_year", width: "6rem"},
-                { text: "End Year", value: "end_year", width: "6rem"},
+                { text: "RCC", value: "biro.rcc"},
+                { text: "Biro", value: "biro.code"},
+                { text: "Product Code", value: "product.product_code"},
+                { text: "Product Name", value: "product.product_name"},
+                { text: "Start Year", value: "start_year"},
+                { text: "End Year", value: "end_year"},
             ],
         },
 
@@ -171,13 +171,6 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-.v-data-table /deep/ .sticky-header {
-    position: sticky;
-    top: 0;
-}
-</style>
 
 <style lang="scss" scoped>
 .searchBar {
