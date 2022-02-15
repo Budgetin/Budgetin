@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from api.utils.hit_api import get_all_biro
-from api.views.planning_view import create_update_biro, get_pic, create_update_all_biro_and_create_monitoring, create_monitoring
+from api.views.admin.planning_view import create_update_biro, create_monitoring
 
 from api.models import Monitoring
 from api.serializers import MonitoringSerializer
@@ -25,8 +25,8 @@ def create_non_existent_biro(biros, planning_id):
         biro, created = create_update_biro(ithc_biro)
         # Biro that lasts with * (IBO*, NIS*) is not included
         if created and ithc_biro["code"][-1] != "*":
-            print("new monitoring created")
             create_monitoring(ithc_biro, biro, planning_id)
+            
 class MonitoringViewSet(viewsets.ModelViewSet):
     queryset = Monitoring.objects.all()
     serializer_class = MonitoringSerializer
