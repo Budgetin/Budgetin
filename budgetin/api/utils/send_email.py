@@ -7,7 +7,7 @@ def send_email(subject, body, receiver_email_list):
         message = body, 
         from_email = config('EMAIL_HOST_USER'), 
         # recipient_list=receiver_email_list) #DEBT, Uncommnet this line. delete line below
-        recipient_list='yosefina_santoso@dti.co.id'
+        recipient_list=['yosefina_santoso@dti.co.id']
     )
     print('Sending email to: {}'.format(receiver_email_list))
     
