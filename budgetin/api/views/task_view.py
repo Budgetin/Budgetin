@@ -8,9 +8,8 @@ from api.serializers import MonitoringSerializer
 
 class TaskViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated, IsUser]
-        
-    @action(methods=["get"], detail=False, url_path="mytask")
-    def my_task(self, request):
+            
+    def list(self, request):
         queryset = Monitoring.objects.select_related('planning', 'biro').all()
         queryset = queryset.filter(pic_initial=request.custom_user['initial'])
         
