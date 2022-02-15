@@ -80,7 +80,7 @@ export default {
                 { text: "PIC", value: "pic_initial"},
                 { text: "Updated Date", value: "updated_at"},
                 { text: "Status", value: "monitoring_status"},
-                { text: "Action", value: "actions", align: "center", sortable: false},
+                { text: "Action", value: "actions", align: "center", sortable: false,width: "4rem"},
             ],
         },
 

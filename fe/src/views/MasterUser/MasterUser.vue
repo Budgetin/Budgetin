@@ -120,7 +120,7 @@ export default {
         { text: "Status", value: "status.id", align: "center"},
         { text: "Update By", value: "update_by"},
         { text: "Update Date", value: "updated_at"},
-        { text: "Actions", value: "actions", align: "center", sortable: false },
+        { text: "Actions", value: "actions", align: "center", sortable: false,width: "4rem" },
       ]
     },
     form: {

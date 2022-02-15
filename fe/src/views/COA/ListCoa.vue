@@ -110,7 +110,7 @@ export default {
         { text: "Hyperion Name", value: "hyperion_name"},
         { text: "Update By", value: "update_by"},
         { text: "Update Date", value: "updated_at"},
-        { text: "Actions", value: "actions", align: "center", sortable: false },
+        { text: "Actions", value: "actions", align: "center", sortable: false ,width: "4rem"},
       ]
     },
     form: {
