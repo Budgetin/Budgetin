@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from api.models import Coa
 from api.serializers import CoaSerializer, CoaResponseSerializer
-from api.permissions import IsAuthenticated, IsAdmin
+from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
 from api.exceptions import ValidationException
@@ -18,7 +18,7 @@ def is_duplicate_coa(id, name, hyperion_name):
 class CoaViewSet(viewsets.ModelViewSet):
     queryset = Coa.objects.all()
     serializer_class = CoaSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
 
     def list(self, request, *args, **kwargs):
         queryset = Coa.objects.select_related('updated_by', 'created_by').all()

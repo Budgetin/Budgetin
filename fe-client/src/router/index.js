@@ -55,6 +55,9 @@ const routes = [
         path: '/home',
         name: 'Home',
         component: () => import("@/views/Home/ListTask"),
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
       },
       {
         path: "/home/:id/editSubmitted",
