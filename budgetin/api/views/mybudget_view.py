@@ -9,6 +9,7 @@ class MyBudgetViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated, IsUser]
      
     def list(self, request):
+        print(request.custom_user)
         user_ithc_biro = request.custom_user['ithc_biro']
 
         queryset = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 

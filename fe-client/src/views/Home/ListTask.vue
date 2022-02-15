@@ -42,7 +42,7 @@
               >
                 <v-tooltip bottom v-if="item.planning.is_active">
                   <template v-slot:activator="{ on }">
-                    <v-icon v-on="on" color="#16B1FF" @click="onEdit(item)">
+                    <v-icon v-on="on" color="#16B1FF">
                       mdi-lead-pencil
                     </v-icon>
                   </template>
@@ -115,9 +115,6 @@ export default {
           disabled: true,
         },
       ]);
-    },
-    onEdit(item) {
-      this.$store.commit("home/SET_SUBMITTED_TASK_ITEM", item);
     },
     onView(item){
 

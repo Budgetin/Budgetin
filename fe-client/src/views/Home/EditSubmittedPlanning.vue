@@ -193,6 +193,7 @@ export default {
   }),
   created() {
     this.setBreadcrumbs();
+    this.getSubmittedItem();
   },
   computed: {
     ...mapState("home", ["loadingGetSubmittedTaskItem", "dataSubmittedTask"]),
@@ -215,6 +216,9 @@ export default {
           disabled: true,
         },
       ]);
+    },
+    getSubmittedItem() {
+      this.getSubmittedTaskById(this.$route.params.id)
     },
     onSaveSuccess() {
       this.dialog = false;
