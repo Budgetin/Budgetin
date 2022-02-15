@@ -7,10 +7,15 @@ const ENDPOINT = "/api/mytask/";
 const home = {
   namespaced: true,
   state: {
-    requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    loadingGetHome: false, // for loading table
+    requestTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetTask: false, // for loading table
     dataHome: [], // for v-data-table
     errorMsg: null,
+
+    requestSubmittedTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetSubmittedTask: false, // for loading table
+    dataSubmittedTask: [], // for v-data-table
+    errorMsgSubmittedTask: null,
 
     loadingGetEdittedItem: false,
     loadingPostPatchHome: false, // for loading post/patch
@@ -47,23 +52,22 @@ const home = {
           });
       });
     },
-    // getHomeById({ commit }, id) {
-    //   commit("SET_LOADING_GET_EDITTED_ITEM", true);
-
-    //   return new Promise((resolve, reject) => {
-    //     getAPI
-    //       .get(ENDPOINT + `${id}/`)
-    //       .then((response) => {
-    //         const data = response.data;
-    //         commit("SET_EDITTED_ITEM", data);
-    //         resolve(data);
-    //       })
-    //       .catch((error) => {
-    //         commit("GET_ERROR", error);
-    //         reject(error);
-    //       });
-    //   });
-    // },
+    getSubmittedTaskById({ commit }, id) {
+      commit("SET_LOADING_GET_SUBMITTED_TASK_ITEM");
+      return new Promise((resolve, reject) => {
+        getAPI
+          .get(ENDPOINT + `${id}/`)
+          .then((response) => {
+            const data = response.data;
+            commit("SET_SUBMITTED_TASK_ITEM", data);
+            resolve(data);
+          })
+          .catch((error) => {
+            commit("SET_ERROR_SUBMITTED_TASK_ITEM", error);
+            reject(error);
+          });
+      });
+    },
     // postHome({ commit }, payload) {
     //   commit("POST_PATCH_INIT");
     //   return new Promise((resolve, reject) => {
@@ -174,23 +178,44 @@ const home = {
   mutations: {
     // get related
     GET_INIT(state) {
-      state.requestStatus = "PENDING";
-      state.loadingGetHome = true;
+      state.requestTaskStatus = "PENDING";
+      state.loadingGetTask = true;
     },
     GET_SUCCESS(state, dataHome) {
-      state.requestStatus = "SUCCESS";
-      state.loadingGetHome = false;
+      state.requestTaskStatus = "SUCCESS";
+      state.loadingGetTask = false;
       state.dataHome = dataHome;
     },
     GET_ERROR(state, error) {
-      state.requestStatus = "ERROR";
-      state.loadingGetHome = false;
+      state.requestTaskStatus = "ERROR";
+      state.loadingGetTask = false;
       state.errorMsg = error;
       state.dataHome = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
     },
+    
+    SET_LOADING_GET_SUBMITTED_TASK_ITEM(state) {
+      state.requestSubmittedTaskStatus = "PENDING";
+      state.loadingGetSubmittedTaskItem = true;
+    },
+    SET_SUBMITTED_TASK_ITEM(state, payload) {
+      state.requestSubmittedTaskStatus = "SUCCESS";
+      state.loadingGetSubmittedTaskItem = false;
+      state.dataSubmittedTask = payload;
+    },
+    SET_ERROR_SUBMITTED_TASK_ITEM(state, error) {
+      state.requestTaskStatus = "ERROR";
+      state.loadingGetSubmittedTaskItem = false;
+      state.errorMsgSubmittedTask = error;
+      state.dataSubmittedTask = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+
 
     // post / patch related
     POST_PATCH_INIT(state) {
@@ -209,12 +234,7 @@ const home = {
         router.push({ name: 'Login'});
       }
     },
-    SET_EDITTED_ITEM(state, payload) {
-      state.edittedItem = payload;
-    },
-    SET_LOADING_GET_EDITTED_ITEM(state, payload) {
-      state.loadingGetEdittedItem = payload;
-    },
+
 
     // history relate
     SET_EDITTED_ITEM_HISTORIES(state, edittedItemHistories) {

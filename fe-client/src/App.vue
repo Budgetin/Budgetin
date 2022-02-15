@@ -43,7 +43,8 @@ export default {
 #app,
 #login-form,
 #list-task,
-#list-budget
+#list-budget,
+#submitted-planning
 {
   font-family: "Nunito", sans-serif !important;
 }

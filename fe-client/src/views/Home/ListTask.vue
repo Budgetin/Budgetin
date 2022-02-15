@@ -36,7 +36,7 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'SubmittedPlanning',
+                  name: 'EditSubmittedPlanning',
                   params: { id: item.id },
                 }"
               >
@@ -70,44 +70,31 @@
 
     </v-container>
 
-    <success-error-alert
-      :success="alert.success"
-      :show="alert.show"
-      :title="alert.title"
-      :subtitle="alert.subtitle"
-      @okClicked="onAlertOk"
-    />
   </v-app>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
-import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 import BinaryStatusTaskChip from "@/components/chips/BinaryStatusTaskChip.vue";
 
 export default {
   name: "Home",
-  components: {SuccessErrorAlert,BinaryStatusTaskChip},
+  components: {BinaryStatusTaskChip},
   watch: {},
   data: () => ({
     dialog: false,
     search: "",
+    isEdit: false,
     dataTable: {
       headers: [
         { text: "Planning For", value: "planning.year"},
         { text: "Biro", value: "biro.code"},
         { text: "Status", value: "monitoring_status", align: "center"},
-        { text: "Due Date", value: ""},
+        { text: "Due Date", value: "due_date"},
         { text: "Update By", value: "updated_by"},
         { text: "Update Date", value: "updated_at"},
         { text: "Actions", value: "actions", align: "center", sortable: false ,width: "4rem"},
       ]
-    },
-    alert: {
-      show: false,
-      success: null,
-      title: null,
-      subtitle: null,
     },
   }),
   created() {
@@ -130,24 +117,11 @@ export default {
       ]);
     },
     onEdit(item) {
-    },    
-    onSaveSuccess() {
-      this.dialog = false;
-      this.alert.show = true;
-      this.alert.success = true;
-      this.alert.title = "Save Success";
-      this.alert.subtitle = "Master Source has been saved successfully";
+      this.$store.commit("home/SET_SUBMITTED_TASK_ITEM", item);
     },
-    onSaveError(error) {
-      this.dialog = false;
-      this.alert.show = true;
-      this.alert.success = false;
-      this.alert.title = "Save Failed";
-      this.alert.subtitle = error;
-    },
-    onAlertOk() {
-      this.alert.show = false;
-    }
+    onView(item){
+
+    }    
   }
 }
 </script>

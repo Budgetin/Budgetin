@@ -57,6 +57,11 @@ const routes = [
         component: () => import("@/views/Home/ListTask"),
       },
       {
+        path: "/home/:id/editSubmitted",
+        name: 'EditSubmittedPlanning',
+        component: () => import("@/views/Home/EditSubmittedPlanning"),
+      },
+      {
         path: "/myBudget",
         name: "ListBudget",
         beforeEnter: (to, from, next) => {
