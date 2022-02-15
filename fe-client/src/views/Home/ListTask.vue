@@ -10,6 +10,8 @@
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
           <v-data-table
+            :items="dataHome"
+            :loading="loadingGetHome"
             :headers="dataTable.headers"
             :search="search"
           >
@@ -38,15 +40,28 @@
                   params: { id: item.id },
                 }"
               >
-                <v-tooltip bottom>
+                <v-tooltip bottom v-if="item.planning.is_active">
                   <template v-slot:activator="{ on }">
-                    <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                    <v-icon v-on="on" color="#16B1FF" @click="onEdit(item)">
+                      mdi-lead-pencil
+                    </v-icon>
+                  </template>
+                  <span>Edit</span>
+                </v-tooltip>
+
+                <v-tooltip bottom v-if="!item.planning.is_active">
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on" color="#16B1FF" @click="onView(item)">
                       mdi-eye
                     </v-icon>
                   </template>
-                  <span>View/Edit</span>
+                  <span>View</span>
                 </v-tooltip>
               </router-link>
+            </template>
+
+            <template v-slot:[`item.monitoring_status`]="{ item }">
+              <binary-status-task-chip :data="item.monitoring_status"> </binary-status-task-chip>
             </template>
 
           </v-data-table>
@@ -66,21 +81,24 @@
 </template>
 
 <script>
-// import { mapState, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import BinaryStatusTaskChip from "@/components/chips/BinaryStatusTaskChip.vue";
+
 export default {
   name: "Home",
-  components: {SuccessErrorAlert},
+  components: {SuccessErrorAlert,BinaryStatusTaskChip},
   watch: {},
   data: () => ({
     dialog: false,
     search: "",
     dataTable: {
       headers: [
-        { text: "Planning For", value: "planning_for"},
-        { text: "Biro", value: "biro"},
-        { text: "Status", value: "status"},
-        { text: "Update By", value: "update_by"},
+        { text: "Planning For", value: "planning.year"},
+        { text: "Biro", value: "biro.code"},
+        { text: "Status", value: "monitoring_status", align: "center"},
+        { text: "Due Date", value: ""},
+        { text: "Update By", value: "updated_by"},
         { text: "Update Date", value: "updated_at"},
         { text: "Actions", value: "actions", align: "center", sortable: false ,width: "4rem"},
       ]
@@ -93,14 +111,14 @@ export default {
     },
   }),
   created() {
-    // this.getHome();
+    this.getHome();
     this.setBreadcrumbs();
   },
-  // computed: {
-  //   ...mapState("masterCoa", ["loadingGetHome", "dataHome"]),
-  // },
+  computed: {
+    ...mapState("home", ["loadingGetHome", "dataHome"]),
+  },
   methods: {
-  //   ...mapActions("masterCoa", ["getHome", "postHome"]),
+    ...mapActions("home", ["getHome"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -162,7 +180,6 @@ button {
 
   .list-task__container {
     padding: 24px 0px;
-    // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 8px;
   }

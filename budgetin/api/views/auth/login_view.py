@@ -38,8 +38,8 @@ class LoginView(APIView):
         employee_id, display_name, role, initial, eselon = get_user_info(username)
 
         # Hit EAI
-        eai_login_status = login_eai(username, password)
-        # eai_login_status = "Berhasil" #DEBT
+        # eai_login_status = login_eai(username, password)
+        eai_login_status = "Berhasil" #DEBT
 
         # If EAI success, Get ITHC EmployeeID
         if eai_login_status != "Berhasil":

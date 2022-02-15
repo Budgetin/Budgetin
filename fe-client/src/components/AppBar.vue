@@ -19,7 +19,7 @@
       <!-- <span class="text-caption">photo</span> -->
       <!-- v-if="userInitial=='Admin'" -->
       <!-- <span class="white--text text-h6" >{{ getInitial }}</span> -->
-      <!-- <span class="white--text text-h6" v-if="userInitial">{{ userInitial }}</span> -->
+      <span class="white--text text-h6" v-if="userInitial">{{ userInitial }}</span>
     </v-avatar>
 
     <v-btn icon style="margin: auto 0px" @click="logout">
@@ -37,17 +37,17 @@ export default {
   },
   computed: {
     ...mapState("breadcrumbs", ["links"]),
-    // ...mapState("login", ["userInitial"]),
+    ...mapState("login", ["userInitial"]),
   },
   methods: {
-    // ...mapActions("login", ["logOut","setInitial"]),
+    ...mapActions("login", ["logOut","setInitial"]),
     logout() {
-      // this.logOut();
+      this.logOut();
     },
     getInitial(){
-      // if(!this.userInitial){
-      //   this.setInitial();
-      // };
+      if(!this.userInitial){
+        this.setInitial();
+      };
     }
   },
 };
