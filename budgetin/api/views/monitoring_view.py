@@ -9,37 +9,31 @@ from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated, IsAdmin
 
-def construct_monitoring_dict(monitoring):
-    monitoring_dict = model_to_dict(monitoring)
-    monitoring_dict['biro'] = model_to_dict(monitoring.biro)
-    monitoring_dict['created_at'] = monitoring.created_at.strftime("%d %B %Y")
-    monitoring_dict['updated_at'] = monitoring.updated_at.strftime("%d %B %Y")
-    return monitoring_dict
-
 class MonitoringViewSet(viewsets.ModelViewSet):
     queryset = Monitoring.objects.all()
     serializer_class = MonitoringSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def list(self, request, *args, **kwargs):
-        parameter  = request.GET.get('planning')
-        if parameter:
-            monitoring = Monitoring.objects.select_related('biro').filter(planning=parameter)
+        planning  = request.GET.get('planning')
+        if planning:
+            queryset = Monitoring.objects.select_related('biro', 'planning').filter(planning=planning)
         else:
-            monitoring = Monitoring.objects.select_related('biro').all()
+            queryset = Monitoring.objects.select_related('biro', 'planning').all()
 
-        monitoring.filter(~Q(monitoring_status=MonitoringStatusEnum.OPTIONAL.value))
-        result = []
-        for each in monitoring:
-            each_dict = construct_monitoring_dict(each)
-            result.append(each_dict)
-        return Response(result)
+        queryset.filter(~Q(monitoring_status=MonitoringStatusEnum.OPTIONAL.value))
+        for monitoring in queryset:
+            monitoring.format_timestamp("%d %B %Y")
+
+        serializer = MonitoringSerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
         id = kwargs['pk']
-        monitoring = Monitoring.objects.select_related('biro').get(pk=id)
-        monitoring_dict = construct_monitoring_dict(monitoring)
-        return Response(monitoring_dict)
+        monitoring = Monitoring.objects.select_related('biro', 'planning').get(pk=id)
+        
+        serializer = MonitoringSerializer(monitoring, many=False)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
