@@ -192,6 +192,8 @@
               :disabled="isView"
               :rules="validation.required"
               placeholder="Input Here"
+              suffix="IDR"
+              @input="total_investment_input"
             >
             </v-text-field>
           </v-col>
@@ -602,6 +604,9 @@ export default {
     ...mapActions("masterCoa", [
       "getMasterCoa"
     ]),
+    total_investment_input(){
+      this.form.total_investment_value = this.numberWithDots(this.form.total_investment_value);
+    },
     onInput(budget){
       if(budget.planning_q1){
         budget.planning_q1 = this.numberWithDots(budget.planning_q1);

@@ -57,7 +57,6 @@ export default {
       this.$emit("existingClicked");
     },
     onCancel(){
-      console.log(this.dataProjectType);
       this.$emit("cancelClicked");
     }
   },
