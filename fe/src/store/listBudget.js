@@ -149,7 +149,7 @@ const listBudget = {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
-          .post(LIST_PLANNING_ENDPOINT, payload)
+          .post(BUDGET_ENDPOINT, payload)
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");

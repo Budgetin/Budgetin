@@ -7,8 +7,15 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'Index',
+    component: () => import("@/views/Index"),
+    children: [
+      {
+        path: '/home',
+        name: 'Home',
+        component: () => import("@/views/Home/ListTask"),
+      }
+    ]
   },
   {
     path: '/login',
