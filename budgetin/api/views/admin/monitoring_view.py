@@ -13,13 +13,6 @@ from api.utils.enum import ActionEnum, TableEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated, IsAdmin
 from api.exceptions.not_found_exception import NotFoundException
 
-def construct_monitoring_dict(monitoring):
-    monitoring_dict = model_to_dict(monitoring)
-    monitoring_dict['biro'] = model_to_dict(monitoring.biro)
-    monitoring_dict['created_at'] = monitoring.created_at.strftime("%d %B %Y")
-    monitoring_dict['updated_at'] = monitoring.updated_at.strftime("%d %B %Y")
-    return monitoring_dict
-
 def create_non_existent_biro(biros, planning_id):
     for ithc_biro in biros:
         biro, created = create_update_biro(ithc_biro)
