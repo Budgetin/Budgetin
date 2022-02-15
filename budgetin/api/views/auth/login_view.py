@@ -14,13 +14,13 @@ def get_user_info(username):
     if users:
         user = users[0]
         if not user["is_deleted"] and user["is_active"]:
-            display_name, initial, eselon = get_user_detail(username)
-            return user['employee_id'], display_name, user['role'], initial, eselon
+            display_name, initial, eselon, ithc_biro = get_user_detail(username)
+            return user['employee_id'], display_name, user['role'], initial, eselon, ithc_biro 
     
     #Check if User S1, S2, S3
     user = get_ithc_employee_info(username)
     if user['biro_manager_id'] == user['employee_id'] or user['sub_group_manager_id'] == user['employee_id'] or user['group_manager_id'] == user['employee_id']:
-        return user['employee_id'], user['display_name'], RoleEnum.USER.value, user['initial'], user['eselon']
+        return user['employee_id'], user['display_name'], RoleEnum.USER.value, user['initial'], user['eselon'], user['biro_id']
     
     raise NotEligibleException()
 
@@ -35,7 +35,7 @@ class LoginView(APIView):
         password = request.data['password']
 
         # # Check if users exists in Budgetin/ITHC database
-        employee_id, display_name, role, initial, eselon = get_user_info(username)
+        employee_id, display_name, role, initial, eselon, ithc_biro = get_user_info(username)
 
         # Hit EAI
         eai_login_status = login_eai(username, password)
@@ -57,7 +57,7 @@ class LoginView(APIView):
         )
 
         # Generate jwt
-        jwt = generate_token(user.id, username, role, eselon, initial)
+        jwt = generate_token(user.id, username, role, eselon, initial, ithc_biro)
         response = Response({
             'username': username,
             'display_name': display_name,
@@ -70,7 +70,7 @@ class LoginView(APIView):
             value=jwt,
             httponly=True,
             samesite='None',
-            secure=True   
+            # secure=True   
         )
                 
         return response
