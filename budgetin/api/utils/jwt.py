@@ -4,13 +4,14 @@ from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
 
-def generate_token(id, username, role, eselon, initial):
+def generate_token(id, username, role, eselon, initial, ithc_biro):
     payload = {
         "id": id,
         "username": username,
         "role": role,
         "eselon": eselon,
         "initial": initial,
+        "ithc_biro": ithc_biro,
         "iat": timezone.now(),
         "exp": timezone.now() + timedelta(hours=8),
     }
