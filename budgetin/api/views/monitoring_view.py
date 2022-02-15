@@ -2,13 +2,31 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from api.utils.hit_api import get_all_biro
+from api.views.planning_view import create_update_biro, get_pic, create_update_all_biro_and_create_monitoring, create_monitoring
 
 from api.models import Monitoring
 from api.serializers import MonitoringSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated, IsAdmin
+from api.exceptions.not_found_exception import NotFoundException
 
+def construct_monitoring_dict(monitoring):
+    monitoring_dict = model_to_dict(monitoring)
+    monitoring_dict['biro'] = model_to_dict(monitoring.biro)
+    monitoring_dict['created_at'] = monitoring.created_at.strftime("%d %B %Y")
+    monitoring_dict['updated_at'] = monitoring.updated_at.strftime("%d %B %Y")
+    return monitoring_dict
+
+def create_non_existent_biro(biros, planning_id):
+    for ithc_biro in biros:
+        biro, created = create_update_biro(ithc_biro)
+        # Biro that lasts with * (IBO*, NIS*) is not included
+        if created and ithc_biro["code"][-1] != "*":
+            print("new monitoring created")
+            create_monitoring(ithc_biro, biro, planning_id)
 class MonitoringViewSet(viewsets.ModelViewSet):
     queryset = Monitoring.objects.all()
     serializer_class = MonitoringSerializer
@@ -52,3 +70,19 @@ class MonitoringViewSet(viewsets.ModelViewSet):
         return Response({
             'message': 'Monitoring cannot be deleted'
         })
+
+    @action(detail=False, methods=['get'])
+    def reload(self, request):
+        try:
+            planning_id = request.query_params.getlist('planning')[0]
+        except KeyError:
+            raise NotFoundException("Planning parameter")
+
+        biros = get_all_biro('manager_employee,sub_group,sub_group.group,manager_employee,sub_group.manager_employee,sub_group.group.manager_employee')
+        create_non_existent_biro(biros, planning_id)
+        return Response({"message":"Biro for planning "+ str(planning_id) +" Reloaded"})
+
+    @action(detail=True, methods=['get'])
+    def submit(self, request, pk=None):
+        monitoring = Monitoring.objects.filter(pk=pk).update(monitoring_status="Submitted")
+        return Response({"message":"Monitoring "+ str(pk) +"status changed to : Submitted"})

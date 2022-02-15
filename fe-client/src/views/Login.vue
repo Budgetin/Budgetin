@@ -99,6 +99,7 @@ export default {
   created() {
   },
   methods: {
+    ...mapActions("login", ["postLogin"]),
     handleLogin() {
       // //console. = "";
       this.$refs.form.validate();
@@ -109,14 +110,13 @@ export default {
           username: this.username,
           password: this.password,
         };
-        this.onSubmitSuccess();
-        // this.postLogin(JSON.parse(JSON.stringify(payload)))
-        //   .then(() => {
-        //     this.onSubmitSuccess();
-        //   })
-        //   .catch((error) => {
-        //     this.onSubmitError(error);
-        //   });
+        this.postLogin(JSON.parse(JSON.stringify(payload)))
+          .then(() => {
+            this.onSubmitSuccess();
+          })
+          .catch((error) => {
+            this.onSubmitError(error);
+          });
       }
     },
     onSubmitSuccess() {
@@ -131,7 +131,7 @@ export default {
       this.valid = true;
       this.loading = false;
       if (this.alert.success) {
-        this.$router.push({ path: "/" });
+        this.$router.push({ path: "/home" });
       }
     },
     onSubmitError(error) {

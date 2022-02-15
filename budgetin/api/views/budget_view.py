@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from api.models import Budget, Project, ProjectDetail
+from api.models import Budget, Project, ProjectDetail, Monitoring
 from api.serializers import BudgetSerializer, BudgetResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
@@ -60,6 +60,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         else:
             project = Project.objects.get(pk=request.data['project_id'])
             
+        
         # Project Detail
         project_detail, created = ProjectDetail.objects.update_or_create(planning_id=request.data['planning'], project=project, defaults={
             'project_type_id': request.data['project_type']
@@ -100,6 +101,9 @@ class BudgetViewSet(viewsets.ModelViewSet):
                 Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(updated_by_id = request.custom_user['id'])
                 
                 AuditLog.Save(updated_budget, request, ActionEnum.UPDATE, TableEnum.BUDGET)
+        
+        #Tag Monitoring of this Biro to Draft
+        monitoring = Monitoring.objects.filter(planning_id=request.data['planning']).update(monitoring_status="Draft")
             
         return Response(model_to_dict(project))
 
@@ -163,7 +167,3 @@ class BudgetViewSet(viewsets.ModelViewSet):
             
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
-
-    # @action(detail=False, methods=['post'])
-    # def list_planning(self, request):
-        

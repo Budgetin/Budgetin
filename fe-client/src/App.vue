@@ -28,6 +28,10 @@ export default {
 .v-main {
   padding-left: 5rem !important;
 }
+
+.v-app-bar.v-app-bar--fixed{
+  left: 5rem !important;
+}
 </style> 
 
 <style lang="scss">
@@ -37,7 +41,9 @@ export default {
 
 /* GLOBAL TYPOGRAPHY  STYLING */
 #app,
-#login-form
+#login-form,
+#list-task,
+#list-budget
 {
   font-family: "Nunito", sans-serif !important;
 }

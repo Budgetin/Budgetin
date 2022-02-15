@@ -31,10 +31,9 @@ EAI_CLIENT_SECRET = config('EAI_CLIENT_SECRET')
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT')
-EMAIL_USE_SSL = False
-EMAIL_USE_TLS = False
 
 # ITHC
 ITHC_API_KEY = config('ITHC_API_KEY')

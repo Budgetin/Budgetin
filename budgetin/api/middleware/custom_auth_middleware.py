@@ -22,7 +22,8 @@ class CustomAuthMiddleware(object):
         #         "display_name": "Winoto Sugiarto",
         #         "role": "User",
         #         "eselon": "S3",
-        #         "initial": "WIN"
+        #         "initial": "WIN",
+        #         "ithc_biro": 37
         #     }
                 
         return None

@@ -4,7 +4,7 @@
       expand-on-hover
       permanent
       dark
-      class="gradient elevation-3"
+      class="gradient elevation-15"
       app
       mini-variant-width="5rem"
     >
