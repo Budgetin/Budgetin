@@ -127,4 +127,4 @@ def get_user_detail(username):
     if res.json():
         employee = [e for e in res.json() if e['is_deleted'] == False]
         if employee:
-            return employee[0]['display_name'], employee[0]['initial'], employee[0]['eselon']['code']
+            return employee[0]['display_name'], employee[0]['initial'], employee[0]['eselon']['code'], employee[0]['biro']

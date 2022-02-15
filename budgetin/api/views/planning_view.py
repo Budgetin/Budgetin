@@ -41,9 +41,9 @@ def create_monitoring(ithc_biro, biro, planning_id, monitoring_status):
         biro_id=biro.id, 
         planning_id=planning_id, 
         monitoring_status=monitoring_status,
-        pic_employee_id=pic['id'],
-        pic_initial=pic['initial'],
-        pic_display_name=pic['display_name'],
+        pic_employee_id=pic['id'] if pic else None, #DEBT. Delete if else when Biro* already has manager
+        pic_initial=pic['initial'] if pic else None, #DEBT. Delete if else when Biro* already has manager
+        pic_display_name=pic['display_name'] if pic else None, #DEBT. Delete if else when Biro* already has manager
     )
     
 def get_pic(ithc_biro):
