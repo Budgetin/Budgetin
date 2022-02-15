@@ -24,6 +24,10 @@ export default {
   font-size: 1.25rem !important;
   font-weight: 600 !important;
 }
+
+.v-main {
+  padding-left: 5rem !important;
+}
 </style> 
 
 <style lang="scss">
@@ -36,10 +40,6 @@ export default {
 #login-form
 {
   font-family: "Nunito", sans-serif !important;
-}
-
-#app-bar{
-   z-index: 15;
 }
 
 .v-data-table {
@@ -61,11 +61,6 @@ export default {
     background-color: var(--grey-bg) !important;
   }
 }
-
-a{
-  background-color: white;
-}
-
 .rounded-card{
     border-radius:100%;
 }

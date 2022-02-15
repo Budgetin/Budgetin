@@ -1,0 +1,193 @@
+<template>
+  <v-app id="list-task">
+    <v-container class="list-task__container outer-container">
+      <v-row no-gutters>
+        <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+          <v-subheader class="list-task__header">My Task</v-subheader>
+        </v-col>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+          <v-data-table
+            :headers="dataTable.headers"
+            :search="search"
+          >
+            <template v-slot:top>
+              <v-toolbar-title>
+                <v-row class="mb-5" no-gutters>
+                  <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
+                    <v-text-field
+                      class="list-task__input"
+                      v-model="search"
+                      append-icon="mdi-magnify"
+                      label="Search"
+                      hide-details
+                    >
+                    </v-text-field>
+                  </v-col>
+                </v-row>
+              </v-toolbar-title>
+            </template>
+
+            <template v-slot:[`item.actions`]="{ item }">
+              <router-link
+                style="text-decoration: none"
+                :to="{
+                  name: 'SubmittedPlanning',
+                  params: { id: item.id },
+                }"
+              >
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                      mdi-eye
+                    </v-icon>
+                  </template>
+                  <span>View/Edit</span>
+                </v-tooltip>
+              </router-link>
+            </template>
+
+          </v-data-table>
+        </v-col>
+      </v-row>
+
+    </v-container>
+
+    <success-error-alert
+      :success="alert.success"
+      :show="alert.show"
+      :title="alert.title"
+      :subtitle="alert.subtitle"
+      @okClicked="onAlertOk"
+    />
+  </v-app>
+</template>
+
+<script>
+// import { mapState, mapActions } from "vuex";
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+export default {
+  name: "Home",
+  components: {SuccessErrorAlert},
+  watch: {},
+  data: () => ({
+    dialog: false,
+    search: "",
+    dataTable: {
+      headers: [
+        { text: "Planning For", value: "planning_for"},
+        { text: "Biro", value: "biro"},
+        { text: "Status", value: "status"},
+        { text: "Update By", value: "update_by"},
+        { text: "Update Date", value: "updated_at"},
+        { text: "Actions", value: "actions", align: "center", sortable: false ,width: "4rem"},
+      ]
+    },
+    alert: {
+      show: false,
+      success: null,
+      title: null,
+      subtitle: null,
+    },
+  }),
+  created() {
+    // this.getHome();
+    this.setBreadcrumbs();
+  },
+  // computed: {
+  //   ...mapState("masterCoa", ["loadingGetHome", "dataHome"]),
+  // },
+  methods: {
+  //   ...mapActions("masterCoa", ["getHome", "postHome"]),
+    setBreadcrumbs() {
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Home",
+          link: false,
+          exact: true,
+          disabled: true,
+        },
+      ]);
+    },
+    onEdit(item) {
+    },    
+    onSaveSuccess() {
+      this.dialog = false;
+      this.alert.show = true;
+      this.alert.success = true;
+      this.alert.title = "Save Success";
+      this.alert.subtitle = "Master Source has been saved successfully";
+    },
+    onSaveError(error) {
+      this.dialog = false;
+      this.alert.show = true;
+      this.alert.success = false;
+      this.alert.title = "Save Failed";
+      this.alert.subtitle = error;
+    },
+    onAlertOk() {
+      this.alert.show = false;
+    }
+  }
+}
+</script>
+
+<style>
+button {
+  min-width: 2rem;
+}
+</style>
+
+<style lang="scss" scoped>
+#list-task {
+  .list-task__header {
+    padding-left: 32px;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .list-task__input {
+    padding: 10px 32px;
+  }
+
+  .list-task__btn {
+    text-align: end;
+
+    button {
+      margin: 10px 32px;
+    }
+  }
+
+  .list-task__container {
+    padding: 24px 0px;
+    // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 8px;
+  }
+
+}
+
+@media only screen and (max-width: 600px) {
+  /* For mobile phones */
+  #list-task {
+    .list-task__btn {
+      text-align: center;
+      padding: 0px 32px;
+
+      button {
+        width: 100%;
+        margin: 0px 0px 32px 0px;
+      }
+    }
+    .list-task__card {
+      flex-direction: column;
+      button {
+        width: 16rem !important;
+        margin-left: unset !important;
+      }
+    }
+  }
+}
+</style>
