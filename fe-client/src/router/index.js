@@ -14,7 +14,15 @@ const routes = [
         path: '/home',
         name: 'Home',
         component: () => import("@/views/Home/ListTask"),
-      }
+      },
+      {
+        path: "myProject",
+        name: "MyProject",
+        // beforeEnter: (to, from, next) => {
+        //   checkSession(next, to.fullPath);
+        // },
+        component: () => import("@/views/MyProject/MyProject"),
+      },
     ]
   },
   {

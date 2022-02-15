@@ -3,7 +3,8 @@ import Vuex from 'vuex'
 
 // List Path Created Module
 import breadcrumbs from "./breadcrumbs";
-import login from "./login"
+import login from "./login";
+import myProject from "./myProject"
 
 Vue.use(Vuex)
 
@@ -20,5 +21,6 @@ export default new Vuex.Store({
   modules: {
     breadcrumbs,
     login,
+    myProject,
   },
 })
