@@ -173,9 +173,8 @@ export default {
 </script>
 
 <style scoped>
-.v-data-table /deep/ .sticky-header {
-    position: sticky;
-    top: 0;
+::v-deep button {
+  min-width: 2rem;
 }
 </style>
 
