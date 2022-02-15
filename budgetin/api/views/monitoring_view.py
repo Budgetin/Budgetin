@@ -1,12 +1,12 @@
+from django.db.models import Q
 from django.forms.models import model_to_dict
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-
 from api.models import Monitoring
 from api.serializers import MonitoringSerializer
 from api.utils.auditlog import AuditLog
-from api.utils.enum import ActionEnum, TableEnum
+from api.utils.enum import ActionEnum, TableEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated, IsAdmin
 
 def construct_monitoring_dict(monitoring):
@@ -28,6 +28,7 @@ class MonitoringViewSet(viewsets.ModelViewSet):
         else:
             monitoring = Monitoring.objects.select_related('biro').all()
 
+        monitoring.filter(~Q(monitoring_status=MonitoringStatusEnum.OPTIONAL.value))
         result = []
         for each in monitoring:
             each_dict = construct_monitoring_dict(each)
