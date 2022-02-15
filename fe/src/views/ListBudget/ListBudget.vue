@@ -610,7 +610,7 @@ export default {
 </script>
 
 <style scoped>
-button {
+::v-deep button {
   min-width: 2rem;
 }
 
