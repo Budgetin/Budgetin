@@ -17,8 +17,10 @@ def create_non_existent_biro(biros, planning_id):
     for ithc_biro in biros:
         biro, created = create_update_biro(ithc_biro)
         # Biro that lasts with * (IBO*, NIS*) is not included
-        if created and ithc_biro["code"][-1] != "*":
-            create_monitoring(ithc_biro, biro, planning_id)
+        if ithc_biro["code"][-1] != "*":
+            create_monitoring(ithc_biro, biro, planning_id, MonitoringStatusEnum.TODO.value)
+        else:
+            create_monitoring(ithc_biro, biro, planning_id, MonitoringStatusEnum.OPTIONAL.value)
             
 class MonitoringViewSet(viewsets.ModelViewSet):
     queryset = Monitoring.objects.all()
