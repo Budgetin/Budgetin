@@ -5,7 +5,7 @@ from api.models import Project
 from api.serializers import ProjectSerializer, ProjectResponseSerializer, ProjectResponseDetailSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.permissions import IsAuthenticated, IsAdmin
+from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 
 def get_filtered_queryset(request, queryset):
     planning = request.query_params.get('planning')
@@ -17,7 +17,7 @@ def get_filtered_queryset(request, queryset):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated, IsAdmin] #DEBT. Uncomment this line
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly] #DEBT. Uncomment this line
 
     def list(self, request, *args, **kwargs):
         queryset = Project.objects.select_related('biro', 'product', 'product__strategy', 'updated_by', 'created_by').all()            
