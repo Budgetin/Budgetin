@@ -8,14 +8,14 @@ const SECONDENDPOINT = "/api/logout/";
 const login = {
   namespaced: true,
   state: {
-    userInitial: "",
-    loadingGetLogout: false, // for loading table
-    loadingPostPatchLogin: false, // for loading post/patch
-    dataLogin: [], // for v-data-table
-    requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingPostPatchLogin: false, // for loading post/patch
+    userInitial: "", // for data Initial
+    getInitialStatus: "IDLE",// possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetInitial: false, // for loading intial
+    loadingGetLogout: false, // for loading table
+    requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
-    loadingGetInitial: false,
   },
   getters: {
     isAuthenticated: state => state.userInitial,
@@ -58,15 +58,9 @@ const login = {
         getAPI
           .post(ENDPOINT, payload)
           .then((response) => {
-            if(response.data.role=="Admin"){
+              console.log(response)
               commit("POST_PATCH_SUCCESS", response.data.initial);
               resolve(response);
-            }
-            else{
-              let errorMsg = `Please recheck your input or try again later`;
-              commit("POST_PATCH_ERROR", errorMsg);
-              reject(errorMsg);
-            }
           })
           .catch((error) => {
             let errorMsg = `Please recheck your input or try again later`;
@@ -93,7 +87,7 @@ const login = {
     },
 
     GET_INITIAL_SUCCESS(state, initial) {
-      state.requestStatus = "SUCCESS";
+      state.getInitialStatus = "SUCCESS";
       state.loadingGetInitial = false;
       state.userInitial = initial;
     },

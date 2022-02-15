@@ -8,13 +8,14 @@ const routes = [
   {
     path: '/',
     name: 'Index',
+    redirect : '/login',
     component: () => import("@/views/Index"),
     children: [
       {
         path: '/home',
         name: 'Home',
         component: () => import("@/views/Home/ListTask"),
-      }
+      },
     ]
   },
   {
