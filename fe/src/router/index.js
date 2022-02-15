@@ -223,7 +223,29 @@ const routes = [
         path: "/login",
         name: "Login",
         beforeEnter: (to, from, next) => {
-          checkSession(next, to.fullPath);
+          try {
+            console.log(from)
+              store
+                .dispatch("login/setInitial")
+                .then(() => {
+                  if (!store.getters["login/isAuthenticated"]) {
+                    console.log(store.getters["login/isAuthenticated"]);
+                    next();
+                    return;
+                  } else {
+                    router.go(-1);
+                    return;
+                  }
+                })
+                .catch((err) => {
+                  next();
+                  return;
+                });
+          } catch (e) {
+            ("masuk e");
+            next();
+            return;
+          }
         },
         component: () => import("@/views/Login"),
       },
