@@ -18,14 +18,26 @@
               cols="12"
               sm="6">
               <div class="StartPlanning__field">
-                <v-text-field
+                <!-- <v-text-field
                   v-model="form.year"
                   placeholder="Input a Year"
                   outlined
                   return-object
                   :disabled="isView"
                   :rules="validation.required">
-                </v-text-field>
+                </v-text-field> -->
+
+                <v-select
+                v-model="form.year"
+                :items="planningFor"
+                item-text="label"
+                item-value="id"
+                placeholder="Choose Year"
+                outlined
+                return-object
+                :disabled="isView"
+                :rules="validation.statusRule">
+                </v-select>
               </div>
             </v-col>
           </v-col>
@@ -204,6 +216,9 @@ export default {
   props: ["form", "isNew", "isView"],
 
   data: () => ({
+    // planningFor: [],
+    // year: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 4),
+    year: new Date().getFullYear(),
     selected: [],
     selectAll: [],
     menu: null,
@@ -226,6 +241,14 @@ export default {
       // },
     },
   }),
+
+  mounted() {
+    console.log(this.year);
+    // this.planningFor = [];
+    // for (let i = 0; i < 2; i++) {
+    //     this.planningFor.push(this.year + i);
+    // }
+  },
   
   computed: {
     ...mapState("statusInfo", ["statusInfoPlanning"]),
@@ -243,6 +266,9 @@ export default {
       if (this.selected.length != this.dataAllBiroItHc.length ) return "mdi-minus-box";
       return 'mdi-checkbox-blank-outline'
     },
+    planningFor() {
+      return Array.from({length: 2}, (value, index) => this.year + index)
+    }
   },
 
   methods: {

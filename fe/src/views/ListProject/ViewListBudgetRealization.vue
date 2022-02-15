@@ -122,7 +122,7 @@ export default {
                     exact: true,
                     disabled: false,
                     to: {
-                        name: "Project List",
+                        name: "ListProject",
                     },
                 },
                 {

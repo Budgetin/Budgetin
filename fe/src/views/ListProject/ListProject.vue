@@ -20,9 +20,9 @@
 
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+                    <!-- height = "80vh"
+                    fixed-header -->
                     <v-data-table
-                    height = "80vh"
-                    fixed-header
                     :headers="dataTable.headers"
                     :loading="loadingGetListProject"
                     :items="dataListProject"
@@ -94,10 +94,10 @@ export default {
         search: "",
         dataTable: {
             headers: [
-                { text: "Action", value: "actions", align: "center", sortable: false, width: "4rem"},
-                { text: "ID", value: "id", width: "4rem"},
-                { text: "ID ITFAM", value: "itfam_id"},
-                { text: "Project Name", value: "project_name", width: "8rem"},
+                { text: "Action", value: "actions", align: "center", sortable: false, width: "3rem"},
+                // { text: "ID", value: "id", width: "4rem"},
+                { text: "ID ITFAM", value: "itfam_id", width: "8rem"},
+                { text: "Project Name", value: "project_name", width: "14rem"},
                 // { text: "Project Description", value: "project_description", width: "10rem"},
                 { text: "RCC", value: "biro.rcc", width: "5rem"},
                 { text: "Biro", value: "biro.code", width: "5rem"},
