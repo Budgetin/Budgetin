@@ -37,7 +37,6 @@ const listBudget = {
 
     //Get List Budget (Active)
     getListBudget() {
-      if (store.state.listBudget.requestStatus !== "SUCCESS")
         store.dispatch("listBudget/getFromAPI");
     },
     getFromAPI({ commit }) {
@@ -57,7 +56,6 @@ const listBudget = {
     },
 
     getListInactiveBudget() {
-      if (store.state.listBudget.requestInactiveStatus !== "SUCCESS")
         store.dispatch("listBudget/getFromInactiveAPI");
     },
     getFromInactiveAPI({ commit }) {
@@ -77,7 +75,6 @@ const listBudget = {
     },
 
     getListActiveBudget() {
-      if (store.state.listBudget.requestActiveStatus !== "SUCCESS")
         store.dispatch("listBudget/getFromActiveAPI");
     },
     getFromActiveAPI({ commit }) {

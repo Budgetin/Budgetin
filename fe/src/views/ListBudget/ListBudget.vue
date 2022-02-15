@@ -610,19 +610,19 @@ export default {
 </script>
 
 <style scoped>
-button {
+::v-deep button {
   min-width: 2rem;
 }
 
-table > tbody > tr:hover td:nth-child(1),
-table > tbody > tr:hover td:nth-child(2),
-table > tbody > tr:hover td:nth-child(3),
-table > tbody > tr:hover td:nth-child(4){
+::v-deep table > tbody > tr:hover td:nth-child(1),
+::v-deep table > tbody > tr:hover td:nth-child(2),
+::v-deep table > tbody > tr:hover td:nth-child(3),
+::v-deep table > tbody > tr:hover td:nth-child(4){
   background: #EEEEEE;
 }
 
-table > tbody > tr > td:nth-child(1),
-table > thead > tr > th:nth-child(1) {
+::v-deep table > tbody > tr > td:nth-child(1),
+::v-deep table > thead > tr > th:nth-child(1) {
   position: sticky !important;
   position: -webkit-sticky !important;
   /* max-width: 4.1rem; */
@@ -630,44 +630,44 @@ table > thead > tr > th:nth-child(1) {
   z-index: 9;
   background: white;
 }
-table > thead > tr > th:nth-child(1) {
+::v-deep table > thead > tr > th:nth-child(1) {
   z-index: 10;
 }
-table > tbody > tr > td:nth-child(2),
-table > thead > tr > th:nth-child(2) {
+::v-deep table > tbody > tr > td:nth-child(2),
+::v-deep table > thead > tr > th:nth-child(2) {
   position: sticky !important;
   position: -webkit-sticky !important;
   left: 5rem;
   z-index: 9;
   background: white;
 }
-table > thead > tr > th:nth-child(2) {
+::v-deep table > thead > tr > th:nth-child(2) {
   z-index: 10;
 }
-table > tbody > tr > td:nth-child(3),
-table > thead > tr > th:nth-child(3) {
+::v-deep table > tbody > tr > td:nth-child(3),
+::v-deep table > thead > tr > th:nth-child(3) {
   position: sticky !important;
   position: -webkit-sticky !important;
   left:12rem;
   z-index: 9;
   background: white;
 }
-table > thead > tr > th:nth-child(3) {
+::v-deep table > thead > tr > th:nth-child(3) {
   z-index: 10;
 }
-table > tbody > tr > td:nth-child(4),
-table > thead > tr > th:nth-child(4) {
+::v-deep table > tbody > tr > td:nth-child(4),
+::v-deep table > thead > tr > th:nth-child(4) {
   position: sticky !important;
   position: -webkit-sticky !important;
   left: 20rem;
   z-index: 9;
   background: white;
 }
-table > thead > tr > th:nth-child(4) {
+::v-deep table > thead > tr > th:nth-child(4) {
   z-index: 10;
 }
 
-.choose-project-type_box{
+::v-deep .choose-project-type_box{
   border:3px rgb(228, 228, 228) solid;
   border-radius:20px;
   padding:0.5rem;
@@ -676,7 +676,7 @@ table > thead > tr > th:nth-child(4) {
   cursor:pointer;
 }
 
-.choose-project-type_box:hover{
+::v-deep .choose-project-type_box:hover{
   border:3px rgb(93, 158, 243) solid;
   border-radius:20px;
   padding:0.5rem;
