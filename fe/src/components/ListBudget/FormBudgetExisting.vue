@@ -183,7 +183,10 @@
               outlined
               dense
               readonly
-              placeholder="-"
+              :rules="validation.targetRule"
+              placeholder="Input Here"
+              suffix="IDR"
+              @input="total_investment_input"
             >
             </v-text-field>
           </v-col>
@@ -638,6 +641,9 @@ export default {
     ...mapActions("masterCoa", [
       "getMasterCoa"
     ]),
+    total_investment_input(){
+      this.form.total_investment_value = this.numberWithDots(this.form.total_investment_value);
+    },
     onSelectProject(){
       this.budgets = [];
       if(this.form.project && this.form.project.id){
@@ -645,7 +651,7 @@ export default {
         this.form.itfam_id = this.form.project.itfam_id;
         this.form.start_year = this.form.project.start_year;
         this.form.end_year = this.form.project.end_year;
-        this.form.total_investment_value = this.form.project.total_investment_value;
+        this.form.total_investment_value = this.numberWithDots(this.form.project.total_investment_value);
         this.form.is_tech = this.form.project.is_tech == true ? "Tech" : "Non-Tech";
         this.form.product = this.form.project.product.product_code;
         this.form.biro = this.form.project.biro.code;
