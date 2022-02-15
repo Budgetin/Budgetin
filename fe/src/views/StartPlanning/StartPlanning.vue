@@ -137,7 +137,7 @@ export default {
                 { text: "Notification", value: "notification" },
                 { text: "Updated By", value: "updated_by"},
                 { text: "Updated Date", value: "updated_at" },
-                { text: "Action", value: "actions", align: "center", sortable: false},
+                { text: "Action", value: "actions", align: "center", sortable: false,width: "4rem"},
             ],
         },
         sortBy: 'id',

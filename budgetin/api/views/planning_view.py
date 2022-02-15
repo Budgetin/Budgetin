@@ -19,7 +19,9 @@ def create_update_all_biro_and_create_monitoring(biros, planning_id):
 
         # Biro that lasts with * (IBO*, NIS*) is not included
         if ithc_biro["code"][-1] != "*":
-            create_monitoring(ithc_biro, biro, planning_id)
+            create_monitoring(ithc_biro, biro, planning_id, MonitoringStatusEnum.TODO.value)
+        else:
+            create_monitoring(ithc_biro, biro, planning_id, MonitoringStatusEnum.OPTIONAL.value)
 
 def create_update_biro(biro):
     return Biro.objects.update_or_create(
@@ -32,13 +34,13 @@ def create_update_biro(biro):
                     }
         )
         
-def create_monitoring(ithc_biro, biro, planning_id):
+def create_monitoring(ithc_biro, biro, planning_id, monitoring_status):
     pic = get_pic(ithc_biro)
     
     Monitoring.objects.create(
         biro_id=biro.id, 
         planning_id=planning_id, 
-        monitoring_status=MonitoringStatusEnum.TODO.value,
+        monitoring_status=monitoring_status,
         pic_employee_id=pic['id'],
         pic_initial=pic['initial'],
         pic_display_name=pic['display_name'],

@@ -112,7 +112,6 @@ const monitorPlanning = {
     patchMonitorPlanning({ commit }, payload) {
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
-      console.log("Payload ID: "+payload.id);
       return new Promise((resolve, reject) => {
         getAPI
           .patch(url, payload)

@@ -17,12 +17,12 @@ class CustomAuthMiddleware(object):
                 request.custom_user = user
         # else: #DEBT. delete this else block
         #     request.custom_user = {
-        #         "id": 1,
-        #         "username": "u067014",
-        #         "display_name": "Harve Louis Marcello",
-        #         "role": "Admin",
-        #         "eselon": "S7B",
-        #         "initial": "HLM"
+        #         "id": 4,
+        #         "username": "u051270",
+        #         "display_name": "Winoto Sugiarto",
+        #         "role": "User",
+        #         "eselon": "S3",
+        #         "initial": "WIN"
         #     }
                 
         return None

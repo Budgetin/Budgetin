@@ -60,13 +60,13 @@
             </div>
           </v-card>
         </v-row>
-        <!-- <success-error-alert
+        <success-error-alert
           :success="alert.success"
           :show="alert.show"
           :title="alert.title"
           :subtitle="alert.subtitle"
           @okClicked="onAlertOk"
-        /> -->
+        />
       </v-container>
     </v-main>
   </v-app>
@@ -74,11 +74,11 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-// import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
+import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 
 export default {
   name: "Login",
-  // components: { SuccessErrorAlert },
+  components: { SuccessErrorAlert },
   data() {
     return {
       valid: true,
@@ -99,7 +99,6 @@ export default {
   created() {
   },
   methods: {
-    ...mapActions("login", ["postLogin", "setInitial"]),
     handleLogin() {
       // //console. = "";
       this.$refs.form.validate();
@@ -110,16 +109,18 @@ export default {
           username: this.username,
           password: this.password,
         };
-        this.postLogin(JSON.parse(JSON.stringify(payload)))
-          .then(() => {
-            this.onSubmitSuccess();
-          })
-          .catch((error) => {
-            this.onSubmitError(error);
-          });
+        this.onSubmitSuccess();
+        // this.postLogin(JSON.parse(JSON.stringify(payload)))
+        //   .then(() => {
+        //     this.onSubmitSuccess();
+        //   })
+        //   .catch((error) => {
+        //     this.onSubmitError(error);
+        //   });
       }
     },
     onSubmitSuccess() {
+      this.loading = false;
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Login Success";
@@ -130,7 +131,7 @@ export default {
       this.valid = true;
       this.loading = false;
       if (this.alert.success) {
-        this.$router.push({ path: "/coa" });
+        this.$router.push({ path: "/" });
       }
     },
     onSubmitError(error) {

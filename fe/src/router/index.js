@@ -223,32 +223,30 @@ const routes = [
         path: "/login",
         name: "Login",
         beforeEnter: (to, from, next) => {
-          checkSession(next, to.fullPath);
+          try {
+            console.log(from)
+              store
+                .dispatch("login/setInitial")
+                .then(() => {
+                  if (!store.getters["login/isAuthenticated"]) {
+                    console.log(store.getters["login/isAuthenticated"]);
+                    next();
+                    return;
+                  } else {
+                    router.go(-1);
+                    return;
+                  }
+                })
+                .catch((err) => {
+                  next();
+                  return;
+                });
+          } catch (e) {
+            ("masuk e");
+            next();
+            return;
+          }
         },
-        // beforeEnter: (to, from, next) => {
-        //   try {
-        //     store
-        //         .dispatch("login/setInitial")
-        //         .then(() => {
-        //           if (!store.getters["login/isAuthenticated"]) {
-        //             next();
-        //             return;
-        //           } else {
-        //             var url = to.params.redirectUrl.toString();
-        //             router.push(url);
-        //             return;
-        //           }
-        //         })
-        //         .catch((err) => {
-        //           next();
-        //           return;
-        //         });
-        //   } catch (e) {
-        //     ("masuk e");
-        //     next();
-        //     return;
-        //   }
-        // },
         component: () => import("@/views/Login"),
       },
     ],
@@ -261,6 +259,15 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
+  },
+  {
+    path: "*",
+    name: "404NotFound",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/404NotFound.vue"),
   },
 ];
 
