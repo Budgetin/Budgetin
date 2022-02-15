@@ -6,7 +6,7 @@
 			</div>
 			<h2>Oops, The Page you are looking for can't be found!</h2>
 			
-			<a href="/startPlanning"><span class="arrow"></span>Return To Homepage</a>
+			<a href="/home"><span class="arrow"></span>Return To Homepage</a>
 		</div>
 	</div>
 </template>
