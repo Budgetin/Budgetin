@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from api.models import Monitoring, Budget
 from api.permissions import IsAuthenticated, IsUser
 from api.serializers import MonitoringSerializer, BudgetResponseSerializer
+from api.utils.enum import MonitoringStatusEnum
 
 class TaskViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated, IsUser]
@@ -34,6 +35,12 @@ class TaskViewSet(viewsets.ViewSet):
         
         serializer = BudgetResponseSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    
+    @action(detail=True, methods=['post'])
+    def submit(self, request, pk=None):
+        monitoring = Monitoring.objects.filter(pk=pk).update(monitoring_status=MonitoringStatusEnum.SUBMITTED.value)
+        return Response({"message":"Monitoring "+ str(pk) +"status changed to : Submitted"})
         
         
         

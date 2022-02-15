@@ -81,8 +81,3 @@ class MonitoringViewSet(viewsets.ModelViewSet):
         biros = get_all_biro('manager_employee,sub_group,sub_group.group,manager_employee,sub_group.manager_employee,sub_group.group.manager_employee')
         create_non_existent_biro(biros, planning_id)
         return Response({"message":"Biro for planning "+ str(planning_id) +" Reloaded"})
-
-    @action(detail=True, methods=['get'])
-    def submit(self, request, pk=None):
-        monitoring = Monitoring.objects.filter(pk=pk).update(monitoring_status="Submitted")
-        return Response({"message":"Monitoring "+ str(pk) +"status changed to : Submitted"})
