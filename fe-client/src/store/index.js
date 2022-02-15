@@ -21,5 +21,6 @@ export default new Vuex.Store({
   modules: {
     breadcrumbs,
     login,
+    home,
   },
 })

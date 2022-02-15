@@ -42,8 +42,8 @@ export default {
 /* GLOBAL TYPOGRAPHY  STYLING */
 #app,
 #login-form,
-#list-task
-#list-budget,
+#list-task,
+#list-budget
 {
   font-family: "Nunito", sans-serif !important;
 }
