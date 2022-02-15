@@ -1,6 +1,6 @@
 <template>
-    <v-app id="list-project">
-        <v-container class="list-project__container outer-container">
+    <v-app id="my-project">
+        <v-container class="my-project__container outer-container">
             <!-- <v-row no-gutters>
                 <v-tabs v-model="tab" color="primary" align-with-title>
                     <v-tabs-slider color="grey"></v-tabs-slider>
@@ -14,7 +14,7 @@
             <v-divider></v-divider> -->
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <v-subheader class="list-project__header">Project List</v-subheader>
+                    <v-subheader class="my-project__header">My Project</v-subheader>
                 </v-col>
             </v-row>
 
@@ -24,8 +24,8 @@
                     fixed-header -->
                     <v-data-table
                     :headers="dataTable.headers"
-                    :loading="loadingGetListProject"
-                    :items="dataListProject"
+                    :loading="loadingGetMyProject"
+                    :items="dataMyProject"
                     :search="search">
                         <template v-slot:top>
                             <v-toolbar-title>
@@ -33,7 +33,7 @@
                                     <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
                                         <v-row no-gutters>
                                             <v-text-field
-                                            class="list-project__input"
+                                            class="my-project__input"
                                             v-model="search"
                                             append-icon="mdi-magnify"
                                             label="Search"
@@ -57,7 +57,7 @@
                             <router-link
                                 style="text-decoration: none"
                                 :to="{
-                                    name: 'ViewListProject',
+                                    name: 'ViewMyProject',
                                     params: { id: item.id },
                                 }">
                                 <v-tooltip bottom>
@@ -79,11 +79,11 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import FormListProject from '@/components/CompListProject/FormListProject';
+import FormMyProject from '@/components/MyProject/FormMyProject';
 export default {
-    name: "ListProject",
+    name: "MyProject",
     components: {
-        FormListProject
+        FormMyProject
     },
     watch: {},
     data: () => ({
@@ -133,25 +133,25 @@ export default {
     }),
 
     created() {
-        this.getListProject();
+        this.getMyProject();
         this.setBreadcrumbs();
     },
     computed: {
-        ...mapState("listProject", ["loadingGetListProject", "dataListProject"]),
+        ...mapState("myProject", ["loadingGetMyProject", "dataMyProject"]),
     },
     methods: {
-        ...mapActions("listProject", ["getListProject"]),
+        ...mapActions("myProject", ["getMyProject"]),
 
         setBreadcrumbs() {
             let param = this.isView ? "View Project Detail" : "Edit Project";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "Project List",
+                    text: "My Project",
                     link: true,
                     exact: true,
                     disabled: false,
                     to: {
-                        name: "ListProject",
+                        name: "MyProject",
                     },
                 },
             ]);
@@ -163,7 +163,7 @@ export default {
 
         },
         onEdit(item) {
-            this.$store.commit("listProject/SET_EDITTED_ITEM", item);
+            this.$store.commit("myProject/SET_EDITTED_ITEM", item);
         },
         onOK() {
             return this.$router.go(-1);
@@ -180,40 +180,40 @@ export default {
     margin: 40px;
 }
 
-#list-project {
-    .list-project__header {
+#my-project {
+    .my-project__header {
         padding-left: 32px;
         font-size: 1.25rem;
         font-weight: 600;
     }
 
-    .list-project__tab {
+    .my-project__tab {
         margin-bottom: 32px;
     }
 
-    .list-project__input {
+    .my-project__input {
         padding: 10px 32px;
     }
 
-    .list-project__btn {
+    .my-project__btn {
         text-align: end;
         button {
             margin: 10px 32px;
         }
     }
 
-    .list-project__switch {
+    .my-project__switch {
         margin-left: 600px;
     }
 
-    .list-project__container {
+    .my-project__container {
         padding: 24px 0px;
         // box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         border-radius: 8px;
     }
 
-    .list-project__card {
+    .my-project__card {
         button {
             width: 8rem;
         }
@@ -222,8 +222,8 @@ export default {
 
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
-#list-project {
-    .list-project__btn {
+#my-project {
+    .my-project__btn {
         text-align: center;
         padding: 0px 32px;
 
@@ -232,7 +232,7 @@ export default {
         margin: 0px 0px 32px 0px;
         }
     }
-    .list-project__card {
+    .my-project__card {
         flex-direction: column;
         button {
         width: 16rem !important;

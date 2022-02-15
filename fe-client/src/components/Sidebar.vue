@@ -26,6 +26,18 @@
           </v-list-item-icon>
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item>
+        <v-list-item link :to="'/myBudget'" replace>
+          <v-list-item-icon>
+            <v-icon>mdi-format-list-bulleted </v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>My Budget</v-list-item-title>
+        </v-list-item>
+        <v-list-item link :to="'/myProject'" replace>
+          <v-list-item-icon>
+            <v-icon>mdi-folder-network </v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>My Project</v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
   </div>

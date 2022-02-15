@@ -4,7 +4,16 @@ import Vuex from 'vuex'
 // List Path Created Module
 import login from "./login";
 import breadcrumbs from "./breadcrumbs";
+import myProject from "./myProject"
 import home from "./home";
+import choosedColumn from "./choosedColumn"
+import listBudget from "./listBudget"
+import listProject from "./listProject"
+import statusInfo from "./statusInfo"
+import masterCoa from "./masterCoa"
+import masterProduct from "./masterProduct"
+import allBiro from "./allBiro"
+import projectType from "./projectType"
 
 Vue.use(Vuex)
 
@@ -21,6 +30,15 @@ export default new Vuex.Store({
   modules: {
     breadcrumbs,
     login,
+    myProject,
     home,
+    listBudget,
+    choosedColumn,
+    masterCoa,
+    masterProduct,
+    allBiro,
+    projectType,
+    statusInfo,
+    listProject,
   },
 })
