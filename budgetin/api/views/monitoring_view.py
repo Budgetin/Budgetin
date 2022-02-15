@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from api.utils.hit_api import get_all_biro
-from api.views.admin.planning_view import create_update_biro, create_monitoring
+from api.views.planning_view import create_update_biro, create_monitoring
 
 from api.models import Monitoring
 from api.serializers import MonitoringSerializer
