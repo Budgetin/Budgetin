@@ -21,3 +21,4 @@ from .upload.import_realisasi import ImportRealisasi
 from .biro_ithc_view import BiroIthcView
 from .biro_view import BiroViewSet
 from .mytask_view import TaskViewSet
+from .myproject_view import MyProjectViewSet

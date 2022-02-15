@@ -32,6 +32,7 @@ router.register('api/auditlog', views.AuditLogViewSet)
 router.register('api/biro', views.BiroViewSet)
 router.register('api/project_detail', views.ProjectDetailViewSet)
 router.register('api/mytask', views.TaskViewSet, 'mytask')
+router.register('api/myproject', views.MyProjectViewSet, 'myproject')
 
 urlpatterns = [
     path('', include(router.urls)),
