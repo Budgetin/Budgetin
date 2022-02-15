@@ -65,6 +65,8 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 class ProjectResponseSerializer(serializers.ModelSerializer):
     product = ProductSerializer(many=False)
     biro = BiroSerializer(many=False)
+    is_tech = serializers.IntegerField()
+    
     class Meta:
         model = Project
         fields = fields = ['id', 'created_by', 'updated_by', 'created_at', 'updated_at', 'itfam_id', 'project_name', 'project_description', 'start_year', 'end_year', 'is_tech', 'total_investment_value', 'biro', 'product']
@@ -75,6 +77,8 @@ class ProjectResponseDetailSerializer(serializers.ModelSerializer):
     project_detail = ProjectDetailSerializer(many=True)
     created_by = serializers.SerializerMethodField()
     updated_by = serializers.SerializerMethodField()
+    is_tech = serializers.IntegerField()
+    
     class Meta:
         model = Project
         fields = ['id', 'created_by', 'updated_by', 'created_at', 'updated_at', 'itfam_id', 'project_name', 'project_description', 'start_year', 'end_year', 'is_tech', 'total_investment_value', 'biro', 'product', 'project_detail']
