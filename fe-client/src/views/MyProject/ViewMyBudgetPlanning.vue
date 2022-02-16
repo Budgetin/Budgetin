@@ -1,8 +1,8 @@
 <template>
     <v-container>
         <v-row no-gutters>
-            <!-- VIEW LIST BUDGET REALIZATION -->
-            <form-edit-budget-realization
+            <!-- VIEW MY BUDGET PLANNING -->
+            <form-edit-budget-planning
             :form="form"
             :isView="isView"
             :dataAllBudget="dataAllBudget"
@@ -11,8 +11,10 @@
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
             @okClicked="onOK"
-            class="view-list-budget-realization__detail">
-            </form-edit-budget-realization>
+            @deleteClicked="onDelete"
+            @restoreClicked="onRestore"
+            class="view-my-budget-planning__detail">
+            </form-edit-budget-planning>
             
             <!-- LOG HISTORY -->
             <v-col xs="12" sm="6" md="6" lg="5">
@@ -32,18 +34,34 @@
         :subtitle="alert.subtitle"
         @okClicked="onAlertOk"
         />
+
+        <success-error-alert
+        :success="delete_alert.success"
+        :show="delete_alert.show"
+        :title="delete_alert.title"
+        :subtitle="delete_alert.subtitle"
+        @okClicked="onAlertDeleteOk"
+        />
+
+        <success-error-alert
+        :success="restore_alert.success"
+        :show="restore_alert.show"
+        :title="restore_alert.title"
+        :subtitle="restore_alert.subtitle"
+        @okClicked="onAlertRestoreOk"
+        />
     </v-container>
 </template>
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormEditBudgetRealization from '@/components/CompListProject/FormEditBudgetRealization';
+import FormEditBudgetPlanning from '@/components/MyProject/FormEditBudgetPlanning';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import TimelineLog from "@/components/TimelineLog";
 export default {
-    name: "ViewListBudgetRealization",
+    name: "ViewMyBudgetPlanning",
     components: {
-        FormEditBudgetRealization, SuccessErrorAlert, TimelineLog
+        FormEditBudgetPlanning, SuccessErrorAlert, TimelineLog
     },
     data: () => ({
         isView: true,
@@ -98,6 +116,18 @@ export default {
             title: null,
             subtitle: null,
         },
+        delete_alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
+        restore_alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
     }),
     created() {
         this.getDetailItem();
@@ -110,26 +140,28 @@ export default {
         ...mapState("masterCoa", ["dataMasterCoa"]),
     },
     methods: {
-        ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById", "getHistory"]),
+        ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById", "getHistory", "deleteAllBudgetById", "restoreAllBudgetById"]),
         ...mapActions("masterCoa", ["getMasterCoa"]),
         
         setBreadcrumbs() {
-            let param = this.isView ? "View Budget Realization" : "Edit Budget Realization";
+            let param = this.isView ? "View Budget Planning" : "Edit Budget Planning";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "Project List",
+                    text: "My Project",
                     link: true,
                     exact: true,
                     disabled: false,
                     to: {
-                        name: "ListProject",
+                        name: "MyProject",
                     },
-                    text: "View Project",
+                },
+                {
+                    text: "View My Project",
                     link: true,
                     exact: true,
                     disabled: false,
                     to: {
-                        name: "ViewListProject",
+                        name: "ViewMyProject",
                     },
                 },
                 {
@@ -143,7 +175,7 @@ export default {
                 this.itemsHistory = JSON.parse(
                     JSON.stringify(this.$store.state.allBudget.edittedItemHistories));
                 for(let i=0; i<this.itemsHistory.length; i++) {
-                    this.itemsHistory[i].table = "budgetRealization"
+                    this.itemsHistory[i].table = "budgetPlanning"
                     // console.log(this.itemsHistory[i]);
                 }
             });
@@ -161,6 +193,24 @@ export default {
         onEdit() {
             this.isView = false;
             this.setBreadcrumbs();
+        },
+        onDelete() {
+            this.deleteAllBudgetById(this.$route.params.id)
+            .then(() => {
+                this.onDeleteSuccess();
+            })
+            .catch((error) => {
+                this.onDeleteError(error);
+            });
+        },
+        onRestore() {
+            this.restoreAllBudgetById(this.$route.params.id)
+            .then(() => {
+                this.onRestoreSuccess();
+            })
+            .catch((error) => {
+                this.onRestoreError(error);
+            });
         },
         onCancel() {
             this.isView = true;
@@ -181,7 +231,7 @@ export default {
             this.alert.show = true;
             this.alert.success = true;
             this.alert.title = "Save Success";
-            this.alert.subtitle = "Edit Budget Realization has been saved successfully";
+            this.alert.subtitle = "Edit Budget Planning has been saved successfully";
         },
         onSaveError(error) {
             this.dialog = false;
@@ -195,6 +245,38 @@ export default {
             this.isView = true;
             this.getDetailItem();
             this.getHistoryItem();
+        },
+        onAlertDeleteOk() {
+            this.delete_alert.show = false;
+            this.$router.go(-1);
+        },
+        onDeleteSuccess() {
+            this.delete_alert.show = true;
+            this.delete_alert.success = true;
+            this.delete_alert.title = "Cancel Success";
+            this.delete_alert.subtitle = "Budget has been cancelled";
+        },
+        onDeleteError(error) {
+            this.delete_alert.show = true;
+            this.delete_alert.success = false;
+            this.delete_alert.title = "Failed to cancel";
+            this.delete_alert.subtitle = error;
+        },
+        onAlertRestoreOk() {
+            this.restore_alert.show = false;
+            this.$router.go(-1);
+        },
+        onRestoreSuccess() {
+            this.restore_alert.show = true;
+            this.restore_alert.success = true;
+            this.restore_alert.title = "Restore Success";
+            this.restore_alert.subtitle = "Budget has been restored";
+        },
+        onRestoreError(error) {
+            this.restore_alert.show = true;
+            this.restore_alert.success = false;
+            this.restore_alert.title = "Failed to restore";
+            this.restore_alert.subtitle = error;
         },
         onOK() {
             return this.$router.go(-1);
@@ -210,7 +292,7 @@ export default {
 .data-table {
     margin: 40px;
 }
-.view-list-budget-realization__header {
+.view-my-budget-planning__header {
     padding-top: 32px;
     padding-bottom: 32px;
     padding-left: 32px;
@@ -218,40 +300,40 @@ export default {
     font-weight: 600;
     min-width: 80%;
 }
-.view-list-budget-realization__detail {
+.view-my-budget-planning__detail {
     border-radius: 8px;
     margin: 1% auto !important;
     width: 50%;
     height: 90%;
 }
-.view-list-budget-realization__input {
+.view-my-budget-planning__input {
     padding: 10px 32px;
 }
-.view-list-budget-realization__btn {
+.view-my-budget-planning__btn {
     text-align: end;
     button {
         margin: 10px 32px;
     }
 }
-.view-list-budget-realization__container {
+.view-my-budget-planning__container {
     padding: 24px 0px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 8px;
     max-height: 90%;
 }
-.view-list-budget-realization__cardText {
+.view-my-budget-planning__cardText {
     flex-grow: 4;
     max-height: 90%;
     overflow-y: scroll;
 }
-.view-list-budget-realization__field {
+.view-my-budget-planning__field {
     min-width: 150px;
 }
 
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
-#view-list-budget-realization {
-    .view-list-budget-realization__btn {
+#view-my-budget-planning {
+    .view-my-budget-planning__btn {
         text-align: center;
         padding: 0px 32px;
 
@@ -260,7 +342,7 @@ export default {
             margin: 0px 0px 32px 0px;
         }
     }
-    .view-list-budget-realization__card {
+    .view-my-budget-planning__card {
         flex-direction: column;
         button {
         width: 16rem !important;
