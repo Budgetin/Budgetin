@@ -39,7 +39,7 @@ class TaskViewSet(viewsets.ViewSet):
     @action(detail=True, methods=['post'])
     def submit(self, request, pk=None):
         monitoring = Monitoring.objects.filter(pk=pk).update(monitoring_status=MonitoringStatusEnum.SUBMITTED.value)
-        return Response({"message":"Monitoring "+ str(pk) +"status changed to : Submitted"})
+        return Response({"message":"Monitoring "+ str(pk) +" status changed to Submitted"})
         
         
         
