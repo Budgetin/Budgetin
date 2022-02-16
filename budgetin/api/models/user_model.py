@@ -9,5 +9,5 @@ class User(TimestampModel, UserTrackModel, SoftDeleteModel):
     username = models.CharField(max_length=100, unique=True)
     initial = models.CharField(max_length=10, blank=True, null=True)
     eselon = models.CharField(max_length=10, blank=True, null=True)
-    role = models.CharField(max_length=100, default='user')
+    role = models.CharField(max_length=100, default='User')
     is_active = models.BooleanField(default=True)

@@ -53,7 +53,7 @@ class TaskViewSet(viewsets.ViewSet):
         monitoring = Monitoring.objects.filter(pk=pk).update(monitoring_status=MonitoringStatusEnum.SUBMITTED.value)
         return Response({"message":"Monitoring "+ str(pk) +" status changed to Submitted"})
         
-    @action(detail=False, methods=['post'], url_path=r'submitted_budget/(?P<monitoring_id>\d+)/download')
+    @action(detail=False, methods=['get'], url_path=r'submitted_budget/(?P<monitoring_id>\d+)/download')
     def export(self, request, monitoring_id):
         monitoring = Monitoring.objects.select_related('planning').get(pk=monitoring_id)
         planning_id = monitoring.planning.id
