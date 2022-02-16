@@ -91,7 +91,7 @@ def get_ithc_employee_info(username):
             display_name = employee[0]['display_name']
             if employee[0]['eselon']:
                 eselon = employee[0]['eselon']['code']
-            biro_id = employee[0]['biro']
+            biro_id = employee[0]['biro']['id']
             if biro_id:
                 biro_manager_id = employee[0]['biro']['manager_employee']
             sub_group_id = employee[0]['sub_group']['id']

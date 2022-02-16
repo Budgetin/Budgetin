@@ -1,32 +1,36 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import action
 
 from api.models import User
-from api.utils.jwt import generate_token, decode_token
-from api.utils.hit_api import login_eai, get_ithc_employee_info, get_user_detail
+from api.utils.jwt import generate_token
+from api.utils.hit_api import get_ithc_employee_info, get_user_detail
 from api.exceptions import InvalidCredentialException, NotEligibleException, NotAuthenticatedException
 from api.utils.enum import RoleEnum
 
-def get_user_info(username):
-    #Check if user exists in Budgetin DB
-    users = User.objects.filter(username=username).values()
-    if users:
-        user = users[0]
-        if not user["is_deleted"] and user["is_active"]:
+def is_manager(user):
+    return user['biro_manager_id'] == user['employee_id'] or user['sub_group_manager_id'] == user['employee_id'] or user['group_manager_id'] == user['employee_id']
+
+def get_admin(username):
+    #Check if admin exists in Budgetin DB
+    admin = User.objects.filter(username=username, role=RoleEnum.ADMIN.value).first()
+    if admin:
+        if not admin.is_deleted and admin.is_active:
             display_name, initial, eselon, ithc_biro = get_user_detail(username)
             return {
-                'employee_id': user['employee_id'],
+                'employee_id': admin.employee_id,
                 'display_name': display_name,
-                'role': user['role'],
+                'role': RoleEnum.ADMIN.value,
                 'initial': initial,
                 'eselon': eselon,
                 'ithc_biro': ithc_biro,
             }
-    
-    #Check if User S1, S2, S3
+    raise NotEligibleException()
+
+def get_user(username):
+    #Check if User is S1, S2, S3 in DB
     user = get_ithc_employee_info(username)
-    if user['biro_manager_id'] == user['employee_id'] or user['sub_group_manager_id'] == user['employee_id'] or user['group_manager_id'] == user['employee_id']:
+    print(user)
+    if is_manager(user):
         return {
                 'employee_id': user['employee_id'],
                 'display_name': user['display_name'],
@@ -35,8 +39,14 @@ def get_user_info(username):
                 'eselon': user['eselon'],
                 'ithc_biro': user['biro_id'],
             }
-    
     raise NotEligibleException()
+
+def get_user_info(username, user_type):
+    
+    if user_type.lower() == RoleEnum.ADMIN.value.lower():
+        return get_admin(username)
+    elif user_type.lower() == RoleEnum.USER.value.lower():
+        return get_user(username)
 
 class LoginView(APIView):
     def post(self, request):
@@ -52,11 +62,7 @@ class LoginView(APIView):
         user_type = request.data['type']
 
         # # Check if users exists in Budgetin/ITHC database
-        user_info = get_user_info(username)
-
-        # # Check if user role condition met
-        if user_info['role'].lower() != user_type.lower():
-            return Response({'message': 'user has no access to this dashboard'})
+        user_info = get_user_info(username, user_type)
         
         # Hit EAI
         # eai_login_status = login_eai(username, password)
@@ -78,19 +84,19 @@ class LoginView(APIView):
         )
 
         # Generate jwt
-        jwt = generate_token(user.id, username, user.role, user.eselon, user.initial, user_info['ithc_biro'])
+        jwt = generate_token(user.id, username, user_info['role'], user_info['eselon'], user_info['initial'], user_info['ithc_biro'])
         response = Response({
             'username': username,
-            'role': user.role,
-            'eselon': user.eselon,
-            'initial': user.initial,
+            'role': user_info['role'],
+            'eselon': user_info['eselon'],
+            'initial': user_info['initial'],
         })
         response.set_cookie(
             key='token',
             value=jwt,
             httponly=True,
             samesite='None',
-            secure=True   
+            # secure=True   
         )
                 
         return response
