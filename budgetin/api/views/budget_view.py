@@ -9,7 +9,8 @@ from api.models import Budget, Project, ProjectDetail, Monitoring
 from api.serializers import BudgetSerializer, BudgetResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.permissions import IsAuthenticated, IsAdmin
+from api.permissions import IsAuthenticated
+from api.utils.export_budget import export_as_excel
 
 class BudgetViewSet(viewsets.ModelViewSet):
     queryset = Budget.objects.all()
@@ -121,7 +122,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         
         return Response({"message" : "Budget deactivated"})
 
-    @action(detail=True, methods=['post'])
+    @action(methods=['post'], detail=True)
     def restore(self, request, pk=None):
         request.data['updated_by'] = request.custom_user['id']
         request.data['is_active'] = True
@@ -130,7 +131,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         
         return Response({"message" : "Budget re-activated"})
     
-    @action(detail=False, methods=['get'])
+    @action(methods=['get'], detail=False)
     def active(self, request):
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
                                                 'project_detail__project', 'project_detail__project_type', 
@@ -143,7 +144,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
     
-    @action(detail=False, methods=['get'])
+    @action(methods=['get'], detail=False)
     def inactive(self, request):
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
                                                 'project_detail__project', 'project_detail__project_type', 
@@ -156,14 +157,11 @@ class BudgetViewSet(viewsets.ModelViewSet):
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
 
-    def list_for_export():
+    @action(methods=['post'], detail=False, url_path='download')
+    def export(self, request):
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
                                                 'project_detail__project', 'project_detail__project_type', 
                                                 'project_detail__project__biro', 'project_detail__project__product', 
-                                                'project_detail__project__product__strategy').all()
-        
-        for budget in budgets:
-            budget.format_timestamp("%d %B %Y")
-            
-        serializer = BudgetResponseSerializer(budgets, many=True)
-        return Response(serializer.data)
+                                                'project_detail__project__product__strategy', 'updated_by').all()
+
+        return export_as_excel(budgets)
