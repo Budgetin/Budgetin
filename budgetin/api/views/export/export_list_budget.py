@@ -5,10 +5,10 @@ import pandas as pd
 from io import BytesIO
 
 from api.views import BudgetViewSet
-class ExportListPlanning(APIView):
+class ExportListBudget(APIView):
     parser_classes = (MultiPartParser,)
     
-    def get(self, request, format=None):
+    def post(self, request, format=None):
         exported_data = []
         collumn = ['ID ITFAM', 'Project ID', 'Project Name', 'Project Description', 'Tech / Non Tech',
          'Product ID', 'RCC', 'Project Type', 'Biro', 'Start Year', 'End Year', 'Strategy', 
