@@ -1,12 +1,10 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js";
-const LIST_PLANNING_ENDPOINT = "/api/budget/list_planning/";
-const BUDGET_ENDPOINT = "/api/budget/";
+const BUDGET_ENDPOINT = "/api/mybudget/";
 const PLANNING_ENPOINT = "/api/planning/";
-const UPLOAD_PLANNING = "/api/import/list_planning/";
+const UPLOAD_PLANNING = "/api/import/list_budget/";
 const UPLOAD_REALIZATION = "/api/import/realisasi/";
-const DOWNLOAD_BUDGET = "/api/download_list_planning/";
 
 const listBudget = {
   namespaced: true,
@@ -74,7 +72,7 @@ const listBudget = {
         });
     },
 
-    getListActiveBudget() {
+    getListActivePlanning() {
         store.dispatch("listBudget/getFromActiveAPI");
     },
     getFromActiveAPI({ commit }) {
@@ -218,40 +216,31 @@ const listBudget = {
           });
       });
     },
-    // patchListBudget({ commit }, payload) {
-    //   commit("POST_PATCH_INIT");
-    //   const url = `${BUDGET_ENDPOINT}${payload.id}/`;
-    //   return new Promise((resolve, reject) => {
-    //     getAPI
-    //       .patch(url, payload)
-    //       .then((response) => {
-    //         resolve(response);
-    //         commit("POST_PATCH_SUCCESS");
-    //         store.dispatch("listBudget/getFromAPI");
-    //         // store.dispatch("masterCategory/getFromAPI");
-    //       })
-    //       .catch((error) => {
-    //         let errorMsg =
-    //           "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-    //         if (error.response) {
-    //           errorMsg = "";
-    //           switch (error.response.status) {
-    //             case 400:
-    //               if (error.response.data.hasOwnProperty("Budget_name")) {
-    //                 errorMsg += error.response.data.Budget_name;
-    //               }
-    //               break;
+    downloadBudget({ commit }, data) {
+      commit("SET_LOADING", true);
 
-    //             default:
-    //               errorMsg += `${error.response.statusText}: Please recheck your input or try again later`;
-    //               break;
-    //           }
-    //         }
-    //         reject(errorMsg);
-    //         commit("POST_PATCH_ERROR", error.response.data);
-    //       });
-    //   });
-    // },
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(BUDGET_ENDPOINT + "download/", {
+            responseType: "arraybuffer", //Khusus download file
+          })
+          .then((response) => {
+            resolve(response);
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "ListPlanning.xlsx");
+            document.body.appendChild(link);
+            link.click();
+            commit("SET_LOADING", false);
+          })
+          .catch((err) => {
+            reject(err);
+            commit("SET_LOADING", false);
+            commit("SET_DOWNLOAD_ERROR", err.message);
+          });
+      });
+    },
   },
   mutations: {
     // import related
@@ -264,6 +253,13 @@ const listBudget = {
         router.push({ name: "Login" });
       }
     },
+    SET_DOWNLOAD_ERROR(state, error) {
+      state.errorMessage = error;
+      if (error.response.status == "401") {
+        router.push({ name: "Login" });
+      }
+    },
+
 
     // get related
     GET_INIT(state) {
