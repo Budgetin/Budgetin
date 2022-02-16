@@ -14,7 +14,7 @@ from api.permissions import IsAuthenticated, IsAdmin
 class BudgetViewSet(viewsets.ModelViewSet):
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
-    permission_classes = [IsAuthenticated, IsAdmin] #DEBT. Uncomment this line
+    permission_classes = [IsAuthenticated]
     
     def list(self, request, *args, **kwargs):
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 

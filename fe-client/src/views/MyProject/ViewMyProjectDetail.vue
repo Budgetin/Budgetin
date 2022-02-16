@@ -1,18 +1,18 @@
 <template>
     <v-container>
         <v-row no-gutters>
-            <!-- VIEW LIST BUDGET REALIZATION -->
-            <form-edit-budget-realization
+            <!-- VIEW MY PROJECT DETAIL -->
+            <form-edit-project-detail
             :form="form"
             :isView="isView"
-            :dataAllBudget="dataAllBudget"
-            :dataMasterCoa="dataMasterCoa"
+            :dataProjectDetail="dataProjectDetail"
+            :dataProjectType="dataProjectType"
             @editClicked="onEdit"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
             @okClicked="onOK"
-            class="view-list-budget-realization__detail">
-            </form-edit-budget-realization>
+            class="view-my-project-detail__detail">
+            </form-edit-project-detail>
             
             <!-- LOG HISTORY -->
             <v-col xs="12" sm="6" md="6" lg="5">
@@ -37,59 +37,37 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
-import FormEditBudgetRealization from '@/components/CompListProject/FormEditBudgetRealization';
+import FormEditProjectDetail from '@/components/MyProject/FormEditProjectDetail';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import TimelineLog from "@/components/TimelineLog";
 export default {
-    name: "ViewListBudgetRealization",
+    name: "ViewMyProjectDetail",
     components: {
-        FormEditBudgetRealization, SuccessErrorAlert, TimelineLog
+        FormEditProjectDetail, SuccessErrorAlert, TimelineLog
     },
     data: () => ({
         isView: true,
         itemsHistory: null,
         form: {
-            allocate: "",
-            coa: "",
             created_at: "",
             created_by: "",
-            expense_type: "",
+            dcsp_id: "",
+            deleted_at: "",
             id: "",
-            is_active: "",
-            is_budget: "",
-            planning_nominal: "",
-            planning_q1: "",
-            planning_q2: "",
-            planning_q3: "",
-            planning_q4: "",
-            realization_apr: "",
-            realization_aug: "",
-            realization_dec: "",
-            realization_feb: "",
-            realization_jan: "",
-            realization_jul: "",
-            realization_jun: "",
-            realization_mar: "",
-            realization_may: "",
-            realization_nov: "",
-            realization_oct: "",
-            realization_sep: "",
-            returns: "",
-            switching_in: "",
-            switching_out: "",
-            top_up: "",
-            updated_at: "",
-            updated_by: "",
-            project_detail: {
-                dcsp_id: "",
+            is_deleted: false,
+            planning: {
                 id: "",
-                planning: {
-                    due_date: "",
-                    id: "",
-                    is_active: "",
-                    year: "",
-               }
-            }
+                is_active: "",
+                notification: "",
+                created_by: "",
+                updated_by: "",
+                year: "",
+                due_date:""
+            },
+            project: "",
+            project_type: "",
+            updated_at: "",
+            updated_by: ""
         },
 
         alert: {
@@ -103,33 +81,35 @@ export default {
         this.getDetailItem();
         this.getHistoryItem();
         this.setBreadcrumbs();
-        this.getMasterCoa();
+        this.getAllProjectType();
     },
     computed: {
-        ...mapState("allBudget", ["loadingGetAllBudget", "dataAllBudget"]),
-        ...mapState("masterCoa", ["dataMasterCoa"]),
+        ...mapState("projectDetail", ["loadingGetProjectDetail", "dataProjectDetail"]),
+        ...mapState("projectType", ["dataProjectType"]),
     },
     methods: {
-        ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById", "getHistory"]),
-        ...mapActions("masterCoa", ["getMasterCoa"]),
+        ...mapActions("projectDetail", ["patchProjectDetail", "getProjectDetailById", "getHistory"]),
+        ...mapActions("projectType", ["getAllProjectType"]),
         
         setBreadcrumbs() {
-            let param = this.isView ? "View Budget Realization" : "Edit Budget Realization";
+            let param = this.isView ? "View Project Detail" : "Edit Project Detail";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "Project List",
+                    text: "My Project",
                     link: true,
                     exact: true,
                     disabled: false,
                     to: {
-                        name: "ListProject",
+                        name: "MyProject",
                     },
-                    text: "View Project",
+                },
+                {
+                    text: "View My Project",
                     link: true,
                     exact: true,
                     disabled: false,
                     to: {
-                        name: "ViewListProject",
+                        name: "ViewMyProject",
                     },
                 },
                 {
@@ -141,21 +121,17 @@ export default {
         getHistoryItem() {
             this.getHistory(this.$route.params.id).then(() => {
                 this.itemsHistory = JSON.parse(
-                    JSON.stringify(this.$store.state.allBudget.edittedItemHistories));
-                for(let i=0; i<this.itemsHistory.length; i++) {
-                    this.itemsHistory[i].table = "budgetRealization"
-                    // console.log(this.itemsHistory[i]);
-                }
+                    JSON.stringify(this.$store.state.projectDetail.edittedItemHistories));
             });
         },
         getDetailItem() {
-            this.getAllBudgetById(this.$route.params.id).then(() => {
+            this.getProjectDetailById(this.$route.params.id).then(() => { 
                 this.setForm();
             });
         },
         setForm() {
             this.form = JSON.parse(
-                JSON.stringify(this.$store.state.allBudget.edittedItem)
+                JSON.stringify(this.$store.state.projectDetail.edittedItem)
             );
         },
         onEdit() {
@@ -168,7 +144,7 @@ export default {
             this.setBreadcrumbs();
         },
         onSubmit(e) {
-            this.patchAllBudget(e)
+            this.patchProjectDetail(e)
             .then(() => {
                 this.onSaveSuccess();
             })
@@ -181,7 +157,7 @@ export default {
             this.alert.show = true;
             this.alert.success = true;
             this.alert.title = "Save Success";
-            this.alert.subtitle = "Edit Budget Realization has been saved successfully";
+            this.alert.subtitle = "Edit Project Detail has been saved successfully";
         },
         onSaveError(error) {
             this.dialog = false;
@@ -210,7 +186,7 @@ export default {
 .data-table {
     margin: 40px;
 }
-.view-list-budget-realization__header {
+.view-my-project-detail__header {
     padding-top: 32px;
     padding-bottom: 32px;
     padding-left: 32px;
@@ -218,40 +194,40 @@ export default {
     font-weight: 600;
     min-width: 80%;
 }
-.view-list-budget-realization__detail {
+.view-my-project-detail__detail {
     border-radius: 8px;
     margin: 1% auto !important;
     width: 50%;
     height: 90%;
 }
-.view-list-budget-realization__input {
+.view-my-project-detail__input {
     padding: 10px 32px;
 }
-.view-list-budget-realization__btn {
+.view-my-project-detail__btn {
     text-align: end;
     button {
         margin: 10px 32px;
     }
 }
-.view-list-budget-realization__container {
+.view-my-project-detail__container {
     padding: 24px 0px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 8px;
     max-height: 90%;
 }
-.view-list-budget-realization__cardText {
+.view-my-project-detail__cardText {
     flex-grow: 4;
     max-height: 90%;
     overflow-y: scroll;
 }
-.view-list-budget-realization__field {
+.view-my-project-detail__field {
     min-width: 150px;
 }
 
 @media only screen and (max-width: 600px) {
 /* For mobile phones */
-#view-list-budget-realization {
-    .view-list-budget-realization__btn {
+#view-my-project-detail {
+    .view-my-project-detail__btn {
         text-align: center;
         padding: 0px 32px;
 
@@ -260,7 +236,7 @@ export default {
             margin: 0px 0px 32px 0px;
         }
     }
-    .view-list-budget-realization__card {
+    .view-my-project-detail__card {
         flex-direction: column;
         button {
         width: 16rem !important;

@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="mb-5">
-      {{ cardTitle }} Project Detail
+      {{ cardTitle }} Project
       <v-spacer></v-spacer>
       <v-btn v-if="isView" icon small @click="$emit('editClicked')" class="mr-3">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
@@ -182,7 +182,7 @@
                 outlined
                 return-object
                 class="mr-3"
-                :rules="validation.required">
+                :rules="validation.techRule">
                 </v-select>
               </div>
             <!-- </v-col> -->
@@ -338,8 +338,8 @@ export default {
     },
 
     isTech: [
-      {label: 'Tech', value: true},
-      {label: 'Non-Tech', value: false},
+      {label: 'Tech', value: 1},
+      {label: 'Non-Tech', value: 0},
     ],
   }),
 
@@ -385,6 +385,7 @@ export default {
           product: this.form.product.id,
           start_year: this.form.start_year,
           end_year: this.form.end_year,
+          is_tech: this.form.is_tech.value,
           total_investment_value: this.nominal ? parseInt(this.form.total_investment_value.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) : 0,
           biro: this.form.biro.id,
         };
