@@ -221,7 +221,7 @@ const listBudget = {
 
       return new Promise((resolve, reject) => {
         getAPI
-          .post(BUDGET_ENDPOINT + "download/", {
+          .get(BUDGET_ENDPOINT + "download/", {
             responseType: "arraybuffer", //Khusus download file
           })
           .then((response) => {
