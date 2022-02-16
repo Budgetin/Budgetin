@@ -86,10 +86,18 @@ const routes = [
       {
         path: "myProject",
         name: "MyProject",
-        // beforeEnter: (to, from, next) => {
-        //   checkSession(next, to.fullPath);
-        // },
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
         component: () => import("@/views/MyProject/MyProject"),
+      },
+      {
+        path: "/myProject/:id/view",
+        name: "ViewMyProject",
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
+        component: () => import("@/views/MyProject/ViewMyProject"),
       },
     ]
   },

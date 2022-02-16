@@ -1,7 +1,7 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js"
-const ENDPOINT = "/api/project/";
+const ENDPOINT = "/api/myproject/";
 
 const myProject = {
   namespaced: true,
@@ -149,7 +149,7 @@ const myProject = {
       commit("SET_REQUEST_STATUS"); 
       return new Promise((resolve, reject) => {
       getAPI
-        .get("/api/auditlog?table=project&entity=" + `${id}`)
+        .get("/api/auditlog?table=myproject&entity=" + `${id}`)
         .then((response) => {
           const data = response.data;
           const sorted = data.sort((a, b) =>
