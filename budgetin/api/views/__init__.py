@@ -16,6 +16,7 @@ from .test_view import TestView
 from .excel_import_view import ImportExcelView
 from .export.export_list_budget import ExportListBudget
 from .export.export_list_project import ExportListProject
+from .export.export_mytask import ExportMyTask
 from .upload.import_list_planning import ImportListPlanning
 from .upload.import_realisasi import ImportRealisasi
 from .biro_ithc_view import BiroIthcView
