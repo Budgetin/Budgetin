@@ -66,7 +66,7 @@ class MonitoringViewSet(viewsets.ModelViewSet):
             'message': 'Monitoring cannot be deleted'
         })
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['post'])
     def reload(self, request):
         try:
             planning_id = request.query_params.getlist('planning')[0]

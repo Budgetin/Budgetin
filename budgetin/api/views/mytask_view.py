@@ -23,9 +23,7 @@ class TaskViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         monitoring = Monitoring.objects.select_related('planning').get(pk=pk)
         planning_id = monitoring.planning.id
-        user_ithc_biro = request.custom_user       
-
-        # user_ithc_biro = request.custom_user['ithc_biro']        
+        user_ithc_biro = request.custom_user['ithc_biro']        
         
         queryset = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
                                                 'project_detail__project', 'project_detail__project_type', 
