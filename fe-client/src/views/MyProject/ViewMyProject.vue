@@ -169,11 +169,13 @@ export default {
     },
     computed: {
         ...mapState("myProject", ["loadingGetMyProject", "dataMyProject"]),
+        ...mapState("listProject", ["loadingGetListProject", "dataListProject"]),
         ...mapState("allBiro", ["loadingGetAllBiro", "dataAllBiro"]),
         ...mapState("masterProduct", ["loadingGetMasterProduct", "dataMasterProduct"]),
     },
     methods: {
         ...mapActions("myProject", ["patchMyProject", "getMyProjectById", "getHistory"]),
+        ...mapActions("listProject", ["getListProjectById"]),
         ...mapActions("masterProduct", ["getMasterProduct"]),
         ...mapActions("allBiro", ["getAllBiro"]),
 
@@ -196,22 +198,22 @@ export default {
             ]);
         },
         getDetailItem() {
-            this.getMyProjectById(this.$route.params.id).then(() => {
+            this.getListProjectById(this.$route.params.id).then(() => {
                 this.projectDetail = JSON.parse(
-                    JSON.stringify(this.$store.state.myProject.edittedItem)
+                    JSON.stringify(this.$store.state.listProject.edittedItem)
                 );
                 this.budgetPlanning = JSON.parse(
-                    JSON.stringify(this.$store.state.myProject.edittedItem)
+                    JSON.stringify(this.$store.state.listProject.edittedItem)
                 );
                 this.budgetRealization = JSON.parse(
-                    JSON.stringify(this.$store.state.myProject.edittedItem)
+                    JSON.stringify(this.$store.state.listProject.edittedItem)
                 );
                 this.setForm();
             });
         },
         setForm() {
             this.form = JSON.parse(
-                JSON.stringify(this.$store.state.myProject.edittedItem)
+                JSON.stringify(this.$store.state.listProject.edittedItem)
             );
         },
         getHistoryItem() {

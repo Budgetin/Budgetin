@@ -19,7 +19,7 @@
                         <router-link
                             style="text-decoration: none"
                             :to="{
-                                name: 'ViewListProjectDetail',
+                                name: 'ViewMyProjectDetail',
                                 params: { id: item.id },
                             }">
                             <v-tooltip bottom>

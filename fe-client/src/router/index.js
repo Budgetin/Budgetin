@@ -114,6 +114,22 @@ const routes = [
         },
         component: () => import("@/views/MyProject/ViewMyProject"),
       },
+      {
+        path: "/myProject/:id/viewProjectDetail",
+        name: "ViewMyProjectDetail",
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
+        component: () => import("@/views/MyProject/ViewMyProjectDetail"),
+      },
+      {
+        path: "/myProject/:id/viewBudgetPlanning",
+        name: "ViewMyBudgetPlanning",
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
+        component: () => import("@/views/MyProject/ViewMyBudgetPlanning"),
+      },
     ]
   },
   {

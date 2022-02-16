@@ -104,6 +104,15 @@ export default {
                     },
                 },
                 {
+                    text: "View Project",
+                    link: true,
+                    exact: true,
+                    disabled: false,
+                    to: {
+                        name: "ViewListProject",
+                    },
+                },
+                {
                     text: param,
                     disabled: true,
                 },
