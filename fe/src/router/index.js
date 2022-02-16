@@ -8,28 +8,38 @@ Vue.use(VueRouter);
 
 function checkSession(next, url) {
   try {
-    if (store.getters["login/isAuthenticated"]) {
+    if (store.getters["login/isAuthenticated"] && store.getters["login/isAdmin"]) {
       next();
       return;
     } else {
       store
         .dispatch("login/setInitial")
         .then(() => {
-          if (store.getters["login/isAuthenticated"] && url!=='/login') {
+          if (store.getters["login/isAuthenticated"] && store.getters["login/isAdmin"] && url!=='/login') {
             next();
             return;
           }
-          else if(store.getters["login/isAuthenticated"] && url=='/login'){
+          else if(store.getters["login/isAuthenticated"] && store.getters["login/isAdmin"] && url=='/login'){
             router.push({ name: 'StartPlanning'});
             return;
           }else{
-            router.push({ name: 'Login', params: { redirectUrl: url !== '' ? url : '/startPlanning/' } });
-            return;
+            if(store.getters["login/isAuthenticated"] && !store.getters["login/isAdmin"]){
+              router.push({ name: '403Unauthorized'});
+              return;
+            }else{
+              router.push({ name: 'Login', params: { redirectUrl: url !== '' ? url : '/startPlanning/' } });
+              return;
+            }
           }
          }).catch((err) => {
            if(err.response.status == 401 && url!=='/login'){
-            router.push({ name: 'Login', params: { redirectUrl: url !== '' ? url : '/startPlanning/' } });
-            return;
+            if(store.getters["login/isAuthenticated"] && !store.getters["login/isAdmin"]){
+              router.push({ name: '403Unauthorized'});
+              return;
+            }else{
+              router.push({ name: 'Login', params: { redirectUrl: url !== '' ? url : '/startPlanning/' } });
+              return;
+            }
            }else{
             next();
             return;
@@ -223,30 +233,32 @@ const routes = [
         path: "/login",
         name: "Login",
         beforeEnter: (to, from, next) => {
-          try {
-            console.log(from)
-              store
-                .dispatch("login/setInitial")
-                .then(() => {
-                  if (!store.getters["login/isAuthenticated"]) {
-                    console.log(store.getters["login/isAuthenticated"]);
-                    next();
-                    return;
-                  } else {
-                    router.go(-1);
-                    return;
-                  }
-                })
-                .catch((err) => {
-                  next();
-                  return;
-                });
-          } catch (e) {
-            ("masuk e");
-            next();
-            return;
-          }
+          checkSession(next, to.fullPath);
         },
+        // beforeEnter: (to, from, next) => {
+        //   try {
+        //     store
+        //         .dispatch("login/setInitial")
+        //         .then(() => {
+        //           if (!store.getters["login/isAuthenticated"]) {
+        //             next();
+        //             return;
+        //           } else {
+        //             var url = to.params.redirectUrl.toString();
+        //             router.push(url);
+        //             return;
+        //           }
+        //         })
+        //         .catch((err) => {
+        //           next();
+        //           return;
+        //         });
+        //   } catch (e) {
+        //     ("masuk e");
+        //     next();
+        //     return;
+        //   }
+        // },
         component: () => import("@/views/Login"),
       },
     ],
@@ -263,11 +275,27 @@ const routes = [
   {
     path: "*",
     name: "404NotFound",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+    beforeEnter: (to, from, next) => {
+      checkSession(next, to.fullPath);
+    },
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/404NotFound.vue"),
+  },
+  {
+    path: "/no-access",
+    name: "403Unauthorized",
+    beforeEnter: (to, from, next) => {
+      if(store.getters["login/isAuthenticated"] && !store.getters["login/isAdmin"]){
+        next();
+        return;
+      }
+      else{
+        router.push({name: '404NotFound'});
+        return;
+      }
+    },
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/403Unauthorized.vue"),
   },
 ];
 
