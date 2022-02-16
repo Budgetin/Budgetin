@@ -155,15 +155,3 @@ class BudgetViewSet(viewsets.ModelViewSet):
 
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
-
-    def list_for_export():
-        budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
-                                                'project_detail__project', 'project_detail__project_type', 
-                                                'project_detail__project__biro', 'project_detail__project__product', 
-                                                'project_detail__project__product__strategy').all()
-        
-        for budget in budgets:
-            budget.format_timestamp("%d %B %Y")
-            
-        serializer = BudgetResponseSerializer(budgets, many=True)
-        return Response(serializer.data)
