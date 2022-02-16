@@ -42,6 +42,9 @@ class TaskViewSet(viewsets.ViewSet):
         queryset = queryset.filter(project_detail__planning__id=planning_id)
         queryset = queryset.filter(project_detail__project__biro__ithc_biro=user_ithc_biro)
         
+        for budget in queryset:
+            budget.format_timestamp("%d %B %Y")
+        
         serializer = BudgetResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
@@ -50,7 +53,7 @@ class TaskViewSet(viewsets.ViewSet):
         monitoring = Monitoring.objects.filter(pk=pk).update(monitoring_status=MonitoringStatusEnum.SUBMITTED.value)
         return Response({"message":"Monitoring "+ str(pk) +" status changed to Submitted"})
         
-    @action(detail=False, methods=['post'], url_path=r'submitted_budget/(?P<monitoring_id>\d+)/download')
+    @action(detail=False, methods=['get'], url_path=r'submitted_budget/(?P<monitoring_id>\d+)/download')
     def export(self, request, monitoring_id):
         monitoring = Monitoring.objects.select_related('planning').get(pk=monitoring_id)
         planning_id = monitoring.planning.id

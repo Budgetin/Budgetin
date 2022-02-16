@@ -58,7 +58,7 @@ class MyBudgetViewSet(viewsets.ViewSet):
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
     
-    @action(detail=False, methods=['post'], url_path='download')
+    @action(detail=False, methods=['get'], url_path='download')
     def export(self, request):
         user_ithc_biro = request.custom_user['ithc_biro']
 

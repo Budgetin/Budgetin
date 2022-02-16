@@ -1,12 +1,10 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js";
-const LIST_PLANNING_ENDPOINT = "/api/budget/list_planning/";
 const BUDGET_ENDPOINT = "/api/budget/";
 const PLANNING_ENPOINT = "/api/planning/";
-const UPLOAD_PLANNING = "/api/import/list_planning/";
+const UPLOAD_PLANNING = "/api/import/list_budget/";
 const UPLOAD_REALIZATION = "/api/import/realisasi/";
-const DOWNLOAD_BUDGET = "/api/download/list_budget/";
 
 const listBudget = {
   namespaced: true,
@@ -74,7 +72,7 @@ const listBudget = {
         });
     },
 
-    getListActiveBudget() {
+    getListActivePlanning() {
         store.dispatch("listBudget/getFromActiveAPI");
     },
     getFromActiveAPI({ commit }) {
@@ -223,7 +221,7 @@ const listBudget = {
 
       return new Promise((resolve, reject) => {
         getAPI
-          .post(DOWNLOAD_BUDGET, {
+          .get(BUDGET_ENDPOINT + "download/", {
             responseType: "arraybuffer", //Khusus download file
           })
           .then((response) => {

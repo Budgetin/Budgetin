@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from api.models import Budget, Project, ProjectDetail, Monitoring
-from api.serializers import BudgetSerializer, BudgetResponseSerializer
+from api.serializers import BudgetSerializer, BudgetResponseSerializer, ProjectSerializer, ProjectDetailSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.permissions import IsAuthenticated
@@ -56,27 +56,26 @@ class BudgetViewSet(viewsets.ModelViewSet):
                 updated_by_id = request.custom_user['id']
             )
 
-            AuditLog.Save(project, request, ActionEnum.CREATE, TableEnum.PROJECT)
+            AuditLog.Save(ProjectSerializer(project), request, ActionEnum.CREATE, TableEnum.PROJECT)
             project.generate_itfamid()
         else:
             project = Project.objects.get(pk=request.data['project_id'])
-            
-        
+
         # Project Detail
         project_detail, created = ProjectDetail.objects.update_or_create(planning_id=request.data['planning'], project=project, defaults={
             'project_type_id': request.data['project_type']
         })
-        
+        print("wololo   "+str(created))
         if created:
             ProjectDetail.objects.filter(planning_id=request.data['planning']).filter(project=project).update( 
                 created_by_id = request.custom_user['id'],
                 updated_by_id = request.custom_user['id']
             )
-            AuditLog.Save(project_detail, request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
+            AuditLog.Save(ProjectDetailSerializer(project_detail), request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
         else:
             ProjectDetail.objects.filter(planning_id=request.data['planning']).filter(project=project).update(
                 updated_by_id = request.custom_user['id'])
-            AuditLog.Save(project_detail, request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
+            AuditLog.Save(ProjectDetailSerializer(project_detail), request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
            
         # Budget
         if len(request.data['budget']) == 0:
@@ -97,11 +96,12 @@ class BudgetViewSet(viewsets.ModelViewSet):
                 created_by_id = request.custom_user['id'],
                 updated_by_id = request.custom_user['id']
                 )
-                AuditLog.Save(updated_budget, request, ActionEnum.CREATE, TableEnum.BUDGET)
+                AuditLog.Save(BudgetSerializer(updated_budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
             else:
                 Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(updated_by_id = request.custom_user['id'])
                 
-                AuditLog.Save(updated_budget, request, ActionEnum.UPDATE, TableEnum.BUDGET)
+                AuditLog.Save(BudgetSerializer(updated_budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
+            print(model_to_dict(updated_budget))
         
         #Tag Monitoring of this Biro to Draft
         monitoring = Monitoring.objects.filter(planning_id=request.data['planning']).update(monitoring_status="Draft")
@@ -157,7 +157,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
 
-    @action(methods=['post'], detail=False, url_path='download')
+    @action(methods=['get'], detail=False, url_path='download')
     def export(self, request):
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
                                                 'project_detail__project', 'project_detail__project_type', 
