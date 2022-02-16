@@ -9,6 +9,7 @@ from datetime import datetime
 from api.utils.auditlog import AuditLog
 
 from api.models import Biro, Coa, Product, Strategy, Project, Planning, ProjectDetail, ProjectType, Budget
+from api.serializers import CoaSerializer, StrategySerializer, ProductSerializer, ProjectSerializer, PlanningSerializer, ProjectDetailSerializer, BudgetSerializer
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import ActionEnum, TableEnum
 from api.exceptions import SheetNotFoundException, ImportValidationException
@@ -62,7 +63,7 @@ def get_or_create_coa(request, coa_name):
     })
 
     if created:
-        AuditLog.Save(coa, request, ActionEnum.CREATE, TableEnum.COA)
+        AuditLog.Save(CoaSerializer(coa), request, ActionEnum.CREATE, TableEnum.COA)
 
     return coa
     
@@ -73,7 +74,7 @@ def get_or_create_strategy(request, strategy_name):
     })
 
     if created:
-        AuditLog.Save(strategy, request, ActionEnum.CREATE, TableEnum.STRATEGY)
+        AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY)
     return strategy
     
 def get_or_create_product(request, product, strategy, index):
@@ -88,7 +89,7 @@ def get_or_create_product(request, product, strategy, index):
     })
 
     if created:
-        AuditLog.Save(product, request, ActionEnum.CREATE, TableEnum.PRODUCT)
+        AuditLog.Save(ProductSerializer(product), request, ActionEnum.CREATE, TableEnum.PRODUCT)
     
 def get_product_code_and_name(product, index):
     splits = product.split('-')
@@ -135,7 +136,7 @@ def get_or_create_project(request, data, biro, product, index):
     project.generate_itfamid()
 
     if created:
-        AuditLog.Save(project, request, ActionEnum.CREATE, TableEnum.PROJECT)
+        AuditLog.Save(ProjectSerializer(project), request, ActionEnum.CREATE, TableEnum.PROJECT)
     
     return project, created
 
@@ -165,7 +166,7 @@ def get_or_create_planning(request, year):
     })
 
     if created:
-        AuditLog.Save(planning, request, ActionEnum.CREATE, TableEnum.PLANNING)
+        AuditLog.Save(PlanningSerializer(planning), request, ActionEnum.CREATE, TableEnum.PLANNING)
 
     return planning
     
@@ -181,7 +182,7 @@ def get_or_create_project_detail(request, data, project, planning, index):
     })
 
     if created:
-        AuditLog.Save(project_detail, request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
+        AuditLog.Save(ProjectDetailSerializer(project_detail), request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
 
     return project_detail
 
@@ -209,7 +210,7 @@ def create_budget(request, data, project_detail, coa):
         updated_by_id = request.custom_user['id'],
     )
 
-    AuditLog.Save(budget, request, ActionEnum.CREATE, TableEnum.BUDGET)
+    AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
 
 class ImportListBudget(APIView):
     parser_classes = (MultiPartParser, )

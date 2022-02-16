@@ -8,12 +8,8 @@ class AuditLog():
     def Save(data, request, action_enum, table_enum):
         
         if data and action_enum != ActionEnum.DELETE:
-            try:
-                entity_id = data.data['id']
-                serialized_data = json.dumps(data.data)
-            except AttributeError:
-                entity_id = data.id
-                serialized_data = json.dumps(model_to_dict(data))
+            entity_id = data.data['id']
+            serialized_data = json.dumps(data.data)
         else:
             entity_id = request.parser_context['kwargs']['pk']
             serialized_data = json.dumps({"message":"entity with id {} deleted from table {}".format(entity_id, table_enum.value)})
