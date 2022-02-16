@@ -130,6 +130,14 @@ const routes = [
         },
         component: () => import("@/views/MyProject/ViewMyBudgetPlanning"),
       },
+      {
+        path: "/myProject/:id/viewBudgetRealization",
+        name: "ViewMyBudgetRealization",
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
+        component: () => import("@/views/MyProject/ViewMyBudgetRealization"),
+      },
     ]
   },
   {
