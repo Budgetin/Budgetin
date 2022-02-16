@@ -4,7 +4,7 @@
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
           <v-subheader class="submitted-planning__header"
-            >Submitted Planning</v-subheader
+            >My Planning</v-subheader
           >
         </v-col>
       </v-row>
@@ -41,9 +41,9 @@
                     justify="end"
                     v-if="taskInfo"
                   >
-                    <v-btn color="#16B1FF" v-if="taskInfo.planning.is_active" class="white--text">Existing</v-btn>
-                    <v-btn color="#7E73FF" v-if="taskInfo.planning.is_active" @click="onAddNew" class="white--text">New</v-btn>
-                    <v-btn outlined> Download </v-btn>
+                    <!-- <v-btn color="#16B1FF" v-if="taskInfo.planning.is_active" class="white--text">Budget for Existing</v-btn> -->
+                    <v-btn color="#7E73FF" v-if="taskInfo.planning.is_active" @click="onAddOption" class="white--text">Add Planning</v-btn>
+                    <v-btn outlined @click="ondownload">Download </v-btn>
                   </v-col>
                 </v-row>
               </v-toolbar-title>
@@ -58,6 +58,18 @@
           </v-data-table>
         </v-col>
       </v-row>
+
+<!-- Input Option -->
+      <v-row no-gutters>
+          <v-dialog v-model="dialogChoose" persistent width="25rem">
+              <form-choose-project-type
+              @newClicked="onAddNew"
+              @existingClicked="onAddExisting"
+              @cancelClicked="onCancel">
+              </form-choose-project-type>
+          </v-dialog>
+      </v-row>
+
 
       <v-row no-gutters>
         <v-dialog v-model="isLoading" persistent width="25rem">
@@ -91,14 +103,16 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import FormChooseProjectType from "@/components/Home/FormChooseProjectType"
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
 export default {
   name: "SubmittedList",
-  components: { SuccessErrorAlert, BinaryYesNoChip },
+  components: { SuccessErrorAlert, BinaryYesNoChip,FormChooseProjectType },
   watch: {},
   data: () => ({
     isLoading: false,
+    dialogChoose:false,
     search: "",
     taskInfo:null,
     dataTable: {
@@ -202,7 +216,7 @@ export default {
   computed: {
   },
   methods: {
-    ...mapActions("home", ["getTaskById","getSubmittedTaskById"]),
+    ...mapActions("home", ["getTaskById","getSubmittedTaskById","downloadPlanning"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -233,9 +247,22 @@ export default {
         this.dataTable.loadingTable = this.$store.state.home.loadingGetSubmittedTaskItem;
       });
     },
+    onAddOption(){
+      this.dialogChoose = !this.dialogChoose;
+    },
+    onCancel() {
+      this.dialogChoose = false;
+    },
     onAddNew(){
       let param = this.$route.params.id;
       return this.$router.push("/home/"+param+"/editSubmitted/new");
+    },
+    onAddExisting(){
+      let param = this.$route.params.id;
+      return this.$router.push("/home/"+param+"/editSubmitted/new");
+    },
+    ondownload(){
+      this.downloadPlanning(this.taskInfo);
     },
     onSaveSuccess() {
       this.dialog = false;

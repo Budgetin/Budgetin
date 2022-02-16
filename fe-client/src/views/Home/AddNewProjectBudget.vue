@@ -30,11 +30,10 @@ export default {
   components: {FormBudgetNew,SuccessErrorAlert},
   created() {
     this.setBreadcrumbs();
+    this.getTaskInformationById();
   },
   methods: {
-    ...mapActions("listBudget", [
-      "postNewBudget",
-    ]),
+...mapActions("home", ["getTaskById"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -61,17 +60,37 @@ export default {
         },
       ]);
     },
+    getTaskInformationById() {
+      let param = this.$route.params.id;
+      this.getTaskById(param).then(() => {
+        if(this.$store.state.home.dataTaskById.length > 1){
+          return this.$router.push("/home/");
+        }
+        else if (!this.$store.state.home.dataTaskById.planning.is_active) {
+          return this.$router.push("/home/"+param+"/editSubmitted/");
+        }{
+        this.setForm();
+        }
+      });
+    },
+    setForm(){
+        this.form.planning =  JSON.parse(
+          JSON.stringify(this.$store.state.home.dataTaskById.planning));
+        this.form.biro =  JSON.parse(
+          JSON.stringify(this.$store.state.home.dataTaskById.biro));
+    },
     onCancel() {
       this.$router.go(-1);
     },
     onSubmit(e) {
-      this.postNewBudget(e)
-      .then(() => {
-          this.onSaveSuccess();
-        })
-        .catch((error) => {
-          this.onSaveError(error);
-        });
+      console.log(e)
+      // this.postNewBudget(e)
+      // .then(() => {
+      //     this.onSaveSuccess();
+      //   })
+      //   .catch((error) => {
+      //     this.onSaveError(error);
+      //   });
     },
     onSaveSuccess() {
       this.alert.show = true;
@@ -91,19 +110,25 @@ export default {
     },
   },
   data: () => ({
-    isView: true,
-    activeBudget: [],
     form: {
         itfam_id : "",
         project_name : "",
         project_description : "",
-        biro : "",
+        biro : 
+          {
+            code: "",
+            id: "",
+          },
         start_year : "",
         end_year : "",
         total_investment_value : "",
         product : "",
         is_tech : "",
-        planning : "",
+        planning : 
+          {
+            id:"",
+            year:""
+          },
         project_type : "",
         dcsp_id : "",
         budget:[

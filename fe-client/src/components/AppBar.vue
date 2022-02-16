@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar id="app-bar" class="bg-grey" prominent flat app dense>
+  <v-app-bar id="app-bar" class="bg-grey elevation-0" prominent flat app dense>
     <v-toolbar-title >
       <v-breadcrumbs
         :items="links"
@@ -52,5 +52,10 @@ export default {
   },
 };
 </script>
+<style scoped>
+#app-bar{
+   z-index: 14;
+}
+</style>
 
 <style lang="scss"></style>
