@@ -14,8 +14,8 @@ class MyBudgetViewSet(viewsets.ViewSet):
         queryset = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
                                                 'project_detail__project', 'project_detail__project_type', 
                                                 'project_detail__project__biro', 'project_detail__project__product', 
-                                                'project_detail__project__product__strategy', 'updated_by', 'created_by').all()            
-        queryset = queryset.filter(biro__ithc_biro=user_ithc_biro)
+                                                'project_detail__project__product__strategy', 'updated_by', 'created_by').all()
+        queryset = queryset.filter(project_detail__project__biro__ithc_biro=user_ithc_biro)
         
         for budget in queryset:
             budget.format_timestamp("%d %B %Y")

@@ -54,11 +54,12 @@ export default {
 
 <style scoped>
 .gradient {
+  z-index: 15;
   background: rgb(14, 6, 83);
   background: linear-gradient(
     180deg,
-    rgba(14, 6, 83, 1) 0%,
-    rgba(47, 232, 253, 1) 25%,
+    rgba(20, 143, 205, 1) 0%,
+    /* rgba(47, 232, 253, 1) 20%, */
     rgb(109, 7, 185) 100%
   );
 }

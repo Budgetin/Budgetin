@@ -2,26 +2,25 @@
   <v-app id="submitted-planning">
     <v-container class="submitted-planning__container outer-container">
       <v-row no-gutters>
-          <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-              <v-subheader class="submitted-planning__header">Submitted Planning</v-subheader>
-          </v-col>
+        <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
+          <v-subheader class="submitted-planning__header"
+            >Submitted Planning</v-subheader
+          >
+        </v-col>
       </v-row>
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
           <!-- <v-data-table
-            :items="dataListBudget"
-            :loading="loadingGetListBudget"
-            :headers="listColumn"
+            :items="dataSubmittedTask"
+            :loading="loadingGetSubmittedTaskItem"
+            :headers="dataTable.Listheader"
             :search="search"
           > -->
-          <v-data-table
-            :headers="listColumn"
-            :search="search"
-          >
+          <v-data-table :headers="dataTable.Listheader" :search="search">
             <template v-slot:top>
               <v-toolbar-title>
                 <v-row class="mb-5" no-gutters>
-                  <v-col cols="12" xs="12" sm="6" md="3" lg="3" no-gutters>
+                  <v-col cols="12" xs="12" sm="6" md="4" lg="4" no-gutters>
                     <v-text-field
                       class="submitted-planning__input"
                       v-model="search"
@@ -40,14 +39,12 @@
                     lg="8"
                     no-gutters
                     class="submitted-planning__btn"
+                    justify="end"
                   >
-                    <v-btn rounded color="#16B1FF">Existing</v-btn>
-                    <v-btn rounded color="#7E73FF">New</v-btn>
-                    <v-btn rounded outlined>
-                          Download
-                    </v-btn>
+                    <v-btn color="#16B1FF" class="white--text">Existing</v-btn>
+                    <v-btn color="#7E73FF" class="white--text">New</v-btn>
+                    <v-btn outlined> Download </v-btn>
                   </v-col>
-                  
                 </v-row>
               </v-toolbar-title>
             </template>
@@ -63,24 +60,22 @@
       </v-row>
 
       <v-row no-gutters>
-          <v-dialog v-model="isLoading" persistent width="25rem">
-            <v-card >
-              <v-card-title class="d-flex justify-center">
-                Loading
-              </v-card-title>
+        <v-dialog v-model="isLoading" persistent width="25rem">
+          <v-card>
+            <v-card-title class="d-flex justify-center"> Loading </v-card-title>
 
-              <v-card-text>
-                <v-row no-gutters class="d-flex justify-center">
-                  <v-progress-circular
-                    :size="70"
-                    :width="7"
-                    color="purple"
-                    indeterminate
-                  ></v-progress-circular>
-                </v-row>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
+            <v-card-text>
+              <v-row no-gutters class="d-flex justify-center">
+                <v-progress-circular
+                  :size="70"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </v-row>
     </v-container>
 
@@ -99,31 +94,56 @@ import { mapState, mapActions } from "vuex";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
 export default {
-  name: "ListBudget",
-  components: {SuccessErrorAlert,BinaryYesNoChip},
+  name: "SubmittedList",
+  components: { SuccessErrorAlert, BinaryYesNoChip },
   watch: {},
   data: () => ({
+    isLoading: false,
     search: "",
     dataTable: {
-      selectedHeader: [],
       Listheader: [
+        { text: "For", value: "project_detail.planning.year", width: "5rem" },
         { text: "Project ID", value: "project_detail.dcsp_id", width: "7rem" },
-        { text: "Project Name", value: "project_detail.project.project_name", width: "8rem" },
-        { text: "Biro", value: "project_detail.project.biro.code", width: "5rem" },
-        { text: "ID ITFAM", value: "project_detail.project.itfam_id", width: "7rem" },
+        {
+          text: "Project Name",
+          value: "project_detail.project.project_name",
+          width: "8rem",
+        },
+        {
+          text: "Biro",
+          value: "project_detail.project.biro.code",
+          width: "5rem",
+        },
+        {
+          text: "ID ITFAM",
+          value: "project_detail.project.itfam_id",
+          width: "7rem",
+        },
         {
           text: "Project Description",
           value: "project_detail.project.project_description",
           width: "10rem",
         },
-        { text: "Tech / Non Tech", value: "project_detail.project.is_tech", width: "9rem" },
+        {
+          text: "Tech / Non Tech",
+          value: "project_detail.project.is_tech",
+          width: "9rem",
+        },
         {
           text: "Product ID",
           value: "project_detail.project.product.product_code",
           width: "7rem",
         },
-        { text: "RCC", value: "project_detail.project.biro.rcc", width: "5rem" },
-        { text: "Project Type", value: "project_detail.project_type", width: "9rem" },
+        {
+          text: "RCC",
+          value: "project_detail.project.biro.rcc",
+          width: "5rem",
+        },
+        {
+          text: "Project Type",
+          value: "project_detail.project_type",
+          width: "9rem",
+        },
         { text: "Is Budget", value: "is_budget", width: "7rem" },
         { text: "COA", value: "coa", width: "5rem" },
         {
@@ -131,8 +151,16 @@ export default {
           value: "expense_type",
           width: "8rem",
         },
-        { text: "Start Year", value: "project_detail.project.start_year", width: "7rem" },
-        { text: "End Year", value: "project_detail.project.end_year", width: "7rem" },
+        {
+          text: "Start Year",
+          value: "project_detail.project.start_year",
+          width: "7rem",
+        },
+        {
+          text: "End Year",
+          value: "project_detail.project.end_year",
+          width: "7rem",
+        },
         {
           text: "Total Investment",
           value: "project_detail.project.total_investment_value",
@@ -147,18 +175,6 @@ export default {
         { text: "Planning Q2", value: "planning_q2", width: "5rem" },
         { text: "Planning Q3", value: "planning_q3", width: "5rem" },
         { text: "Planning Q4", value: "planning_q4", width: "5rem" },
-        { text: "Realization Jan", value: "realization_jan", width: "5rem" },
-        { text: "Realization Feb", value: "realization_feb", width: "5rem" },
-        { text: "Realization Mar", value: "realization_mar", width: "5rem" },
-        { text: "Realization Apr", value: "realization_apr", width: "5rem" },
-        { text: "Realization May", value: "realization_may", width: "5rem" },
-        { text: "Realization Jun", value: "realization_jun", width: "5rem" },
-        { text: "Realization Jul", value: "realization_jul", width: "5rem" },
-        { text: "Realization Aug", value: "realization_aug", width: "5rem" },
-        { text: "Realization Sep", value: "realization_sep", width: "5rem" },
-        { text: "Realization Oct", value: "realization_oct", width: "5rem" },
-        { text: "Realization Nov", value: "realization_nov", width: "5rem" },
-        { text: "Realization Dec", value: "realization_dec", width: "5rem" },
         {
           text: "Strategy",
           value: "project_detail.project.product.strategy",
@@ -177,22 +193,32 @@ export default {
   }),
   created() {
     this.setBreadcrumbs();
+    this.getSubmittedItem();
   },
   computed: {
-    // ...mapState("listBudget", ["loadingGetListBudget", "loadingGetListInactiveBudget", "dataListBudget", "dataListInactiveBudget", "isLoading"]),
-    // ...mapState("choosedColumn", ["listColumn"]),
+    ...mapState("home", ["loadingGetSubmittedTaskItem", "dataSubmittedTask"]),
   },
   methods: {
-    // ...mapActions("listBudget", ["getListBudget", "getListInactiveBudget", "postListBudget","importBudget","importRealization"]),
+    ...mapActions("home", ["getSubmittedTaskById"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
           text: "Home",
-          link: false,
+          link: true,
           exact: true,
+          disabled: false,
+          to: {
+            name: "Home",
+          },
+        },
+        {
+          text: "Submitted List",
           disabled: true,
         },
       ]);
+    },
+    getSubmittedItem() {
+      this.getSubmittedTaskById(this.$route.params.id)
     },
     onSaveSuccess() {
       this.dialog = false;
@@ -211,7 +237,7 @@ export default {
     onAlertOk() {
       this.alert.show = false;
     },
-  }
+  },
 };
 </script>
 
@@ -223,8 +249,8 @@ export default {
 ::v-deep table > tbody > tr:hover td:nth-child(1),
 ::v-deep table > tbody > tr:hover td:nth-child(2),
 ::v-deep table > tbody > tr:hover td:nth-child(3),
-::v-deep table > tbody > tr:hover td:nth-child(4){
-  background: #EEEEEE;
+::v-deep table > tbody > tr:hover td:nth-child(4) {
+  background: #eeeeee;
 }
 
 ::v-deep table > tbody > tr > td:nth-child(1),
@@ -254,7 +280,7 @@ export default {
 ::v-deep table > thead > tr > th:nth-child(3) {
   position: sticky !important;
   position: -webkit-sticky !important;
-  left:12rem;
+  left: 12rem;
   z-index: 9;
   background: white;
 }
@@ -273,23 +299,22 @@ export default {
   z-index: 10;
 }
 
-::v-deep .choose-project-type_box{
-  border:3px rgb(228, 228, 228) solid;
-  border-radius:20px;
-  padding:0.5rem;
+::v-deep .choose-project-type_box {
+  border: 3px rgb(228, 228, 228) solid;
+  border-radius: 20px;
+  padding: 0.5rem;
   width: 10rem;
   font-weight: 600;
-  cursor:pointer;
+  cursor: pointer;
 }
 
-::v-deep .choose-project-type_box:hover{
-  border:3px rgb(93, 158, 243) solid;
-  border-radius:20px;
-  padding:0.5rem;
+::v-deep .choose-project-type_box:hover {
+  border: 3px rgb(93, 158, 243) solid;
+  border-radius: 20px;
+  padding: 0.5rem;
   width: 10rem;
-  cursor:pointer;
+  cursor: pointer;
 }
-
 </style>
 
 <style lang="scss" scoped>

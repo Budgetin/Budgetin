@@ -8,17 +8,19 @@ const SECONDENDPOINT = "/api/logout/";
 const login = {
   namespaced: true,
   state: {
-    userInitial: "",
-    loadingGetLogout: false, // for loading table
-    loadingPostPatchLogin: false, // for loading post/patch
-    dataLogin: [], // for v-data-table
-    requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingPostPatchLogin: false, // for loading post/patch
+    userInitial: "", // for data Initial
+    userRole: "", // for data Role
+    getInitialStatus: "IDLE",// possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetInitial: false, // for loading intial
+    loadingGetLogout: false, // for loading table
+    requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     errorMsg: null,
-    loadingGetInitial: false,
   },
   getters: {
     isAuthenticated: state => state.userInitial,
+    isAdmin: state => state.userRole == "Admin" ? true : false,
   },
   actions: {
     logOut({ commit }) {
@@ -42,7 +44,7 @@ const login = {
         getAPI
           .get(ENDPOINT + "user/")
           .then((response) => {
-            commit("GET_INITIAL_SUCCESS", response.data.initial);
+            commit("GET_INITIAL_SUCCESS", response.data);
             resolve(response);
           })
           .catch((error) => {
@@ -58,18 +60,19 @@ const login = {
         getAPI
           .post(ENDPOINT, payload)
           .then((response) => {
-            if(response.data.role=="Admin"){
-              commit("POST_PATCH_SUCCESS", response.data.initial);
+            if(!response.data.message){
+              commit("POST_PATCH_SUCCESS", response.data);
               resolve(response);
             }
             else{
-              let errorMsg = `Please recheck your input or try again later`;
-              commit("POST_PATCH_ERROR", errorMsg);
-              reject(errorMsg);
+              throw new Error("403");
             }
+            
           })
           .catch((error) => {
-            let errorMsg = `Please recheck your input or try again later`;
+            let errorMsg = error.message == '403' ? 
+                          `You have insufficient permission`:
+                          `Please recheck your input or try again later`;
             commit("POST_PATCH_ERROR", errorMsg);
             reject(errorMsg);
           });
@@ -92,10 +95,11 @@ const login = {
       state.errorMsg = error;
     },
 
-    GET_INITIAL_SUCCESS(state, initial) {
-      state.requestStatus = "SUCCESS";
+    GET_INITIAL_SUCCESS(state, data) {
+      state.getInitialStatus = "SUCCESS";
       state.loadingGetInitial = false;
-      state.userInitial = initial;
+      state.userInitial = data.initial;
+      state.userRole = data.role;
     },
     GET_INITIAL_ERROR(state, error) {
       state.requestStatus = "ERROR";
@@ -109,10 +113,11 @@ const login = {
       state.postPatchStatus = "PENDING";
       state.loadingPostPatchLogin = true;
     },
-    POST_PATCH_SUCCESS(state, initial) {
+    POST_PATCH_SUCCESS(state, data) {
       state.postPatchStatus = "SUCCESS";
       state.loadingPostPatchLogin = false;
-      state.userInitial = initial;
+      state.userInitial = data.initial;
+      state.userRole = data.role;
     },
     POST_PATCH_ERROR(state, error) {
       state.postPatchStatus = "ERROR";

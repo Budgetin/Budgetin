@@ -30,13 +30,20 @@ class LoginView(APIView):
             return Response({'message': 'username must be filled'})
         if "password" not in request.data:
             return Response({'message': 'password must be filled'})
+        if "type" not in request.data:
+            return Response({'message': 'type must be filled'})
 
         username = request.data['username']
         password = request.data['password']
+        user_type = request.data['type']
 
         # # Check if users exists in Budgetin/ITHC database
         employee_id, display_name, role, initial, eselon, ithc_biro = get_user_info(username)
 
+        # # Check if user role condition met
+        if role.lower() != user_type.lower():
+            return Response({'message': 'user has no access to this dashboard'})
+        
         # Hit EAI
         # eai_login_status = login_eai(username, password)
         eai_login_status = "Berhasil" #DEBT

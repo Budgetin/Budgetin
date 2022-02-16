@@ -109,6 +109,7 @@ export default {
         const payload = {
           username: this.username,
           password: this.password,
+          type: 'Admin'
         };
         this.postLogin(JSON.parse(JSON.stringify(payload)))
           .then(() => {
@@ -136,7 +137,7 @@ export default {
     onSubmitError(error) {
       this.alert.show = true;
       this.alert.success = false;
-      this.alert.title = "Submit Failed";
+      this.alert.title = "Login Failed";
       this.alert.subtitle = error;
     },
   },
