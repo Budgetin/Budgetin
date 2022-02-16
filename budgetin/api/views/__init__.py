@@ -14,7 +14,7 @@ from .auth.login_user_view import LoginUserView
 from .auth.logout_view import LogoutView
 from .excel_import_view import ImportExcelView
 from .export.export_list_budget import ExportListBudget
-from .upload.import_list_planning import ImportListBudget
+from .upload.import_list_budget import ImportListBudget
 from .upload.import_realisasi import ImportRealisasi
 from .biro_ithc_view import BiroIthcView
 from .biro_view import BiroViewSet
