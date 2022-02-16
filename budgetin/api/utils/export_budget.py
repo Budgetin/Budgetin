@@ -8,7 +8,7 @@ def export_as_excel(budgets):
     exported_data = []
     column = ['ID ITFAM', 'Project ID', 'Project Name', 'Project Description', 'Tech / Non Tech',
          'Product ID', 'RCC', 'Project Type', 'Biro', 'Start Year', 'End Year', 'Strategy', 
-         'Total Investment', 'Is Budget', 'COA', 'Capex/Opex', 'Budget This Year', 'Q1', 'Q2', 'Q3', 'Q4', 'Last Updated By']
+         'Total Investment', 'Is Budget', 'COA', 'Capex/Opex', 'Budget This Year', 'Q1', 'Q2', 'Q3', 'Q4', 'Is Active', 'Last Updated By']
     
     for budget in budgets:     
         data_temp.append(budget.project_detail.project.itfam_id)   
@@ -24,6 +24,7 @@ def export_as_excel(budgets):
         data_temp.append(budget.project_detail.project.end_year)
         data_temp.append(budget.project_detail.project.product.strategy)
         data_temp.append(budget.project_detail.project.total_investment_value)
+        data_temp.append(budget.is_active)
         data_temp.append(budget.updated_by)
 
         #isBudget
