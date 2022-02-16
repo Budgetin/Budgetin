@@ -20,7 +20,7 @@ class CustomAuthMiddleware(object):
                 "id": 4,
                 "username": "u051270",
                 "display_name": "Winoto Sugiarto",
-                "role": "User",
+                "role": "Admin",
                 "eselon": "S3",
                 "initial": "WIN",
                 "ithc_biro": 37

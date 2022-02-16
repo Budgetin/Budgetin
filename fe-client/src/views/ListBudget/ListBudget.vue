@@ -3,7 +3,7 @@
     <v-container class="list-budget__container outer-container">
       <v-row no-gutters>
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-              <v-subheader class="list-budget__header">Budget List</v-subheader>
+              <v-subheader class="list-budget__header">My Budget</v-subheader>
           </v-col>
         <v-tabs 
           v-model="tab" 
@@ -146,24 +146,6 @@
                       <v-icon>mdi-table-column-plus-before</v-icon>
                     </v-btn>
                   </v-col>
-
-                  <v-col
-                    cols="12"
-                    xs="12"
-                    sm="6"
-                    md="8"
-                    lg="8"
-                    no-gutters
-                    class="list-budget__btn"
-                  >
-                    <v-btn rounded color="primary" @click="onUpdateRealization" v-if="tab==0">Update Realization </v-btn>
-                    <v-btn rounded color="primary" @click="onInputOption" v-if="tab==0"> Add Budget </v-btn>
-                    <v-btn rounded color="primary" @click="onExport" v-if="tab==0">
-                          <v-icon left> mdi-export-variant </v-icon>
-                          Download
-                      </v-btn>
-                  </v-col>
-                  
                 </v-row>
               </v-toolbar-title>
             </template>
@@ -467,7 +449,7 @@ export default {
     ...mapState("choosedColumn", ["listColumn"]),
   },
   methods: {
-    ...mapActions("listBudget", ["getListBudget", "getListInactiveBudget", "postListBudget","importBudget","importRealization"]),
+    ...mapActions("listBudget", ["getListBudget", "getListInactiveBudget", "postListBudget","importBudget","importRealization","downloadBudget"]),
     getSelectedHeader() {
       if (this.listColumn.length == 1) {
         this.dataTable.selectedHeader = [].concat(this.dataTable.Listheader);
@@ -482,7 +464,7 @@ export default {
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
-          text: "Budget List",
+          text: "My Budget",
           link: true,
           exact: true,
           disabled: false,

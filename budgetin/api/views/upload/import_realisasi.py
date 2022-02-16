@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from api.exceptions import SheetNotFoundException, NotFoundException, ImportValidationException
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.auditlog import AuditLog
+from api.serializers import BudgetSerializer
 from django.db.models.base import ObjectDoesNotExist
 
 from api.models import Coa, ProjectDetail, Budget, Planning
@@ -41,7 +42,7 @@ def update_db(request, index, data):
         )
     except TypeError:
         raise ImportValidationException("Wrong input type on line " + str(index))
-    AuditLog.Save(budget_object.get(), request, ActionEnum.UPDATE, TableEnum.BUDGET)
+    AuditLog.Save(BudgetSerializer(budget_object.get()), request, ActionEnum.UPDATE, TableEnum.BUDGET)
 
 def get_coa(index, coa_name):
     try:
