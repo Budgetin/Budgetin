@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from api.models import Budget
 from api.permissions import IsAuthenticated, IsUser
@@ -11,15 +12,47 @@ class MyBudgetViewSet(viewsets.ViewSet):
     def list(self, request):
         user_ithc_biro = request.custom_user['ithc_biro']
 
-        queryset = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
+        budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
                                                 'project_detail__project', 'project_detail__project_type', 
                                                 'project_detail__project__biro', 'project_detail__project__product', 
                                                 'project_detail__project__product__strategy', 'updated_by', 'created_by').all()
-        queryset = queryset.filter(project_detail__project__biro__ithc_biro=user_ithc_biro)
+        budgets = budgets.filter(project_detail__project__biro__ithc_biro=user_ithc_biro)
         
-        for budget in queryset:
+        for budget in budgets:
             budget.format_timestamp("%d %B %Y")
             
             
-        serializer = BudgetResponseSerializer(queryset, many=True)
+        serializer = BudgetResponseSerializer(budgets, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        user_ithc_biro = request.custom_user['ithc_biro']
+        budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
+                                                'project_detail__project', 'project_detail__project_type', 
+                                                'project_detail__project__biro', 'project_detail__project__product', 
+                                                'project_detail__project__product__strategy', 'updated_by', 'created_by'
+                                                ).filter(is_active=True)
+        budgets = budgets.filter(project_detail__project__biro__ithc_biro=user_ithc_biro)
+        
+        for budget in budgets:
+            budget.format_timestamp("%d %B %Y")
+
+        serializer = BudgetResponseSerializer(budgets, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def inactive(self, request):
+        user_ithc_biro = request.custom_user['ithc_biro']
+        budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
+                                                'project_detail__project', 'project_detail__project_type', 
+                                                'project_detail__project__biro', 'project_detail__project__product', 
+                                                'project_detail__project__product__strategy', 'updated_by', 'created_by'
+                                                ).filter(is_active=False)
+        budgets = budgets.filter(project_detail__project__biro__ithc_biro=user_ithc_biro)
+        
+        for budget in budgets:
+            budget.format_timestamp("%d %B %Y")
+
+        serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)

@@ -1,40 +1,38 @@
 <template>
-    <v-app id="view-list-project-detail">
-        <v-container>
-            <v-row no-gutters>
-                <!-- VIEW Project List DETAIL -->
-                <form-edit-project-detail
-                :form="form"
-                :isView="isView"
-                :dataProjectDetail="dataProjectDetail"
-                :dataProjectType="dataProjectType"
-                @editClicked="onEdit"
-                @cancelClicked="onCancel"
-                @submitClicked="onSubmit"
-                @okClicked="onOK"
-                class="view-list-project-detail__detail">
-                </form-edit-project-detail>
-                
-                <!-- LOG HISTORY -->
-                <v-col xs="12" sm="6" md="6" lg="5">
-                    <v-container>
-                        <timeline-log
-                            :items="itemsHistory"
-                            v-if="itemsHistory">
-                        </timeline-log>
-                    </v-container>
-                </v-col>
-            </v-row>
+    <v-container>
+        <v-row no-gutters>
+            <!-- VIEW Project List DETAIL -->
+            <form-edit-project-detail
+            :form="form"
+            :isView="isView"
+            :dataProjectDetail="dataProjectDetail"
+            :dataProjectType="dataProjectType"
+            @editClicked="onEdit"
+            @cancelClicked="onCancel"
+            @submitClicked="onSubmit"
+            @okClicked="onOK"
+            class="view-list-project-detail__detail">
+            </form-edit-project-detail>
+            
+            <!-- LOG HISTORY -->
+            <v-col xs="12" sm="6" md="6" lg="5">
+                <v-container>
+                    <timeline-log
+                        :items="itemsHistory"
+                        v-if="itemsHistory">
+                    </timeline-log>
+                </v-container>
+            </v-col>
+        </v-row>
 
-            <success-error-alert
-            :success="alert.success"
-            :show="alert.show"
-            :title="alert.title"
-            :subtitle="alert.subtitle"
-            @okClicked="onAlertOk"
-            />
-        </v-container>
-    </v-app>
+        <success-error-alert
+        :success="alert.success"
+        :show="alert.show"
+        :title="alert.title"
+        :subtitle="alert.subtitle"
+        @okClicked="onAlertOk"
+        />
+    </v-container>
 </template>
 
 <script>
@@ -103,6 +101,15 @@ export default {
                     disabled: false,
                     to: {
                         name: "ListProject",
+                    },
+                },
+                {
+                    text: "View Project",
+                    link: true,
+                    exact: true,
+                    disabled: false,
+                    to: {
+                        name: "ViewListProject",
                     },
                 },
                 {
@@ -179,45 +186,42 @@ export default {
 .data-table {
     margin: 40px;
 }
-
-#view-list-project-detail {
-    .view-list-project-detail__header {
-        padding-top: 32px;
-        padding-bottom: 32px;
-        padding-left: 32px;
-        font-size: 1.25rem;
-        font-weight: 600;
-        min-width: 80%;
+.view-list-project-detail__header {
+    padding-top: 32px;
+    padding-bottom: 32px;
+    padding-left: 32px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    min-width: 80%;
+}
+.view-list-project-detail__detail {
+    border-radius: 8px;
+    margin: 1% auto !important;
+    width: 50%;
+    height: 90%;
+}
+.view-list-project-detail__input {
+    padding: 10px 32px;
+}
+.view-list-project-detail__btn {
+    text-align: end;
+    button {
+        margin: 10px 32px;
     }
-    .view-list-project-detail__detail {
-        border-radius: 8px;
-        margin: 1% auto !important;
-        width: 50%;
-        height: 90%;
-    }
-    .view-list-project-detail__input {
-        padding: 10px 32px;
-    }
-    .view-list-project-detail__btn {
-        text-align: end;
-        button {
-            margin: 10px 32px;
-        }
-    }
-    .view-list-project-detail__container {
-        padding: 24px 0px;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        border-radius: 8px;
-        max-height: 90%;
-    }
-    .view-list-project-detail__cardText {
-        flex-grow: 4;
-        max-height: 90%;
-        overflow-y: scroll;
-    }
-    .view-list-project-detail__field {
-        min-width: 150px;
-    }
+}
+.view-list-project-detail__container {
+    padding: 24px 0px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 8px;
+    max-height: 90%;
+}
+.view-list-project-detail__cardText {
+    flex-grow: 4;
+    max-height: 90%;
+    overflow-y: scroll;
+}
+.view-list-project-detail__field {
+    min-width: 150px;
 }
 
 @media only screen and (max-width: 600px) {

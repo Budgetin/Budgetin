@@ -14,6 +14,8 @@ import masterCoa from "./masterCoa"
 import masterProduct from "./masterProduct"
 import allBiro from "./allBiro"
 import projectType from "./projectType"
+import projectDetail from "./projectDetail"
+import allBudget from "./allBudget"
 
 Vue.use(Vuex)
 
@@ -40,5 +42,7 @@ export default new Vuex.Store({
     projectType,
     statusInfo,
     listProject,
+    projectDetail,
+    allBudget,
   },
 })

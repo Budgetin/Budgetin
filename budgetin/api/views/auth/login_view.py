@@ -15,12 +15,26 @@ def get_user_info(username):
         user = users[0]
         if not user["is_deleted"] and user["is_active"]:
             display_name, initial, eselon, ithc_biro = get_user_detail(username)
-            return user['employee_id'], display_name, user['role'], initial, eselon, ithc_biro 
+            return {
+                'employee_id': user['employee_id'],
+                'display_name': display_name,
+                'role': user['role'],
+                'initial': initial,
+                'eselon': eselon,
+                'ithc_biro': ithc_biro,
+            }
     
     #Check if User S1, S2, S3
     user = get_ithc_employee_info(username)
     if user['biro_manager_id'] == user['employee_id'] or user['sub_group_manager_id'] == user['employee_id'] or user['group_manager_id'] == user['employee_id']:
-        return user['employee_id'], user['display_name'], RoleEnum.USER.value, user['initial'], user['eselon'], user['biro_id']
+        return {
+                'employee_id': user['employee_id'],
+                'display_name': user['display_name'],
+                'role': RoleEnum.USER.value,
+                'initial': user['initial'],
+                'eselon': user['eselon'],
+                'ithc_biro': user['biro_id'],
+            }
     
     raise NotEligibleException()
 
@@ -38,10 +52,10 @@ class LoginView(APIView):
         user_type = request.data['type']
 
         # # Check if users exists in Budgetin/ITHC database
-        employee_id, display_name, role, initial, eselon, ithc_biro = get_user_info(username)
+        user_info = get_user_info(username)
 
         # # Check if user role condition met
-        if role.lower() != user_type.lower():
+        if user_info['role'].lower() != user_type.lower():
             return Response({'message': 'user has no access to this dashboard'})
         
         # Hit EAI
@@ -56,21 +70,20 @@ class LoginView(APIView):
         # Else create new user with given username, employee_id and display_name, initial and eselon 
         user, created = User.objects.update_or_create(
             username=username,
-            employee_id=employee_id,
-            defaults={'display_name': display_name,
-                      'initial': initial,
-                      'eselon': eselon
+            employee_id=user_info['employee_id'],
+            defaults={'display_name': user_info['display_name'],
+                      'initial': user_info['initial'],
+                      'eselon': user_info['eselon']
                       }
         )
 
         # Generate jwt
-        jwt = generate_token(user.id, username, role, eselon, initial, ithc_biro)
+        jwt = generate_token(user.id, username, user.role, user.eselon, user.initial, user_info['ithc_biro'])
         response = Response({
             'username': username,
-            'display_name': display_name,
-            'role': role,
-            'eselon': eselon,
-            'initial': initial,
+            'role': user.role,
+            'eselon': user.eselon,
+            'initial': user.initial,
         })
         response.set_cookie(
             key='token',
