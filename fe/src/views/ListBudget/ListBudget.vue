@@ -467,7 +467,7 @@ export default {
     ...mapState("choosedColumn", ["listColumn"]),
   },
   methods: {
-    ...mapActions("listBudget", ["getListBudget", "getListInactiveBudget", "postListBudget","importBudget","importRealization"]),
+    ...mapActions("listBudget", ["getListBudget", "getListInactiveBudget", "postListBudget","importBudget","importRealization","downloadBudget"]),
     getSelectedHeader() {
       if (this.listColumn.length == 1) {
         this.dataTable.selectedHeader = [].concat(this.dataTable.Listheader);
