@@ -21,7 +21,15 @@ class TaskViewSet(viewsets.ViewSet):
         return Response(serializer.data)
     
     def retrieve(self, request, pk=None):
-        monitoring = Monitoring.objects.select_related('planning').get(pk=pk)
+        monitoring = Monitoring.objects.get(pk=pk)
+        monitoring.format_timestamp("%d %B %Y")
+
+        serializer = MonitoringSerializer(monitoring, many=False)
+        return Response(serializer.data)
+    
+    @action(methods=['get'], detail=False, url_path=r'submitted_budget/(?P<monitoring_id>\d+)')
+    def submitted_budget(self, request, monitoring_id):
+        monitoring = Monitoring.objects.select_related('planning').get(pk=monitoring_id)
         planning_id = monitoring.planning.id
         user_ithc_biro = request.custom_user['ithc_biro']        
         
@@ -39,7 +47,7 @@ class TaskViewSet(viewsets.ViewSet):
     @action(detail=True, methods=['post'])
     def submit(self, request, pk=None):
         monitoring = Monitoring.objects.filter(pk=pk).update(monitoring_status=MonitoringStatusEnum.SUBMITTED.value)
-        return Response({"message":"Monitoring "+ str(pk) +"status changed to : Submitted"})
+        return Response({"message":"Monitoring "+ str(pk) +" status changed to Submitted"})
         
         
         
