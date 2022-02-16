@@ -33,10 +33,10 @@
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
-              <router-link
+              <router-link 
                 style="text-decoration: none"
                 :to="{
-                  name: 'EditSubmittedPlanning',
+                  name: 'SubmittedList',
                   params: { id: item.id },
                 }"
               >
@@ -48,7 +48,6 @@
                   </template>
                   <span>Edit</span>
                 </v-tooltip>
-
                 <v-tooltip bottom v-if="!item.planning.is_active">
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on" color="#16B1FF" @click="onView(item)">

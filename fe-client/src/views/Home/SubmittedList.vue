@@ -11,12 +11,11 @@
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
           <v-data-table
-            :items="dataSubmittedTask"
-            :loading="loadingGetSubmittedTaskItem"
+            :items="dataTable.value"
+            :loading="dataTable.loadingTable"
             :headers="dataTable.Listheader"
             :search="search"
           >
-          <!-- <v-data-table :headers="dataTable.Listheader" :search="search"> -->
             <template v-slot:top>
               <v-toolbar-title>
                 <v-row class="mb-5" no-gutters>
@@ -42,19 +41,19 @@
                     justify="end"
                   >
                     <v-btn color="#16B1FF" class="white--text">Existing</v-btn>
-                    <v-btn color="#7E73FF" class="white--text">New</v-btn>
+                    <v-btn color="#7E73FF" @click="onAddNew" class="white--text">New</v-btn>
                     <v-btn outlined> Download </v-btn>
                   </v-col>
                 </v-row>
               </v-toolbar-title>
             </template>
 
-            <!-- <template v-slot:[`item.is_budget`]="{ item }">
+            <template v-slot:[`item.is_budget`]="{ item }">
                 <binary-yes-no-chip :boolean="item.is_budget"> </binary-yes-no-chip>
             </template>
             <template v-slot:[`item.project_detail.project.is_tech`]="{ item }">
                 <binary-yes-no-chip :boolean="item.project_detail.project.is_tech"> </binary-yes-no-chip>
-            </template> -->
+            </template>
           </v-data-table>
         </v-col>
       </v-row>
@@ -100,7 +99,10 @@ export default {
   data: () => ({
     isLoading: false,
     search: "",
+    taskInfo:[],
     dataTable: {
+      loadingTable:true,
+      value:[],
       Listheader: [
         { text: "For", value: "project_detail.planning.year", width: "5rem" },
         { text: "Project ID", value: "project_detail.dcsp_id", width: "7rem" },
@@ -193,13 +195,13 @@ export default {
   }),
   created() {
     this.setBreadcrumbs();
+    this.getTaskInformationById();
     this.getSubmittedItem();
   },
   computed: {
-    ...mapState("home", ["loadingGetSubmittedTaskItem", "dataSubmittedTask"]),
   },
   methods: {
-    ...mapActions("home", ["getSubmittedTaskById"]),
+    ...mapActions("home", ["getTaskById","getSubmittedTaskById"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -217,11 +219,24 @@ export default {
         },
       ]);
     },
+    getTaskInformationById() {
+      this.getTaskById(this.$route.params.id).then(() => {
+        this.taskInfo = JSON.parse(
+          JSON.stringify(this.$store.state.home.dataSubmittedTask));
+        this.dataTable.loadingTable = this.$store.state.home.loadingGetSubmittedTaskItem;
+      });
+    },
     getSubmittedItem() {
-      this.getSubmittedTaskById(this.$route.params.id)
-      console.log(this.dataSubmittedTask)
-      console.log(this.loadingGetSubmittedTaskItem)
-
+      this.getSubmittedTaskById(this.$route.params.id).then(() => {
+        this.value = JSON.parse(
+          JSON.stringify(this.$store.state.home.dataTaskById));
+        console.log(this.value);
+      });
+    },
+    onAddNew(){
+      let param = this.$route.params.id;
+      console.log(param)
+      return this.$router.push("/home/"+param+"/editSubmitted/new");
     },
     onSaveSuccess() {
       this.dialog = false;

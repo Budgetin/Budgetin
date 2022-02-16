@@ -12,6 +12,11 @@ const home = {
     dataHome: [], // for v-data-table
     errorMsg: null,
 
+    requestTaskByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetTaskById: false, // for loading table
+    dataTaskById: [], // for v-data-table
+    errorMsgTaskById: null,
+
     requestSubmittedTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetSubmittedTask: false, // for loading table
     dataSubmittedTask: [], // for v-data-table
@@ -52,15 +57,37 @@ const home = {
           });
       });
     },
+    getTaskById({ commit }, id) {
+      commit("GET_INIT_BY_ID");
+      return new Promise((resolve, reject) => {
+        getAPI
+          .get(ENDPOINT + `${id}/`)
+          .then((response) => {
+            const cleanData = response.data
+            const sorted = cleanData.sort((a, b) =>
+              a.updated_at > b.updated_at ? 1 : -1
+            );
+            commit("GET_TASK_BY_ID_SUCCESS", sorted);
+            resolve(sorted);
+          })
+          .catch((error) => {
+            commit("GET_TASK_BY_ID_SUCCESS", error);
+            reject(error);
+          });
+      });
+    },
     getSubmittedTaskById({ commit }, id) {
       commit("SET_LOADING_GET_SUBMITTED_TASK_ITEM");
       return new Promise((resolve, reject) => {
         getAPI
           .get(ENDPOINT + `${id}/`)
           .then((response) => {
-            const data = response.data;
-            commit("SET_SUBMITTED_TASK_ITEM", data);
-            resolve(data);
+            const cleanData = response.data
+            const sorted = cleanData.sort((a, b) =>
+              a.updated_at > b.updated_at ? 1 : -1
+            );
+            commit("SET_SUBMITTED_TASK_ITEM", sorted);
+            resolve(sorted);
           })
           .catch((error) => {
             commit("SET_ERROR_SUBMITTED_TASK_ITEM", error);
@@ -176,7 +203,7 @@ const home = {
 
   },
   mutations: {
-    // get related
+    // get Task related
     GET_INIT(state) {
       state.requestTaskStatus = "PENDING";
       state.loadingGetTask = true;
@@ -195,7 +222,28 @@ const home = {
         router.push({ name: 'Login'});
       }
     },
+
+    // get Task by ID related
+    GET_INIT_BY_ID(state) {
+      state.requestTaskByIdStatus = "PENDING";
+      state.loadingGetTaskById = true;
+    },
+    GET_TASK_BY_ID_SUCCESS(state, dataTask) {
+      state.requestTaskByIdStatus = "SUCCESS";
+      state.loadingGetTaskById = false;
+      state.dataTaskById = dataTask;
+    },
+    GET_TASK_BY_ID_ERROR(state, error) {
+      state.requestTaskByIdStatus = "ERROR";
+      state.loadingGetTaskById = false;
+      state.errorMsgTaskById = error;
+      state.dataTaskById = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
     
+    // get Submitted based Task related
     SET_LOADING_GET_SUBMITTED_TASK_ITEM(state) {
       state.requestSubmittedTaskStatus = "PENDING";
       state.loadingGetSubmittedTaskItem = true;

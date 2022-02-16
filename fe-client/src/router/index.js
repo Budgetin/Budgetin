@@ -71,8 +71,13 @@ const routes = [
       },
       {
         path: "/home/:id/editSubmitted",
-        name: 'EditSubmittedPlanning',
-        component: () => import("@/views/Home/EditSubmittedPlanning"),
+        name: 'SubmittedList',
+        component: () => import("@/views/Home/SubmittedList"),
+      },
+      {
+        path: "/home/:id/editSubmitted/new",
+        name: 'AddNewProjectBudget',
+        component: () => import("@/views/Home/AddNewProjectBudget"),
       },
       {
         path: "/myBudget",

@@ -10,10 +10,11 @@ export default {
   props: ["boolean"],
   computed: {
     chipColor() {
-      return this.boolean ? "cyan" : "red";
+      return this.boolean ? "rgba(97, 164, 232, 0.2)" : "red";
     },
     textColor() {
-      return `${this.chipColor}--text`;
+      return this.boolean ? "blue--text" : "red";
+      // return `${this.chipColor}--text`;
     },
     label() {
       return this.boolean ? "Yes" : "No";
