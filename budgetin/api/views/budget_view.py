@@ -157,7 +157,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
 
-    @action(methods=['post'], detail=False, url_path='download')
+    @action(methods=['get'], detail=False, url_path='download')
     def export(self, request):
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
                                                 'project_detail__project', 'project_detail__project_type', 
