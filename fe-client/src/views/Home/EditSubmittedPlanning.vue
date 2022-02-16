@@ -10,13 +10,13 @@
       </v-row>
       <v-row no-gutters>
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-          <!-- <v-data-table
+          <v-data-table
             :items="dataSubmittedTask"
             :loading="loadingGetSubmittedTaskItem"
             :headers="dataTable.Listheader"
             :search="search"
-          > -->
-          <v-data-table :headers="dataTable.Listheader" :search="search">
+          >
+          <!-- <v-data-table :headers="dataTable.Listheader" :search="search"> -->
             <template v-slot:top>
               <v-toolbar-title>
                 <v-row class="mb-5" no-gutters>
@@ -219,6 +219,9 @@ export default {
     },
     getSubmittedItem() {
       this.getSubmittedTaskById(this.$route.params.id)
+      console.log(this.dataSubmittedTask)
+      console.log(this.loadingGetSubmittedTaskItem)
+
     },
     onSaveSuccess() {
       this.dialog = false;

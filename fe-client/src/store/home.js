@@ -58,7 +58,6 @@ const home = {
         getAPI
           .get(ENDPOINT + `${id}/`)
           .then((response) => {
-            console.log(response)
             const data = response.data;
             commit("SET_SUBMITTED_TASK_ITEM", data);
             resolve(data);
