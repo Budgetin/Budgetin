@@ -520,7 +520,7 @@ export default {
   props: ["form", "isView", "isNew"],
   mixins: [formatting],
   created() {
-    this.getListActiveBudget();
+    this.getListActivePlanning();
     this.getAllProjectType();
     this.getAllBiro();
     this.getMasterProduct();
@@ -589,7 +589,7 @@ export default {
   },
   methods: {
     ...mapActions("listBudget", [
-      "getListActiveBudget"
+      "getListActivePlanning"
     ]),
     ...mapActions("projectType", [
       "getAllProjectType"

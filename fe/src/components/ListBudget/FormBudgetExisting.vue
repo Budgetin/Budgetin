@@ -534,7 +534,7 @@ export default {
   mixins: [formatting],
   created() {
     this.getListProject();
-    this.getListActiveBudget();
+    this.getListActivePlanning();
     this.getAllProjectType();
     this.getAllBiro();
     this.getMasterProduct();
@@ -627,7 +627,7 @@ export default {
       "getListProjectById"
     ]),
     ...mapActions("listBudget", [
-      "getListActiveBudget"
+      "getListActivePlanning"
     ]),
     ...mapActions("projectType", [
       "getAllProjectType",
