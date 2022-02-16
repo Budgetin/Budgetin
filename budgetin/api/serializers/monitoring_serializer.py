@@ -19,7 +19,7 @@ class MonitoringSerializer(serializers.ModelSerializer):
     due_date = serializers.SerializerMethodField()
     class Meta:
         model = Monitoring
-        fields = ['id', 'pic_employee_id', 'pic_initial', 'pic_display_name', 'monitoring_status', 'biro', 'planning', 'due_date', 'created_at', 'updated_at']
+        fields = ['id', 'pic_employee_id', 'pic_initial', 'pic_display_name', 'monitoring_status', 'biro', 'planning', 'due_date', 'updated_at']
 
     def get_due_date(self, monitoring):
         return monitoring.planning.due_date.strftime("%d %B %Y")

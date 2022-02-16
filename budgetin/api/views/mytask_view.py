@@ -42,6 +42,9 @@ class TaskViewSet(viewsets.ViewSet):
         queryset = queryset.filter(project_detail__planning__id=planning_id)
         queryset = queryset.filter(project_detail__project__biro__ithc_biro=user_ithc_biro)
         
+        for budget in queryset:
+            budget.format_timestamp("%d %B %Y")
+        
         serializer = BudgetResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
