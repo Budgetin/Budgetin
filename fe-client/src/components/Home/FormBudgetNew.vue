@@ -1,9 +1,8 @@
 <template>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
-        <h1 style="font-weight:bold;">Create Budget Planning for New Project</h1>
   <v-card>  
     <v-card-title>
-              <strong> Project Detail</strong>
+      <strong> Project Detail</strong>
     </v-card-title>
     <v-card-text>
         <v-divider></v-divider><br>

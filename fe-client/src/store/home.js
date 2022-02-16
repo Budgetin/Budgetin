@@ -64,11 +64,8 @@ const home = {
           .get(ENDPOINT + `${id}/`)
           .then((response) => {
             const cleanData = response.data
-            const sorted = cleanData.sort((a, b) =>
-              a.updated_at > b.updated_at ? 1 : -1
-            );
-            commit("GET_TASK_BY_ID_SUCCESS", sorted);
-            resolve(sorted);
+            commit("GET_TASK_BY_ID_SUCCESS", cleanData);
+            resolve(cleanData);
           })
           .catch((error) => {
             commit("GET_TASK_BY_ID_SUCCESS", error);
@@ -80,14 +77,17 @@ const home = {
       commit("SET_LOADING_GET_SUBMITTED_TASK_ITEM");
       return new Promise((resolve, reject) => {
         getAPI
-          .get(ENDPOINT + `${id}/`)
+          .get(ENDPOINT+"submitted_budget/" + `${id}/`)
           .then((response) => {
-            const cleanData = response.data
-            const sorted = cleanData.sort((a, b) =>
+            let cleanData = response.data
+            if(cleanData.length > 1){
+              let sorted = cleanData.sort((a, b) =>
               a.updated_at > b.updated_at ? 1 : -1
-            );
-            commit("SET_SUBMITTED_TASK_ITEM", sorted);
-            resolve(sorted);
+              );
+              cleanData = sorted;
+            }
+            commit("SET_SUBMITTED_TASK_ITEM", cleanData);
+            resolve(cleanData);
           })
           .catch((error) => {
             commit("SET_ERROR_SUBMITTED_TASK_ITEM", error);
@@ -258,6 +258,7 @@ const home = {
       state.loadingGetSubmittedTaskItem = false;
       state.errorMsgSubmittedTask = error;
       state.dataSubmittedTask = [];
+      console.log(error)
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }

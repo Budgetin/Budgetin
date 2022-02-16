@@ -661,7 +661,7 @@ export default {
             biro : this.form.biro.id,
             start_year : this.form.start_year,
             end_year : this.form.end_year,
-            total_investment_value : this.form.total_investment_value,
+            total_investment_value : this.form.total_investment_value ? parseInt(this.form.total_investment_value.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')):0,
             product : this.form.product.id,
             is_tech : this.form.is_tech.id = 1 ? true : false,
             planning : this.form.planning.id,

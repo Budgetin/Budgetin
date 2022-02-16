@@ -39,9 +39,10 @@
                     no-gutters
                     class="submitted-planning__btn"
                     justify="end"
+                    v-if="taskInfo"
                   >
-                    <v-btn color="#16B1FF" class="white--text">Existing</v-btn>
-                    <v-btn color="#7E73FF" @click="onAddNew" class="white--text">New</v-btn>
+                    <v-btn color="#16B1FF" v-if="taskInfo.planning.is_active" class="white--text">Existing</v-btn>
+                    <v-btn color="#7E73FF" v-if="taskInfo.planning.is_active" @click="onAddNew" class="white--text">New</v-btn>
                     <v-btn outlined> Download </v-btn>
                   </v-col>
                 </v-row>
@@ -99,7 +100,7 @@ export default {
   data: () => ({
     isLoading: false,
     search: "",
-    taskInfo:[],
+    taskInfo:null,
     dataTable: {
       loadingTable:true,
       value:[],
@@ -222,20 +223,18 @@ export default {
     getTaskInformationById() {
       this.getTaskById(this.$route.params.id).then(() => {
         this.taskInfo = JSON.parse(
-          JSON.stringify(this.$store.state.home.dataSubmittedTask));
-        this.dataTable.loadingTable = this.$store.state.home.loadingGetSubmittedTaskItem;
+          JSON.stringify(this.$store.state.home.dataTaskById));
       });
     },
     getSubmittedItem() {
       this.getSubmittedTaskById(this.$route.params.id).then(() => {
-        this.value = JSON.parse(
-          JSON.stringify(this.$store.state.home.dataTaskById));
-        console.log(this.value);
+        this.dataTable.value = JSON.parse(
+          JSON.stringify(this.$store.state.home.dataSubmittedTask));
+        this.dataTable.loadingTable = this.$store.state.home.loadingGetSubmittedTaskItem;
       });
     },
     onAddNew(){
       let param = this.$route.params.id;
-      console.log(param)
       return this.$router.push("/home/"+param+"/editSubmitted/new");
     },
     onSaveSuccess() {
