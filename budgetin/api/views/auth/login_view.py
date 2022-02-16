@@ -96,7 +96,7 @@ class LoginView(APIView):
             value=jwt,
             httponly=True,
             samesite='None',
-            # secure=True   
+            secure=True   
         )
                 
         return response
