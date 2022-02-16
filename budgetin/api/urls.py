@@ -13,5 +13,4 @@ urlpatterns = [
     path('import/list_planning/', views.ImportListPlanning.as_view()),
     path('import/realisasi/', views.ImportRealisasi.as_view()),
     path('download/list_budget/', views.ExportListBudget.as_view()),
-    path('download_list_project/', views.ExportListProject.as_view())
 ]
