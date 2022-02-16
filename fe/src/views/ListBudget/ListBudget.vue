@@ -146,24 +146,6 @@
                       <v-icon>mdi-table-column-plus-before</v-icon>
                     </v-btn>
                   </v-col>
-
-                  <v-col
-                    cols="12"
-                    xs="12"
-                    sm="6"
-                    md="8"
-                    lg="8"
-                    no-gutters
-                    class="list-budget__btn"
-                  >
-                    <v-btn rounded color="primary" @click="onUpdateRealization" v-if="tab==0">Update Realization </v-btn>
-                    <v-btn rounded color="primary" @click="onInputOption" v-if="tab==0"> Add Budget </v-btn>
-                    <v-btn rounded color="primary" @click="onExport" v-if="tab==0">
-                          <v-icon left> mdi-export-variant </v-icon>
-                          Download
-                      </v-btn>
-                  </v-col>
-                  
                 </v-row>
               </v-toolbar-title>
             </template>
