@@ -12,7 +12,7 @@ from api.utils.enum import MonitoringStatusEnum
 from api.utils.manager_email import get_managers_email_list
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.permissions import IsAuthenticated, IsAdmin, IsUser
+from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 
 @transaction.atomic
 def create_update_all_biro_and_create_monitoring(biros, planning_id):
@@ -94,7 +94,7 @@ def get_biros_code(biros_id):
 class PlanningViewSet(viewsets.ModelViewSet):
     queryset = Planning.objects.all()
     serializer_class = PlanningSerializer
-    permission_classes = [IsAuthenticated, IsAdmin, IsUser]
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
 
     def list(self, request, *args, **kwargs):
         queryset = Planning.objects.select_related('updated_by', 'created_by').all()

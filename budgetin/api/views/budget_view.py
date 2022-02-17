@@ -5,12 +5,37 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from api.models import Budget, Project, ProjectDetail, Monitoring
+from api.models import Budget, Project, ProjectDetail, Monitoring, Planning, Biro
 from api.serializers import BudgetSerializer, BudgetResponseSerializer, ProjectSerializer, ProjectDetailSerializer
 from api.utils.auditlog import AuditLog
-from api.utils.enum import ActionEnum, TableEnum
+from api.utils.enum import ActionEnum, TableEnum, RoleEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated
 from api.utils.export_budget import export_as_excel
+from api.exceptions import ValidationException
+
+def active_planning(planning_id):
+    planning = Planning.objects.get(pk=planning_id)
+    return planning.is_active
+
+def user_eligible(request):
+    # Admin, eligible to create budget in all biro
+    role = request.custom_user['role']
+    if role.lower() == RoleEnum.ADMIN.value.lower():
+        return True
+
+    # User, only eligible to create budget in his/her biro only for planning that is not yet submitted
+    biro_id = request.data['biro']
+    biro = Biro.objects.get(pk=biro_id)
+    user_ithc_biro = request.custom_user['ithc_biro']
+    if user_ithc_biro == biro.ithc_biro:
+        planning_id = request.data['planning']
+        monitoring = Monitoring.objects.select_related('planning').get(biro=biro, planning=planning_id)
+        if monitoring.monitoring_status.lower() == MonitoringStatusEnum.SUBMITTED.value.lower():
+            raise ValidationException('Your budget planning for ' + str(monitoring.planning.year) + ' is already submitted. Please contact admin for further assistance')
+        
+        return True
+    
+    return False
 
 class BudgetViewSet(viewsets.ModelViewSet):
     queryset = Budget.objects.all()
@@ -41,6 +66,14 @@ class BudgetViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
+        planning_id = request.data['planning']
+        
+        if not active_planning(planning_id):
+            raise ValidationException('Selected planning is currently inactive.')
+        
+        if not user_eligible(request):
+            raise ValidationException('You are not eligible to add budget to this biro')
+        
         # Project
         if 'project_id' not in request.data:
             project = Project.objects.create(
@@ -80,7 +113,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         # Budget
         if len(request.data['budget']) == 0:
             budget = Budget.objects.create(project_detail=project_detail, coa=None)
-            AuditLog.Save(budget, request, ActionEnum.CREATE, TableEnum.BUDGET)
+            AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
         for budget in request.data['budget']:
             updated_budget, budget_created = Budget.objects.update_or_create(project_detail=project_detail, coa=None, defaults={
                 'coa_id': budget['coa'],
@@ -105,7 +138,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         
         #Tag Monitoring of this Biro to Draft
         monitoring = Monitoring.objects.filter(planning_id=request.data['planning']).update(monitoring_status="Draft")
-            
+        
         return Response(model_to_dict(project))
 
     @transaction.atomic

@@ -16,7 +16,7 @@
                 style="text-decoration: none"
                 :to="{
                     name: 'ViewListBudgetPlanning',
-                    params: { id: item.id },
+                    params: { id_budget_planning: item.id },
                 }">
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">

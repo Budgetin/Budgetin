@@ -37,7 +37,23 @@ const masterCoa = {
       getAPI
         .get(ENDPOINT)
         .then((response) => {
-          const cleanData = response.data
+          const cleanData = response.data.map((data) => {
+            return {
+              created_at: data.created_at,
+              created_by: data.created_by,
+              definition: data.definition,
+              deleted_at: data.deleted_at,
+              hyperion_name: data.hyperion_name,
+              id: data.id,
+              is_capex: data.is_capex,
+              is_deleted: data.is_deleted,
+              minimum_item_origin: data.minimum_item_origin,
+              name: data.name,
+              updated_at: data.update_at,
+              updated_by: data.updated_by,
+              option : String(data.name+" [ "+data.definition+" ] ")
+            };
+          });
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
           );

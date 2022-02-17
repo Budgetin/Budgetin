@@ -41,8 +41,8 @@
                     justify="end"
                     v-if="taskInfo"
                   >
-                    <!-- <v-btn color="#16B1FF" v-if="taskInfo.planning.is_active" class="white--text">Budget for Existing</v-btn> -->
-                    <v-btn color="#7E73FF" v-if="taskInfo.planning.is_active" @click="onAddOption" class="white--text">Add Planning</v-btn>
+                    <v-btn color="#16B1FF" v-if="taskInfo.monitoring_status!='Submitted'" class="white--text" @click="onSubmit">Submit</v-btn>
+                    <v-btn color="#7E73FF" v-if="taskInfo.planning.is_active && taskInfo.monitoring_status!='Submitted'" @click="onAddOption" class="white--text">Add Planning</v-btn>
                     <v-btn outlined @click="ondownload">Download </v-btn>
                   </v-col>
                 </v-row>
@@ -72,7 +72,7 @@
 
 
       <v-row no-gutters>
-        <v-dialog v-model="isLoading" persistent width="25rem">
+        <v-dialog v-model="loadingGetDownloadPlanning" persistent width="25rem">
           <v-card>
             <v-card-title class="d-flex justify-center"> Loading </v-card-title>
 
@@ -111,7 +111,6 @@ export default {
   components: { SuccessErrorAlert, BinaryYesNoChip,FormChooseProjectType },
   watch: {},
   data: () => ({
-    isLoading: false,
     dialogChoose:false,
     search: "",
     taskInfo:null,
@@ -214,9 +213,10 @@ export default {
     this.getSubmittedItem();
   },
   computed: {
+    ...mapState("home",["loadingGetDownloadPlanning"])
   },
   methods: {
-    ...mapActions("home", ["getTaskById","getSubmittedTaskById","downloadPlanning"]),
+    ...mapActions("home", ["getTaskById","getSubmittedTaskById","submitPlanning","downloadPlanning"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -247,6 +247,16 @@ export default {
         this.dataTable.loadingTable = this.$store.state.home.loadingGetSubmittedTaskItem;
       });
     },
+    onSubmit(){
+      if(this.taskInfo){
+        this.submitPlanning(this.taskInfo).then(() => {
+          this.getTaskInformationById();
+          this.onSaveSuccess("Planning Submitted")
+        }).catch((error) => {
+          this.onSaveError(error);
+        });
+      }
+    },
     onAddOption(){
       this.dialogChoose = !this.dialogChoose;
     },
@@ -255,21 +265,27 @@ export default {
     },
     onAddNew(){
       let param = this.$route.params.id;
-      return this.$router.push("/home/"+param+"/editSubmitted/new");
+      return this.$router.push("/home/"+param+"/submitted/new");
     },
     onAddExisting(){
       let param = this.$route.params.id;
-      return this.$router.push("/home/"+param+"/editSubmitted/new");
+      return this.$router.push("/home/"+param+"/submitted/new");
     },
     ondownload(){
-      this.downloadPlanning(this.taskInfo);
+      if(this.taskInfo){
+        this.downloadPlanning(this.taskInfo).then(() => {
+          this.onSaveSuccess("Check Your Download Folder")
+        }).catch((error) => {
+          this.onSaveError(error);
+        });
+      }
     },
-    onSaveSuccess() {
+    onSaveSuccess(message) {
       this.dialog = false;
       this.alert.show = true;
       this.alert.success = true;
-      this.alert.title = "Save Success";
-      this.alert.subtitle = "Budget has been saved successfully";
+      this.alert.title = "Success";
+      this.alert.subtitle = message;
     },
     onSaveError(error) {
       this.dialog = false;

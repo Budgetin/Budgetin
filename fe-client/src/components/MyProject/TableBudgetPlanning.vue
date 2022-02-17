@@ -16,10 +16,11 @@
                 style="text-decoration: none"
                 :to="{
                     name: 'ViewMyBudgetPlanning',
-                    params: { id: item.id },
+                    params: { id_budget_planning: item.id },
                 }">
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
+                        <!-- <v-icon v-on="on" color="primary" @click="$emit('getIdClicked')"> -->
                         <v-icon v-on="on" color="primary" @click="onEdit(item)">
                             mdi-eye
                         </v-icon>

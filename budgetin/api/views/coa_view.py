@@ -11,11 +11,11 @@ from api.exceptions import ValidationException
 
 def is_duplicate_coa_create(name, hyperion_name):
     if Coa.objects.filter(name=name) or Coa.objects.filter(hyperion_name=hyperion_name):
-        raise ValidationException
+        raise ValidationException('COA ' + name + ' already exists')
 
 def is_duplicate_coa(id, name, hyperion_name):
     if Coa.objects.filter(name=name).exclude(id=id) or Coa.objects.filter(hyperion_name=hyperion_name).exclude(id=id):
-        raise ValidationException
+        raise ValidationException('COA ' + name + ' already exists')
 class CoaViewSet(viewsets.ModelViewSet):
     queryset = Coa.objects.all()
     serializer_class = CoaSerializer

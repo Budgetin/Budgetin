@@ -3,25 +3,35 @@ import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js"
 
 const ENDPOINT = "/api/mytask/";
+const BUDGET_ENDPOINT = "/api/budget/";
 
 const home = {
   namespaced: true,
   state: {
+    // get Task
     requestTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetTask: false, // for loading table
     dataHome: [], // for v-data-table
     errorMsg: null,
-
+    // get task by id
     requestTaskByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetTaskById: false, // for loading table
     dataTaskById: null, // for store data
     errorMsgTaskById: null,
-
+    // get List My Planning based on task id
     requestSubmittedTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetSubmittedTask: false, // for loading table
     dataSubmittedTask: [], // for v-data-table
     errorMsgSubmittedTask: null,
-
+    // set monitoring status as Submitted
+    requestSubmitPlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingPostSubmitPlanning: false, // for loading table
+    errorMsgSubmitPlanning: null,
+    // save planning
+    requestSavePlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingPostSavePlanning: false, // for loading table
+    errorMsgSavePlanning: null,
+    // download My Planning
     requestDownloadPlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingDownloadPlanning: false, // for loading data
     errorMsgDownloadPlanning: null,
@@ -58,7 +68,7 @@ const home = {
           })
           .catch((error) => {
             commit("GET_ERROR", error);
-            reject(error);
+            reject(error.message);
           });
       });
     },
@@ -75,7 +85,7 @@ const home = {
           })
           .catch((error) => {
             commit("GET_ERROR_TASK_BY_ID", error);
-            reject(error);
+            reject(error.message);
           });
       });
     },
@@ -98,13 +108,30 @@ const home = {
           })
           .catch((error) => {
             commit("GET_ERROR_SUBMITTED_TASK_ITEM", error);
-            reject(error);
+            reject(error.message);
           });
       });
     },
+    
+    submitPlanning({ commit }, payload) {
+      commit("POST_INIT_PLANNING");
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(BUDGET_ENDPOINT,payload)
+          .then((response) => {
+            commit("POST_SUCCESS_PLANNING");
+            resolve(response);
+          })
+          .catch((error) => {
+            commit("POST_ERROR_PLANNING", error);
+            console.log(error.message);
+            reject(error.message);
+          });
+      });
+    },
+
     downloadPlanning({ commit }, data) {
-      console.log(data)
-      commit("GET_INIT_DOWNLOAD_PLANNING", true);
+      commit("GET_INIT_DOWNLOAD_PLANNING");
       return new Promise((resolve, reject) => {
         getAPI
           .get(ENDPOINT+"submitted_budget/"+ `${data.id}/`+"download/", {
@@ -118,11 +145,11 @@ const home = {
             link.setAttribute("download", "MyPlanning.xlsx");
             document.body.appendChild(link);
             link.click();
-            commit("GET_SUCCESS_DOWNLOAD_PLANNING", false);
+            commit("GET_SUCCESS_DOWNLOAD_PLANNING");
           })
           .catch((err) => {
-            reject(err);
-            commit("GET_ERROR_DOWNLOAD_PLANNING", err.message);
+            reject(err.message);
+            commit("GET_ERROR_DOWNLOAD_PLANNING", err);
           });
       });
     },
@@ -190,10 +217,46 @@ const home = {
       }
     },
 
+    //Post Status Submit related
+    POST_INIT_SUBMIT_PLANNING(state) {
+      state.requestSubmitPlanningStatus = "PENDING";
+      state.loadingPostSubmitPlanning = true;
+    },
+    POST_SUCCESS_SUBMIT_PLANNING(state) {
+      state.requestSubmitPlanningStatus = "SUCCESS";
+      state.loadingPostSubmitPlanning = false;
+    },
+    GET_ERROR_SUBMIT_PLANNING(state, error) {
+      state.requestSubmitPlanningStatus = "ERROR";
+      state.loadingPostSubmitPlanning = false;
+      state.errorMsgSubmitPlanning = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    //Post Planning related
+    POST_INIT_PLANNING(state) {
+      state.requestSavePlanningStatus = "PENDING";
+      state.loadingPostSavePlanning = true;
+    },
+    POST_SUCCESS_PLANNING(state) {
+      state.requestSavePlanningStatus = "SUCCESS";
+      state.loadingPostSavePlanning = false;
+    },
+    POST_ERROR_PLANNING(state, error) {
+      state.requestSavePlanningStatus = "ERROR";
+      state.loadingPostSavePlanning = false;
+      state.errorMsgSavePlanning = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
     // Download Planning by Task 
     GET_INIT_DOWNLOAD_PLANNING(state) {
       state.requestDownloadPlanningStatus = "PENDING";
-      state.loadingDownloadPlanningTask = true;
+      state.loadingGetDownloadPlanning = true;
     },
     GET_SUCCESS_DOWNLOAD_PLANNING(state) {
       state.requestDownloadPlanningStatus = "SUCCESS";
@@ -204,61 +267,6 @@ const home = {
       state.loadingGetDownloadPlanning = false;
       state.errorMsg = error;
       state.dataHome = [];
-      if(error.response.status =="401"){
-        router.push({ name: 'Login'});
-      }
-    },
-
-
-    // post / patch related
-    POST_PATCH_INIT(state) {
-      state.postPatchStatus = "PENDING";
-      state.loadingPostPatchHome = true;
-    },
-    POST_PATCH_SUCCESS(state) {
-      state.requestStatus = "SUCCESS";
-      state.loadingPostPatchHome = false;
-    },
-    POST_PATCH_ERROR(state, error) {
-      state.requestStatus = "ERROR";
-      state.loadingPostPatchHome = false;
-      state.errorMsg = error;
-      if(error.response.status =="401"){
-        router.push({ name: 'Login'});
-      }
-    },
-
-
-    // history relate
-    SET_EDITTED_ITEM_HISTORIES(state, edittedItemHistories) {
-      state.requestHistoriesStatus = "SUCCESS";
-      state.loadingGetEdittedItemHistories = false;
-      state.edittedItemHistories = edittedItemHistories;
-    },
-    SET_REQUEST_STATUS(state) {
-      state.requestHistoriesStatus = "PENDING";
-      state.loadingGetEdittedItemHistories = true;
-      state.edittedItemHistories = [];
-    },
-
-    ON_CHANGE(state, payload) {
-      state.value = payload;
-    },
-    ON_CHANGE_PAGING(state, payload) {
-      state.current = payload;
-    },
-
-    // delete item
-    SET_DELETE_ITEM(state, payload) {
-      state.deleteItem = payload;
-    },
-    SET_LOADING_DELETE_ITEM(state, payload) {
-      state.loadingDeleteItem = payload;
-    },
-    DELETE_ERROR(state, error) {
-      state.deleteStatus = "ERROR";
-      state.loadingDeleteItem = false;
-      state.errorMsg = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }

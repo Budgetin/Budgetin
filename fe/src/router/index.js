@@ -174,7 +174,7 @@ const routes = [
         component: () => import("@/views/ListProject/ViewListProject"),
       },
       {
-        path: "/projectList/:id/viewProjectDetail",
+        path: "/projectList/:id/view/:id_project_detail/viewProjectDetail",
         name: "ViewListProjectDetail",
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);
@@ -182,7 +182,7 @@ const routes = [
         component: () => import("@/views/ListProject/ViewListProjectDetail"),
       },
       {
-        path: "/projectList/:id/viewBudgetPlanning",
+        path: "/projectList/:id/view/:id_budget_planning/viewBudgetPlanning",
         name: "ViewListBudgetPlanning",
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);
@@ -190,7 +190,7 @@ const routes = [
         component: () => import("@/views/ListProject/ViewListBudgetPlanning"),
       },
       {
-        path: "/projectList/:id/viewBudgetRealization",
+        path: "/projectList/:id/view/:id_budget_realization/viewBudgetRealization",
         name: "ViewListBudgetRealization",
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);
