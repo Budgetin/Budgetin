@@ -120,7 +120,7 @@ export default {
 
         dataTable: {
             budgetRealizationHeaders: [
-                { text: "Action", value: "actions", align: "center", sortable: false},
+                // { text: "Action", value: "actions", align: "center", sortable: false},
                 { text: "Year", value: "year"},
                 { text: "Budget Status", value: "is_active"},
                 { text: "COA", value: "coa"},
