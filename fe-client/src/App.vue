@@ -32,6 +32,10 @@ export default {
 .v-app-bar.v-app-bar--fixed{
   left: 5rem !important;
 }
+
+.v-btn {
+  text-transform: none !important;
+}
 </style> 
 
 <style lang="scss">

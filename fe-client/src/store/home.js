@@ -14,13 +14,17 @@ const home = {
 
     requestTaskByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetTaskById: false, // for loading table
-    dataTaskById: [], // for v-data-table
+    dataTaskById: null, // for store data
     errorMsgTaskById: null,
 
     requestSubmittedTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetSubmittedTask: false, // for loading table
     dataSubmittedTask: [], // for v-data-table
     errorMsgSubmittedTask: null,
+
+    requestDownloadPlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingDownloadPlanning: false, // for loading data
+    errorMsgDownloadPlanning: null,
 
     loadingGetEdittedItem: false,
     loadingPostPatchHome: false, // for loading post/patch
@@ -38,6 +42,7 @@ const home = {
     value: (state) => state.dataHome
   },
   actions: {
+
     getHome({ commit }) {
       commit("GET_INIT");
       return new Promise((resolve, reject) => {
@@ -53,28 +58,30 @@ const home = {
           })
           .catch((error) => {
             commit("GET_ERROR", error);
-            reject(error);
+            reject(error.message);
           });
       });
     },
+
     getTaskById({ commit }, id) {
-      commit("GET_INIT_BY_ID");
+      commit("GET_INIT_TASK_BY_ID");
       return new Promise((resolve, reject) => {
         getAPI
           .get(ENDPOINT + `${id}/`)
           .then((response) => {
             const cleanData = response.data
-            commit("GET_TASK_BY_ID_SUCCESS", cleanData);
+            commit("GET_SUCCESS_TASK_BY_ID", cleanData);
             resolve(cleanData);
           })
           .catch((error) => {
-            commit("GET_TASK_BY_ID_SUCCESS", error);
-            reject(error);
+            commit("GET_ERROR_TASK_BY_ID", error);
+            reject(error.message);
           });
       });
     },
+
     getSubmittedTaskById({ commit }, id) {
-      commit("SET_LOADING_GET_SUBMITTED_TASK_ITEM");
+      commit("GET_INIT_SUBMITTED_TASK_ITEM");
       return new Promise((resolve, reject) => {
         getAPI
           .get(ENDPOINT+"submitted_budget/" + `${id}/`)
@@ -86,120 +93,38 @@ const home = {
               );
               cleanData = sorted;
             }
-            commit("SET_SUBMITTED_TASK_ITEM", cleanData);
+            commit("GET_SUCCESS_SUBMITTED_TASK_ITEM", cleanData);
             resolve(cleanData);
           })
           .catch((error) => {
-            commit("SET_ERROR_SUBMITTED_TASK_ITEM", error);
-            reject(error);
+            commit("GET_ERROR_SUBMITTED_TASK_ITEM", error);
+            reject(error.message);
           });
       });
     },
-    // postHome({ commit }, payload) {
-    //   commit("POST_PATCH_INIT");
-    //   return new Promise((resolve, reject) => {
-    //     getAPI
-    //       .post(ENDPOINT, payload)
-    //       .then((response) => {
-    //         resolve(response);
-    //         commit("POST_PATCH_SUCCESS");
-    //         store.dispatch("home/getFromAPI");
-    //       })
-    //       .catch((error) => {
-    //         let errorMsg =
-    //           "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-    //         if (error.response) {
-    //           errorMsg = "";
-    //           switch (error.response.status) {
-    //             case 400:
-    //               if (error.response.data.hasOwnProperty("Coa_name")) {
-    //                 errorMsg += error.response.data.Coa_name;
-    //               }
-    //               break;
-
-    //             default:
-    //               errorMsg += `Please recheck your input or try again later`;
-    //               break;
-    //           }
-    //         }
-    //         commit("POST_PATCH_ERROR", errorMsg);
-    //         reject(errorMsg);
-    //       });
-    //   });
-    // },
-    // patchHome({ commit }, payload) {
-    //   commit("POST_PATCH_INIT");
-    //   const url = `${ENDPOINT}${payload.id}/`;
-    //   return new Promise((resolve, reject) => {
-    //     getAPI
-    //       .patch(url, payload)
-    //       .then((response) => {
-    //         resolve(response);
-    //         commit("POST_PATCH_SUCCESS");
-    //         store.dispatch("home/getFromAPI");
-    //         // store.dispatch("masterCategory/getFromAPI");
-    //       })
-    //       .catch((error) => {
-    //         let errorMsg =
-    //           "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-    //         if (error.response) {
-    //           errorMsg = "";
-    //           switch (error.response.status) {
-    //             case 400:
-    //               if (error.response.data.hasOwnProperty("Coa_name")) {
-    //                 errorMsg += error.response.data.Coa_name;
-    //               }
-    //               break;
-
-    //             default:
-    //               errorMsg += `${error.response.statusText}: Please recheck your input or try again later`;
-    //               break;
-    //           }
-    //         }
-    //         reject(errorMsg);
-    //         commit("POST_PATCH_ERROR", error.response.data);
-    //       });
-    //   });
-    // },
-
-    // deleteHomeById({ commit }, id) {
-    //   commit("SET_LOADING_DELETE_ITEM", true);
-    //   return new Promise((resolve, reject) => {
-    //     getAPI
-    //       .delete(ENDPOINT + `${id}/`)
-    //       .then((response) => {
-    //         const data = response.data;
-    //         commit("SET_DELETE_ITEM", data);
-    //         resolve(data);
-    //         store.dispatch("home/getFromAPI");
-    //       })
-    //       .catch((error) => {
-    //         commit("DELETE_ERROR", error);
-    //         reject(error);
-    //       });
-    //   });
-    // },
-
-    //   //harus return promise
-    // getHistory({ commit }, id) {
-    //   commit("SET_REQUEST_STATUS"); 
-    //   return new Promise((resolve, reject) => {
-    //   getAPI
-    //     .get("/api/auditlog?table=coa&entity=" + `${id}`)
-    //     .then((response) => {
-    //       const data = response.data;
-    //       const sorted = data.sort((a, b) =>
-    //       a.id < b.id ? 1 : -1
-    //     );
-    //       commit("SET_EDITTED_ITEM_HISTORIES", sorted); 
-    //       resolve(sorted);
-    //     })
-    //     .catch((error) => {
-    //       commit("GET_ERROR", error);
-    //       reject(error);
-    //     });
-    //   });
-    // },
+    downloadPlanning({ commit }, data) {
+      commit("GET_INIT_DOWNLOAD_PLANNING", true);
+      return new Promise((resolve, reject) => {
+        getAPI
+          .get(ENDPOINT+"submitted_budget/"+ `${data.id}/`+"download/", {
+            responseType: "arraybuffer", //Khusus download file
+          })
+          .then((response) => {
+            resolve(response);
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "MyPlanning.xlsx");
+            document.body.appendChild(link);
+            link.click();
+            commit("GET_SUCCESS_DOWNLOAD_PLANNING");
+          })
+          .catch((err) => {
+            reject(err.message);
+            commit("GET_ERROR_DOWNLOAD_PLANNING", err);
+          });
+      });
+    },
 
   },
   mutations: {
@@ -224,16 +149,16 @@ const home = {
     },
 
     // get Task by ID related
-    GET_INIT_BY_ID(state) {
+    GET_INIT_TASK_BY_ID(state) {
       state.requestTaskByIdStatus = "PENDING";
       state.loadingGetTaskById = true;
     },
-    GET_TASK_BY_ID_SUCCESS(state, dataTask) {
+    GET_SUCCESS_TASK_BY_ID(state, dataTask) {
       state.requestTaskByIdStatus = "SUCCESS";
       state.loadingGetTaskById = false;
       state.dataTaskById = dataTask;
     },
-    GET_TASK_BY_ID_ERROR(state, error) {
+    GET_ERROR_TASK_BY_ID(state, error) {
       state.requestTaskByIdStatus = "ERROR";
       state.loadingGetTaskById = false;
       state.errorMsgTaskById = error;
@@ -244,16 +169,16 @@ const home = {
     },
     
     // get Submitted based Task related
-    SET_LOADING_GET_SUBMITTED_TASK_ITEM(state) {
+    GET_INIT_SUBMITTED_TASK_ITEM(state) {
       state.requestSubmittedTaskStatus = "PENDING";
       state.loadingGetSubmittedTaskItem = true;
     },
-    SET_SUBMITTED_TASK_ITEM(state, payload) {
+    GET_SUCCESS_SUBMITTED_TASK_ITEM(state, payload) {
       state.requestSubmittedTaskStatus = "SUCCESS";
       state.loadingGetSubmittedTaskItem = false;
       state.dataSubmittedTask = payload;
     },
-    SET_ERROR_SUBMITTED_TASK_ITEM(state, error) {
+    GET_ERROR_SUBMITTED_TASK_ITEM(state, error) {
       state.requestTaskStatus = "ERROR";
       state.loadingGetSubmittedTaskItem = false;
       state.errorMsgSubmittedTask = error;
@@ -264,6 +189,24 @@ const home = {
       }
     },
 
+    // Download Planning by Task 
+    GET_INIT_DOWNLOAD_PLANNING(state) {
+      state.requestDownloadPlanningStatus = "PENDING";
+      state.loadingGetDownloadPlanning = true;
+    },
+    GET_SUCCESS_DOWNLOAD_PLANNING(state) {
+      state.requestDownloadPlanningStatus = "SUCCESS";
+      state.loadingGetDownloadPlanning = false;
+    },
+    GET_ERROR_DOWNLOAD_PLANNING(state, error) {
+      state.requestDownloadPlanningStatus = "ERROR";
+      state.loadingGetDownloadPlanning = false;
+      state.errorMsg = error;
+      state.dataHome = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
 
 
     // post / patch related

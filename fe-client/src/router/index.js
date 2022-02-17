@@ -70,12 +70,12 @@ const routes = [
         },
       },
       {
-        path: "/home/:id/editSubmitted",
+        path: "/home/:id/submitted",
         name: 'SubmittedList',
         component: () => import("@/views/Home/SubmittedList"),
       },
       {
-        path: "/home/:id/editSubmitted/new",
+        path: "/home/:id/submitted/new",
         name: 'AddNewProjectBudget',
         component: () => import("@/views/Home/AddNewProjectBudget"),
       },
