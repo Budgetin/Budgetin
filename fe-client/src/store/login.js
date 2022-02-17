@@ -42,7 +42,7 @@ const login = {
     setInitial({ commit }) {
       return new Promise((resolve, reject) => {
         getAPI
-          .get(ENDPOINT + "user/")
+          .get(ENDPOINT + "user/?role=user")
           .then((response) => {
             commit("GET_INITIAL_SUCCESS", response.data);
             resolve(response);
