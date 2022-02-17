@@ -13,11 +13,11 @@ from api.exceptions.validation_exception import ValidationException
 
 def is_duplicate_user(username):
     if User.objects.filter(username=username):
-        raise ValidationException
+        raise ValidationException('User ' + username + ' already exists')
 
 def is_duplicate_user_update(id, username):
     if User.objects.filter(username=username).exclude(pk=id):
-        raise ValidationException
+        raise ValidationException('User ' + username + ' already exists')
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

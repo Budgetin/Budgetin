@@ -171,7 +171,7 @@ export default {
             ]);
         },
         getHistoryItem() {
-            this.getHistory(this.$route.params.id).then(() => {
+            this.getHistory(this.$route.params.id_budget_planning).then(() => {
                 this.itemsHistory = JSON.parse(
                     JSON.stringify(this.$store.state.allBudget.edittedItemHistories));
                 for(let i=0; i<this.itemsHistory.length; i++) {
@@ -181,7 +181,7 @@ export default {
             });
         },
         getDetailItem() {
-            this.getAllBudgetById(this.$route.params.id).then(() => {
+            this.getAllBudgetById(this.$route.params.id_budget_planning).then(() => {
                 this.setForm();
             });
         },
@@ -195,7 +195,7 @@ export default {
             this.setBreadcrumbs();
         },
         onDelete() {
-            this.deleteAllBudgetById(this.$route.params.id)
+            this.deleteAllBudgetById(this.$route.params.id_budget_planning)
             .then(() => {
                 this.onDeleteSuccess();
             })
@@ -204,7 +204,7 @@ export default {
             });
         },
         onRestore() {
-            this.restoreAllBudgetById(this.$route.params.id)
+            this.restoreAllBudgetById(this.$route.params.id_budget_planning)
             .then(() => {
                 this.onRestoreSuccess();
             })

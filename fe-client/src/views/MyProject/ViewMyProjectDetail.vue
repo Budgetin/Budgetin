@@ -119,13 +119,14 @@ export default {
             ]);
         },
         getHistoryItem() {
-            this.getHistory(this.$route.params.id).then(() => {
+            this.getHistory(this.$route.params.id_project_detail).then(() => {
                 this.itemsHistory = JSON.parse(
                     JSON.stringify(this.$store.state.projectDetail.edittedItemHistories));
             });
         },
         getDetailItem() {
-            this.getProjectDetailById(this.$route.params.id).then(() => { 
+            console.log(this.$route.params.id_project_detail);
+            this.getProjectDetailById(this.$route.params.id_project_detail).then(() => { 
                 this.setForm();
             });
         },

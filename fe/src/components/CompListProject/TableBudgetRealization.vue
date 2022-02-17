@@ -16,7 +16,7 @@
                 style="text-decoration: none"
                 :to="{
                     name: 'ViewListBudgetRealization',
-                    params: { id: item.id },
+                    params: { id_budget_realization: item.id },
                 }">
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
@@ -121,6 +121,7 @@ export default {
         dataTable: {
             budgetRealizationHeaders: [
                 { text: "Action", value: "actions", align: "center", sortable: false},
+                { text: "ID", value: "id"},
                 { text: "Year", value: "year"},
                 { text: "Budget Status", value: "is_active"},
                 { text: "COA", value: "coa"},

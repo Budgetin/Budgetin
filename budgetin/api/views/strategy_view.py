@@ -11,11 +11,11 @@ from api.exceptions.validation_exception import ValidationException
 
 def is_duplicate_create(name):
     if Strategy.objects.filter(name=name):
-        raise ValidationException
+        raise ValidationException('Strategy ' + name + ' already exists')
 
 def is_duplicate(id, name):
     if Strategy.objects.filter(name=name).exclude(pk=id):
-        raise ValidationException
+        raise ValidationException('Strategy ' + name + ' already exists')
 
 class StrategyViewSet(viewsets.ModelViewSet):
     queryset = Strategy.objects.all()
