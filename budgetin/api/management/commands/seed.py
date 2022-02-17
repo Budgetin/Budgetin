@@ -59,7 +59,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.seed_user_dev()
         self.seed_project_type()
-        self.seed_strategy()
-        self.seed_coa()
-        self.seed_product()
-        self.seed_user_dev()
+        # self.seed_strategy()
+        # self.seed_coa()
+        # self.seed_product()

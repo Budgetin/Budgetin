@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from django.db import transaction
 
 from api.models import Planning, Monitoring, Biro
 from api.serializers import PlanningSerializer, PlanningResponseSerializer, ActivePlanningSerializer
@@ -13,6 +14,7 @@ from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 
+@transaction.atomic
 def create_update_all_biro_and_create_monitoring(biros, planning_id):
     for ithc_biro in biros:
         biro, created = create_update_biro(ithc_biro)
@@ -23,6 +25,7 @@ def create_update_all_biro_and_create_monitoring(biros, planning_id):
         else:
             create_monitoring(ithc_biro, biro, planning_id, MonitoringStatusEnum.OPTIONAL.value)
 
+@transaction.atomic
 def create_update_biro(biro):
     return Biro.objects.update_or_create(
         ithc_biro=biro['id'],
@@ -34,6 +37,7 @@ def create_update_biro(biro):
                     }
         )
         
+@transaction.atomic
 def create_monitoring(ithc_biro, biro, planning_id, monitoring_status):
     pic = get_pic(ithc_biro)
     
@@ -142,6 +146,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         AuditLog.Save(planning, request, ActionEnum.UPDATE, TableEnum.PLANNING)
         return planning
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
         planning = super().destroy(request, *args, **kwargs)

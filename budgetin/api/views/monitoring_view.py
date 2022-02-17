@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.db import transaction
 from django.forms.models import model_to_dict
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -48,6 +49,7 @@ class MonitoringViewSet(viewsets.ModelViewSet):
         serializer = MonitoringSerializer(monitoring, many=False)
         return Response(serializer.data)
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
@@ -55,6 +57,7 @@ class MonitoringViewSet(viewsets.ModelViewSet):
         AuditLog.Save(monitoring, request, ActionEnum.CREATE, TableEnum.MONITORING)
         return monitoring
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
         monitoring = super().update(request, *args, **kwargs)
@@ -66,6 +69,7 @@ class MonitoringViewSet(viewsets.ModelViewSet):
             'message': 'Monitoring cannot be deleted'
         })
 
+    @transaction.atomic
     @action(detail=False, methods=['post'])
     def reload(self, request):
         try:
