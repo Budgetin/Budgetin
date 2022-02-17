@@ -49,6 +49,7 @@ const masterUser = {
                   id: data.is_active,
                   label: data.is_active?"Active":"Inactive"
                 },
+                updated_by: data.updated_by,
                 updated_at: data.updated_at
             }
           });
