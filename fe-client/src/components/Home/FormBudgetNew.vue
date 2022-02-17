@@ -281,7 +281,7 @@
                   hide-selected
                   v-model="budget.coa"
                   :items="dataMasterCoa"
-                  item-text="option"
+                  item-text="name"
                   item-value="id"
                   placeholder="Select"
                   outlined
@@ -291,6 +291,20 @@
                   :dense="true"
                   @input="onInput(budget)"
                 >
+                <template v-slot:item="{ item, attrs, on }">
+                  <v-list-item v-on="on" v-bind="attrs">
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        <v-row no-gutters align="center">
+                        <span>{{ item.name }}</span>
+                        <v-spacer></v-spacer>
+                        <span style="opacity:0.7">{{ item.definition }}</span>
+                        </v-row>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+
                 </v-combobox>
               </div>
             </v-col>
