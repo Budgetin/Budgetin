@@ -114,10 +114,7 @@ export default {
           disabled: true,
         },
       ]);
-    },
-    onView(item){
-
-    }    
+    },  
   }
 }
 </script>

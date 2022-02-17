@@ -13,7 +13,7 @@ export default {
       return this.boolean ? "rgba(97, 164, 232, 0.2)" : "red";
     },
     textColor() {
-      return this.boolean ? "blue--text" : "red";
+      return this.boolean ? "blue--text" : "red--text";
       // return `${this.chipColor}--text`;
     },
     label() {
