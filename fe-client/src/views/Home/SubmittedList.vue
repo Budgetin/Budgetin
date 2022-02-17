@@ -71,8 +71,8 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'ViewMyProject',
-                  params: { id: item.project_detail.project.id },
+                  name: 'ViewMyPlanning',
+                  params: { id_project: item.project_detail.project.id },
                 }"
               >
                 <v-tooltip bottom>

@@ -80,7 +80,7 @@ const routes = [
         component: () => import("@/views/Home/AddNewProjectBudget"),
       },
       {
-        path: "/home/:id/view",
+        path: "/home/:id/submitted/:id_project/view",
         name: "ViewMyPlanning",
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);

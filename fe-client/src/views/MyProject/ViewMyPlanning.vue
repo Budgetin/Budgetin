@@ -78,7 +78,7 @@ import TableBudgetRealization from '@/components/MyProject/TableBudgetRealizatio
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 import TimelineLog from "@/components/TimelineLog";
 export default {
-    name: "ViewMyProject",
+    name: "ViewMyPlanning",
     components: {
         FormMyProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization, SuccessErrorAlert, TimelineLog
     },
@@ -183,27 +183,34 @@ export default {
         ...mapActions("listProject", ["getListProjectById"]),
         ...mapActions("masterProduct", ["getMasterProduct"]),
         ...mapActions("allBiro", ["getAllBiro"]),
-
         setBreadcrumbs() {
-            let param = this.isView ? "View Project" : "Edit Project Detail";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "My Project",
+                    text: "Home",
                     link: true,
                     exact: true,
                     disabled: false,
                     to: {
-                        name: "MyProject",
+                        name: "Home",
                     },
                 },
                 {
-                    text: param,
+                    text: "Submitted List",
+                    link: true,
+                    exact: true,
+                    disabled: false,
+                    to: {
+                        name: "SubmittedList",
+                    },
+                },
+                {
+                    text: "View Detail",
                     disabled: true,
                 },
             ]);
         },
         getDetailItem() {
-            this.getListProjectById(this.$route.params.id).then(() => {
+            this.getListProjectById(this.$route.params.id_project).then(() => {
                 this.projectDetail = JSON.parse(
                     JSON.stringify(this.$store.state.listProject.edittedItem)
                 );
@@ -223,7 +230,7 @@ export default {
         },
         getHistoryItem() {
             // console.log("Masuk getHistoryItem");
-            this.getHistory(this.$route.params.id).then(() => {
+            this.getHistory(this.$route.params.id_project).then(() => {
                 // console.log("Masuk getHistory");
                 this.itemsHistory = JSON.parse(
                     JSON.stringify(this.$store.state.myProject.edittedItemHistories));
