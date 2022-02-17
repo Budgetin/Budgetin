@@ -2,73 +2,13 @@
   <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
     <v-card>
       <v-card-title>
-        <strong> Project Detail</strong>
-      </v-card-title>
-      <v-card-text>
-        <v-divider></v-divider><br />
-        <!-- Nama nama -->
-        <v-row no-gutters>
-          <v-col cols="4"> For <strong class="red--text">*</strong></v-col>
-          <v-col cols="4"> Project ID </v-col>
-          <v-col cols="4"> Project Type <strong class="red--text">*</strong>
-          </v-col>
-        </v-row>
-
-        <!-- Kolom kolom -->
-        <v-row no-gutters>
-          <v-col cols="4">
-            <div>
-              <v-select
-                v-model="form.planning"
-                :items="planningItem"
-                item-text="year"
-                item-value="id"
-                placeholder="Year"
-                outlined
-                disabled
-                :rules="validation.required"
-                class="mr-2"
-                :dense=true>
-              </v-select>
-            </div>
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              v-model="form.dcsp_id"
-              outlined
-              dense
-              :disabled="true"
-              placeholder="Auto Input"
-              class="mr-2"
-            >
-            </v-text-field>
-          </v-col>
-          <v-col cols="4">
-            <div>
-              <v-select
-                v-model="getProjectType"
-                :items="dataProjectType"
-                item-text="name"
-                item-value="id"
-                placeholder="Type"
-                outlined
-                return-object
-                :rules="validation.required"
-                class="mr-2"
-                disabled
-                :dense="true"
-              >
-              </v-select>
-            </div>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
-
-    <br />
-    <v-card>
-      <v-card-title>
-        <strong> Project</strong>
+        <v-avatar
+          color="#1B84CB"
+          size="25"
+        >
+          <span class="white--text" style="font-size:0.8rem;">1</span>
+        </v-avatar>
+        <strong style="margin-left:1rem;"> Project</strong>
       </v-card-title>
       <v-card-text>
         <v-divider></v-divider><br />
@@ -252,6 +192,80 @@
         </v-row>
       </v-card-text>
     </v-card>
+
+    <br />
+    
+    <v-card>
+      <v-card-title>
+        <v-avatar
+          color="#1B84CB"
+          size="25"
+        >
+          <span class="white--text" style="font-size:0.8rem;">2</span>
+        </v-avatar>
+        <strong style="margin-left:1rem;"> Project Detail</strong>
+      </v-card-title>
+      <v-card-text>
+        <v-divider></v-divider><br />
+        <!-- Nama nama -->
+        <v-row no-gutters>
+          <v-col cols="4"> For <strong class="red--text">*</strong></v-col>
+          <v-col cols="4"> Project ID </v-col>
+          <v-col cols="4"> Project Type <strong class="red--text">*</strong>
+          </v-col>
+        </v-row>
+
+        <!-- Kolom kolom -->
+        <v-row no-gutters>
+          <v-col cols="4">
+            <div>
+              <v-select
+                v-model="form.planning"
+                :items="planningItem"
+                item-text="year"
+                item-value="id"
+                placeholder="Year"
+                outlined
+                disabled
+                :rules="validation.required"
+                class="mr-2"
+                :dense=true>
+              </v-select>
+            </div>
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              v-model="form.dcsp_id"
+              outlined
+              dense
+              :disabled="true"
+              placeholder="Auto Input"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="4">
+            <div>
+              <v-select
+                v-model="getProjectType"
+                :items="dataProjectType"
+                item-text="name"
+                item-value="id"
+                placeholder="Type"
+                outlined
+                return-object
+                :rules="validation.required"
+                class="mr-2"
+                disabled
+                :dense="true"
+              >
+              </v-select>
+            </div>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+
     <!-- List Budget -->
 
     <div v-for="(budget, index) in budgets" :key="budget.name">
@@ -407,9 +421,15 @@
       <v-card-text>
         <v-row no-gutters>
           <v-col cols="6" align="left">
-            <v-btn class="white--text ml-3" color='#7E73FF' @click="onAddNewBudget">
-              Add Budget
-            </v-btn>
+            <v-avatar
+                color="#1B84CB"
+                size="25"
+              >
+                <strong><span class="white--text" style="font-size:0.8rem;">3</span></strong>
+              </v-avatar>
+              <v-btn class="white--text ml-3" style="margin-left:1rem;" color='#7E73FF' @click="onAddNewBudget">
+                Add Budget
+              </v-btn>
           </v-col>
           <v-col cols="6" align="right">
             <v-btn

@@ -645,7 +645,6 @@ export default {
       this.form.total_investment_value = this.numberWithDots(this.form.total_investment_value);
     },
     onSelectProject(){
-      this.budgets = [];
       if(this.form.project && this.form.project.id){
         this.form.project_description = this.form.project.project_description;
         this.form.itfam_id = this.form.project.itfam_id;
@@ -668,7 +667,6 @@ export default {
         this.form.rcc = "";
         this.form.project_type = "";
         this.projectTypeEnable = false;
-        this.budget_table = [];
       }
 
       if(this.form.project && this.form.project.id){
