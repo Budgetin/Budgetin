@@ -150,6 +150,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
+        request.data['updated_by'] = request.custom_user['id']
         budget = super().destroy(request, *args, **kwargs)
         AuditLog.Save(budget, request, ActionEnum.DELETE, TableEnum.BUDGET)
         
