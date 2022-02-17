@@ -17,6 +17,10 @@ const home = {
     dataTaskById: null, // for store data
     errorMsgTaskById: null,
 
+    requestSubmitPlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingPostSubmitPlanning: false, // for loading table
+    errorMsgSubmitPlanning: null,
+
     requestSubmittedTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetSubmittedTask: false, // for loading table
     dataSubmittedTask: [], // for v-data-table
@@ -102,8 +106,26 @@ const home = {
           });
       });
     },
+
+    submitPlanning({ commit }, data) {
+      commit("POST_INIT_SUBMIT_PLANNING");
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(ENDPOINT+`${data.id}/`+"submit/")
+          .then((response) => {
+            commit("POST_SUCCESS_SUBMIT_PLANNING");
+            resolve(response);
+          })
+          .catch((error) => {
+            commit("GET_ERROR_SUBMIT_PLANNING", error);
+            console.log(error.message);
+            reject(error.message);
+          });
+      });
+    },
+
     downloadPlanning({ commit }, data) {
-      commit("GET_INIT_DOWNLOAD_PLANNING", true);
+      commit("GET_INIT_DOWNLOAD_PLANNING");
       return new Promise((resolve, reject) => {
         getAPI
           .get(ENDPOINT+"submitted_budget/"+ `${data.id}/`+"download/", {
@@ -184,6 +206,24 @@ const home = {
       state.errorMsgSubmittedTask = error;
       state.dataSubmittedTask = [];
       console.log(error)
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    //Post Status Submit related
+    POST_INIT_SUBMIT_PLANNING(state) {
+      state.requestSubmitPlanningStatus = "PENDING";
+      state.loadingPostSubmitPlanning = true;
+    },
+    POST_SUCCESS_SUBMIT_PLANNING(state) {
+      state.requestSubmitPlanningStatus = "SUCCESS";
+      state.loadingPostSubmitPlanning = false;
+    },
+    GET_ERROR_SUBMIT_PLANNING(state, error) {
+      state.requestSubmitPlanningStatus = "ERROR";
+      state.loadingPostSubmitPlanning = false;
+      state.errorMsgSubmitPlanning = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }

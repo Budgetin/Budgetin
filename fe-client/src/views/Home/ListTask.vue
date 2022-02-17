@@ -92,7 +92,7 @@ export default {
         { text: "Due Date", value: "due_date"},
         { text: "Update By", value: "updated_by"},
         { text: "Update Date", value: "updated_at"},
-        { text: "Actions", value: "actions", align: "center", sortable: false ,width: "4rem"},
+        { text: "Actions", value: "actions", align: "center", sortable: false},
       ]
     },
   }),

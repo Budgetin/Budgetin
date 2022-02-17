@@ -33,7 +33,7 @@ export default {
     this.getTaskInformationById();
   },
   methods: {
-...mapActions("home", ["getTaskById"]),
+...mapActions("home", ["getTaskById","postNewPlanning"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -66,8 +66,8 @@ export default {
         if(this.$store.state.home.dataTaskById.length > 1){
           return this.$router.push("/home/");
         }
-        else if (!this.$store.state.home.dataTaskById.planning.is_active) {
-          return this.$router.push("/home/"+param+"/editSubmitted/");
+        else if (!this.$store.state.home.dataTaskById.planning.is_active || this.$store.state.home.dataTaskById.monitoring_status =='Submitted') {
+          return this.$router.push("/home/"+param+"/Submitted/");
         }{
         this.setForm();
         }
@@ -83,20 +83,19 @@ export default {
       this.$router.go(-1);
     },
     onSubmit(e) {
-      console.log(e)
-      // this.postNewBudget(e)
-      // .then(() => {
-      //     this.onSaveSuccess();
-      //   })
-      //   .catch((error) => {
-      //     this.onSaveError(error);
-      //   });
+      this.postNewPlanning(e)
+      .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.onSaveError(error);
+        });
     },
     onSaveSuccess() {
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
-      this.alert.subtitle = "Budget has been saved successfully";
+      this.alert.subtitle = "Planning has been saved successfully";
     },
     onSaveError(error) {
       this.alert.show = true;
