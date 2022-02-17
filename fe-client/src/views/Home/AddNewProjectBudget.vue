@@ -33,7 +33,7 @@ export default {
     this.getTaskInformationById();
   },
   methods: {
-...mapActions("home", ["getTaskById","postNewPlanning"]),
+...mapActions("home", ["getTaskById","submitPlanning"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -83,7 +83,8 @@ export default {
       this.$router.go(-1);
     },
     onSubmit(e) {
-      this.postNewPlanning(e)
+      console.log(e)
+      this.submitPlanning(e)
       .then(() => {
           this.onSaveSuccess();
         })

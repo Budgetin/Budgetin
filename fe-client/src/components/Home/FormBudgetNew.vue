@@ -560,8 +560,7 @@ export default {
             ""
           )
         );
-
-      budget.planning_nominal = this.numberWithDots(budget.planning_nominal);
+      budget.planning_nominal = this.numberWithDots(String(budget.planning_nominal));
 
       if (budget.coa) {
         if (
