@@ -11,11 +11,11 @@ from api.exceptions.validation_exception import ValidationException
 
 def is_product_duplicate(product_id, product_code, product_name):
     if Product.objects.filter(product_code=product_code).exclude(id=product_id) or Product.objects.filter(product_name=product_name).exclude(id=product_id):
-        raise ValidationException
+        raise ValidationException('Product ' + product_code + ' already exists')
 
 def is_product_duplicate_create(product_code, product_name):
     if Product.objects.filter(product_code=product_code) or Product.objects.filter(product_name=product_name):
-        raise ValidationException
+        raise ValidationException('Product ' + product_code + ' already exists')
 
 
 class ProductViewSet(viewsets.ModelViewSet):
