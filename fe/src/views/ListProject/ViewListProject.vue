@@ -229,6 +229,7 @@ export default {
         },
         onLogHistory() {
             this.dialog = !this.dialog;
+            this.getHistoryItem();
         },
         onCancelHistory() {
             this.dialog = false;

@@ -120,7 +120,7 @@ const routes = [
         component: () => import("@/views/MyProject/ViewMyProject"),
       },
       {
-        path: "/myProject/:id/viewProjectDetail",
+        path: "/myproject/:id/view/:id_project_detail/viewProjectDetail",
         name: "ViewMyProjectDetail",
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);
@@ -128,7 +128,7 @@ const routes = [
         component: () => import("@/views/MyProject/ViewMyProjectDetail"),
       },
       {
-        path: "/myProject/:id/viewBudgetPlanning",
+        path: "/myProject/:id/view/:id_budget_planning/viewBudgetPlanning",
         name: "ViewMyBudgetPlanning",
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);
@@ -136,7 +136,7 @@ const routes = [
         component: () => import("@/views/MyProject/ViewMyBudgetPlanning"),
       },
       {
-        path: "/myProject/:id/viewBudgetRealization",
+        path: "/myProject/:id/view/:id_budget_realization/viewBudgetRealization",
         name: "ViewMyBudgetRealization",
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);

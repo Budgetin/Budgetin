@@ -16,7 +16,7 @@
                 style="text-decoration: none"
                 :to="{
                     name: 'ViewMyBudgetRealization',
-                    params: { id: item.id },
+                    params: { id_budget_realization: item.id },
                 }">
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">

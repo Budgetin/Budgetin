@@ -20,7 +20,7 @@
                             style="text-decoration: none"
                             :to="{
                                 name: 'ViewListProjectDetail',
-                                params: { id: item.id },
+                                params: { id_project_detail: item.id },
                             }">
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on }">
