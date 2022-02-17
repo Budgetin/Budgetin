@@ -10,4 +10,4 @@ from .project_serializer import ProjectSerializer, ProjectResponseSerializer, Pr
 from .project_type_serializer import ProjectTypeSerializer
 from .strategy_serializer import StrategySerializer, StrategyResponseSerializer
 from .user_serializer import UserSerializer, UserResponseSerializer
-
+from .realization_serializer import RealizationSerializer

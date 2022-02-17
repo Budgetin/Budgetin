@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from django.db import transaction
 
 from api.permissions import IsAuthenticated, IsAdmin
 from api.models import User
@@ -39,6 +40,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserResponseSerializer(user, many=False)
         return Response(serializer.data)
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         is_duplicate_user(request.data['username'])
         employee_info = get_ithc_employee_info(request.data['username'])
@@ -50,6 +52,7 @@ class UserViewSet(viewsets.ModelViewSet):
         AuditLog.Save(user, request, ActionEnum.CREATE, TableEnum.USER)
         return user
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         is_duplicate_user_update(kwargs['pk'], request.data['username'])
         request.data['updated_by'] = request.custom_user['id']
