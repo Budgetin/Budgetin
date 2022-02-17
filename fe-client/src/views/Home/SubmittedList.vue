@@ -72,7 +72,7 @@
 
 
       <v-row no-gutters>
-        <v-dialog v-model="isLoading" persistent width="25rem">
+        <v-dialog v-model="loadingGetDownloadPlanning" persistent width="25rem">
           <v-card>
             <v-card-title class="d-flex justify-center"> Loading </v-card-title>
 
@@ -111,7 +111,6 @@ export default {
   components: { SuccessErrorAlert, BinaryYesNoChip,FormChooseProjectType },
   watch: {},
   data: () => ({
-    isLoading: false,
     dialogChoose:false,
     search: "",
     taskInfo:null,
@@ -214,6 +213,7 @@ export default {
     this.getSubmittedItem();
   },
   computed: {
+    ...mapState("home",["loadingGetDownloadPlanning"])
   },
   methods: {
     ...mapActions("home", ["getTaskById","getSubmittedTaskById","downloadPlanning"]),
@@ -255,21 +255,25 @@ export default {
     },
     onAddNew(){
       let param = this.$route.params.id;
-      return this.$router.push("/home/"+param+"/editSubmitted/new");
+      return this.$router.push("/home/"+param+"/submitted/new");
     },
     onAddExisting(){
       let param = this.$route.params.id;
-      return this.$router.push("/home/"+param+"/editSubmitted/new");
+      return this.$router.push("/home/"+param+"/submitted/new");
     },
     ondownload(){
-      this.downloadPlanning(this.taskInfo);
+      this.downloadPlanning(this.taskInfo).then(() => {
+        this.onSaveSuccess("Check Your Download Folder")
+      }).catch((error) => {
+        this.onSaveError(error);
+      });
     },
-    onSaveSuccess() {
+    onSaveSuccess(message) {
       this.dialog = false;
       this.alert.show = true;
       this.alert.success = true;
-      this.alert.title = "Save Success";
-      this.alert.subtitle = "Budget has been saved successfully";
+      this.alert.title = "Success";
+      this.alert.subtitle = message;
     },
     onSaveError(error) {
       this.dialog = false;
