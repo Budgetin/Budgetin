@@ -54,13 +54,6 @@
           <v-col cols="4" no-gutters> Product ID <strong class="red--text">*</strong>
             <!-- <v-col> -->
               <div class="ListProject__field">
-                <!-- <v-text-field
-                v-model="form.product.product_code"
-                outlined
-                dense
-                disabled
-                class="mr-3">
-                </v-text-field> -->
                 <v-select
                 v-model="form.product"
                 :items="dataMasterProduct"
@@ -121,14 +114,6 @@
           <v-col cols="2" no-gutters> RCC <strong class="red--text">*</strong>
             <!-- <v-col> -->
               <div class="ListProject__field">
-                <!-- <v-text-field
-                  v-model="form.biro.rcc"
-                  outlined
-                  return-object
-                  dense
-                  disabled
-                  class="mr-3">
-                </v-text-field> -->
                 <v-select
                 v-model="form.biro"
                 :items="dataAllBiro"
@@ -209,49 +194,17 @@
           <v-col cols="2" no-gutters> End Year <strong class="red--text">*</strong>
             <!-- <v-col> -->
               <div class="ListProject__field">
-                <!-- <div class="mb-6">Active picker: <code>{{ 'YEAR' }}</code></div> -->
-                <!-- <v-menu
-                v-model="menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="auto">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                    v-model="form.end_year"
-                    outlined
-                    return-object
-                    dense
-                    :disabled="isView"
-                    class="mr-3"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on">
-                    </v-text-field>
-                  </template>
-                  <v-date-picker
-                  v-model="form.end_year"
-                  @input="menu = false"
-                  :min="new Date().toISOString().substr(0, 6)"
-                  type="month"
-                  :active-picker.sync="activePicker"
-                  @change="save">
-                  </v-date-picker>
-                </v-menu> -->
-                <!-- readonly
-                v-bind="attrs"
-                v-on="on" -->
-                <!-- :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)" -->
                 <v-text-field
                   v-model="form.end_year"
                   outlined
                   return-object
                   dense
+                  :rules="validation.required"
                   :disabled="isView"
-                  class="mr-3"
-                  :rules="validation.required">
+                  class="mr-3">
                 </v-text-field>
               </div>
+              <!-- :rules="[validation.required, rules.endYearMin(form.end_year, form.start_year)]" -->
             <!-- </v-col> -->
           </v-col>
 
@@ -313,16 +266,7 @@ export default {
   props: ["form", "isNew", "isView"],
   mixins: [formatting],
 
-  // watch: {
-  //   menu (val) {
-  //     val && setTimeout(() => (this.activePicker = 'YEAR'))
-  //   },
-  // },
   data: () => ({
-    // activePicker: 'YEAR',
-    // date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 4),
-    // menu: false,
-
     validation: {
       required: [
         (v) => !!v || "This field is required"
@@ -342,6 +286,12 @@ export default {
       {label: 'Non-Tech', value: 0},
     ],
   }),
+
+  rules: {
+    endYearMin(value, min) {
+      return (value || "") >= min || `Loan must be at least ${min}`;
+    },
+  },
 
   computed: {
     ...mapState("listProject", ["getListProject", "dataListProject"]),
@@ -372,9 +322,6 @@ export default {
   },
 
   methods: {
-    // save (date) {
-    //   this.$refs.menu.save(date)
-    // },
     onSubmit() {
       let validate = this.$refs.form.validate();
       if (validate) {

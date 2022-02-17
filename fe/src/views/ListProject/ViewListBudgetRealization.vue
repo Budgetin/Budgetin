@@ -124,6 +124,8 @@ export default {
                     to: {
                         name: "ListProject",
                     },
+                },
+                {
                     text: "View Project",
                     link: true,
                     exact: true,

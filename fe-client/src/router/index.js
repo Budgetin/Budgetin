@@ -80,6 +80,14 @@ const routes = [
         component: () => import("@/views/Home/AddNewProjectBudget"),
       },
       {
+        path: "/home/:id/view",
+        name: "ViewMyPlanning",
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
+        component: () => import("@/views/MyProject/ViewMyPlanning"),
+      },
+      {
         path: "/myBudget",
         name: "ListBudget",
         beforeEnter: (to, from, next) => {

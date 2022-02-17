@@ -122,8 +122,8 @@ export default {
 
         dataTable: {
             projectDetailsHeaders: [
-                { text: "Action", value: "actions", align: "center", sortable: false},
-                { text: "ID", value: "id"},
+                // { text: "Action", value: "actions", align: "center", sortable: false},
+                // { text: "ID", value: "id"},
                 { text: "Year", value: "planning.year"},
                 { text: "Project ID", value: "dcsp_id"},
                 { text: "Status", value: "planning.is_active"},
