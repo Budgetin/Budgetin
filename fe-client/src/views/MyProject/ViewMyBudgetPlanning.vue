@@ -63,7 +63,12 @@ export default {
     components: {
         FormEditBudgetPlanning, SuccessErrorAlert, TimelineLog
     },
+    // props: ["myProjectData"],
     data: () => ({
+        projectId: "",
+        myProjectData: {
+
+        },
         isView: true,
         itemsHistory: null,
         form: {
@@ -106,8 +111,12 @@ export default {
                     id: "",
                     is_active: "",
                     year: "",
-               }
-            }
+                },
+                project: {
+                    id: "",
+                    project_name: "",
+                },
+            },
         },
 
         alert: {
@@ -138,11 +147,24 @@ export default {
     computed: {
         ...mapState("allBudget", ["loadingGetAllBudget", "dataAllBudget"]),
         ...mapState("masterCoa", ["dataMasterCoa"]),
+        ...mapState("listProject", ["dataListProject"]),
     },
     methods: {
         ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById", "getHistory", "deleteAllBudgetById", "restoreAllBudgetById"]),
+        ...mapActions("listProject", ["getListProjectById"]),
         ...mapActions("masterCoa", ["getMasterCoa"]),
         
+        getDetailItem() {
+            console.log(this.$route.params.id_budget_planning);
+            this.getAllBudgetById(this.$route.params.id_budget_planning).then(() => {
+                this.setForm();
+            });
+        },
+        setForm() {
+            this.form = JSON.parse(
+                JSON.stringify(this.$store.state.allBudget.edittedItem)
+            );
+        },
         setBreadcrumbs() {
             let param = this.isView ? "View Budget Planning" : "Edit Budget Planning";
             this.$store.commit("breadcrumbs/SET_LINKS", [
@@ -171,7 +193,7 @@ export default {
             ]);
         },
         getHistoryItem() {
-            this.getHistory(this.$route.params.id).then(() => {
+            this.getHistory(this.$route.params.id_budget_planning).then(() => {
                 this.itemsHistory = JSON.parse(
                     JSON.stringify(this.$store.state.allBudget.edittedItemHistories));
                 for(let i=0; i<this.itemsHistory.length; i++) {
@@ -180,22 +202,12 @@ export default {
                 }
             });
         },
-        getDetailItem() {
-            this.getAllBudgetById(this.$route.params.id).then(() => {
-                this.setForm();
-            });
-        },
-        setForm() {
-            this.form = JSON.parse(
-                JSON.stringify(this.$store.state.allBudget.edittedItem)
-            );
-        },
         onEdit() {
             this.isView = false;
             this.setBreadcrumbs();
         },
         onDelete() {
-            this.deleteAllBudgetById(this.$route.params.id)
+            this.deleteAllBudgetById(this.$route.params.id_budget_planning)
             .then(() => {
                 this.onDeleteSuccess();
             })
@@ -204,7 +216,7 @@ export default {
             });
         },
         onRestore() {
-            this.restoreAllBudgetById(this.$route.params.id)
+            this.restoreAllBudgetById(this.$route.params.id_budget_planning)
             .then(() => {
                 this.onRestoreSuccess();
             })

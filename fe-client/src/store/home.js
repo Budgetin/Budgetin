@@ -58,7 +58,7 @@ const home = {
           })
           .catch((error) => {
             commit("GET_ERROR", error);
-            reject(error);
+            reject(error.message);
           });
       });
     },
@@ -75,7 +75,7 @@ const home = {
           })
           .catch((error) => {
             commit("GET_ERROR_TASK_BY_ID", error);
-            reject(error);
+            reject(error.message);
           });
       });
     },
@@ -98,12 +98,11 @@ const home = {
           })
           .catch((error) => {
             commit("GET_ERROR_SUBMITTED_TASK_ITEM", error);
-            reject(error);
+            reject(error.message);
           });
       });
     },
     downloadPlanning({ commit }, data) {
-      console.log(data)
       commit("GET_INIT_DOWNLOAD_PLANNING", true);
       return new Promise((resolve, reject) => {
         getAPI
@@ -118,11 +117,11 @@ const home = {
             link.setAttribute("download", "MyPlanning.xlsx");
             document.body.appendChild(link);
             link.click();
-            commit("GET_SUCCESS_DOWNLOAD_PLANNING", false);
+            commit("GET_SUCCESS_DOWNLOAD_PLANNING");
           })
           .catch((err) => {
-            reject(err);
-            commit("GET_ERROR_DOWNLOAD_PLANNING", err.message);
+            reject(err.message);
+            commit("GET_ERROR_DOWNLOAD_PLANNING", err);
           });
       });
     },
@@ -193,7 +192,7 @@ const home = {
     // Download Planning by Task 
     GET_INIT_DOWNLOAD_PLANNING(state) {
       state.requestDownloadPlanningStatus = "PENDING";
-      state.loadingDownloadPlanningTask = true;
+      state.loadingGetDownloadPlanning = true;
     },
     GET_SUCCESS_DOWNLOAD_PLANNING(state) {
       state.requestDownloadPlanningStatus = "SUCCESS";

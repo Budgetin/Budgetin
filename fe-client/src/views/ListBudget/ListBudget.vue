@@ -88,7 +88,7 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'EditListPlanning',
+                  name: 'ViewMyBudgetPlanning',
                   params: { id: item.id },
                 }"
               >
@@ -150,11 +150,11 @@
               </v-toolbar-title>
             </template>
 
-            <template v-slot:[`item.actions`]="{ item }">
+             <template v-slot:[`item.actions`]="{ item }">
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'EditListPlanning',
+                  name: 'ViewMyBudgetPlanning',
                   params: { id: item.id },
                 }"
               >
@@ -454,6 +454,13 @@ export default {
       if (this.listColumn.length == 1) {
         this.dataTable.selectedHeader = [].concat(this.dataTable.Listheader);
         this.dataTable.selectedHeader.splice(0, 0, {
+          text: "Actions",
+          value: "actions",
+          align: "center",
+          sortable: false,
+          width: "5rem",
+        });
+        this.dataTable.selectedHeader.splice(1, 0, {
           text: "For",
           value: "project_detail.planning.year",
           width: "5rem",
@@ -492,14 +499,21 @@ export default {
       
     },
     onClose(e) {
-      this.dataTable.selectedHeader.splice(0, 1);
+      this.dataTable.selectedHeader.splice(0, 2);
       this.dialog = false;
       if (e.length > 0) {
         this.dataTable.selectedHeader = [];
         for (let i = 0; i < e.length; i++) {
           this.dataTable.selectedHeader.push(e[i]);
         }
-        this.dataTable.selectedHeader.splice(0, 1, {
+        this.dataTable.selectedHeader.splice(0, 0, {
+          text: "Actions",
+          value: "actions",
+          align: "center",
+          sortable: false,
+          width: "4.55rem",
+        });
+        this.dataTable.selectedHeader.splice(1, 0, {
           text: "For",
           value: "project_detail.planning.year",
           width: "5rem",
@@ -630,7 +644,7 @@ export default {
 ::v-deep table > thead > tr > th:nth-child(3) {
   position: sticky !important;
   position: -webkit-sticky !important;
-  left:12rem;
+  left:10rem;
   z-index: 9;
   background: white;
 }
@@ -641,7 +655,7 @@ export default {
 ::v-deep table > thead > tr > th:nth-child(4) {
   position: sticky !important;
   position: -webkit-sticky !important;
-  left: 20rem;
+  left: 17rem;
   z-index: 9;
   background: white;
 }

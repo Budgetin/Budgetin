@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "ItemLogListProjectDetail",
+  name: "ItemLogMyProjectDetail",
   props: ["data"],
   computed:{
     getProjectType() {
