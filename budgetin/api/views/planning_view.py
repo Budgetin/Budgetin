@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from django.db import transaction
 
 from api.models import Planning, Monitoring, Biro
 from api.serializers import PlanningSerializer, PlanningResponseSerializer, ActivePlanningSerializer
@@ -11,8 +12,9 @@ from api.utils.enum import MonitoringStatusEnum
 from api.utils.manager_email import get_managers_email_list
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.permissions import IsAuthenticated, IsAdmin
+from api.permissions import IsAuthenticated, IsAdmin, IsUser
 
+@transaction.atomic
 def create_update_all_biro_and_create_monitoring(biros, planning_id):
     for ithc_biro in biros:
         biro, created = create_update_biro(ithc_biro)
@@ -23,6 +25,7 @@ def create_update_all_biro_and_create_monitoring(biros, planning_id):
         else:
             create_monitoring(ithc_biro, biro, planning_id, MonitoringStatusEnum.OPTIONAL.value)
 
+@transaction.atomic
 def create_update_biro(biro):
     return Biro.objects.update_or_create(
         ithc_biro=biro['id'],
@@ -34,6 +37,7 @@ def create_update_biro(biro):
                     }
         )
         
+@transaction.atomic
 def create_monitoring(ithc_biro, biro, planning_id, monitoring_status):
     pic = get_pic(ithc_biro)
     
@@ -90,7 +94,7 @@ def get_biros_code(biros_id):
 class PlanningViewSet(viewsets.ModelViewSet):
     queryset = Planning.objects.all()
     serializer_class = PlanningSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsAdmin, IsUser]
 
     def list(self, request, *args, **kwargs):
         queryset = Planning.objects.select_related('updated_by', 'created_by').all()
@@ -142,6 +146,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         AuditLog.Save(planning, request, ActionEnum.UPDATE, TableEnum.PLANNING)
         return planning
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
         planning = super().destroy(request, *args, **kwargs)
