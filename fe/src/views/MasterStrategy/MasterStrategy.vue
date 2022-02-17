@@ -108,7 +108,7 @@ export default {
     dataTable: {
       headers: [
         { text: "Strategy Name", value: "name"},
-        { text: "Update By", value: "update_by"},
+        { text: "Update By", value: "updated_by"},
         { text: "Update Date", value: "updated_at"},
         { text: "Actions", value: "actions", align: "center", sortable: false,width: "4rem" },
       ]

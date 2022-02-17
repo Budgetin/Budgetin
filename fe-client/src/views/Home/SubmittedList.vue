@@ -49,12 +49,32 @@
               </v-toolbar-title>
             </template>
 
+          <template v-slot:[`item.actions`]="{ item }">
+              <router-link
+                style="text-decoration: none"
+                :to="{
+                  name: 'ViewMyProject',
+                  params: { id: item.project_detail.project.id },
+                }"
+              >
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on" color="#16B1FF">
+                      mdi-eye
+                    </v-icon>
+                  </template>
+                  <span>View/Edit</span>
+                </v-tooltip>
+              </router-link>
+            </template>
+
             <template v-slot:[`item.is_budget`]="{ item }">
                 <binary-yes-no-chip :boolean="item.is_budget"> </binary-yes-no-chip>
             </template>
             <template v-slot:[`item.project_detail.project.is_tech`]="{ item }">
                 <binary-yes-no-chip :boolean="item.project_detail.project.is_tech"> </binary-yes-no-chip>
             </template>
+
           </v-data-table>
         </v-col>
       </v-row>
@@ -118,6 +138,7 @@ export default {
       loadingTable:true,
       value:[],
       Listheader: [
+        { text: "Actions", value: "actions", align: "center", sortable: false ,width: "5rem"},
         { text: "For", value: "project_detail.planning.year", width: "5rem" },
         { text: "Project ID", value: "project_detail.dcsp_id", width: "7rem" },
         {
@@ -340,7 +361,7 @@ export default {
 ::v-deep table > thead > tr > th:nth-child(3) {
   position: sticky !important;
   position: -webkit-sticky !important;
-  left: 12rem;
+  left: 10rem;
   z-index: 9;
   background: white;
 }
@@ -351,7 +372,7 @@ export default {
 ::v-deep table > thead > tr > th:nth-child(4) {
   position: sticky !important;
   position: -webkit-sticky !important;
-  left: 20rem;
+  left: 17rem;
   z-index: 9;
   background: white;
 }
