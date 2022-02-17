@@ -41,8 +41,8 @@
                     justify="end"
                     v-if="taskInfo"
                   >
-                    <!-- <v-btn color="#16B1FF" v-if="taskInfo.planning.is_active" class="white--text">Budget for Existing</v-btn> -->
-                    <v-btn color="#7E73FF" v-if="taskInfo.planning.is_active" @click="onAddOption" class="white--text">Add Planning</v-btn>
+                    <v-btn color="#16B1FF" v-if="taskInfo.monitoring_status!='Submitted'" class="white--text" @click="onSubmit">Submit</v-btn>
+                    <v-btn color="#7E73FF" v-if="taskInfo.planning.is_active && taskInfo.monitoring_status!='Submitted'" @click="onAddOption" class="white--text">Add Planning</v-btn>
                     <v-btn outlined @click="ondownload">Download </v-btn>
                   </v-col>
                 </v-row>
@@ -216,7 +216,7 @@ export default {
     ...mapState("home",["loadingGetDownloadPlanning"])
   },
   methods: {
-    ...mapActions("home", ["getTaskById","getSubmittedTaskById","downloadPlanning"]),
+    ...mapActions("home", ["getTaskById","getSubmittedTaskById","submitPlanning","downloadPlanning"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -247,6 +247,16 @@ export default {
         this.dataTable.loadingTable = this.$store.state.home.loadingGetSubmittedTaskItem;
       });
     },
+    onSubmit(){
+      if(this.taskInfo){
+        this.submitPlanning(this.taskInfo).then(() => {
+          this.getTaskInformationById();
+          this.onSaveSuccess("Planning Submitted")
+        }).catch((error) => {
+          this.onSaveError(error);
+        });
+      }
+    },
     onAddOption(){
       this.dialogChoose = !this.dialogChoose;
     },
@@ -262,11 +272,13 @@ export default {
       return this.$router.push("/home/"+param+"/submitted/new");
     },
     ondownload(){
-      this.downloadPlanning(this.taskInfo).then(() => {
-        this.onSaveSuccess("Check Your Download Folder")
-      }).catch((error) => {
-        this.onSaveError(error);
-      });
+      if(this.taskInfo){
+        this.downloadPlanning(this.taskInfo).then(() => {
+          this.onSaveSuccess("Check Your Download Folder")
+        }).catch((error) => {
+          this.onSaveError(error);
+        });
+      }
     },
     onSaveSuccess(message) {
       this.dialog = false;
