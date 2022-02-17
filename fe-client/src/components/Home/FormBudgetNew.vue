@@ -2,12 +2,6 @@
   <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
     <v-card>
       <v-card-title>
-        <v-avatar
-          color="#1B84CB"
-          size="25"
-        >
-          <span class="white--text" style="font-size:0.8rem;">1</span>
-        </v-avatar>
         <strong style="margin-left:1rem;"> Project</strong>
       </v-card-title>
       <v-card-text>
@@ -107,7 +101,7 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
+              :rules="validation.targetRule"
               placeholder="Input Here"
               suffix="IDR"
               @input="total_investment_input"
@@ -197,12 +191,6 @@
     
     <v-card>
       <v-card-title>
-        <v-avatar
-          color="#1B84CB"
-          size="25"
-        >
-          <span class="white--text" style="font-size:0.8rem;">2</span>
-        </v-avatar>
         <strong style="margin-left:1rem;"> Project Detail</strong>
       </v-card-title>
       <v-card-text>
@@ -435,12 +423,6 @@
       <v-card-text>
         <v-row no-gutters>
           <v-col cols="6" align="left">
-            <v-avatar
-                color="#1B84CB"
-                size="25"
-              >
-                <strong><span class="white--text" style="font-size:0.8rem;">3</span></strong>
-              </v-avatar>
               <v-btn class="white--text ml-3" style="margin-left:1rem;" color='#7E73FF' @click="onAddNewBudget">
                 Add Budget
               </v-btn>
@@ -449,12 +431,12 @@
             <v-btn
               rounded
               outlined
-              class="primary--text"
+              class="light-blue--text"
               @click="$emit('cancelClicked')"
             >
               Cancel
             </v-btn>
-            <v-btn rounded class="primary ml-3" type="submit"> Save </v-btn>
+            <v-btn rounded color="#16B1FF" class="white--text ml-3" type="submit"> Save </v-btn>
           </v-col>
         </v-row>
       </v-card-text>

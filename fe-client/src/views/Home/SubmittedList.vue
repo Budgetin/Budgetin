@@ -41,15 +41,33 @@
                     justify="end"
                     v-if="taskInfo"
                   >
-                    <v-btn color="#16B1FF" v-if="taskInfo.monitoring_status!='Submitted'" class="white--text" @click="onSubmit">Submit</v-btn>
-                    <v-btn color="#7E73FF" v-if="taskInfo.planning.is_active && taskInfo.monitoring_status!='Submitted'" @click="onAddOption" class="white--text">Add Planning</v-btn>
+                    <v-btn
+                      color="#16B1FF"
+                      v-if="
+                        taskInfo.planning.is_active &&
+                        taskInfo.monitoring_status != 'Submitted'
+                      "
+                      class="white--text"
+                      @click="onSubmit"
+                      >Submit</v-btn
+                    >
+                    <v-btn
+                      color="#7E73FF"
+                      v-if="
+                        taskInfo.planning.is_active &&
+                        taskInfo.monitoring_status != 'Submitted'
+                      "
+                      @click="onAddOption"
+                      class="white--text"
+                      >Add Planning</v-btn
+                    >
                     <v-btn outlined @click="ondownload">Download </v-btn>
                   </v-col>
                 </v-row>
               </v-toolbar-title>
             </template>
 
-          <template v-slot:[`item.actions`]="{ item }">
+            <template v-slot:[`item.actions`]="{ item }">
               <router-link
                 style="text-decoration: none"
                 :to="{
@@ -59,9 +77,7 @@
               >
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
-                    <v-icon v-on="on" color="#16B1FF">
-                      mdi-eye
-                    </v-icon>
+                    <v-icon v-on="on" color="#16B1FF"> mdi-eye </v-icon>
                   </template>
                   <span>View/Edit</span>
                 </v-tooltip>
@@ -69,27 +85,50 @@
             </template>
 
             <template v-slot:[`item.is_budget`]="{ item }">
-                <binary-yes-no-chip :boolean="item.is_budget"> </binary-yes-no-chip>
+              <binary-yes-no-chip :boolean="item.is_budget">
+              </binary-yes-no-chip>
             </template>
             <template v-slot:[`item.project_detail.project.is_tech`]="{ item }">
-                <binary-yes-no-chip :boolean="item.project_detail.project.is_tech"> </binary-yes-no-chip>
+              <binary-yes-no-chip
+                :boolean="item.project_detail.project.is_tech"
+              >
+              </binary-yes-no-chip>
             </template>
 
+            <template v-slot:[`item.project_detail.project.total_investment_value`]="{ item }">
+              <span>{{ numberWithDots(item.project_detail.project.total_investment_value) }}</span>
+            </template>
+            
+            <template v-slot:[`item.budget_nominal`]="{ item }">
+              <span>{{ numberWithDots(sumValue([parseInt(item.planning_q1),parseInt(item.planning_q2),parseInt(item.planning_q3),parseInt(item.planning_q4)])) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q1`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q1) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q2`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q2) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q3`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q3) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q4`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q4) }}</span>
+            </template>
           </v-data-table>
         </v-col>
       </v-row>
 
-<!-- Input Option -->
+      <!-- Input Option -->
       <v-row no-gutters>
-          <v-dialog v-model="dialogChoose" persistent width="25rem">
-              <form-choose-project-type
-              @newClicked="onAddNew"
-              @existingClicked="onAddExisting"
-              @cancelClicked="onCancel">
-              </form-choose-project-type>
-          </v-dialog>
+        <v-dialog v-model="dialogChoose" persistent width="25rem">
+          <form-choose-project-type
+            @newClicked="onAddNew"
+            @existingClicked="onAddExisting"
+            @cancelClicked="onCancel"
+          >
+          </form-choose-project-type>
+        </v-dialog>
       </v-row>
-
 
       <v-row no-gutters>
         <v-dialog v-model="loadingGetDownloadPlanning" persistent width="25rem">
@@ -123,22 +162,30 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import FormChooseProjectType from "@/components/Home/FormChooseProjectType"
+import FormChooseProjectType from "@/components/Home/FormChooseProjectType";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
+import formatting from "@/mixins/formatting";
 export default {
   name: "SubmittedList",
-  components: { SuccessErrorAlert, BinaryYesNoChip,FormChooseProjectType },
+  components: { SuccessErrorAlert, BinaryYesNoChip, FormChooseProjectType },
+  mixins: [formatting],
   watch: {},
   data: () => ({
-    dialogChoose:false,
+    dialogChoose: false,
     search: "",
-    taskInfo:null,
+    taskInfo: null,
     dataTable: {
-      loadingTable:true,
-      value:[],
+      loadingTable: true,
+      value: [],
       Listheader: [
-        { text: "Actions", value: "actions", align: "center", sortable: false ,width: "5rem"},
+        {
+          text: "Actions",
+          value: "actions",
+          align: "center",
+          sortable: false,
+          width: "5rem",
+        },
         { text: "For", value: "project_detail.planning.year", width: "5rem" },
         { text: "Project ID", value: "project_detail.dcsp_id", width: "7rem" },
         {
@@ -234,10 +281,15 @@ export default {
     this.getSubmittedItem();
   },
   computed: {
-    ...mapState("home",["loadingGetDownloadPlanning"])
+    ...mapState("home", ["loadingGetDownloadPlanning"]),
   },
   methods: {
-    ...mapActions("home", ["getTaskById","getSubmittedTaskById","submitPlanning","downloadPlanning"]),
+    ...mapActions("home", [
+      "getTaskById",
+      "getSubmittedTaskById",
+      "submitPlanning",
+      "downloadPlanning",
+    ]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -258,47 +310,54 @@ export default {
     getTaskInformationById() {
       this.getTaskById(this.$route.params.id).then(() => {
         this.taskInfo = JSON.parse(
-          JSON.stringify(this.$store.state.home.dataTaskById));
+          JSON.stringify(this.$store.state.home.dataTaskById)
+        );
       });
     },
     getSubmittedItem() {
       this.getSubmittedTaskById(this.$route.params.id).then(() => {
         this.dataTable.value = JSON.parse(
-          JSON.stringify(this.$store.state.home.dataSubmittedTask));
-        this.dataTable.loadingTable = this.$store.state.home.loadingGetSubmittedTaskItem;
+          JSON.stringify(this.$store.state.home.dataSubmittedTask)
+        );
+        this.dataTable.loadingTable =
+          this.$store.state.home.loadingGetSubmittedTaskItem;
       });
     },
-    onSubmit(){
-      if(this.taskInfo){
-        this.submitPlanning(this.taskInfo).then(() => {
-          this.getTaskInformationById();
-          this.onSaveSuccess("Planning Submitted")
-        }).catch((error) => {
-          this.onSaveError(error);
-        });
+    onSubmit() {
+      if (this.taskInfo) {
+        this.submitPlanning(this.taskInfo)
+          .then(() => {
+            this.getTaskInformationById();
+            this.onSaveSuccess("Planning Submitted");
+          })
+          .catch((error) => {
+            this.onSaveError(error);
+          });
       }
     },
-    onAddOption(){
+    onAddOption() {
       this.dialogChoose = !this.dialogChoose;
     },
     onCancel() {
       this.dialogChoose = false;
     },
-    onAddNew(){
+    onAddNew() {
       let param = this.$route.params.id;
-      return this.$router.push("/home/"+param+"/submitted/new");
+      return this.$router.push("/home/" + param + "/submitted/new");
     },
-    onAddExisting(){
+    onAddExisting() {
       let param = this.$route.params.id;
-      return this.$router.push("/home/"+param+"/submitted/new");
+      return this.$router.push("/home/" + param + "/submitted/new");
     },
-    ondownload(){
-      if(this.taskInfo){
-        this.downloadPlanning(this.taskInfo).then(() => {
-          this.onSaveSuccess("Check Your Download Folder")
-        }).catch((error) => {
-          this.onSaveError(error);
-        });
+    ondownload() {
+      if (this.taskInfo) {
+        this.downloadPlanning(this.taskInfo)
+          .then(() => {
+            this.onSaveSuccess("Check Your Download Folder");
+          })
+          .catch((error) => {
+            this.onSaveError(error);
+          });
       }
     },
     onSaveSuccess(message) {

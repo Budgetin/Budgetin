@@ -1,5 +1,20 @@
 export default {
   methods: {
+
+        /**
+     * Function to sum all value in parameter
+     * @param array
+     * @returns {string}
+     */
+      sumValue(array) {
+        if (array) {
+          let sum = 0;
+          for (let index = 0; index < array.length; index++) {
+            sum = sum +  array[index];              
+          }
+          return sum.toString();
+        }
+      },
     /**
      * Function to insert . in between 3 digits.
      * @param num

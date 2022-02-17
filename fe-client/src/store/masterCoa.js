@@ -28,7 +28,7 @@ const masterCoa = {
     value: (state) => state.value
   },
   actions: {
-    getMasterCoa() {
+    getMasterCoa({ commit }) {
       if (store.state.masterCoa.requestStatus !== "SUCCESS")
         store.dispatch("masterCoa/getFromAPI");
     },
@@ -51,7 +51,6 @@ const masterCoa = {
               name: data.name,
               updated_at: data.update_at,
               updated_by: data.updated_by,
-              option : String(data.name+" [ "+data.definition+" ] ")
             };
           });
           const sorted = cleanData.sort((a, b) =>
