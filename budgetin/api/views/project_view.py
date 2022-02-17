@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from django.db import transaction
 
 from api.models import Project
 from api.serializers import ProjectSerializer, ProjectResponseSerializer, ProjectResponseDetailSerializer
@@ -37,6 +38,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectResponseDetailSerializer(project, many=False)
         return Response(serializer.data)
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
@@ -44,12 +46,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         AuditLog.Save(project, request, ActionEnum.CREATE, TableEnum.PROJECT)
         return project
 
+
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
         project = super().update(request, *args, **kwargs)
         AuditLog.Save(project, request, ActionEnum.UPDATE, TableEnum.PROJECT)
         return project
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']                       
         project = super().destroy(request, *args, **kwargs)

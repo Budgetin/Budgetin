@@ -6,11 +6,12 @@ from io import BytesIO
 def export_as_excel(budgets):
     data_temp = []
     exported_data = []
-    column = ['ID ITFAM', 'Project ID', 'Project Name', 'Project Description', 'Tech / Non Tech',
-         'Product ID', 'RCC', 'Project Type', 'Biro', 'Start Year', 'End Year', 'Strategy', 'Is Active', 'Last Updated By', 
+    column = ['Id', 'Id ITFAM', 'Project Id', 'Project Name', 'Project Description', 'Tech / Non Tech',
+         'Product Id', 'RCC', 'Project Type', 'Biro', 'Start Year', 'End Year', 'Strategy', 'Is Active', 'Last Updated By', 
          'Total Investment', 'Is Budget', 'COA', 'Capex/Opex', 'Budget This Year', 'Q1', 'Q2', 'Q3', 'Q4']
     
-    for budget in budgets:     
+    for budget in budgets:    
+        data_temp.append(budget.project_detail.id) 
         data_temp.append(budget.project_detail.project.itfam_id)   
         data_temp.append(budget.project_detail.dcsp_id)
         data_temp.append(budget.project_detail.project.project_name)

@@ -141,20 +141,34 @@ class BudgetViewSet(viewsets.ModelViewSet):
         
         return Response(model_to_dict(project))
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
         budget = super().update(request, *args, **kwargs)
         AuditLog.Save(budget, request, ActionEnum.UPDATE, TableEnum.BUDGET)
         return budget
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
-        request.data['is_active'] = False
-        budget = super().update(request, *args, **kwargs)
-        AuditLog.Save(budget, request, ActionEnum.UPDATE, TableEnum.BUDGET)
+        budget = super().destroy(request, *args, **kwargs)
+        AuditLog.Save(budget, request, ActionEnum.DELETE, TableEnum.BUDGET)
+        
+        return budget
+    
+    @transaction.atomic
+    @action(methods=['post'], detail=True)
+    def deactivate(self, request, pk=None):
+        Budget.objects.filter(pk=pk).update(
+            updated_by = request.custom_user['id'],
+            is_active = False
+        )
+        updated_budget = Budget.objects.get(pk=pk)
+        AuditLog.Save(BudgetSerializer(updated_budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
         
         return Response({"message" : "Budget deactivated"})
 
+    @transaction.atomic
     @action(methods=['post'], detail=True)
     def restore(self, request, pk=None):
         request.data['updated_by'] = request.custom_user['id']
@@ -163,7 +177,8 @@ class BudgetViewSet(viewsets.ModelViewSet):
         AuditLog.Save(budget, request, ActionEnum.UPDATE, TableEnum.BUDGET)
         
         return Response({"message" : "Budget re-activated"})
-    
+
+    @transaction.atomic
     @action(methods=['get'], detail=False)
     def active(self, request):
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
@@ -176,7 +191,8 @@ class BudgetViewSet(viewsets.ModelViewSet):
 
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
-    
+
+    @transaction.atomic
     @action(methods=['get'], detail=False)
     def inactive(self, request):
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 

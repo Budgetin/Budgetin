@@ -45,12 +45,12 @@ def create_update_biro(biro):
     
 def insert_to_db(request, data, index):
     biro = Biro.objects.filter(code=data['Biro']).first()
-    coa, _ = get_or_create_coa(request, data['COA'])
-    strategy, _ = get_or_create_strategy(request, data['Strategy'])
-    product, _ = get_or_create_product(request, data['Product'], strategy, index)
-    project, _ = get_or_create_project(request, data, biro, product, index)
-    planning, _ = get_or_create_planning(request, data['Tahun'])
-    project_detail, _ = get_or_create_project_detail(request, data, project, planning, index)
+    coa = get_or_create_coa(request, data['COA'])
+    strategy = get_or_create_strategy(request, data['Strategy'])
+    product = get_or_create_product(request, data['Product'], strategy, index)
+    project = get_or_create_project(request, data, biro, product, index)
+    planning = get_or_create_planning(request, data['Tahun'])
+    project_detail = get_or_create_project_detail(request, data, project, planning, index)
     create_budget(request, data, project_detail, coa)
     
 
@@ -90,11 +90,13 @@ def get_or_create_product(request, product, strategy, index):
 
     if created:
         AuditLog.Save(ProductSerializer(product), request, ActionEnum.CREATE, TableEnum.PRODUCT)
+
+    return product
     
 def get_product_code_and_name(product, index):
     splits = product.split('-')
     if len(splits) <= 1:
-        raise ImportValidationException('Invalid Product Column. Expected: Product Code - Product Name. Found: ' + product + 'On line' + index)
+        raise ImportValidationException('Invalid Product Column. Expected: Product Code - Product Name. Found: ' + product + 'On line' + str(index))
     product_code = splits[0]
     splits.pop(0)
     product_name = '-'.join(splits)
@@ -105,15 +107,15 @@ def validate_product(product_code, product_name, strategy, index):
     product = Product.objects.filter(product_code=product_code).first()
     if product:
         if product.strategy != strategy:
-            message = 'Inconsistent Product Strategy. Product Code - ' + product_code + '. Existing Strategy - ' + product.strategy.name + '. Found Strategy - ' + strategy.name + 'On line' + index
+            message = 'Inconsistent Product Strategy. Product Code - ' + product_code + '. Existing Strategy - ' + product.strategy.name + '. Found Strategy - ' + strategy.name + 'On line' + str(index)
             raise ImportValidationException(message)
         if product.product_name != product_name:
-            message = 'Inconsistent Product Name. Product Code - ' + product_code + '. Existing Product Name - ' + product.product_name + '. Found Product Name - ' + product_name + 'On line' + index
+            message = 'Inconsistent Product Name. Product Code - ' + product_code + '. Existing Product Name - ' + product.product_name + '. Found Product Name - ' + product_name + 'On line' + str(index)
             raise ImportValidationException(message)
         
 def get_or_create_project(request, data, biro, product, index):
     project_name = data['Project Name']
-    project_description = data['Project Description']
+    project_description = '' if math.isnan(data['Project Description']) else data['Project Description'] 
     start_year = data['Tahun'] if math.isnan(data['Tahun Mulai']) else data['Tahun Mulai']
     end_year = data['Tahun'] if math.isnan(data['Tahun Selesai']) else data['Tahun Selesai']
     total_investment_value = data['Total Investment']
@@ -138,19 +140,19 @@ def get_or_create_project(request, data, biro, product, index):
     if created:
         AuditLog.Save(ProjectSerializer(project), request, ActionEnum.CREATE, TableEnum.PROJECT)
     
-    return project, created
+    return project
 
 def validate_project(project_name, product, biro, is_tech, index):
     project = Project.objects.filter(project_name=project_name).first()
     if project:
         if project.product != product:
-            message = 'Inconsistent Project Product (' + project_name + '). Existing Product: ' + project.product.product_code + '. Found Product: ' + product.product_code + 'On line' + index
+            message = 'Inconsistent Project Product (' + project_name + '). Existing Product: ' + project.product.product_code + '. Found Product: ' + product.product_code + 'On line' + str(index)
             raise ImportValidationException(message)
         if project.biro != biro:
-            message = 'Inconsistent Project Biro (' + project_name + '). Existing Biro: ' + project.biro.code + '. Found Biro: ' + biro.code + 'On line' + index
+            message = 'Inconsistent Project Biro (' + project_name + '). Existing Biro: ' + project.biro.code + '. Found Biro: ' + biro.code + 'On line' + str(index)
             raise ImportValidationException(message)
         if project.is_tech != is_tech:
-            message = 'Inconsistent Project Tech/Non Tech (' + project_name + '). Existing project is type of ' + get_is_tech_str(project.is_tech) + '. Found project is type of ' + get_is_tech_str(is_tech) + 'On line' + index
+            message = 'Inconsistent Project Tech/Non Tech (' + project_name + '). Existing project is type of ' + get_is_tech_str(project.is_tech) + '. Found project is type of ' + get_is_tech_str(is_tech) + 'On line' + str(index)
             raise ImportValidationException(message)
         
 def get_is_tech_str(is_tech):
@@ -190,7 +192,7 @@ def validate_project_detail(project, planning, project_type, index):
     project_detail = ProjectDetail.objects.filter(project=project, planning=planning).first()
     if project_detail:
         if project_detail.project_type != project_type:
-            message = 'Inconsistent Project Type (' + project.project_name + '). Existing Project Type: ' + project_detail.project_type.name + '. Found Project Type: ' + project_type.name + 'On line' + index
+            message = 'Inconsistent Project Type (' + project.project_name + '). Existing Project Type: ' + project_detail.project_type.name + '. Found Project Type: ' + project_type.name + 'On line' + str(index)
             raise ImportValidationException(message)
 
 def get_project_type(type):
