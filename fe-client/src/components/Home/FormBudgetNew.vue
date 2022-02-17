@@ -144,7 +144,7 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
+              :rules="validation.targetRule"
               placeholder="Input Here"
               class="mr-2"
             >
@@ -216,7 +216,6 @@
                 placeholder="Choose Product"
                 outlined
                 return-object
-                :rules="validation.required"
                 class="mr-2"
                 :dense="true"
               >
@@ -270,19 +269,19 @@
 
           <!-- Nama nama -->
           <v-row no-gutters>
-            <v-col cols="3"> COA <strong class="red--text">*</strong> </v-col>
+            <v-col cols="9"> COA <strong class="red--text">*</strong> </v-col>
             <v-col cols="3"> Expense Type </v-col>
           </v-row>
 
           <!-- Kolom kolom -->
           <v-row no-gutters>
-            <v-col cols="3">
+            <v-col cols="9">
               <div>
                 <v-combobox
                   hide-selected
                   v-model="budget.coa"
                   :items="dataMasterCoa"
-                  item-text="name"
+                  item-text="option"
                   item-value="id"
                   placeholder="Select"
                   outlined
