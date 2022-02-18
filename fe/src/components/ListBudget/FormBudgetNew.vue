@@ -1,89 +1,6 @@
 <template>
       <v-form ref="form" lazy-validation @submit.prevent="onSubmit">
         <h1 style="font-weight:bold;">Create Budget Planning for New Project</h1>
-  <v-card>  
-    <v-card-title>
-              <strong> Project Detail</strong>
-    </v-card-title>
-    <v-card-text>
-        <v-divider></v-divider><br>
-        <!-- Nama nama -->
-        <v-row no-gutters>
-          <v-col cols="4">
-            For <strong class="red--text">*</strong>
-          </v-col>
-          <v-col cols="4">
-            Project ID
-          </v-col>
-          <v-col cols="4">
-            Project Type <strong class="red--text">*</strong>
-          </v-col>
-        </v-row>
-
-        <!-- Kolom kolom -->
-        <v-row no-gutters>
-          <v-col cols="4">
-              <div>
-                <v-select
-                  v-model="form.planning"
-                  :items="dataActiveListBudget"
-                  item-text="year"
-                  item-value="id"
-                  placeholder="Year"
-                  outlined
-                  return-object
-                  :rules="validation.required"
-                  class="mr-2"
-                  :dense=true>
-                </v-select>
-              </div>
-            </v-col>
-          <!-- <v-col cols="4">
-            <v-text-field
-              v-model="form.planning"
-              outlined
-              dense
-              :disabled="isView"
-              :rules="validation.required"
-              placeholder="Input Here"
-              class="mr-2"
-            >
-            </v-text-field>
-          </v-col> -->
-          <v-col cols="4"> 
-            <v-text-field
-              v-model="form.dcsp_id"
-              outlined
-              dense
-              :disabled="true"
-              placeholder="Auto Input"
-              class="mr-2"
-            >
-            </v-text-field>
-          </v-col>
-          <v-col cols="4">
-              <div>
-                <v-select
-                  v-model="getProjectType"
-                  :items="dataProjectType"
-                  item-text="name"
-                  item-value="id"
-                  placeholder="Type"
-                  outlined
-                  return-object
-                  :rules="validation.required"
-                  class="mr-2"
-                  disabled
-                  :dense=true>
-                </v-select>
-              </div>
-            </v-col>
-          
-        </v-row>
-          </v-card-text>
-        </v-card>
-
-        <br>
         <v-card>
           <v-card-title>
               <strong> Project</strong>
@@ -178,7 +95,6 @@
               outlined
               dense
               :disabled="isView"
-              :rules="validation.required"
               placeholder="Input Here"
               class="mr-2"
             >
@@ -205,7 +121,7 @@
             Tech/Non-Tech <strong class="red--text">*</strong>
           </v-col>
           <v-col cols="3">
-            Product 
+            Product <strong class="red--text">*</strong>
           </v-col>
           <v-col cols="3">
             Biro <strong class="red--text">*</strong>
@@ -280,6 +196,88 @@
         </v-row>
         </v-card-text>
         </v-card>
+        <br>
+        <v-card>  
+    <v-card-title>
+              <strong> Project Detail</strong>
+    </v-card-title>
+    <v-card-text>
+        <v-divider></v-divider><br>
+        <!-- Nama nama -->
+        <v-row no-gutters>
+          <v-col cols="4">
+            For <strong class="red--text">*</strong>
+          </v-col>
+          <v-col cols="4">
+            Project ID
+          </v-col>
+          <v-col cols="4">
+            Project Type <strong class="red--text">*</strong>
+          </v-col>
+        </v-row>
+
+        <!-- Kolom kolom -->
+        <v-row no-gutters>
+          <v-col cols="4">
+              <div>
+                <v-select
+                  v-model="form.planning"
+                  :items="dataActiveListBudget"
+                  item-text="year"
+                  item-value="id"
+                  placeholder="Year"
+                  outlined
+                  return-object
+                  :rules="validation.required"
+                  class="mr-2"
+                  :dense=true>
+                </v-select>
+              </div>
+            </v-col>
+          <!-- <v-col cols="4">
+            <v-text-field
+              v-model="form.planning"
+              outlined
+              dense
+              :disabled="isView"
+              :rules="validation.required"
+              placeholder="Input Here"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col> -->
+          <v-col cols="4"> 
+            <v-text-field
+              v-model="form.dcsp_id"
+              outlined
+              dense
+              :disabled="true"
+              placeholder="Auto Input"
+              class="mr-2"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col cols="4">
+              <div>
+                <v-select
+                  v-model="getProjectType"
+                  :items="dataProjectType"
+                  item-text="name"
+                  item-value="id"
+                  placeholder="Type"
+                  outlined
+                  return-object
+                  :rules="validation.required"
+                  class="mr-2"
+                  disabled
+                  :dense=true>
+                </v-select>
+              </div>
+            </v-col>
+          
+        </v-row>
+          </v-card-text>
+        </v-card>
         <!-- List Budget -->
 
         <div v-for="(budget, index) in budgets" :key="budget.name">
@@ -298,7 +296,7 @@
         
         <!-- Nama nama -->
         <v-row no-gutters>
-          <v-col cols="3">
+          <v-col cols="9">
             COA <strong class="red--text">*</strong>
           </v-col>
           <v-col cols="3">
@@ -308,22 +306,37 @@
 
         <!-- Kolom kolom -->
         <v-row no-gutters >
-          <v-col cols="3">
+          <v-col cols="9">
               <div>
                 <v-combobox
-                hide-selected
-                v-model="budget.coa"
-                :items="dataMasterCoa"
-                item-text="name"
-                item-value="id"
-                placeholder="Select"
-                outlined
-                return-object
-                :rules="validation.required"
-                class="mr-2"
-                :dense=true
-                @input="onInput(budget)">
-              </v-combobox>
+                  hide-selected
+                  v-model="budget.coa"
+                  :items="dataMasterCoa"
+                  item-text="name"
+                  item-value="id"
+                  placeholder="Select"
+                  outlined
+                  return-object
+                  :rules="validation.required"
+                  class="mr-2"
+                  :dense="true"
+                  @input="onInput(budget)"
+                >
+                <template v-slot:item="{ item, attrs, on }">
+                  <v-list-item v-on="on" v-bind="attrs">
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        <v-row no-gutters align="center">
+                        <span>{{ item.name }}</span>
+                        <v-spacer></v-spacer>
+                        <span style="opacity:0.7">{{ item.definition }}</span>
+                        </v-row>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+
+                </v-combobox>
               </div>
             </v-col>
           <v-col cols="3">
@@ -534,7 +547,7 @@ export default {
         (v) => !!v || "This field is required"
       ],
       targetRule: [
-        v => /^[0-9.,]+$/.test(v) ||"This field is numbers only",
+        v => /(^[0-9.,]+$|^$|[null])/.test(v) || "This field is numbers only",
       ],
     },
     budgets: [],
@@ -608,24 +621,16 @@ export default {
       this.form.total_investment_value = this.numberWithDots(this.form.total_investment_value);
     },
     onInput(budget){
-      if(budget.planning_q1){
-        budget.planning_q1 = this.numberWithDots(budget.planning_q1);
-      }
-      if(budget.planning_q2){
-        budget.planning_q2 = this.numberWithDots(budget.planning_q2);
-      }
-      if(budget.planning_q3){
-        budget.planning_q3 = this.numberWithDots(budget.planning_q3);
-      }
-      if(budget.planning_q4){
-        budget.planning_q4 = this.numberWithDots(budget.planning_q4);
-      }
+      budget.planning_q1 = this.numberWithDots(budget.planning_q1);
+      budget.planning_q2 = this.numberWithDots(budget.planning_q2);
+      budget.planning_q3 = this.numberWithDots(budget.planning_q3);
+      budget.planning_q4 = this.numberWithDots(budget.planning_q4);
       budget.planning_nominal = parseInt(budget.planning_q1.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
       parseInt(budget.planning_q2.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
       parseInt(budget.planning_q3.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
       parseInt(budget.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
 
-      budget.planning_nominal = this.numberWithDots(budget.planning_nominal);
+      budget.planning_nominal = this.numberWithDots(String(budget.planning_nominal));
 
       if(budget.coa){
         if(budget.coa.is_capex && parseInt(budget.planning_nominal.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) >= budget.coa.minimum_item_origin){
@@ -676,11 +681,11 @@ export default {
       this.budgets.push({
           coa : "",
           expense_type : "",
-          planning_q1 : "",
-          planning_q2 : "",
-          planning_q3 : "",
-          planning_q4 : "",
-          planning_nominal : ""
+          planning_q1 : "0",
+          planning_q2 : "0",
+          planning_q3 : "0",
+          planning_q4 : "0",
+          planning_nominal : "0"
       });
     },
   },
