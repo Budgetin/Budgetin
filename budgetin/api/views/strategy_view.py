@@ -64,7 +64,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
         return strategy
     
     @transaction.atomic
-    @action(methods=['post'], detail=False)
+    @action(methods=['post'], detail=False, url_path='import')
     def import_from_excel(self, request):
         file = request.FILES['file'].read()
         df = read_excel(file, 'strategy')
