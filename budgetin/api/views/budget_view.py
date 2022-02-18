@@ -139,27 +139,33 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def create_budget(self, request, project_detail):
         if len(request.data['budget']) == 0:
             if not self.is_budget_exists(project_detail):
-                budget = Budget.objects.create(project_detail=project_detail, coa=None)
-                AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
-        for budget in request.data['budget']:
-            updated_budget, budget_created = Budget.objects.update_or_create(project_detail=project_detail, coa=None, defaults={
-                'coa_id': budget['coa'],
-                'expense_type': budget['expense_type'],
-                'planning_q1': budget['planning_q1'],
-                'planning_q2': budget['planning_q2'],
-                'planning_q3':budget['planning_q3'],
-                'planning_q4': budget['planning_q4']
-            })
-            if budget_created:
-                Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(
-                created_by_id = request.custom_user['id'],
-                updated_by_id = request.custom_user['id']
+                budget = Budget.objects.create(
+                    project_detail=project_detail,
+                    coa=None,
+                    created_by_id = request.custom_user['id'],
+                    updated_by_id = request.custom_user['id']
                 )
-                AuditLog.Save(BudgetSerializer(updated_budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
-            else:
-                Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(updated_by_id = request.custom_user['id'])
-                
-                AuditLog.Save(BudgetSerializer(updated_budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
+                AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
+        else:
+            for budget in request.data['budget']:
+                updated_budget, budget_created = Budget.objects.update_or_create(project_detail=project_detail, coa=None, defaults={
+                    'coa_id': budget['coa'],
+                    'expense_type': budget['expense_type'],
+                    'planning_q1': budget['planning_q1'],
+                    'planning_q2': budget['planning_q2'],
+                    'planning_q3':budget['planning_q3'],
+                    'planning_q4': budget['planning_q4']
+                })
+                if budget_created:
+                    Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(
+                        created_by_id = request.custom_user['id'],
+                        updated_by_id = request.custom_user['id']
+                    )
+                    AuditLog.Save(BudgetSerializer(updated_budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
+                else:
+                    Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(updated_by_id = request.custom_user['id'])
+                    
+                    AuditLog.Save(BudgetSerializer(updated_budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
     
     def is_budget_exists(self, project_detail):
         return Budget.objects.filter(project_detail=project_detail).count() > 0
