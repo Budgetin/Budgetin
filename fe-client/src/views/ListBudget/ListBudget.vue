@@ -73,11 +73,7 @@
                     no-gutters
                     class="list-budget__btn"
                   >
-                    <v-btn rounded color="primary" @click="onUpdateRealization">Update Realization </v-btn>
-                    <v-btn rounded color="primary" @click="onInputOption"> Add Budget </v-btn>
-                    <v-btn rounded color="primary" @click="onExport">
-                          Download
-                      </v-btn>
+                    <v-btn outlined @click="onExport">Download </v-btn>
                   </v-col>
                   
                 </v-row>
@@ -89,16 +85,27 @@
                 style="text-decoration: none"
                 :to="{
                   name: 'ViewMyBudgetPlanning',
-                  params: { id: item.id },
+                  params: { 
+                            id: item.project_detail.project.id,
+                            id_budget_planning: item.id
+                          },
                 }"
               >
-                <v-tooltip bottom>
+                <v-tooltip bottom v-if="item.project_detail.planning.is_active">
                   <template v-slot:activator="{ on }">
-                    <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                    <v-icon v-on="on" color="#16B1FF">
+                      mdi-lead-pencil
+                    </v-icon>
+                  </template>
+                  <span>Edit</span>
+                </v-tooltip>
+                <v-tooltip bottom v-if="!item.project_detail.planning.is_active">
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on" color="#16B1FF">
                       mdi-eye
                     </v-icon>
                   </template>
-                  <span>View/Edit</span>
+                  <span>View</span>
                 </v-tooltip>
               </router-link>
             </template>
@@ -107,6 +114,24 @@
             </template>
             <template v-slot:[`item.project_detail.project.is_tech`]="{ item }">
                 <binary-yes-no-chip :boolean="item.project_detail.project.is_tech"> </binary-yes-no-chip>
+            </template>
+            <template v-slot:[`item.project_detail.project.total_investment_value`]="{ item }">
+              <span>{{ numberWithDots(item.project_detail.project.total_investment_value) }}</span>
+            </template>
+            <template v-slot:[`item.budget_nominal`]="{ item }">
+              <span>{{ numberWithDots(item.planning_nominal) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q1`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q1) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q2`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q2) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q3`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q3) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q4`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q4) }}</span>
             </template>
           </v-data-table>
 
@@ -155,16 +180,27 @@
                 style="text-decoration: none"
                 :to="{
                   name: 'ViewMyBudgetPlanning',
-                  params: { id: item.id },
+                  params: { 
+                            id: item.project_detail.project.id,
+                            id_budget_planning: item.id
+                          },
                 }"
               >
-                <v-tooltip bottom>
+                <v-tooltip bottom v-if="item.project_detail.planning.is_active">
                   <template v-slot:activator="{ on }">
-                    <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                    <v-icon v-on="on" color="#16B1FF">
+                      mdi-lead-pencil
+                    </v-icon>
+                  </template>
+                  <span>Edit</span>
+                </v-tooltip>
+                <v-tooltip bottom v-if="!item.project_detail.planning.is_active">
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on" color="#16B1FF">
                       mdi-eye
                     </v-icon>
                   </template>
-                  <span>View/Edit</span>
+                  <span>View</span>
                 </v-tooltip>
               </router-link>
             </template>
@@ -173,6 +209,24 @@
             </template>
             <template v-slot:[`item.project_detail.project.is_tech`]="{ item }">
                 <binary-yes-no-chip :boolean="item.project_detail.project.is_tech"> </binary-yes-no-chip>
+            </template>
+            <template v-slot:[`item.project_detail.project.total_investment_value`]="{ item }">
+              <span>{{ numberWithDots(item.project_detail.project.total_investment_value) }}</span>
+            </template>
+            <template v-slot:[`item.budget_nominal`]="{ item }">
+              <span>{{ numberWithDots(item.budget_planning) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q1`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q1) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q2`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q2) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q3`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q3) }}</span>
+            </template>
+            <template v-slot:[`item.planning_q4`]="{ item }">
+              <span>{{ numberWithDots(item.planning_q4) }}</span>
             </template>
           </v-data-table>
         </v-col>
@@ -289,9 +343,11 @@ import UploadFileBudget from "@/components/ListBudget/UploadFileBudget"
 import UploadFileRealization from "@/components/ListBudget/UploadFileRealization"
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import BinaryYesNoChip from "@/components/chips/BinaryYesNoChip";
+import formatting from "@/mixins/formatting";
 export default {
   name: "ListBudget",
   components: {SuccessErrorAlert,ColumnOption,FormChooseProjectType,BinaryYesNoChip,UploadFileBudget,UploadFileRealization},
+  mixins: [formatting],
   watch: {},
   data: () => ({
     dialog: false,
@@ -586,15 +642,15 @@ export default {
       this.inputOption = true;
     },
 
-    onUpdateRealization(){
-      this.dialogUpdateRealization = true;
-    },
+    // onUpdateRealization(){
+    //   this.dialogUpdateRealization = true;
+    // },
 
-    onAdd() {
-      this.dialogChoose = !this.dialogChoose;
-      this.inputOption = false;
-      this.dialogUpload = false;
-    },
+    // onAdd() {
+    //   this.dialogChoose = !this.dialogChoose;
+    //   this.inputOption = false;
+    //   this.dialogUpload = false;
+    // },
     onNewClick(){
       return this.$router.push("/myBudget/new");
     },
