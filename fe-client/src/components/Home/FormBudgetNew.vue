@@ -488,7 +488,9 @@ export default {
     validation: {
       hasUpdated: false,
       required: [(v) => !!v || "This field is required"],
-      targetRule: [(v) => /^[0-9.,]+$/.test(v) || "This field is numbers only"],
+      targetRule: [
+        v => /(^[0-9.,]+$|^$|[null])/.test(v) || "This field is numbers only",
+      ],
     },
     budgets: [],
   }),
@@ -538,18 +540,10 @@ export default {
     },
 
     onInput(budget) {
-      if (budget.planning_q1) {
-        budget.planning_q1 = this.numberWithDots(budget.planning_q1);
-      }
-      if (budget.planning_q2) {
-        budget.planning_q2 = this.numberWithDots(budget.planning_q2);
-      }
-      if (budget.planning_q3) {
-        budget.planning_q3 = this.numberWithDots(budget.planning_q3);
-      }
-      if (budget.planning_q4) {
-        budget.planning_q4 = this.numberWithDots(budget.planning_q4);
-      }
+      budget.planning_q1 = this.numberWithDots(budget.planning_q1);
+      budget.planning_q2 = this.numberWithDots(budget.planning_q2);
+      budget.planning_q3 = this.numberWithDots(budget.planning_q3);
+      budget.planning_q4 = this.numberWithDots(budget.planning_q4);
       budget.planning_nominal =
         parseInt(
           budget.planning_q1.replace(

@@ -18,7 +18,7 @@
               <v-combobox
                 hide-selected
                 v-model="form.project"
-                :items="dataListProject"
+                :items="dataMyProject"
                 item-text="project_name"
                 item-value="id"
                 placeholder="Search Project..."
@@ -234,7 +234,7 @@
                     :rules="validation.required"
                     class="mr-2"
                     :dense=true
-                    @change="onSelectProject">
+                    @change="onSelectFor">
                   </v-select>
                 </div>
               </v-col>
@@ -301,12 +301,15 @@
                 <router-link
                     style="text-decoration: none"
                     :to="{
-                        name: 'ViewListBudgetPlanning',
-                        params: { id: item.id },
+                      name: 'ViewMyBudgetPlanning',
+                      params: { 
+                                id: form.project.id,
+                                id_budget_planning: item.id
+                              },
                     }">
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on }">
-                            <v-icon v-on="on" color="primary" @click="onEdit(item)">
+                            <v-icon v-on="on" color="primary">
                                 mdi-eye
                             </v-icon>
                         </template>
@@ -544,7 +547,7 @@ export default {
   props: ["form", "isView", "isNew"],
   mixins: [formatting],
   created() {
-    this.getListProject();
+    this.getMyProject();
     this.getListActivePlanning();
     this.getAllProjectType();
     this.getAllBiro();
@@ -558,7 +561,7 @@ export default {
         (v) => !!v || "This field is required"
       ],
       targetRule: [
-        v => /^[0-9.,]+$/.test(v) ||"This field is numbers only",
+        v => /(^[0-9.,]+$|^$|[null])/.test(v) || "This field is numbers only",
       ],
     },
     budgets: [],
@@ -580,8 +583,8 @@ export default {
     },
   }),
   computed: {
-    ...mapState("listProject", [
-      "dataListProject",
+    ...mapState("myProject", [
+      "dataMyProject",
       "edittedItem"
     ]),
     ...mapState("listBudget", [
@@ -633,9 +636,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions("listProject", [
-      "getListProject",
-      "getListProjectById"
+    ...mapActions("myProject", [
+      "getMyProject",
+      "getMyProjectById"
     ]),
     ...mapActions("listBudget", [
       "getListActivePlanning"
@@ -684,8 +687,12 @@ export default {
         this.projectTypeEnable = false;
       }
 
-      if(this.form.project && this.form.project.id){
-        this.getListProjectById(this.form.project.id).then(() => {
+      onSelectFor();
+    },
+
+    onSelectFor(){
+      if(this.form.project && this.form.project.id && this.form.planning && this.form.planning.id){
+        this.getMyProjectById(this.form.project.id).then(() => {
           var project_detail = this.edittedItem.project_detail.find((x)=> x.planning.id==this.form.planning.id);
           if(project_detail){
             this.projectTypeEnable = false;
@@ -710,28 +717,18 @@ export default {
           }
         });
       }
-
-      
     },
     onInput(budget){
-      if(budget.planning_q1){
-        budget.planning_q1 = this.numberWithDots(budget.planning_q1);
-      }
-      if(budget.planning_q2){
-        budget.planning_q2 = this.numberWithDots(budget.planning_q2);
-      }
-      if(budget.planning_q3){
-        budget.planning_q3 = this.numberWithDots(budget.planning_q3);
-      }
-      if(budget.planning_q4){
-        budget.planning_q4 = this.numberWithDots(budget.planning_q4);
-      }
+      budget.planning_q1 = this.numberWithDots(budget.planning_q1);
+      budget.planning_q2 = this.numberWithDots(budget.planning_q2);
+      budget.planning_q3 = this.numberWithDots(budget.planning_q3);
+      budget.planning_q4 = this.numberWithDots(budget.planning_q4);
       budget.planning_nominal = parseInt(budget.planning_q1.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
       parseInt(budget.planning_q2.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
       parseInt(budget.planning_q3.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) +
       parseInt(budget.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, ''));
 
-      budget.planning_nominal = this.numberWithDots(budget.planning_nominal);
+      budget.planning_nominal = this.numberWithDots(String(budget.planning_nominal));
 
       if(budget.coa){
         if(budget.coa.is_capex && parseInt(budget.planning_nominal.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) >= budget.coa.minimum_item_origin){
@@ -759,15 +756,26 @@ export default {
           delete element.planning_nominal;
         });
 
+        var start_year = null;
+        var end_year = null;
+
+        try{
+          start_year = parseInt(this.form.start_year);
+        }catch{};
+        try{
+          end_year = parseInt(this.form.end_year);
+        }catch{};
+
         const payload = {
             project_id : this.form.project.id,
-            project_name : this.form.project.project_name,
-            project_description : this.form.project.project_description,
-            start_year : this.form.project.start_year,
-            end_year : this.form.project.end_year,
-            total_investment_value : this.form.project.total_investment_value,
+            project_name : this.form.project.project_name, //refer ke object project
+            project_description : this.form.project_description, //refer ke inputan form
+            biro : this.form.project.biro.id,
+            start_year: this.form.start_year?this.form.start_year:null,
+            end_year: this.form.end_year?this.form.end_year:null,
+            total_investment_value: this.form.total_investment_value? parseInt(this.form.total_investment_value.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')):0,
             product : this.form.product.id,
-            is_tech : this.form.is_tech.label == "Tech" ? 1 : 0,
+            is_tech : this.form.is_tech.label == "Tech" ? true : false,
             planning : this.form.planning.id,
             project_type : this.form.project_type.id,
             budget: tempBudgets
