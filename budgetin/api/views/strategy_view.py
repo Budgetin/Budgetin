@@ -71,8 +71,8 @@ class StrategyViewSet(viewsets.ModelViewSet):
         
         for index, row in df.iterrows():
             self.insert_to_db(request, row, (index+2))
-            
-        raise ValidationException('success')
+        
+        return Response(status=204)
     
     def insert_to_db(self, request, data, index):
         name = data['strategy_name']
