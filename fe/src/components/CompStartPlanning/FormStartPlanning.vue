@@ -267,7 +267,7 @@ export default {
       return 'mdi-checkbox-blank-outline'
     },
     planningFor() {
-      return Array.from({length: 2}, (value, index) => this.year + index)
+      return Array.from({length: 1}, (value, index) => this.year + index +1)
     }
   },
 

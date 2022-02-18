@@ -80,6 +80,11 @@ const routes = [
         component: () => import("@/views/Home/AddNewProjectBudget"),
       },
       {
+        path: "/home/:id/submitted/existing",
+        name: 'AddExistingProjectBudget',
+        component: () => import("@/views/Home/AddExistingProjectBudget"),
+      },
+      {
         path: "/home/:id/submitted/:id_project/view",
         name: "ViewMyPlanning",
         beforeEnter: (to, from, next) => {

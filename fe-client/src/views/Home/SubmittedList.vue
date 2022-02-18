@@ -95,12 +95,13 @@
               </binary-yes-no-chip>
             </template>
 
+
+            <!-- start data bentuk nominal -->
             <template v-slot:[`item.project_detail.project.total_investment_value`]="{ item }">
               <span>{{ numberWithDots(item.project_detail.project.total_investment_value) }}</span>
             </template>
-            
-            <template v-slot:[`item.budget_nominal`]="{ item }">
-              <span>{{ numberWithDots(sumValue([parseInt(item.planning_q1),parseInt(item.planning_q2),parseInt(item.planning_q3),parseInt(item.planning_q4)])) }}</span>
+            <template v-slot:[`item.planning_nominal`]="{ item }">
+              <span>{{ numberWithDots(item.planning_nominal) }}</span>
             </template>
             <template v-slot:[`item.planning_q1`]="{ item }">
               <span>{{ numberWithDots(item.planning_q1) }}</span>
@@ -114,6 +115,8 @@
             <template v-slot:[`item.planning_q4`]="{ item }">
               <span>{{ numberWithDots(item.planning_q4) }}</span>
             </template>
+          <!-- end data bentuk nominal -->
+
           </v-data-table>
         </v-col>
       </v-row>
@@ -252,7 +255,7 @@ export default {
         },
         {
           text: "Budget This Year",
-          value: "budget_nominal",
+          value: "planning_nominal",
           width: "9rem",
         },
         { text: "Planning Q1", value: "planning_q1", width: "5rem" },
