@@ -186,6 +186,7 @@ export default {
             );
         },
         setBreadcrumbs() {
+            console.log(this.$route);
             let param = this.isView ? "View Budget Planning" : "Edit Budget Planning";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {

@@ -106,7 +106,8 @@
                 outlined
                 return-object
                 :disabled="isView"
-                :rules="validation.notifRule">
+                required
+                :rules="validation.required">
                 </v-select>
               </div>
             </v-col>
@@ -221,7 +222,7 @@ export default {
       yearRule: [
         v => { if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;
         return 'Year has to be integer and contains 4 digits'; }
-      ],
+      ]
       // yearRule: v  => {
       //   //if (!v.trim()) return true;
       //   if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;

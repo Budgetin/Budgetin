@@ -50,7 +50,7 @@
                 </v-tooltip>
                 <v-tooltip bottom v-if="!item.planning.is_active">
                   <template v-slot:activator="{ on }">
-                    <v-icon v-on="on" color="#16B1FF" @click="onView(item)">
+                    <v-icon v-on="on" color="#16B1FF">
                       mdi-eye
                     </v-icon>
                   </template>
