@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-row no-gutters>
-            <!-- VIEW MY BUDGET PLANNING -->
+            <!-- VIEW SUBMITTED BUDGET PLANNING -->
             <form-edit-budget-planning
             :form="form"
             :isView="isView"
