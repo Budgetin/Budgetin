@@ -77,10 +77,10 @@ class StrategyViewSet(viewsets.ModelViewSet):
     def insert_to_db(self, request, data, index):
         name = data['strategy_name']
         if self.strategy_already_exists(name):
-            raise ValidationException('Strategy {} at line {} already exists'.format(name, index))
+            raise ValidationException("Strategy '{}' at line {} already exists".format(name, index))
 
         strategy = self.create_strategy(request, name)
-        AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.UPDATE, TableEnum.STRATEGY) 
+        AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY) 
             
     def strategy_already_exists(self, name):
         return Strategy.objects.filter(name=name).count() > 0
