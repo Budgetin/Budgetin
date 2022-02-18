@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="mb-5">
-      {{ cardTitle }} a Monitoring Status
+      {{ cardTitle }} Monitor Planning
       <v-spacer></v-spacer>
       <v-btn v-if="isView" icon small @click="$emit('editClicked')">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
@@ -94,13 +94,41 @@
               cols="12"
               sm="6">
               <div class="monitor-planning__field">
-                <v-text-field
+                <!-- <v-text-field
                   v-model="form.updated_at"
                   outlined
                   dense
                   disabled
                   :rules="validation.required">
-                </v-text-field>
+                </v-text-field> -->
+                <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto">
+                  <template v-slot:activator="{ on, attrs }">
+                    <div class="StartPlanning__field">
+                      <v-text-field
+                      ref="form"
+                      v-model="form.updated_at"
+                      outlined
+                      v-bind="attrs"
+                      v-on="on"
+                      placeholder="Pick a Date"
+                      dense
+                      disabled
+                      :rules="validation.required">
+                      </v-text-field>
+                    </div>
+                  </template>
+                  <v-date-picker
+                  v-model="form.updated_at"
+                  @input="menu = false"
+                  :min="new Date().toISOString().substr(0, 10)">
+                  </v-date-picker>
+                </v-menu>
               </div>
             </v-col>
           </v-col>
@@ -120,6 +148,7 @@
                   placeholder="Input Status"
                   outlined
                   return-object
+                  dense
                   :disabled="isView"
                   :rules="validation.required">
                 </v-select>
@@ -136,7 +165,8 @@
               outlined
               class="primary--text"
               @click="$emit('okClicked')"
-              v-if="isView">
+              v-if="isView"
+              style="width: 8rem;">
               OK
             </v-btn>
             <v-btn
@@ -164,6 +194,7 @@ export default {
   props: ["form", "isNew", "isView"],
   
   data: () => ({
+    menu: null,
     validation: {
       required: [
         (v) => !!v || "This field is required"
