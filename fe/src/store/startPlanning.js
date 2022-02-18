@@ -72,24 +72,24 @@ const startPlanning = {
             store.dispatch("startPlanning/getFromAPI");
           })
           .catch((error) => {
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  if (error.response.data.hasOwnProperty("year")) {
-                    errorMsg += error.response.data.year;
-                  }
-                  break;
+            // let errorMsg =
+            //   "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
+            // if (error.response) {
+            //   errorMsg = "";
+            //   switch (error.response.status) {
+            //     case 400:
+            //       if (error.response.data.hasOwnProperty("year")) {
+            //         errorMsg += error.response.data.year;
+            //       }
+            //       break;
 
-                default:
-                  errorMsg += `Please recheck your input or try again later`;
-                  break;
-              }
-            }
-            commit("POST_PATCH_ERROR", errorMsg);
-            reject(errorMsg);
+            //     default:
+            //       errorMsg += `Please recheck your input or try again later`;
+            //       break;
+            //   }
+            // }
+            commit("POST_PATCH_ERROR", error);
+            reject(error.response.data.year);
           });
       });
     },
@@ -178,14 +178,15 @@ const startPlanning = {
       state.loadingPostPatchStartPlanning = true;
     },
     POST_PATCH_SUCCESS(state) {
-      state.requestStatus = "SUCCESS";
+      state.postPatchStatus = "SUCCESS";
       state.loadingPostPatchStartPlanning = false;
     },
     POST_PATCH_ERROR(state, error) {
-      state.requestStatus = "ERROR";
+      state.postPatchStatus = "ERROR";
       state.loadingPostPatchStartPlanning = false;
       state.errorMsg = error;
-      if(error.response.status =="401"){
+      console.log(error);
+      if (error.response.status == "401"){
         router.push({ name: 'Login'});
       }
     },

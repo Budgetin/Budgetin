@@ -218,7 +218,7 @@
                   <v-progress-circular
                     :size="70"
                     :width="7"
-                    color="purple"
+                    color="blue"
                     indeterminate
                   ></v-progress-circular>
                 </v-row>

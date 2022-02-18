@@ -17,8 +17,7 @@
             :headers="dataTable.headers"
             :loading="loadingGetStartPlanning"
             :items="dataStartPlanning"
-            :search="search"
-          >
+            :search="search">
             <template v-slot:top>
               <v-toolbar-title>
                 <v-row class="mb-5" no-gutters>
@@ -108,11 +107,10 @@
         </v-col>
       </v-row>
 
-      <v-row no-gutters>
+      <!-- <v-row no-gutters>
         <v-dialog v-model="loadingPostPatchStartPlanning" persistent width="25rem">
           <v-card>
             <v-card-title class="d-flex justify-center"> Loading </v-card-title>
-
             <v-card-text>
               <v-row no-gutters class="d-flex justify-center">
                 <v-progress-circular
@@ -125,7 +123,7 @@
             </v-card-text>
           </v-card>
         </v-dialog>
-      </v-row>
+      </v-row> -->
 
       <v-row no-gutters>
         <v-dialog v-model="dialog" persistent width="40rem">
@@ -138,8 +136,7 @@
             @editClicked="onEdit"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-            @okClicked="onOK"
-          >
+            @okClicked="onOK">
           </form-start-planning>
         </v-dialog>
       </v-row>
@@ -238,19 +235,13 @@ export default {
       "dataStartPlanning",
       "loadingPostPatchStartPlanning",
     ]),
-    ...mapState("monitorPlanning", [
-      "loadingGetMonitorPlanning",
-      "dataMonitorPlanning",
-    ]),
+    ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning",]),
     ...mapState("allBiroItHc", ["dataAllBiroItHc"]),
   },
 
   methods: {
     ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
-    ...mapActions("monitorPlanning", [
-      "getMonitorPlanning",
-      "postMonitorPlanning",
-    ]),
+    ...mapActions("monitorPlanning", ["getMonitorPlanning", "postMonitorPlanning"]),
     ...mapActions("allBiroItHc", ["getAllBiroItHc"]),
 
     setBreadcrumbs() {

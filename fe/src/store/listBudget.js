@@ -191,8 +191,8 @@ const listBudget = {
           })
           .catch((err) => {
             reject(err);
-            commit("SET_UPLOAD_ERROR", err.message);
             commit("SET_LOADING", false);
+            commit("SET_UPLOAD_ERROR", err.message);
           });
       });
     },
@@ -211,8 +211,8 @@ const listBudget = {
           })
           .catch((err) => {
             reject(err);
-            commit("SET_UPLOAD_ERROR", err.message);
             commit("SET_LOADING", false);
+            commit("SET_UPLOAD_ERROR", err.message);
           });
       });
     },

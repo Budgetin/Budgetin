@@ -78,6 +78,7 @@ export default {
         this.getEdittedItem();
         this.getHistoryItem();
         this.setBreadcrumbs();
+        this.getAllBiroItHc();
     },
 
     computed: {
@@ -87,6 +88,7 @@ export default {
 
     methods: {
         ...mapActions("startPlanning", ["patchStartPlanning", "getStartPlanningById", "getHistory"]),
+        ...mapActions("allBiroItHc", ["getAllBiroItHc"]),
         
         setBreadcrumbs() {
             let param = this.isView ? "View Planning" : "Edit Planning";

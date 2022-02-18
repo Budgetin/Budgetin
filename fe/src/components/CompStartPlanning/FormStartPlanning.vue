@@ -18,15 +18,6 @@
               cols="12"
               sm="6">
               <div class="StartPlanning__field">
-                <!-- <v-text-field
-                  v-model="form.year"
-                  placeholder="Input a Year"
-                  outlined
-                  return-object
-                  :disabled="isView"
-                  :rules="validation.required">
-                </v-text-field> -->
-
                 <v-select
                 v-model="form.year"
                 :items="planningFor"
@@ -36,7 +27,7 @@
                 outlined
                 return-object
                 :disabled="isView"
-                :rules="validation.statusRule">
+                :rules="validation.required">
                 </v-select>
               </div>
             </v-col>
@@ -216,8 +207,6 @@ export default {
   props: ["form", "isNew", "isView"],
 
   data: () => ({
-    // planningFor: [],
-    // year: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 4),
     year: new Date().getFullYear(),
     selected: [],
     selectAll: [],
@@ -230,7 +219,6 @@ export default {
         v => /^[0-9.,]+$/.test(v) || "This field is numbers only",
       ],
       yearRule: [
-        //if (!v.trim()) return true;
         v => { if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;
         return 'Year has to be integer and contains 4 digits'; }
       ],
@@ -242,14 +230,6 @@ export default {
     },
   }),
 
-  mounted() {
-    console.log(this.year);
-    // this.planningFor = [];
-    // for (let i = 0; i < 2; i++) {
-    //     this.planningFor.push(this.year + i);
-    // }
-  },
-  
   computed: {
     ...mapState("statusInfo", ["statusInfoPlanning"]),
     ...mapState("statusInfo", ["statusNotification"]),
@@ -281,9 +261,12 @@ export default {
             year: this.form.year,
             is_active: this.form.is_active.id,
             due_date: this.form.due_date + "T23:59",
-            notification: this.form.notification.id ? 1 : 0,
-            biros: this.selectAll ? this.selectAll : 0,
-            body: this.form.body ? this.form.body : 0,
+            // notification: this.form.notification.id ? 1 : 0,
+            notification: this.form.notification.id,
+            // biros: this.selected ? this.selected : 0,
+            biros: this.selected,
+            // body: this.form.body ? this.form.body : 0,
+            body: this.form.body,
           };
           this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
           // console.log(this.selectAll);
@@ -293,9 +276,12 @@ export default {
             year: this.form.year,
             is_active: this.form.is_active.id,
             due_date: this.form.due_date + "T23:59",
-            notification: this.form.notification.id ? 1 : 0,
-            biros: this.selected ? this.selected : 0,
-            body: this.form.body ? this.form.body : 0,
+            // notification: this.form.notification.id ? 1 : 0,
+            notification: this.form.notification.id,
+            // biros: this.selected ? this.selected : 0,
+            biros: this.selected,
+            // body: this.form.body ? this.form.body : 0,
+            body: this.form.body,
           };
           this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
           // console.log(this.selected);
