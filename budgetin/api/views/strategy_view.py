@@ -1,5 +1,8 @@
+import pandas
+
 from rest_framework import viewsets 
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.db import transaction
 
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
@@ -7,8 +10,8 @@ from api.models import Strategy
 from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.auditlog import AuditLog
-from api.exceptions.validation_exception import ValidationException
+from api.utils.file import read_excel
+from api.exceptions import ValidationException
 
 def is_duplicate_create(name):
     if Strategy.objects.filter(name=name):
@@ -61,3 +64,32 @@ class StrategyViewSet(viewsets.ModelViewSet):
         strategy = super().destroy(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.DELETE, TableEnum.STRATEGY)
         return strategy
+    
+    @transaction.atomic
+    @action(methods=['post'], detail=False)
+    def import_from_excel(self, request):
+        file = request.FILES['file'].read()
+        df = read_excel(file, 'strategy')
+        
+        for index, row in df.iterrows():
+            self.insert_to_db(request, row, (index+2))
+            
+        raise ValidationException('success')
+    
+    def insert_to_db(self, request, data, index):
+        name = data['strategy_name']
+        if self.strategy_already_exists(name):
+            raise ValidationException('Strategy {} at line {} already exists'.format(name, index))
+
+        strategy = self.create_strategy(request, name)
+        AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.UPDATE, TableEnum.STRATEGY) 
+            
+    def strategy_already_exists(self, name):
+        return Strategy.objects.filter(name=name).count() > 0
+    
+    def create_strategy(self, request, name):
+        return Strategy.objects.create(
+            name = name,
+            created_by_id = request.custom_user['id'],
+            updated_by_id = request.custom_user['id'],
+        )
