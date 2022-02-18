@@ -150,7 +150,7 @@ const routes = [
         component: () => import("@/views/StartPlanning/ViewPlanning"),
       },
       {
-        path: "/startPlanning/:id/viewStatusMonitor",
+        path: "/startPlanning/:id/monitor/:id_monitor/viewStatusMonitor",
         name: "ViewStatusMonitoring",
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);

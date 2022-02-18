@@ -28,8 +28,7 @@
                       append-icon="mdi-magnify"
                       label="Search"
                       single-line
-                      hide-details
-                    >
+                      hide-details>
                     </v-text-field>
                   </v-col>
                   <v-col
@@ -39,8 +38,7 @@
                     md="8"
                     lg="8"
                     no-gutters
-                    class="start-planning__btn"
-                  >
+                    class="start-planning__btn">
                     <v-btn rounded color="primary" @click="onAdd">
                       + Start New Planning
                     </v-btn>
@@ -60,12 +58,7 @@
               >
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
-                    <v-icon
-                      class="ma-3"
-                      v-on="on"
-                      color="primary"
-                      @click="onMonitor(item)"
-                    >
+                    <v-icon class="ma-2" v-on="on" color="primary" @click="onMonitor(item)">
                       mdi-monitor
                     </v-icon>
                   </template>
@@ -107,7 +100,7 @@
         </v-col>
       </v-row>
 
-      <!-- <v-row no-gutters>
+      <v-row no-gutters>
         <v-dialog v-model="loadingPostPatchStartPlanning" persistent width="25rem">
           <v-card>
             <v-card-title class="d-flex justify-center"> Loading </v-card-title>
@@ -123,7 +116,7 @@
             </v-card-text>
           </v-card>
         </v-dialog>
-      </v-row> -->
+      </v-row>
 
       <v-row no-gutters>
         <v-dialog v-model="dialog" persistent width="40rem">
@@ -173,20 +166,13 @@ export default {
     search: "",
     dataTable: {
       headers: [
-        // { text: "ID", value: "id" },
         { text: "Planning For", value: "year", width: "8rem" },
         { text: "Status", value: "is_active", width: "6rem" },
         { text: "Due Date", value: "due_date", width: "8rem" },
         { text: "Notification", value: "notification", width: "8rem" },
         { text: "Updated By", value: "updated_by", width: "8rem" },
         { text: "Updated Date", value: "updated_at", width: "8rem" },
-        {
-          text: "Action",
-          value: "actions",
-          align: "center",
-          sortable: false,
-          width: "8rem",
-        },
+        { text: "Action", value: "actions", align: "center", sortable: false, width: "8rem" },
       ],
     },
     sortBy: "id",

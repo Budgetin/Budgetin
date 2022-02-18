@@ -350,7 +350,7 @@ export default {
     },
     onAddExisting() {
       let param = this.$route.params.id;
-      return this.$router.push("/home/" + param + "/submitted/new");
+      return this.$router.push("/home/" + param + "/submitted/existing");
     },
     ondownload() {
       if (this.taskInfo) {

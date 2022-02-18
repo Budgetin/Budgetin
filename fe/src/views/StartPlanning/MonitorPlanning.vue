@@ -3,7 +3,7 @@
         <v-container class="monitor-planning__container outer-container">
             <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" no-gutters>
-                    <v-subheader class="monitor-planning__header">Monitoring Status</v-subheader>
+                    <v-subheader class="monitor-planning__header">Monitor Planning</v-subheader>
                 </v-col>
             </v-row>
 
@@ -37,7 +37,7 @@
                                 style="text-decoration: none"
                                 :to="{
                                 name: 'ViewStatusMonitoring',
-                                params: { id: item.id },
+                                params: { id_monitor: item.id },
                                 }">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on }">
@@ -115,7 +115,7 @@ export default {
 
     created() {
         this.getEdittedItem();
-        this.getMonitorPlanningById(this.$route.params.id);
+        this.getMonitorPlanningById();
         this.setBreadcrumbs();
     },
     
@@ -130,16 +130,20 @@ export default {
         ...mapActions("monitorPlanning", ["getMonitorPlanningById", "postMonitorPlanning"]),
 
         setBreadcrumbs() {
-            let param = this.isView ? "View Monitor Planning Status" : "Edit Monitor Planning Status";
+            // let param = this.isView ? "Monitor Planning" : "Edit Monitor Planning Status";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "Monitor Planning Status",
+                    text: "Start Planning",
                     link: true,
                     exact: true,
                     disabled: false,
                     to: {
-                        name: "MonitorPlanning",
+                        name: "StartPlanning",
                     },
+                },
+                {
+                    text: "Monitor Planning",
+                    disabled: true,
                 },
             ]);
         },
