@@ -51,7 +51,10 @@ export default {
     name:"",
     files: [],
     validation: {
-      uploadRule: [(v) => !!v || "File is required"],
+      uploadRule: [
+        (v) => !!v || "File is required",
+        v => (v && v.size > 0) || 'File is required'
+      ],
     },
   }),
 

@@ -114,11 +114,11 @@
             <v-card-text>
               <v-row no-gutters class="d-flex justify-center">
                 <v-progress-circular
-                :size="70"
-                :width="7"
-                color="primary"
-                indeterminate>
-                </v-progress-circular>
+                  :size="70"
+                  :width="7"
+                  color="blue"
+                  indeterminate
+                ></v-progress-circular>
               </v-row>
             </v-card-text>
           </v-card>

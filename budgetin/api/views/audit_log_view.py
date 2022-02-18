@@ -4,7 +4,7 @@ from django.forms.models import model_to_dict
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 
-from api.models import AuditLog, User, Strategy, Product, Biro
+from api.models import AuditLog, User, Strategy, Product, Biro, Coa
 from api.serializers import AuditLogSerializer
 from api.utils.date_format import timestamp_to_strdateformat
 from api.utils.enum import ActionEnum
@@ -39,6 +39,8 @@ class AuditLogViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.C
                     serialized_data['product'] = Product.objects.get(pk=serialized_data['product']).product_name
                 if 'biro' in serialized_data and serialized_data['biro']:
                     serialized_data['biro'] = Biro.objects.get(pk=serialized_data['biro']).code
+                if 'coa' in serialized_data and serialized_data['coa']:
+                    serialized_data['coa'] = Coa.objects.get(pk=serialized_data['coa']).name
 
                 serialized_data['created_at'] = timestamp_to_strdateformat(str(serialized_data['created_at']), "%d %B %Y")
                 serialized_data['updated_at'] = timestamp_to_strdateformat(str(serialized_data['updated_at']), "%d %B %Y")
