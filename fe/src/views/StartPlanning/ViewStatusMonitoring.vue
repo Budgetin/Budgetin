@@ -77,7 +77,7 @@ export default {
     created() {
         this.getEdittedItem();
         this.getHistoryItem();
-        // this.setBreadcrumbs();
+        this.setBreadcrumbs();
     },
 
     computed: {
@@ -89,10 +89,19 @@ export default {
         ...mapActions("monitorPlanning", ["patchMonitorPlanning", "getMonitorPlanningDetailById", "getHistory"]),
 
         setBreadcrumbs() {
-            let param = this.isView ? "View Monitor Planning Status" : "Edit Monitor Planning Status";
+            let param = this.isView ? "View Monitor Planning" : "Edit Monitor Planning";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
-                    text: "Monitor Planning Status",
+                    text: "Start Planning",
+                    link: true,
+                    exact: true,
+                    disabled: false,
+                    to: {
+                        name: "StartPlanning",
+                    },
+                },
+                {
+                    text: "Monitor Planning",
                     link: true,
                     exact: true,
                     disabled: false,
@@ -109,7 +118,7 @@ export default {
         
         getHistoryItem() {
             // console.log("Masuk getHistoryItem");
-            this.getHistory(this.$route.params.id).then(() => {
+            this.getHistory(this.$route.params.id_monitor).then(() => {
                 // console.log("Masuk getHistory");
                 this.itemsHistory = JSON.parse(
                     JSON.stringify(this.$store.state.monitorPlanning.edittedItemHistories));
@@ -118,8 +127,8 @@ export default {
         },
         getEdittedItem() {
             // console.log("Masuk Editted Item");
-            this.getMonitorPlanningDetailById(this.$route.params.id).then(() => {
-                // console.log("ParamID: "+this.$route.params.id);
+            this.getMonitorPlanningDetailById(this.$route.params.id_monitor).then(() => {
+                // console.log("ParamID: "+this.$route.params.id_monitor);
                 this.setForm();
             });
         },
