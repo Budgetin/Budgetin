@@ -6,7 +6,7 @@
       <v-btn v-if="isView" icon small @click="$emit('editClicked')" class="mr-3">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
-      <v-btn v-if="isView" icon small @click="$emit('logHistoryClicked')" class="mr-3">
+      <v-btn v-if="isView" icon small @click="$emit('logHistoryClicked')">
         <v-icon color="primary"> mdi-history </v-icon>
       </v-btn>
     </v-card-title>

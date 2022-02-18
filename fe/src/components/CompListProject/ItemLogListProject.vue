@@ -7,7 +7,7 @@
         <v-row>Tech/Non-Tech: {{getTech}}</v-row>
         <v-row>Start Year: {{data.serialized_data.start_year}}</v-row>
         <v-row>End Year: {{data.serialized_data.end_year}}</v-row>
-        <v-row>Total Investment: {{numberWithDots(this.data.serialized_data.total_investment_value) }}</v-row>
+        <v-row>Total Investment: {{numberWithDots(this.data.serialized_data.total_investment_value)}}</v-row>
     </v-container>
 </template>
 

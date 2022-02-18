@@ -8,7 +8,7 @@
       <v-col>
         <!-- :headers="dataTable.budgetPlanningHeaders" -->
         <v-data-table
-        :headers="headers"
+        :headers="dataTable.budgetPlanningHeaders"
         :loading="status"
         :items="budgetItem">
           <template v-slot:[`item.actions`]="{ item }">
@@ -120,48 +120,10 @@ export default {
       ],
     },
 
-    // dataTable: {
-    //   budgetPlanningHeaders: [
-    //     { text: "Action", value: "actions", align: "center", sortable: false },
-    //     // { text: "ID", value: "id"},
-    //     { text: "Year", value: "year"},
-    //     { text: "Budget Status", value: "is_active"},
-    //     { text: "COA", value: "coa"},
-    //     { text: "CAPEX/OPEX", value: "expense_type"},
-    //     { text: "Budget This Year", value: "planning_nominal"},
-    //     { text: "Q1", value: "planning_q1"},
-    //     { text: "Q2", value: "planning_q2"},
-    //     { text: "Q3", value: "planning_q3"},
-    //     { text: "Q4", value: "planning_q4"},
-    //   ],
-    // },
-  }),
-
-  mounted() {
-    this.showItem = this.budgetPlanning.project_detail;
-
-    // console.log(this.showItem);
-    this.budgetItem = [];
-    for (let i = 0; i < this.showItem.length; i++) {
-        for (let j = 0; j < this.showItem[i].budget.length; j++) {
-            this.budgetItem.push(this.showItem[i].budget[j]);
-        }
-    }
-    // console.log(this.budgetItem);
-
-    this.planningItem = [];
-    for (let i = 0; i < this.showItem.length; i++) {
-        this.planningItem.push(this.showItem[i].planning);
-    }
-    // console.log("PLANNING ITEM");
-    // console.log(this.planningItem);
-  },
-  computed: {
-    status: function () {
-      return this.budgetPlanning.project_detail ? false : true;
-    },
-    headers() {
-      const headers = [
+    dataTable: {
+      budgetPlanningHeaders: [
+        { text: "Action", value: "actions", align: "center", sortable: false },
+        // { text: "ID", value: "id"},
         { text: "Year", value: "year"},
         { text: "Budget Status", value: "is_active"},
         { text: "COA", value: "coa"},
@@ -171,35 +133,68 @@ export default {
         { text: "Q2", value: "planning_q2"},
         { text: "Q3", value: "planning_q3"},
         { text: "Q4", value: "planning_q4"},
-      ]
-      for(let i = 0; i < this.planningItem.length; i++) {
-        // console.log("IS ACTIVE PLANNING");
-        // console.log(this.planningItem[i].is_active);
-        if(this.planningItem[i].is_active == true) {
-          // console.log(headers.length);
-          let j = headers.length;
-          while(j > 0) {
-            headers.pop();
-            j--;
-          }
+      ],
+    },
+  }),
 
-          headers.push(
-            { text: "Action", value: "actions", align: "center", sortable: false },
-            { text: "Year", value: "year"},
-            { text: "Budget Status", value: "is_active"},
-            { text: "COA", value: "coa"},
-            { text: "CAPEX/OPEX", value: "expense_type"},
-            { text: "Budget This Year", value: "planning_nominal"},
-            { text: "Q1", value: "planning_q1"},
-            { text: "Q2", value: "planning_q2"},
-            { text: "Q3", value: "planning_q3"},
-            { text: "Q4", value: "planning_q4"},
-          );
-        };
-      };
-
-      return headers
+  mounted() {
+    this.showItem = this.budgetPlanning.project_detail;
+    this.budgetItem = [];
+    for (let i = 0; i < this.showItem.length; i++) {
+        for (let j = 0; j < this.showItem[i].budget.length; j++) {
+            this.budgetItem.push(this.showItem[i].budget[j]);
+        }
     }
+
+    this.planningItem = [];
+    for (let i = 0; i < this.showItem.length; i++) {
+        this.planningItem.push(this.showItem[i].planning);
+    }
+  },
+  computed: {
+    status: function () {
+      return this.budgetPlanning.project_detail ? false : true;
+    },
+    // headers() {
+    //   const headers = [
+    //     { text: "Year", value: "year"},
+    //     { text: "Budget Status", value: "is_active"},
+    //     { text: "COA", value: "coa"},
+    //     { text: "CAPEX/OPEX", value: "expense_type"},
+    //     { text: "Budget This Year", value: "planning_nominal"},
+    //     { text: "Q1", value: "planning_q1"},
+    //     { text: "Q2", value: "planning_q2"},
+    //     { text: "Q3", value: "planning_q3"},
+    //     { text: "Q4", value: "planning_q4"},
+    //   ]
+    //   for(let i = 0; i < this.planningItem.length; i++) {
+    //     // console.log("IS ACTIVE PLANNING");
+    //     // console.log(this.planningItem[i].is_active);
+    //     if(this.planningItem[i].is_active == true) {
+    //       // console.log(headers.length);
+    //       let j = headers.length;
+    //       while(j > 0) {
+    //         headers.pop();
+    //         j--;
+    //       }
+
+    //       headers.push(
+    //         { text: "Action", value: "actions", align: "center", sortable: false },
+    //         { text: "Year", value: "year"},
+    //         { text: "Budget Status", value: "is_active"},
+    //         { text: "COA", value: "coa"},
+    //         { text: "CAPEX/OPEX", value: "expense_type"},
+    //         { text: "Budget This Year", value: "planning_nominal"},
+    //         { text: "Q1", value: "planning_q1"},
+    //         { text: "Q2", value: "planning_q2"},
+    //         { text: "Q3", value: "planning_q3"},
+    //         { text: "Q4", value: "planning_q4"},
+    //       );
+    //     };
+    //   };
+
+    //   return headers
+    // }
   },
   methods: {
     onOK() {

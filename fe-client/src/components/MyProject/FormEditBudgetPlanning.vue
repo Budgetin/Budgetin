@@ -1,28 +1,48 @@
 <template>
   <v-card>
     <v-card-title class="mb-5">
-      {{ cardTitle }} a Budget Planning
+      {{ cardTitle }} Budget Planning
       <v-spacer></v-spacer>
-      <v-btn v-if="isView" icon small @click="$emit('editClicked')">
+      <v-btn v-if="isView" icon small @click="$emit('editClicked')" class="mr-3">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
 
+      <!-- DELETE BUDGET, CANNOT BE RESTORED -->
       <a-popconfirm
-      v-if="form.is_active == true"
-      title="Are you sure you want to cancel this budget?"
+      v-if="form.is_active == true && form.project_detail.planning.is_active == true"
+      title="Are you sure you want to delete this budget?"
       ok-text="Yes"
       cancel-text="No"
-      @confirm="$emit('deleteClicked')">
+      @confirm="$emit('deleteClicked')"
+      class="mr-2">
         <v-icon color="error" v-if="!isNew"> mdi-delete </v-icon>
       </a-popconfirm>
 
+      <!-- CANCEL BUDGET -->
       <a-popconfirm
-      v-if="form.is_active == false"
+      v-if="form.is_active == true && form.project_detail.planning.is_active == false"
+      title="Are you sure you want to cancel this budget?"
+      ok-text="Yes"
+      cancel-text="No"
+      @confirm="$emit('cancelBudgetClicked')"
+      class="mr-2">
+        <a-popover>
+          <template slot="content">
+            <p>Cancel Budget</p>
+          </template>
+          <v-icon color="error" v-if="!isNew"> mdi-file-cancel-outline </v-icon>
+        </a-popover>
+      </a-popconfirm>
+
+      <!-- RESTORE BUDGET THAT HAS BEEN CANCELLED -->
+      <a-popconfirm
+      v-if="form.is_active == false && form.project_detail.planning.is_active == false"
       title="Are you sure you want to restore this budget?"
       ok-text="Yes"
       cancel-text="No"
-      @confirm="$emit('restoreClicked')">
-        <v-icon color="primary" v-if="!isNew"> mdi-delete-restore </v-icon>
+      @confirm="$emit('restoreClicked')"
+      class="mr-2">
+        <v-icon color="primary" v-if="!isNew"> mdi-file-restore-outline </v-icon>
       </a-popconfirm>
     </v-card-title>
 
@@ -220,6 +240,12 @@ export default {
     ],
   }),
   
+  // mounted() {
+  //   this.planningItem = [];
+  //   for (let i = 0; i < this.showItem.length; i++) {
+  //       this.planningItem.push(this.showItem[i].planning);
+  //   }
+  // },
   computed: {
     ...mapState("masterCoa", ["getMasterCoa", "dataMasterCoa"]),
 
