@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.forms import model_to_dict
 from django.db import transaction
 
@@ -6,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from api.models import Budget, Project, ProjectDetail, Monitoring, Planning, Biro
-from api.serializers import BudgetSerializer, BudgetResponseSerializer, ProjectSerializer, ProjectDetailSerializer
+from api.serializers import BudgetSerializer, BudgetResponseSerializer, ProjectSerializer, ProjectDetailSerializer, MonitoringBaseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum, RoleEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated
@@ -98,7 +99,6 @@ class BudgetViewSet(viewsets.ModelViewSet):
         project_detail, created = ProjectDetail.objects.update_or_create(planning_id=request.data['planning'], project=project, defaults={
             'project_type_id': request.data['project_type']
         })
-        print("wololo   "+str(created))
         if created:
             ProjectDetail.objects.filter(planning_id=request.data['planning']).filter(project=project).update( 
                 created_by_id = request.custom_user['id'],
@@ -134,10 +134,9 @@ class BudgetViewSet(viewsets.ModelViewSet):
                 Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(updated_by_id = request.custom_user['id'])
                 
                 AuditLog.Save(BudgetSerializer(updated_budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
-            print(model_to_dict(updated_budget))
         
         #Tag Monitoring of this Biro to Draft
-        monitoring = Monitoring.objects.filter(planning_id=request.data['planning']).update(monitoring_status="Draft")
+        Monitoring.objects.filter(planning_id=request.data['planning']).filter(biro_id=request.data['biro']).update(monitoring_status="Draft")
         
         return Response(model_to_dict(project))
 
@@ -151,9 +150,33 @@ class BudgetViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
+        deleted_budget = Budget.objects.get(pk=kwargs['pk'])
         budget = super().destroy(request, *args, **kwargs)
-        AuditLog.Save(budget, request, ActionEnum.DELETE, TableEnum.BUDGET)
         
+        remaining_budget = Budget.objects.filter(project_detail_id=deleted_budget.project_detail_id).count()
+        deleted_pd = ProjectDetail.objects.select_related('project').get(pk=deleted_budget.project_detail_id)
+        planning_id = deleted_pd.planning_id
+        biro = deleted_pd.project.biro_id
+        if not remaining_budget:
+            ProjectDetail.objects.filter(pk = deleted_budget.project_detail_id).update(
+                is_deleted = True,
+                deleted_at = datetime.now()
+            )
+            #Special for auditlog project detail
+            rewritten_req = request
+            rewritten_req.parser_context['kwargs']['pk'] = deleted_budget.project_detail_id
+            AuditLog.Save(ProjectDetailSerializer(deleted_pd), rewritten_req, ActionEnum.DELETE, TableEnum.PROJECT_DETAIL)
+
+        #check if there is any project detail left for monitoring x
+        remaining_pd = ProjectDetail.objects.select_related('project', 'project__biro').filter(planning_id = planning_id).filter(project__biro_id=biro).count()
+        if not remaining_pd:
+            updated_monitoring = Monitoring.objects.filter(planning_id=planning_id).filter(biro_id=biro).get()
+            Monitoring.objects.filter(planning_id=planning_id).filter(biro_id=biro).update(
+                monitoring_status = 'To Do'
+            )
+            AuditLog.Save(MonitoringBaseSerializer(updated_monitoring), request, ActionEnum.UPDATE, TableEnum.MONITORING)
+        #ENDSEQ
+        AuditLog.Save(budget, request, ActionEnum.DELETE, TableEnum.BUDGET)
         return budget
     
     @transaction.atomic

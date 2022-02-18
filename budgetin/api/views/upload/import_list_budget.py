@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from datetime import datetime
 from api.utils.auditlog import AuditLog
 
-from api.models import Biro, Coa, Product, Strategy, Project, Planning, ProjectDetail, ProjectType, Budget
+from api.models import Biro, Coa, Product, Strategy, Project, Planning, ProjectDetail, ProjectType, Budget, Monitoring
 from api.serializers import CoaSerializer, StrategySerializer, ProductSerializer, ProjectSerializer, PlanningSerializer, ProjectDetailSerializer, BudgetSerializer
 from api.utils.hit_api import get_all_biro
 from api.utils.enum import ActionEnum, TableEnum
@@ -51,7 +51,7 @@ def insert_to_db(request, data, index):
     project = get_or_create_project(request, data, biro, product, index)
     planning = get_or_create_planning(request, data['Tahun'])
     project_detail = get_or_create_project_detail(request, data, project, planning, index)
-    create_budget(request, data, project_detail, coa)
+    create_budget(request, data, project_detail, coa, biro, planning)
     
 
 def get_or_create_coa(request, coa_name):
@@ -199,7 +199,7 @@ def get_project_type(type):
     project_type, _ = ProjectType.objects.get_or_create(name=type)
     return project_type
 
-def create_budget(request, data, project_detail, coa):
+def create_budget(request, data, project_detail, coa, biro, planning):
     budget = Budget.objects.create(
         project_detail = project_detail,
         coa = coa,
@@ -211,7 +211,7 @@ def create_budget(request, data, project_detail, coa):
         created_by_id = request.custom_user['id'],
         updated_by_id = request.custom_user['id'],
     )
-
+    Monitoring.objects.filter(planning_id=planning.id).filter(biro_id=biro.id).update(monitoring_status='Draft')
     AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
 
 class ImportListBudget(APIView):

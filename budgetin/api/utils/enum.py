@@ -20,6 +20,7 @@ class TableEnum(Enum):
     PROJECT_DETAIL = "project_detail"
     STRATEGY = "strategy"
     USER = "user"
+    REALIZATION = "realization"
 
 
 class RoleEnum(Enum):
@@ -36,3 +37,12 @@ class ProjectTypeEnum(Enum):
     NEW = "New"
     CARRY_FORWARD = "Carry Forward"
     REGULAR = "Regular"
+
+class SwitchingTypeEnum(Enum):
+    SWITCH = "Switching"
+    RETURN = "Return"
+    TOPUP = "Top Up"
+    CORRECTION_SWITCHING_IN = "Correction Switching In"
+    CORRECTION_SWITCHING_OUT = "Correction Switching Out"
+    CORRECTION_RETURN = "Correction Return"
+    CORRETCTION_TOPUP = "Correction Top Up"
