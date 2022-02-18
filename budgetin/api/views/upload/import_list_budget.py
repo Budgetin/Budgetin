@@ -27,6 +27,26 @@ Validasi Import Planning
  - Budget planning pada tahun yang sama harus memiliki Project Type yang sama
 '''
 
+class ImportListBudget(APIView):
+    parser_classes = (MultiPartParser, )
+    
+    @transaction.atomic
+    def post(self, request, format=None):
+        file_obj = request.FILES['file'].read()
+        try:
+            df = pandas.read_excel(file_obj, sheet_name='Planning')
+        except ValueError:
+            raise SheetNotFoundException('Planning')
+
+        create_update_all_biro()
+        
+        for index, row in df.iterrows():
+            print(index)
+            insert_to_db(request, row, (index+2))
+        raise SheetNotFoundException('success')
+        
+        return Response(status=204)
+
 def create_update_all_biro():
     biros = get_all_biro('manager_employee,sub_group,sub_group.group,manager_employee,sub_group.manager_employee,sub_group.group.manager_employee')
     for biro in biros:
@@ -211,23 +231,5 @@ def create_budget(request, data, project_detail, coa, biro, planning):
         created_by_id = request.custom_user['id'],
         updated_by_id = request.custom_user['id'],
     )
-    Monitoring.objects.filter(planning_id=planning.id).filter(biro_id=biro.id).update(monitoring_status='Draft')
+
     AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
-
-class ImportListBudget(APIView):
-    parser_classes = (MultiPartParser, )
-    
-    @transaction.atomic
-    def post(self, request, format=None):
-        file_obj = request.FILES['file'].read()
-        try:
-            df = pandas.read_excel(file_obj, sheet_name='Planning')
-        except ValueError:
-            raise SheetNotFoundException('Planning')
-
-        create_update_all_biro()
-        
-        for index, row in df.iterrows():
-            insert_to_db(request, row, (index+2))
-            
-        return Response(status=204)

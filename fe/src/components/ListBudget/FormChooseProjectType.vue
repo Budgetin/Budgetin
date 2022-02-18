@@ -14,13 +14,13 @@
         <v-row >
           <v-col cols="6" class="mt-2" >
             <div class="choose-project-type_box" align="center" justify="center" @click="onNewClick">
-              <img :src="require('../../assets/new_project.png')" height="80rem" style="padding:0.2rem;"/><br>
+              <img :src="require('../../assets/new_project.gif')" height="80rem" style="padding:0.2rem;"/><br>
               New Project
             </div>
           </v-col>
           <v-col cols="6" class="mt-2" align="center" justify="center">
             <div class="choose-project-type_box" align="center" justify="center" @click="onExistingClick">
-              <img :src="require('../../assets/existing_project.png')" height="80rem" style="padding:0.2rem;"/><br>
+              <img :src="require('../../assets/existing_project.gif')" height="80rem" style="padding:0.2rem;"/><br>
               Existing Project
             </div>
           </v-col>

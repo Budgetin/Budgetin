@@ -6,10 +6,12 @@ export default {
      * @returns {string}
      */
     numberWithDots(num) {
-      if (num) {
-        num = num.toString().replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
-        return num.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+      if (num != null || num != "" || num != "0") {
+        num = num.toString().replace(/^[0]*/g,"").replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '');
+        var result = num.toString().split( /(?=(?:\d{3})+(?:\.|$))/g ).join( "," );
+        return result != "" ? result : "0";
       }
+      return "0"
     },
 
     /**

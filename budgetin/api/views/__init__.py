@@ -12,7 +12,6 @@ from .audit_log_view import AuditLogViewSet
 from .auth.login_view import LoginView
 from .auth.login_user_view import LoginUserView
 from .auth.logout_view import LogoutView
-from .excel_import_view import ImportExcelView
 from .upload.import_list_budget import ImportListBudget
 from .upload.import_realisasi import ImportRealisasi
 from .upload.import_dcsp import ImportDCSP

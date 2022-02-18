@@ -17,8 +17,7 @@
             :headers="dataTable.headers"
             :loading="loadingGetStartPlanning"
             :items="dataStartPlanning"
-            :search="search"
-          >
+            :search="search">
             <template v-slot:top>
               <v-toolbar-title>
                 <v-row class="mb-5" no-gutters>
@@ -29,8 +28,7 @@
                       append-icon="mdi-magnify"
                       label="Search"
                       single-line
-                      hide-details
-                    >
+                      hide-details>
                     </v-text-field>
                   </v-col>
                   <v-col
@@ -40,8 +38,7 @@
                     md="8"
                     lg="8"
                     no-gutters
-                    class="start-planning__btn"
-                  >
+                    class="start-planning__btn">
                     <v-btn rounded color="primary" @click="onAdd">
                       + Start New Planning
                     </v-btn>
@@ -61,12 +58,7 @@
               >
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
-                    <v-icon
-                      class="ma-3"
-                      v-on="on"
-                      color="primary"
-                      @click="onMonitor(item)"
-                    >
+                    <v-icon class="ma-2" v-on="on" color="primary" @click="onMonitor(item)">
                       mdi-monitor
                     </v-icon>
                   </template>
@@ -112,13 +104,12 @@
         <v-dialog v-model="loadingPostPatchStartPlanning" persistent width="25rem">
           <v-card>
             <v-card-title class="d-flex justify-center"> Loading </v-card-title>
-
             <v-card-text>
               <v-row no-gutters class="d-flex justify-center">
                 <v-progress-circular
                   :size="70"
                   :width="7"
-                  color="purple"
+                  color="blue"
                   indeterminate
                 ></v-progress-circular>
               </v-row>
@@ -138,8 +129,7 @@
             @editClicked="onEdit"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
-            @okClicked="onOK"
-          >
+            @okClicked="onOK">
           </form-start-planning>
         </v-dialog>
       </v-row>
@@ -176,20 +166,13 @@ export default {
     search: "",
     dataTable: {
       headers: [
-        // { text: "ID", value: "id" },
         { text: "Planning For", value: "year", width: "8rem" },
         { text: "Status", value: "is_active", width: "6rem" },
         { text: "Due Date", value: "due_date", width: "8rem" },
         { text: "Notification", value: "notification", width: "8rem" },
         { text: "Updated By", value: "updated_by", width: "8rem" },
         { text: "Updated Date", value: "updated_at", width: "8rem" },
-        {
-          text: "Action",
-          value: "actions",
-          align: "center",
-          sortable: false,
-          width: "8rem",
-        },
+        { text: "Action", value: "actions", align: "center", sortable: false, width: "8rem" },
       ],
     },
     sortBy: "id",
@@ -238,19 +221,13 @@ export default {
       "dataStartPlanning",
       "loadingPostPatchStartPlanning",
     ]),
-    ...mapState("monitorPlanning", [
-      "loadingGetMonitorPlanning",
-      "dataMonitorPlanning",
-    ]),
+    ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanning",]),
     ...mapState("allBiroItHc", ["dataAllBiroItHc"]),
   },
 
   methods: {
     ...mapActions("startPlanning", ["getStartPlanning", "postStartPlanning"]),
-    ...mapActions("monitorPlanning", [
-      "getMonitorPlanning",
-      "postMonitorPlanning",
-    ]),
+    ...mapActions("monitorPlanning", ["getMonitorPlanning", "postMonitorPlanning"]),
     ...mapActions("allBiroItHc", ["getAllBiroItHc"]),
 
     setBreadcrumbs() {
