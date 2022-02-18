@@ -19,5 +19,12 @@
         "display_name": "Angel",
         "username" : "u065248",
         "role" : "Admin"
+    },
+    {
+        "id" : 4,
+        "employee_id": 32,
+        "display_name": "Winoto",
+        "username" : "u051270",
+        "role" : "Admin"
     }
 ]
