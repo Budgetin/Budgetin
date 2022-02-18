@@ -52,6 +52,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
             budget.format_timestamp("%d %B %Y")
             
         serializer = BudgetResponseSerializer(budgets, many=True)
+        Response(serializer.get_coa())
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
@@ -75,6 +76,16 @@ class BudgetViewSet(viewsets.ModelViewSet):
             raise ValidationException('You are not eligible to add budget to this biro')
         
         # Project
+        project = self.create_or_update_project(request)
+        project_detail = self.create_or_update_project_detail(request, project)
+        self.create_budget(request, project_detail)
+        
+        #Tag Monitoring of this Biro to Draft
+        Monitoring.objects.filter(planning_id=request.data['planning']).update(monitoring_status="Draft")
+        
+        return Response(model_to_dict(project))
+
+    def create_or_update_project(self, request):
         if 'project_id' not in request.data:
             project = Project.objects.create(
                 project_name = request.data['project_name'],
@@ -88,13 +99,25 @@ class BudgetViewSet(viewsets.ModelViewSet):
                 created_by_id = request.custom_user['id'],
                 updated_by_id = request.custom_user['id']
             )
-
-            AuditLog.Save(ProjectSerializer(project), request, ActionEnum.CREATE, TableEnum.PROJECT)
             project.generate_itfamid()
+            AuditLog.Save(ProjectSerializer(project), request, ActionEnum.CREATE, TableEnum.PROJECT)
         else:
             project = Project.objects.get(pk=request.data['project_id'])
+            project.project_description = request.data['project_description']
+            project.start_year = request.data['start_year']
+            project.end_year = request.data['end_year']
+            project.total_investment_value = request.data['total_investment_value']
+            project.product_id = request.data['product']
+            project.is_tech = request.data['is_tech']
+            project.updated_by_id = request.custom_user['id']
+            project.save()
+            
+            AuditLog.Save(ProjectSerializer(project), request, ActionEnum.UPDATE, TableEnum.PROJECT)
+        
+        project.refresh_from_db()
+        return project
 
-        # Project Detail
+    def create_or_update_project_detail(self, request, project):
         project_detail, created = ProjectDetail.objects.update_or_create(planning_id=request.data['planning'], project=project, defaults={
             'project_type_id': request.data['project_type']
         })
@@ -109,11 +132,15 @@ class BudgetViewSet(viewsets.ModelViewSet):
             ProjectDetail.objects.filter(planning_id=request.data['planning']).filter(project=project).update(
                 updated_by_id = request.custom_user['id'])
             AuditLog.Save(ProjectDetailSerializer(project_detail), request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
-           
-        # Budget
+        
+        project_detail.refresh_from_db()
+        return project_detail
+    
+    def create_budget(self, request, project_detail):
         if len(request.data['budget']) == 0:
-            budget = Budget.objects.create(project_detail=project_detail, coa=None)
-            AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
+            if not self.is_budget_exists(project_detail):
+                budget = Budget.objects.create(project_detail=project_detail, coa=None)
+                AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
         for budget in request.data['budget']:
             updated_budget, budget_created = Budget.objects.update_or_create(project_detail=project_detail, coa=None, defaults={
                 'coa_id': budget['coa'],
@@ -124,7 +151,6 @@ class BudgetViewSet(viewsets.ModelViewSet):
                 'planning_q4': budget['planning_q4']
             })
             if budget_created:
-                # print(Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).get())
                 Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(
                 created_by_id = request.custom_user['id'],
                 updated_by_id = request.custom_user['id']
@@ -134,13 +160,11 @@ class BudgetViewSet(viewsets.ModelViewSet):
                 Budget.objects.filter(project_detail=project_detail).filter(coa_id = budget['coa']).update(updated_by_id = request.custom_user['id'])
                 
                 AuditLog.Save(BudgetSerializer(updated_budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
-            print(model_to_dict(updated_budget))
+    
+    def is_budget_exists(self, project_detail):
+        return Budget.objects.filter(project_detail=project_detail).count() > 0
         
-        #Tag Monitoring of this Biro to Draft
-        monitoring = Monitoring.objects.filter(planning_id=request.data['planning']).update(monitoring_status="Draft")
-        
-        return Response(model_to_dict(project))
-
+    
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
