@@ -125,7 +125,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         
         #Process send notification
         if is_send_notification(request):
-            send_notification(request, biros)
+            # send_notification(request, biros) #DEBT. Uncomment this line
             planning.data['body'] = request.data['body']
             planning.data['send_to'] = get_biros_code(request.data['biros'])
             
@@ -139,7 +139,7 @@ class PlanningViewSet(viewsets.ModelViewSet):
         planning = super().update(request, *args, **kwargs)
 
         if(is_send_notification(request)):
-            send_notification(request)
+            # send_notification(request) #DEBT. Uncomment this line
             planning.data['email_body'] = request.data['body']
             planning.data['send_to'] = get_biros_code(request.data['biros'])
         
