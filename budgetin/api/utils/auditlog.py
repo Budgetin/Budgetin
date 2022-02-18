@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 import json
 
 from django.forms import model_to_dict
@@ -14,8 +14,7 @@ class AuditLog():
             entity_id = request.parser_context['kwargs']['pk']
             serialized_data = json.dumps({"message":"entity with id {} deleted from table {}".format(entity_id, table_enum.value)})
             
-        AL.objects.create(timestamp=datetime.datetime.now(
-            ), modified_by=request.custom_user['id'], entity_id=entity_id, serialized_data=serialized_data, action=action_enum.value, table=table_enum.value)
+        AL.objects.create(timestamp=timezone.now(), modified_by=request.custom_user['id'], entity_id=entity_id, serialized_data=serialized_data, action=action_enum.value, table=table_enum.value)
         # AL.objects.create(timestamp=datetime.datetime.now(
         #     ), modified_by=1, entity_id=entity_id, serialized_data=serialized_data, action=action_enum.value, table=table_enum.value)
 
