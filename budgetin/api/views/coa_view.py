@@ -97,12 +97,9 @@ class CoaViewSet(viewsets.ModelViewSet):
         
         if pd.isnull(name):
             errors.append("Coa name must be filled at line {}".format(index))
-        elif self.coa_already_exists(name):
+        elif Coa.name_exists(name):
             errors.append("Coa '{}' at line {} already exists".format(name, index))
         return errors
-            
-    def coa_already_exists(self, name):
-        return Coa.objects.filter(name__iexact=name).count() > 0
     
     def create_coa(self, request, data):
         return Coa.objects.create(

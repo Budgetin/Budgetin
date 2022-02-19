@@ -103,30 +103,21 @@ class ProductViewSet(viewsets.ModelViewSet):
         
         if pd.isnull(code):
             errors.append("Product code must be filled at line {}".format(index))
-        elif self.product_code_already_exists(code):
+        elif Product.code_exists(code):
             errors.append("Product code '{}' at line {} already exists".format(code, index))
             
         if pd.isnull(name):
             errors.append("Product name must be filled at line {}".format(index))
-        elif self.product_name_already_exists(name):
+        elif Product.name_exists(name):
             errors.append("Product name '{}' at line {} already exists".format(name, index))
 
         return errors
     
-    def product_code_already_exists(self, code):
-        return Product.objects.filter(product_code__iexact=code).count() > 0
-    
-    def product_name_already_exists(self, name):
-        return Product.objects.filter(product_name__iexact=name).count() > 0
-    
     def validate_strategy(self, data, index, errors):
         strategy_name = data['strategy_name']
-        if not pd.isnull(strategy_name) and self.strategy_not_exists(strategy_name, index):
+        if not pd.isnull(strategy_name) and Strategy.name_exists(strategy_name):
             errors.append("Strategy '{}' at line {} does not exists".format(strategy_name, index))
         return errors
-    
-    def strategy_not_exists(self, name, index):
-        return Strategy.objects.filter(name__iexact=name).count() == 0
     
     def get_strategy(self, data):
         strategy_name = data['strategy_name']

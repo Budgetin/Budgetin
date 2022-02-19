@@ -94,12 +94,9 @@ class StrategyViewSet(viewsets.ModelViewSet):
     
     def validate_strategy(self, data, index, errors):
         name = data['strategy_name']
-        if self.strategy_already_exists(name):
+        if Strategy.name_exists(name):
             errors.append("Strategy '{}' at line {} already exists".format(name, index))
         return errors
-            
-    def strategy_already_exists(self, name):
-        return Strategy.objects.filter(name__iexact=name).count() > 0
     
     def create_strategy(self, request, data):
         return Strategy.objects.create(
