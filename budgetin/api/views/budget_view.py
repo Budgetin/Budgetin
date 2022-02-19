@@ -244,3 +244,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
                                                 'project_detail__project__product__strategy', 'updated_by').all()
 
         return export_as_excel(budgets)
+    
+    @action(methods=['post'], detail=False, url_path='import')
+    def import_from_excel(self, request):
+        return Response(status=204)

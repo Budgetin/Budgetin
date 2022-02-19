@@ -9,7 +9,7 @@ from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.file import read_excel
-from api.exceptions import ValidationException
+from api.exceptions import ValidationException, ImportValidationException
 
 def is_duplicate_create(name):
     if Strategy.objects.filter(name=name):
@@ -68,19 +68,26 @@ class StrategyViewSet(viewsets.ModelViewSet):
     def import_from_excel(self, request):
         file = request.FILES['file'].read()
         df = read_excel(file, 'strategy')
+        errors = []
         
         for index, row in df.iterrows():
-            self.insert_to_db(request, row, (index+2))
-        
+            errors.extend(self.insert_to_db(request, row, (index+2)))
+            
+        if errors:
+            raise ImportValidationException(errors)
+
         return Response(status=204)
     
     def insert_to_db(self, request, data, index):
+        errors = []
         name = data['strategy_name']
         if self.strategy_already_exists(name):
-            raise ValidationException("Strategy '{}' at line {} already exists".format(name, index))
-
+            errors.append("Strategy '{}' at line {} already exists".format(name, index))
+        
         strategy = self.create_strategy(request, name)
-        AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY) 
+        AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY)
+
+        return errors
             
     def strategy_already_exists(self, name):
         return Strategy.objects.filter(name__iexact=name).count() > 0
