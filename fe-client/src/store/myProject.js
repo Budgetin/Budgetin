@@ -2,6 +2,7 @@ import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js"
 const ENDPOINT = "/api/myproject/";
+const ENDPOINT_PROJECT = "/api/project/";
 
 const myProject = {
   namespaced: true,
@@ -51,7 +52,7 @@ const myProject = {
 
       return new Promise((resolve, reject) => {
         getAPI
-          .get(ENDPOINT + `${id}/`)
+          .get(ENDPOINT_PROJECT + `${id}/`)
           .then((response) => {
             const data = response.data;
             commit("SET_EDITTED_ITEM", data);

@@ -242,14 +242,14 @@
                 <v-row >
                   <v-col cols="6" class="mt-2" >
                     <div class="choose-project-type_box" align="center" justify="center" @click="onUpload">
-                      <img :src="require('../../assets/upload.png')" height="80rem" /><br>
+                      <img :src="require('../../assets/upload.gif')" height="80rem" /><br>
                       Upload Excel
                       <!-- <v-btn rounded color="primary" @click="onUpload"> Upload Excel </v-btn> -->
                     </div>
                   </v-col>
                   <v-col cols="6" class="mt-2" align="center" justify="center">
                     <div class="choose-project-type_box" align="center" justify="center" @click="onAdd">
-                      <img :src="require('../../assets/input_form.png')" height="80rem" style="padding:0.2rem;"/><br>
+                      <img :src="require('../../assets/new_project.gif')" height="80rem" style="padding:0.2rem;"/><br>
                       Input Form
                       <!-- <v-btn rounded color="primary" @click="onAdd"> Input Form </v-btn> -->
                     </div>

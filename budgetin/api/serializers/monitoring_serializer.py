@@ -2,7 +2,10 @@ import datetime
 from rest_framework import serializers
 
 from api.models import Monitoring, Biro, Planning
-
+class MonitoringBaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Monitoring
+        fields = '__all__'
 class BiroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Biro

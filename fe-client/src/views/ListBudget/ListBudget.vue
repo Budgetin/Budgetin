@@ -59,7 +59,7 @@
                     no-gutters
                     class="column__btn"
                   >
-                    <v-btn class="mt-2" color="primary" @click="chooseColumn">
+                    <v-btn class="mt-2 white--text ml-1" color="#16B1FF" @click="chooseColumn">
                       <v-icon>mdi-table-column-plus-before</v-icon>
                     </v-btn>
                   </v-col>
@@ -84,10 +84,9 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'ViewMyBudgetPlanning',
+                  name: 'ViewMyProject',
                   params: { 
-                            id: item.project_detail.project.id,
-                            id_budget_planning: item.id
+                            id: item.project_detail.project.id
                           },
                 }"
               >
@@ -167,7 +166,8 @@
                     no-gutters
                     class="column__btn"
                   >
-                    <v-btn class="mt-2" color="primary" @click="chooseColumn">
+                   
+                    <v-btn class="mt-2 white--text ml-1" color="#16B1FF" @click="chooseColumn">
                       <v-icon>mdi-table-column-plus-before</v-icon>
                     </v-btn>
                   </v-col>
@@ -179,10 +179,9 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'ViewMyBudgetPlanning',
+                  name: 'ViewMyProject',
                   params: { 
-                            id: item.project_detail.project.id,
-                            id_budget_planning: item.id
+                            id: item.project_detail.project.id
                           },
                 }"
               >
@@ -214,7 +213,7 @@
               <span>{{ numberWithDots(item.project_detail.project.total_investment_value) }}</span>
             </template>
             <template v-slot:[`item.budget_nominal`]="{ item }">
-              <span>{{ numberWithDots(item.budget_planning) }}</span>
+              <span>{{ numberWithDots(item.planning_nominal) }}</span>
             </template>
             <template v-slot:[`item.planning_q1`]="{ item }">
               <span>{{ numberWithDots(item.planning_q1) }}</span>
@@ -646,11 +645,11 @@ export default {
     //   this.dialogUpdateRealization = true;
     // },
 
-    // onAdd() {
-    //   this.dialogChoose = !this.dialogChoose;
-    //   this.inputOption = false;
-    //   this.dialogUpload = false;
-    // },
+    onAdd() {
+      this.dialogChoose = !this.dialogChoose;
+      this.inputOption = false;
+      this.dialogUpload = false;
+    },
     onNewClick(){
       return this.$router.push("/myBudget/new");
     },
