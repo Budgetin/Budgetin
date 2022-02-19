@@ -1,3 +1,4 @@
+import pandas as pd
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -67,19 +68,34 @@ class CoaViewSet(viewsets.ModelViewSet):
     def import_from_excel(self, request):
         file = request.FILES['file'].read()
         df = read_excel(file, 'coa')
+        errors = []
         
         for index, row in df.iterrows():
-            self.insert_to_db(request, row, (index+2))
-
+            errors.extend(self.insert_to_db(request, row, (index+2)))
+        
+        if errors:
+            raise ValidationException(errors)
+        
         return Response(status=204)
     
     def insert_to_db(self, request, data, index):
+        errors = []
+        
         name = data['coa_name']
-        if self.coa_already_exists(name):
-            raise ValidationException("Coa '{}' at line {} already exists".format(name, index))
+        errors = self.validate_coa(name, index, errors)
 
-        coa = self.create_coa(request, data)
-        AuditLog.Save(CoaSerializer(coa), request, ActionEnum.CREATE, TableEnum.COA) 
+        if not errors:
+            coa = self.create_coa(request, data)
+            AuditLog.Save(CoaSerializer(coa), request, ActionEnum.CREATE, TableEnum.COA) 
+
+        return errors
+    
+    def validate_coa(self, name, index, errors):
+        if pd.isnull(name):
+            errors.append("Coa name must be filled at line {}".format(index))
+        elif self.coa_already_exists(name):
+            errors.append("Coa '{}' at line {} already exists".format(name, index))
+        return errors
             
     def coa_already_exists(self, name):
         return Coa.objects.filter(name__iexact=name).count() > 0
@@ -87,8 +103,8 @@ class CoaViewSet(viewsets.ModelViewSet):
     def create_coa(self, request, data):
         return Coa.objects.create(
             name = data['coa_name'],
-            definition = data['coa_definition'],
-            hyperion_name = data['hyperion_name'],
+            definition = data['coa_definition'] if not pd.isnull(data['coa_definition']) else None,
+            hyperion_name = data['hyperion_name'] if not pd.isnull(data['hyperion_name']) else None,
             is_capex = True,
             created_by_id = request.custom_user['id'],
             updated_by_id = request.custom_user['id'],
