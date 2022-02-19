@@ -70,8 +70,8 @@ class StrategyViewSet(viewsets.ModelViewSet):
         df = read_excel(file, 'strategy')
         errors = []
         
-        for index, row in df.iterrows():
-            errors.extend(self.insert_to_db(request, row, (index+2)))
+        for index, data in df.iterrows():
+            errors.extend(self.insert_to_db(request, data, (index+2)))
             
         if errors:
             raise ValidationException(errors)
