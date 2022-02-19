@@ -76,7 +76,6 @@ class BudgetViewSet(viewsets.ModelViewSet):
         if not user_eligible(request):
             raise ValidationException('You are not eligible to add budget to this biro')
         
-        # Project
         project = self.create_or_update_project(request)
         project_detail = self.create_or_update_project_detail(request, project)
         self.create_budget(request, project_detail)
