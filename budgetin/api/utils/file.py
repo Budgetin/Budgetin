@@ -1,6 +1,14 @@
 import pandas
+from django.utils.datastructures import MultiValueDictKeyError
 
-from api.exceptions import SheetNotFoundException
+from api.exceptions import SheetNotFoundException, FileNotFoundException
+
+def read_file(request):
+    try:
+        return request.FILES['file'].read()
+    except MultiValueDictKeyError:
+        raise FileNotFoundException
+    
 
 def read_excel(file, sheet_name):
     try:
