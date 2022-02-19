@@ -115,7 +115,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     
     def validate_strategy(self, data, index, errors):
         strategy_name = data['strategy_name']
-        if not pd.isnull(strategy_name) and Strategy.name_exists(strategy_name):
+        if not pd.isnull(strategy_name) and not Strategy.name_exists(strategy_name):
             errors.append("Strategy '{}' at line {} does not exists".format(strategy_name, index))
         return errors
     
