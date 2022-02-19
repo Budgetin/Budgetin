@@ -17,3 +17,8 @@ class Project(SoftDeleteModel, TimestampModel, UserTrackModel):
     def generate_itfamid(self):
         self.itfam_id = str(self.start_year) + str(self.id).zfill(7)
         self.save()
+        
+    @staticmethod
+    def name_exists(name):
+        return Project.objects.filter(project_name__iexact=name).count() > 0
+    

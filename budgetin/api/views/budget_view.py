@@ -1,4 +1,5 @@
-from datetime import datetime
+import pandas as pd
+from django.utils import timezone
 from django.forms import model_to_dict
 from django.db import transaction
 
@@ -6,12 +7,14 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from api.models import Budget, Project, ProjectDetail, Monitoring, Planning, Biro
-from api.serializers import BudgetSerializer, BudgetResponseSerializer, ProjectSerializer, ProjectDetailSerializer, MonitoringBaseSerializer
+from api.models import Budget, Project, ProjectDetail, Monitoring, Planning, Biro, Product, Coa, ProjectType
+from api.serializers import BudgetSerializer, BudgetResponseSerializer, ProjectSerializer, ProjectDetailSerializer, MonitoringBaseSerializer, PlanningSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum, RoleEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated
 from api.utils.export_budget import export_as_excel
+from api.utils.file import read_file, read_excel
+from api.utils.hit_api import get_all_biro
 from api.exceptions import ValidationException
 
 def active_planning(planning_id):
@@ -190,7 +193,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         if not remaining_budget:
             ProjectDetail.objects.filter(pk = deleted_budget.project_detail_id).update(
                 is_deleted = True,
-                deleted_at = datetime.now()
+                deleted_at = timezone.now()
             )
             #Special for auditlog project detail
             rewritten_req = request
@@ -269,5 +272,192 @@ class BudgetViewSet(viewsets.ModelViewSet):
         return export_as_excel(budgets)
     
     @action(methods=['post'], detail=False, url_path='import')
+    @transaction.atomic
     def import_from_excel(self, request):
+        file = read_file(request)
+        df = read_excel(file, 'budget')
+        errors = []
+        
+        self.create_update_all_biro()
+        
+        for index, data in df.iterrows():
+            print(index)
+            errors = self.insert_to_db(request, data, (index+2), errors)
+            
+        if errors:
+            raise ValidationException(errors)
+
         return Response(status=204)
+    
+    def create_update_all_biro(self):
+        biros = get_all_biro('manager_employee,sub_group,sub_group.group,manager_employee,sub_group.manager_employee,sub_group.group.manager_employee')
+        for biro in biros:
+            self.create_update_biro(biro)
+
+    def create_update_biro(self, biro):
+        return Biro.objects.update_or_create(
+            ithc_biro=biro['id'],
+            defaults={
+                'code': biro['code'], 
+                'name': biro['name'],
+                'sub_group_code': biro['sub_group']['code'],
+                'group_code': biro['sub_group']['group']['code'],
+                'rcc': biro['sub_group']['rcc'],
+            }
+        )
+    
+    def insert_to_db(self, request, data, index, errors):
+        errors.extend(self.validate_data(data, index))
+        
+        if not errors:
+            product = Product.objects.filter(product_code__iexact=data['product_code']).first()
+            coa = Coa.objects.filter(name__iexact=data['coa_name']).first()
+            biro = Biro.objects.filter(code__iexact=data['biro']).first()
+            planning = self.get_or_create_planning(request, data['year'])
+            project = self.update_or_create_project(request, data, biro, product)
+            project_detail = self.get_or_create_project_detail(request, data, project, planning)
+            self.create_budget(request, data, project_detail, coa)
+            
+        return errors
+    
+    def get_or_create_planning(self, request, year):
+        planning, created = Planning.objects.get_or_create(year=year, defaults={
+            'is_active': False, #DEBT
+            'notification': False,
+            'due_date': timezone.now(),
+            'created_by_id': request.custom_user['id'],
+            'updated_by_id': request.custom_user['id'],
+        })
+
+        if created:
+            AuditLog.Save(PlanningSerializer(planning), request, ActionEnum.CREATE, TableEnum.PLANNING)
+
+        return planning
+    
+    def update_or_create_project(self, request, data, biro, product):
+        project_name = data['project_name']
+        project_description = data['project_description'] if not pd.isnull(data['project_description']) else None
+        start_year = data['start_year'] if not pd.isnull(data['start_year']) else None
+        end_year = data['end_year'] if not pd.isnull(data['end_year']) else None
+        total_investment_value = data['total_investment']
+        product = product
+        is_tech = True if data['is_tech'] == 'Tech' else False
+        
+        project, created = Project.objects.update_or_create(project_name__iexact=project_name, defaults={
+            'project_description': project_description,
+            'start_year': start_year,
+            'end_year': end_year,
+            'total_investment_value': total_investment_value,
+            'biro': biro,
+            'product': product,
+            'is_tech': is_tech,
+            'created_by_id': request.custom_user['id'],
+            'updated_by_id': request.custom_user['id'],
+        })
+        project.generate_itfamid()
+
+        if created:
+            AuditLog.Save(ProjectSerializer(project), request, ActionEnum.CREATE, TableEnum.PROJECT)
+        
+        return project
+    
+    def get_or_create_project_detail(self, request, data, project, planning):
+        project_type = ProjectType.objects.filter(name__iexact=data['project_type']).first()
+        
+        project_detail, created = ProjectDetail.objects.get_or_create(project=project, planning=planning, defaults={
+            'dcsp_id': data['project_id'],
+            'project_type': project_type,
+            'created_by_id': request.custom_user['id'],
+            'updated_by_id': request.custom_user['id'],
+        })
+
+        if created:
+            AuditLog.Save(ProjectDetailSerializer(project_detail), request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
+
+        return project_detail
+    
+    def create_budget(self, request, data, project_detail, coa):
+        budget = Budget.objects.create(
+            project_detail = project_detail,
+            coa = coa,
+            expense_type = data["capex_opex"],
+            planning_q1 = data["Q1"] * data["total_budget"],
+            planning_q2 = data["Q2"] * data["total_budget"],
+            planning_q3 = data["Q3"] * data["total_budget"],
+            planning_q4 = data["Q4"] * data["total_budget"],
+            created_by_id = request.custom_user['id'],
+            updated_by_id = request.custom_user['id'],
+        )
+
+        AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
+            
+    def validate_data(self, data, index):
+        errors = []
+        errors = self.validate_product(data, index, errors)
+        errors = self.validate_coa(data, index, errors)
+        errors = self.validate_biro(data, index, errors)
+        errors = self.validate_project(data, index, errors)
+        return errors
+    
+    def validate_product(self, data, index, errors):
+        code = data['product_code']
+        if pd.isnull(code):
+            errors.append("Product code must be filled at line {}".format(index))
+        elif not Product.code_exists(code):
+            errors.append("Product code '{}' at line {} doesn't exists".format(code, index))
+        return errors
+    
+    def validate_coa(self, data, index, errors):
+        name = data['coa_name']
+        if not Coa.name_exists(name):
+            errors.append("Coa '{}' at line {} doesn't exists".format(name, index))
+        return errors
+    
+    def validate_biro(self, data, index, errors):
+        code = data['biro']
+        if not Biro.code_exists(code):
+            errors.append("Biro '{}' at line {} doesn't exists".format(code, index))
+        return errors
+    
+    def validate_project(self, data, index, errors):
+        name = data['project_name']
+        description = data['project_description']
+        is_tech = True if data['is_tech'] == 'Tech' else False
+        project_type = data['project_type']
+        biro = data['biro']
+        year = data['year']
+        
+        if pd.isnull(name):
+            errors.append("Project name must be filled at line {}".format(index))
+        if pd.isnull(is_tech):
+            errors.append("Is Tech must be filled at line {}".format(index))
+        if pd.isnull(project_type):
+            errors.append("Project type must be filled at line {}".format(index))
+        
+        existing_project = Project.objects.select_related('biro').filter(project_name__iexact=name).first()
+        if existing_project:
+            if description != existing_project.project_description:
+                errors.append("Inconsistent project description at line {}. Existing project description is '{}'".format(index, existing_project.project_description))
+            if not pd.isnull(is_tech) and is_tech != existing_project.is_tech:
+                errors.append("Inconsistent project tech/non tech at line {}. Existing project is a type of '{}'".format(index, 'Tech' if existing_project.is_tech else 'Non Tech'))
+            if not pd.isnull(biro) and biro.lower() != existing_project.biro.name.lower():
+                errors.append("Inconsistent project biro at line {}. Existing project is owned by '{}'".format(index, existing_project.biro.name))
+            
+            if not pd.isnull(project_type):
+                existing_project = Project.objects.select_related(
+                    'project_detail', 
+                    'project_detail__planning'
+                ).filter(project_name__iexact=name, project_detail__planning__year=year).first()
+
+                existing_project_type = existing_project.project_detail.project_type
+                if existing_project and project_type.lower() != existing_project_type.lower():
+                    errors.append("Inconsistent project type at line {}. Existing project type is '{}'".format(index, existing_project_type))
+        return errors
+
+    def create_strategy(self, request, data):
+        return Budget.objects.create(
+            name = data['strategy_name'],
+            created_by_id = request.custom_user['id'],
+            updated_by_id = request.custom_user['id'],
+        )
+    
