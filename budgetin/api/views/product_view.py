@@ -85,9 +85,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         errors = self.validate_data(data, index)
 
         if not errors:
-            strategy_name = data['strategy_name']
-            strategy = self.get_strategy(strategy_name)
-                        
+            strategy = self.get_strategy(data)
             product = self.create_product(request, data, strategy)
             AuditLog.Save(ProductSerializer(product), request, ActionEnum.CREATE, TableEnum.PRODUCT) 
         
@@ -130,11 +128,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     def strategy_not_exists(self, name, index):
         return Strategy.objects.filter(name__iexact=name).count() == 0
     
-    def get_strategy(self, name):
-        if pd.isnull(name):
+    def get_strategy(self, data):
+        strategy_name = data['strategy_name']
+        if pd.isnull(strategy_name):
             strategy = None
         else:
-            strategy = Strategy.objects.filter(name__iexact=name).first()
+            strategy = Strategy.objects.filter(name__iexact=strategy_name).first()
         return strategy
     
     def create_product(self, request, data, strategy):
