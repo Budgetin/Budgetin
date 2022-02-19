@@ -84,8 +84,9 @@ class StrategyViewSet(viewsets.ModelViewSet):
         if self.strategy_already_exists(name):
             errors.append("Strategy '{}' at line {} already exists".format(name, index))
         
-        strategy = self.create_strategy(request, name)
-        AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY)
+        if not errors:
+            strategy = self.create_strategy(request, name)
+            AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY)
 
         return errors
             
