@@ -79,10 +79,7 @@ class CoaViewSet(viewsets.ModelViewSet):
         return Response(status=204)
     
     def insert_to_db(self, request, data, index):
-        errors = []
-        
-        name = data['coa_name']
-        errors = self.validate_coa(name, index, errors)
+        errors = self.validate_data(data, index)
 
         if not errors:
             coa = self.create_coa(request, data)
@@ -90,7 +87,14 @@ class CoaViewSet(viewsets.ModelViewSet):
 
         return errors
     
-    def validate_coa(self, name, index, errors):
+    def validate_data(self, data, index):
+        errors = []
+        errors = self.validate_coa(data, index, errors)
+        return errors
+    
+    def validate_coa(self, data, index, errors):
+        name = data['coa_name']
+        
         if pd.isnull(name):
             errors.append("Coa name must be filled at line {}".format(index))
         elif self.coa_already_exists(name):
