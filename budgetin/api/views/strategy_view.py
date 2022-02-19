@@ -9,7 +9,7 @@ from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.file import read_excel
-from api.exceptions import ValidationException, ImportValidationException
+from api.exceptions import ValidationException
 
 def is_duplicate_create(name):
     if Strategy.objects.filter(name=name):
@@ -74,7 +74,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
             errors.extend(self.insert_to_db(request, row, (index+2)))
             
         if errors:
-            raise ImportValidationException(errors)
+            raise ValidationException(errors)
 
         return Response(status=204)
     
