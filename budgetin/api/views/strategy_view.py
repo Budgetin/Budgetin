@@ -8,7 +8,7 @@ from api.models import Strategy
 from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_excel
+from api.utils.file import read_excel, read_file
 from api.exceptions import ValidationException
 
 def is_duplicate_create(name):
@@ -66,7 +66,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     @action(methods=['post'], detail=False, url_path='import')
     def import_from_excel(self, request):
-        file = request.FILES['file'].read()
+        file = read_file(request)
         df = read_excel(file, 'strategy')
         errors = []
         

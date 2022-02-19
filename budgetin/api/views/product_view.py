@@ -10,7 +10,7 @@ from api.models import Product, Strategy
 from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_excel
+from api.utils.file import read_excel, read_file
 from api.exceptions import ValidationException
 
 def is_product_duplicate(product_id, product_code, product_name):
@@ -69,7 +69,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     @action(methods=['post'], detail=False, url_path='import')
     def import_from_excel(self, request):
-        file = request.FILES['file'].read()
+        file = read_file(request)
         df = read_excel(file, 'product')
         errors = []
         
