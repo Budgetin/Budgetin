@@ -83,7 +83,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
         AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY) 
             
     def strategy_already_exists(self, name):
-        return Strategy.objects.filter(name=name).count() > 0
+        return Strategy.objects.filter(name__iexact=name).count() > 0
     
     def create_strategy(self, request, name):
         return Strategy.objects.create(

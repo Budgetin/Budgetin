@@ -88,10 +88,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         AuditLog.Save(ProductSerializer(product), request, ActionEnum.CREATE, TableEnum.PRODUCT) 
             
     def product_already_exists(self, code):
-        return Product.objects.filter(product_code=code).count() > 0
+        return Product.objects.filter(product_code__iexact=code).count() > 0
     
     def get_strategy_or_raise_error(self, name, index):
-        strategy = Strategy.objects.filter(name=name)
+        strategy = Strategy.objects.filter(name__iexact=name)
         if strategy.count() == 0:
             raise ImportValidationException("Strategy '{}' at line {} does not exists".format(name, index))
         return strategy.first()
