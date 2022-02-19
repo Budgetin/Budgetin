@@ -74,7 +74,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         errors = []
         
         for index, row in df.iterrows():
-            print(index)
             errors.extend(self.insert_to_db(request, row, (index+2)))
         
         if errors:
@@ -83,34 +82,60 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(status=204)    
 
     def insert_to_db(self, request, data, index):
-        errors = []
-        
-        code = data['product_code']
-        if self.product_already_exists(code):
-            errors.append("Product '{}' at line {} already exists".format(code, index))
-        
-        ''' 
-        Get strategy. Strategy Can be empty. If filled, strategy must exists in DB.
-        '''
-        strategy_name = data['strategy_name']
-        if pd.isnull(strategy_name):
-            strategy = None
-        elif self.strategy_not_exists(strategy_name, index):
-            errors.append("Strategy '{}' at line {} does not exists".format(strategy_name, index))
-        else:
-            strategy = Strategy.objects.filter(name__iexact=strategy_name).first()
-            
+        errors = self.validate_data(data, index)
+
         if not errors:
+            strategy_name = data['strategy_name']
+            strategy = self.get_strategy(strategy_name)
+                        
             product = self.create_product(request, data, strategy)
             AuditLog.Save(ProductSerializer(product), request, ActionEnum.CREATE, TableEnum.PRODUCT) 
         
         return errors
+    
+    def validate_data(self, data, index):
+        errors = []
+        errors = self.validate_product(data, index, errors)
+        errors = self.validate_strategy(data, index, errors)
+        return errors
+    
+    def validate_product(self, data, index, errors):
+        code = data['product_code']
+        name = data['product_name']
+        
+        if pd.isnull(code):
+            errors.append("Product code must be filled at line {}".format(index))
+        elif self.product_code_already_exists(code):
+            errors.append("Product code '{}' at line {} already exists".format(code, index))
             
-    def product_already_exists(self, code):
+        if pd.isnull(name):
+            errors.append("Product name must be filled at line {}".format(index))
+        elif self.product_name_already_exists(name):
+            errors.append("Product name '{}' at line {} already exists".format(name, index))
+
+        return errors
+    
+    def product_code_already_exists(self, code):
         return Product.objects.filter(product_code__iexact=code).count() > 0
+    
+    def product_name_already_exists(self, name):
+        return Product.objects.filter(product_name__iexact=name).count() > 0
+    
+    def validate_strategy(self, data, index, errors):
+        strategy_name = data['strategy_name']
+        if not pd.isnull(strategy_name) and self.strategy_not_exists(strategy_name, index):
+            errors.append("Strategy '{}' at line {} does not exists".format(strategy_name, index))
+        return errors
     
     def strategy_not_exists(self, name, index):
         return Strategy.objects.filter(name__iexact=name).count() == 0
+    
+    def get_strategy(self, name):
+        if pd.isnull(name):
+            strategy = None
+        else:
+            strategy = Strategy.objects.filter(name__iexact=name).first()
+        return strategy
     
     def create_product(self, request, data, strategy):
         return Product.objects.create(
