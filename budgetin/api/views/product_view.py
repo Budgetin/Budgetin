@@ -1,3 +1,4 @@
+import pandas as pd
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
 from rest_framework import viewsets
@@ -70,31 +71,46 @@ class ProductViewSet(viewsets.ModelViewSet):
     def import_from_excel(self, request):
         file = request.FILES['file'].read()
         df = read_excel(file, 'product')
+        errors = []
         
         for index, row in df.iterrows():
-            self.insert_to_db(request, row, (index+2))
+            print(index)
+            errors.extend(self.insert_to_db(request, row, (index+2)))
         
+        if errors:
+            raise ImportValidationException(errors)
+
         return Response(status=204)    
 
     def insert_to_db(self, request, data, index):
+        errors = []
+        
         code = data['product_code']
         if self.product_already_exists(code):
-            raise ImportValidationException("Product '{}' at line {} already exists".format(code, index))
+            errors.append("Product '{}' at line {} already exists".format(code, index))
         
+        ''' 
+        Get strategy. Strategy Can be empty. If filled, strategy must exists in DB.
+        '''
         strategy_name = data['strategy_name']
-        strategy = self.get_strategy_or_raise_error(strategy_name, index)
+        if pd.isnull(strategy_name):
+            strategy = None
+        elif self.strategy_not_exists(strategy_name, index):
+            errors.append("Strategy '{}' at line {} does not exists".format(strategy_name, index))
+        else:
+            strategy = Strategy.objects.filter(name__iexact=strategy_name).first()
             
-        product = self.create_product(request, data, strategy)
-        AuditLog.Save(ProductSerializer(product), request, ActionEnum.CREATE, TableEnum.PRODUCT) 
+        if not errors:
+            product = self.create_product(request, data, strategy)
+            AuditLog.Save(ProductSerializer(product), request, ActionEnum.CREATE, TableEnum.PRODUCT) 
+        
+        return errors
             
     def product_already_exists(self, code):
         return Product.objects.filter(product_code__iexact=code).count() > 0
     
-    def get_strategy_or_raise_error(self, name, index):
-        strategy = Strategy.objects.filter(name__iexact=name)
-        if strategy.count() == 0:
-            raise ImportValidationException("Strategy '{}' at line {} does not exists".format(name, index))
-        return strategy.first()
+    def strategy_not_exists(self, name, index):
+        return Strategy.objects.filter(name__iexact=name).count() == 0
     
     def create_product(self, request, data, strategy):
         return Product.objects.create(
