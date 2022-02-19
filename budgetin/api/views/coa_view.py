@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.db import transaction
 
 from api.models import Coa
@@ -7,6 +8,7 @@ from api.serializers import CoaSerializer, CoaResponseSerializer
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
+from api.utils.file import read_excel
 from api.exceptions import ValidationException
 
 def is_duplicate_coa_create(name, hyperion_name):
@@ -59,3 +61,35 @@ class CoaViewSet(viewsets.ModelViewSet):
         coa = super().destroy(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.DELETE, TableEnum.COA)
         return coa
+    
+    @transaction.atomic
+    @action(methods=['post'], detail=False, url_path='import')
+    def import_from_excel(self, request):
+        file = request.FILES['file'].read()
+        df = read_excel(file, 'coa')
+        
+        for index, row in df.iterrows():
+            self.insert_to_db(request, row, (index+2))
+
+        return Response(status=204)
+    
+    def insert_to_db(self, request, data, index):
+        name = data['coa_name']
+        if self.coa_already_exists(name):
+            raise ValidationException("Coa '{}' at line {} already exists".format(name, index))
+
+        coa = self.create_coa(request, data)
+        AuditLog.Save(CoaSerializer(coa), request, ActionEnum.CREATE, TableEnum.COA) 
+            
+    def coa_already_exists(self, name):
+        return Coa.objects.filter(name__iexact=name).count() > 0
+    
+    def create_coa(self, request, data):
+        return Coa.objects.create(
+            name = data['coa_name'],
+            definition = data['coa_definition'],
+            hyperion_name = data['hyperion_name'],
+            is_capex = True,
+            created_by_id = request.custom_user['id'],
+            updated_by_id = request.custom_user['id'],
+        )
