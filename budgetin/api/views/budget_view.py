@@ -12,7 +12,7 @@ from api.serializers import BudgetSerializer, BudgetResponseSerializer, ProjectS
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum, RoleEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated
-from api.utils.export_budget import export_as_excel
+from api.utils.export_budget import export_budget_as_excel
 from api.utils.file import read_file, read_excel
 from api.utils.hit_api import get_all_biro
 from api.exceptions import ValidationException
@@ -270,7 +270,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
                                                 'project_detail__project__biro', 'project_detail__project__product', 
                                                 'project_detail__project__product__strategy', 'updated_by').all()
 
-        return export_as_excel(budgets)
+        return export_budget_as_excel(budgets)
     
     @action(methods=['post'], detail=False, url_path='import')
     @transaction.atomic
