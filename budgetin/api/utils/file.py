@@ -20,12 +20,15 @@ def read_excel(file, sheet_name):
     
     return df
 
-def get_import_template(table):
+def get_import_template_path(table):
     module_dir = os.path.dirname(__file__)
     file_name = 'import_template_' + table.value + '.xlsx'
     file_path = os.path.join(module_dir, 'template/', file_name)
+    
+    return file_path
 
+def get_import_template(path):
     try:
-        return open(file_path, 'rb')
+        return open(path, 'rb')
     except:
         raise FileNotFoundException()
