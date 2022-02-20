@@ -1,7 +1,11 @@
 from django.db import models
+from django_softdelete.models import SoftDeleteModel
+from api.models.abstract_model import TimestampModel, UserTrackModel
 
-class Realization(models.Model):
+class Realization(SoftDeleteModel, TimestampModel, UserTrackModel):
     #DEBT add parent either ProjectDetail or Budget
+    coa = models.ForeignKey('Coa', on_delete=models.CASCADE)
+    budget = models.ForeignKey('Budget', on_delete=models.CASCADE)
     realization_jan = models.BigIntegerField(default = 0, blank = True)
     realization_feb = models.BigIntegerField(default = 0, blank = True)
     realization_mar = models.BigIntegerField(default = 0, blank = True)
@@ -14,8 +18,4 @@ class Realization(models.Model):
     realization_oct = models.BigIntegerField(default = 0, blank = True)
     realization_nov = models.BigIntegerField(default = 0, blank = True)
     realization_dec = models.BigIntegerField(default = 0, blank = True)
-    switching_in = models.BigIntegerField(default = 0, blank = True)
-    switching_out = models.BigIntegerField(default = 0, blank = True)
-    top_up = models.BigIntegerField(default = 0, blank = True)
-    returns = models.BigIntegerField(default = 0, blank = True)
     allocate = models.BigIntegerField(default = 0, blank = True)

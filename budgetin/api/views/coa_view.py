@@ -1,5 +1,7 @@
+import pandas as pd
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.db import transaction
 
 from api.models import Coa
@@ -7,6 +9,7 @@ from api.serializers import CoaSerializer, CoaResponseSerializer
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
+from api.utils.file import read_excel, read_file, get_import_template_path, load_file, export_excel
 from api.exceptions import ValidationException
 
 def is_duplicate_coa_create(name, hyperion_name):
@@ -59,3 +62,58 @@ class CoaViewSet(viewsets.ModelViewSet):
         coa = super().destroy(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.DELETE, TableEnum.COA)
         return coa
+    
+    @transaction.atomic
+    @action(methods=['post'], detail=False, url_path='import')
+    def import_from_excel(self, request):
+        file = read_file(request)
+        df = read_excel(file, TableEnum.COA.value)
+        errors = []
+        
+        for index, data in df.iterrows():
+            errors.extend(self.insert_to_db(request, data, (index+2)))
+        
+        if errors:
+            raise ValidationException(errors)
+        
+        return Response(status=204)
+    
+    def insert_to_db(self, request, data, index):
+        errors = self.validate_data(data, index)
+
+        if not errors:
+            coa = self.create_coa(request, data)
+            AuditLog.Save(CoaSerializer(coa), request, ActionEnum.CREATE, TableEnum.COA) 
+
+        return errors
+    
+    def validate_data(self, data, index):
+        errors = []
+        errors = self.validate_coa(data, index, errors)
+        return errors
+    
+    def validate_coa(self, data, index, errors):
+        name = data['coa_name']
+        
+        if pd.isnull(name):
+            errors.append("Coa name must be filled at line {}".format(index))
+        elif Coa.name_exists(name):
+            errors.append("Coa '{}' at line {} already exists".format(name, index))
+        return errors
+    
+    def create_coa(self, request, data):
+        return Coa.objects.create(
+            name = data['coa_name'],
+            definition = data['coa_definition'] if not pd.isnull(data['coa_definition']) else None,
+            hyperion_name = data['hyperion_name'] if not pd.isnull(data['hyperion_name']) else None,
+            is_capex = True,
+            created_by_id = request.custom_user['id'],
+            updated_by_id = request.custom_user['id'],
+        )
+    
+    @action(methods=['get'], detail=False, url_path='import/template')
+    def download_import_template(self, request):
+        file_path = get_import_template_path(TableEnum.COA)
+        file = load_file(file_path, 'rb')
+        
+        return export_excel(file, 'import_template_strategy.xlsx')
