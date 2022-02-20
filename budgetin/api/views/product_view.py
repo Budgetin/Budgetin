@@ -1,16 +1,20 @@
 import pandas as pd
+from io import BytesIO
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
+from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from openpyxl import load_workbook
+from openpyxl.writer.excel import save_virtual_workbook
 
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
-from api.models import Product, Strategy
+from api.models import Product, Strategy, Coa
 from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_excel, read_file
+from api.utils.file import read_excel, read_file, get_import_template_path, remove_sheet
 from api.exceptions import ValidationException
 
 def is_product_duplicate(product_id, product_code, product_name):
@@ -135,3 +139,43 @@ class ProductViewSet(viewsets.ModelViewSet):
             created_by_id = request.custom_user['id'],
             updated_by_id = request.custom_user['id'],
         )
+    
+    @action(methods=['get'], detail=False, url_path='import/template')
+    def download_import_template(self, request):
+        file_path = get_import_template_path(TableEnum.PRODUCT)
+        book = load_workbook(filename=file_path)
+
+        self.write_coa_sheet(book, file_path)
+
+        book.close()                
+        response = HttpResponse(content=BytesIO(save_virtual_workbook(book)))
+        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        response['Content-Disposition'] = 'attachment; filename="import_template_product.xlsx"'
+        
+        return response
+    
+    def write_coa_sheet(self, book, file_path):
+        columns = ['coa_name', 'hyperion_name', 'coa_definition']
+        coas = self.get_all_coa()
+        
+        writer = pd.ExcelWriter(file_path, engine = 'openpyxl')
+        writer.book = book
+        
+        if 'existing_coa' in book.sheetnames:
+            remove_sheet(book, 'existing_coa')            
+            
+        df = pd.DataFrame(coas, columns=columns)
+        df.to_excel(writer, sheet_name = 'existing_coa', index=False)
+        writer.save()
+        writer.close()
+    
+    def get_all_coa(self):
+        coas = Coa.objects.all()
+        result = []
+        for coa in coas:
+            temp = []
+            temp.append(coa.name)
+            temp.append(coa.hyperion_name)
+            temp.append(coa.definition)
+            result.append(temp)
+        return result
