@@ -1,7 +1,10 @@
 import pandas as pd
+from io import BytesIO
 from django.utils import timezone
 from django.forms import model_to_dict
 from django.db import transaction
+from openpyxl import load_workbook
+from openpyxl.writer.excel import save_virtual_workbook
 
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -13,7 +16,7 @@ from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum, RoleEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated
 from api.utils.export_budget import export_budget_as_excel
-from api.utils.file import read_file, read_excel
+from api.utils.file import read_excel, read_file, get_import_template_path, remove_sheet, export_excel
 from api.utils.hit_api import get_all_biro
 from api.exceptions import ValidationException
 
@@ -473,4 +476,69 @@ class BudgetViewSet(viewsets.ModelViewSet):
             created_by_id = request.custom_user['id'],
             updated_by_id = request.custom_user['id'],
         )
+        
+    @action(methods=['get'], detail=False, url_path='import/template')
+    def download_import_template(self, request):
+        file_path = get_import_template_path(TableEnum.BUDGET)
+        book = load_workbook(filename=file_path)
+
+        self.write_product_sheet(book, file_path)
+        self.write_coa_sheet(book, file_path)
+
+        book.close()                
+        return export_excel(content=BytesIO(save_virtual_workbook(book)), filename='import_template_product.xlsx')
+    
+    def write_product_sheet(self, book, file_path):
+        columns = ['product_code', 'product_name', 'strategy']
+        products = self.get_all_product()
+        
+        writer = pd.ExcelWriter(file_path, engine = 'openpyxl')
+        writer.book = book
+        
+        if 'existing_product' in book.sheetnames:
+            remove_sheet(book, 'existing_product')            
+            
+        df = pd.DataFrame(products, columns=columns)
+        df.to_excel(writer, sheet_name = 'existing_product', index=False)
+        writer.save()
+        writer.close()
+    
+    def get_all_product(self):
+        products = Product.objects.select_related('strategy').all()
+        result = []
+        for product in products:
+            temp = []
+            strategy = product.strategy
+            
+            temp.append(product.product_code)
+            temp.append(product.product_name)
+            temp.append(strategy.name if strategy else '')
+            result.append(temp)
+        return result
+    
+    def write_coa_sheet(self, book, file_path):
+        columns = ['coa_name', 'hyperion_name', 'coa_definition']
+        coas = self.get_all_coa()
+        
+        writer = pd.ExcelWriter(file_path, engine = 'openpyxl')
+        writer.book = book
+        
+        if 'existing_coa' in book.sheetnames:
+            remove_sheet(book, 'existing_coa')            
+            
+        df = pd.DataFrame(coas, columns=columns)
+        df.to_excel(writer, sheet_name = 'existing_coa', index=False)
+        writer.save()
+        writer.close()
+    
+    def get_all_coa(self):
+        coas = Coa.objects.all()
+        result = []
+        for coa in coas:
+            temp = []
+            temp.append(coa.name)
+            temp.append(coa.hyperion_name)
+            temp.append(coa.definition)
+            result.append(temp)
+        return result
     
