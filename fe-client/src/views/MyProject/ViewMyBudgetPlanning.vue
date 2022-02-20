@@ -175,7 +175,6 @@ export default {
     ...mapActions("masterCoa", ["getMasterCoa"]),
 
     getDetailItem() {
-      console.log(this.$route.params.id_budget_planning);
       this.getAllBudgetById(this.$route.params.id_budget_planning).then(() => {
         this.setForm();
       });
@@ -186,7 +185,6 @@ export default {
       );
     },
     setBreadcrumbs() {
-      console.log(this.$route.name);
       let name = this.$route.name;
       let param = this.isView ? "View Budget Planning" : "Edit Budget Planning";
       if (name = "ViewSubmittedBudgetPlanning") {

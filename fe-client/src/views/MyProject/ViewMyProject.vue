@@ -29,6 +29,7 @@
         <v-row no-gutters>
             <v-card class="view-my-project__table">
                 <table-budget-planning
+                :route_to="route"
                 :budgetPlanning="budgetPlanning"
                 v-if="budgetPlanning.project_detail">
                 </table-budget-planning>
@@ -78,6 +79,7 @@ export default {
         FormMyProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization, SuccessErrorAlert, TimelineLog
     },
     data: () => ({
+        route:'ViewMyBudgetPlanning',
         dialog: false,
         isView: true,
         itemsHistory: null,

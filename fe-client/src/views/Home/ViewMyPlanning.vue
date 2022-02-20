@@ -248,7 +248,6 @@ export default {
       );
     },
     getHistoryItem() {
-      console.log(this.$route.params.id_project);
       this.getHistory(this.$route.params.id_project).then(() => {
         // console.log("Masuk getHistory");
         this.itemsHistory = JSON.parse(

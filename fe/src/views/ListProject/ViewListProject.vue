@@ -30,7 +30,8 @@
             <v-card class="view-list-project__table">
                 <table-budget-planning
                 :budgetPlanning="budgetPlanning"
-                v-if="budgetPlanning.project_detail">
+                v-if="budgetPlanning.project_detail"
+                :route_to="route">
                 </table-budget-planning>
             </v-card>
         </v-row>
@@ -78,6 +79,7 @@ export default {
         FormListProject, TableProjectDetails, TableBudgetPlanning, TableBudgetRealization, SuccessErrorAlert, TimelineLog
     },
     data: () => ({
+        route:'ViewMyBudgetPlanning',
         dialog: false,
         isView: true,
         itemsHistory: null,
