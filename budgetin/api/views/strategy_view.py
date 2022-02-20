@@ -10,7 +10,7 @@ from api.models import Strategy
 from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_excel, read_file, get_import_template_path, get_file
+from api.utils.file import read_excel, read_file, get_import_template_path, load_file
 from api.exceptions import ValidationException
 
 def is_duplicate_create(name):
@@ -110,7 +110,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):
         file_path = get_import_template_path(TableEnum.STRATEGY)
-        file = get_file(file_path)
+        file = load_file(file_path)
 
         response = HttpResponse(content=file)
         response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
