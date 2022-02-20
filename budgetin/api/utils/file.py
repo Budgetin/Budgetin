@@ -27,7 +27,7 @@ def get_import_template_path(table):
     
     return file_path
 
-def get_import_template(path):
+def get_file(path):
     try:
         return open(path, 'rb')
     except:
