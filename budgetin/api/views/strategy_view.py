@@ -10,7 +10,7 @@ from api.models import Strategy
 from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_excel, read_file, get_import_template_path, load_file
+from api.utils.file import read_excel, read_file, get_import_template_path, load_file, export_excel
 from api.exceptions import ValidationException
 
 def is_duplicate_create(name):
@@ -69,7 +69,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False, url_path='import')
     def import_from_excel(self, request):
         file = read_file(request)
-        df = read_excel(file, 'strategy')
+        df = read_excel(file, TableEnum.STRATEGY.value)
         errors = []
         
         for index, data in df.iterrows():
@@ -111,11 +111,5 @@ class StrategyViewSet(viewsets.ModelViewSet):
     def download_import_template(self, request):
         file_path = get_import_template_path(TableEnum.STRATEGY)
         file = load_file(file_path, 'rb')
-
-        response = HttpResponse(content=file)
-        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        response['Content-Disposition'] = 'attachment; filename="import_strategy_template.xlsx"'
         
-        file.close()
-        
-        return response
+        return export_excel(file, 'import_template_strategy.xlsx')

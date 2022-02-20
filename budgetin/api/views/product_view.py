@@ -14,7 +14,7 @@ from api.models import Product, Strategy, Coa
 from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_excel, read_file, get_import_template_path, remove_sheet
+from api.utils.file import read_excel, read_file, get_import_template_path, remove_sheet, export_excel
 from api.exceptions import ValidationException
 
 def is_product_duplicate(product_id, product_code, product_name):
@@ -74,7 +74,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False, url_path='import')
     def import_from_excel(self, request):
         file = read_file(request)
-        df = read_excel(file, 'product')
+        df = read_excel(file, TableEnum.PRODUCT.value)
         errors = []
         
         for index, data in df.iterrows():
@@ -148,11 +148,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         self.write_coa_sheet(book, file_path)
 
         book.close()                
-        response = HttpResponse(content=BytesIO(save_virtual_workbook(book)))
-        response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        response['Content-Disposition'] = 'attachment; filename="import_template_product.xlsx"'
-        
-        return response
+        return export_excel(content=BytesIO(save_virtual_workbook(book)), filename='import_template_product.xlsx')
     
     def write_coa_sheet(self, book, file_path):
         columns = ['coa_name', 'hyperion_name', 'coa_definition']
