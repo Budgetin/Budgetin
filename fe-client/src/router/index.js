@@ -94,7 +94,7 @@ const routes = [
         component: () => import("@/views/Home/AddExistingProjectBudget"),
       },
       {
-        path: "/home/:id/submitted/:id_project/view",
+        path: "/:path_history/:id/submitted/:id_project/view",
         name: "ViewMyPlanning",
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);
@@ -107,7 +107,7 @@ const routes = [
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);
         },
-        component: () => import("@/views/Home/ViewSubmittedBudgetPlanning"),
+        component: () => import("@/views/MyProject/ViewMyBudgetPlanning"),
       },
       {
         path: "/myBudget",

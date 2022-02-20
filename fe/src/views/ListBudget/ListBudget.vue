@@ -242,7 +242,7 @@
                 <v-row >
                   <v-col cols="6" class="mt-2" >
                     <div class="choose-project-type_box" align="center" justify="center" @click="onUpload">
-                      <img :src="require('../../assets/upload.gif')" height="80rem" /><br>
+                      <img :src="require('../../assets/upload_2.gif')" height="80rem" /><br>
                       Upload Excel
                       <!-- <v-btn rounded color="primary" @click="onUpload"> Upload Excel </v-btn> -->
                     </div>

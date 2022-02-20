@@ -5,6 +5,7 @@
       <v-card class="view-my-project__table">
         <table-budget-planning
           :budgetPlanning="budgetPlanning"
+          :route_to="route"
           v-if="budgetPlanning.project_detail"
         >
         </table-budget-planning>
@@ -93,6 +94,7 @@ export default {
     TimelineLog,
   },
   data: () => ({
+    route:'ViewSubmittedBudgetPlanning',
     dialog: false,
     isView: true,
     itemsHistory: null,
