@@ -10,12 +10,16 @@ class Project(SoftDeleteModel, TimestampModel, UserTrackModel):
     biro = models.ForeignKey('Biro', on_delete=models.CASCADE)
     start_year = models.IntegerField(blank=True, null=True)
     end_year = models.IntegerField(blank=True, null=True)
-    total_investment_value = models.BigIntegerField()
+    total_investment_value = models.BigIntegerField(blank=True, default=0)
     product = models.ForeignKey('Product',on_delete=models.CASCADE)
     is_tech = models.BooleanField(default=False)
 
-    def generate_itfamid(self):
-        self.itfam_id = str(self.start_year) + str(self.id).zfill(7)
+    def generate_itfamid(self, year):
+        self.itfam_id = str(year) + str(self.id).zfill(7)
+        self.save()
+        
+    def add_total_investment(self, nominal):
+        self.total_investment_value += nominal
         self.save()
         
     @staticmethod

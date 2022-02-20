@@ -16,7 +16,8 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'product_code', 'strategy']
         
     def get_strategy(self, product):
-        return product.strategy.name
+        if product.strategy:
+            return product.strategy.name
         
 class BiroSerializer(serializers.ModelSerializer):
     class Meta:

@@ -155,7 +155,6 @@ def get_or_create_project(request, data, biro, product, index):
         'created_by_id': request.custom_user['id'],
         'updated_by_id': request.custom_user['id'],
     })
-    project.generate_itfamid()
 
     if created:
         AuditLog.Save(ProjectSerializer(project), request, ActionEnum.CREATE, TableEnum.PROJECT)

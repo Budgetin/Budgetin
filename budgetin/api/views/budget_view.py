@@ -89,6 +89,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         return Response(model_to_dict(project))
 
     def create_or_update_project(self, request):
+        planning = Planning.objects.filter(planning__id=request.data['planning'])
         if 'project_id' not in request.data:
             project = Project.objects.create(
                 project_name = request.data['project_name'],
@@ -102,7 +103,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
                 created_by_id = request.custom_user['id'],
                 updated_by_id = request.custom_user['id']
             )
-            project.generate_itfamid()
+            project.generate_itfamid(planning.year)
             AuditLog.Save(ProjectSerializer(project), request, ActionEnum.CREATE, TableEnum.PROJECT)
         else:
             project = Project.objects.get(pk=request.data['project_id'])
@@ -314,9 +315,9 @@ class BudgetViewSet(viewsets.ModelViewSet):
             coa = Coa.objects.filter(name__iexact=data['coa_name']).first()
             biro = Biro.objects.filter(code__iexact=data['biro']).first()
             planning = self.get_or_create_planning(request, data['year'])
-            project = self.update_or_create_project(request, data, biro, product)
+            project = self.create_or_update_project_from_excel(request, data, biro, product)
             project_detail = self.get_or_create_project_detail(request, data, project, planning)
-            self.create_budget(request, data, project_detail, coa)
+            self.create_or_update_budget(request, data, project_detail, coa)
             
         return errors
     
@@ -334,31 +335,31 @@ class BudgetViewSet(viewsets.ModelViewSet):
 
         return planning
     
-    def update_or_create_project(self, request, data, biro, product):
+    def create_or_update_project_from_excel(self, request, data, biro, product):
         project_name = data['project_name']
         project_description = data['project_description'] if not pd.isnull(data['project_description']) else None
+        year = data['year']
         start_year = data['start_year'] if not pd.isnull(data['start_year']) else None
         end_year = data['end_year'] if not pd.isnull(data['end_year']) else None
-        total_investment_value = data['total_investment']
         product = product
         is_tech = True if data['is_tech'] == 'Tech' else False
         
         project, created = Project.objects.update_or_create(project_name__iexact=project_name, defaults={
+            'project_name': project_name,
             'project_description': project_description,
             'start_year': start_year,
             'end_year': end_year,
-            'total_investment_value': total_investment_value,
             'biro': biro,
             'product': product,
             'is_tech': is_tech,
             'created_by_id': request.custom_user['id'],
             'updated_by_id': request.custom_user['id'],
         })
-        project.generate_itfamid()
 
         if created:
+            project.generate_itfamid(year)
             AuditLog.Save(ProjectSerializer(project), request, ActionEnum.CREATE, TableEnum.PROJECT)
-        
+                    
         return project
     
     def get_or_create_project_detail(self, request, data, project, planning):
@@ -376,20 +377,29 @@ class BudgetViewSet(viewsets.ModelViewSet):
 
         return project_detail
     
-    def create_budget(self, request, data, project_detail, coa):
-        budget = Budget.objects.create(
+    def create_or_update_budget(self, request, data, project_detail, coa):
+        budget, created = Budget.objects.update_or_create(
             project_detail = project_detail,
             coa = coa,
-            expense_type = data["capex_opex"],
-            planning_q1 = data["Q1"] * data["total_budget"],
-            planning_q2 = data["Q2"] * data["total_budget"],
-            planning_q3 = data["Q3"] * data["total_budget"],
-            planning_q4 = data["Q4"] * data["total_budget"],
-            created_by_id = request.custom_user['id'],
-            updated_by_id = request.custom_user['id'],
+            defaults={
+                'expense_type': data["capex_opex"],
+                'planning_q1': data["Q1"] * data["total_budget"],
+                'planning_q2': data["Q2"] * data["total_budget"],
+                'planning_q3': data["Q3"] * data["total_budget"],
+                'planning_q4': data["Q4"] * data["total_budget"],
+                'updated_by_id': request.custom_user['id'],
+            }
         )
-
-        AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
+        
+        if created:
+            project = Project.objects.filter(project_detail=project_detail).first()
+            project.add_total_investment(data['total_budget'])
+            
+            budget.created_by_id = request.custom_user['id']
+            budget.save()
+            AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
+        else:
+            AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
             
     def validate_data(self, data, index):
         errors = []
@@ -421,7 +431,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
     
     def validate_project(self, data, index, errors):
         name = data['project_name']
-        description = data['project_description']
+        description = data['project_description'] if not pd.isnull(data['project_description']) else None
         is_tech = True if data['is_tech'] == 'Tech' else False
         project_type = data['project_type']
         biro = data['biro']
@@ -436,22 +446,25 @@ class BudgetViewSet(viewsets.ModelViewSet):
         
         existing_project = Project.objects.select_related('biro').filter(project_name__iexact=name).first()
         if existing_project:
-            if description != existing_project.project_description:
+            if description and description != existing_project.project_description:
                 errors.append("Inconsistent project description at line {}. Existing project description is '{}'".format(index, existing_project.project_description))
             if not pd.isnull(is_tech) and is_tech != existing_project.is_tech:
                 errors.append("Inconsistent project tech/non tech at line {}. Existing project is a type of '{}'".format(index, 'Tech' if existing_project.is_tech else 'Non Tech'))
-            if not pd.isnull(biro) and biro.lower() != existing_project.biro.name.lower():
-                errors.append("Inconsistent project biro at line {}. Existing project is owned by '{}'".format(index, existing_project.biro.name))
+            if not pd.isnull(biro) and biro.lower() != existing_project.biro.code.lower():
+                errors.append("Inconsistent project biro at line {}. Existing project is owned by '{}'".format(index, existing_project.biro.zcode))
             
             if not pd.isnull(project_type):
-                existing_project = Project.objects.select_related(
+                existing_project = Project.objects.prefetch_related(
                     'project_detail', 
-                    'project_detail__planning'
+                    'project_detail__planning',
+                    'project_detail__project_type'
                 ).filter(project_name__iexact=name, project_detail__planning__year=year).first()
-
-                existing_project_type = existing_project.project_detail.project_type
-                if existing_project and project_type.lower() != existing_project_type.lower():
-                    errors.append("Inconsistent project type at line {}. Existing project type is '{}'".format(index, existing_project_type))
+                
+                if existing_project:
+                    existing_project_detail = existing_project.project_detail.filter(planning__year=year).first()
+                    existing_project_type = existing_project_detail.project_type.name
+                    if project_type.lower() != existing_project_type.lower():
+                        errors.append("Inconsistent project type at line {}. Existing project type is '{}'".format(index, existing_project_type))
         return errors
 
     def create_strategy(self, request, data):
