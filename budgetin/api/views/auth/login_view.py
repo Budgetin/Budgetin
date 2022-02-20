@@ -29,7 +29,6 @@ def get_admin(username):
 def get_user(username):
     #Check if User is S1, S2, S3 in DB
     user = get_ithc_employee_info(username)
-    print(user)
     if is_manager(user):
         return {
                 'employee_id': user['employee_id'],

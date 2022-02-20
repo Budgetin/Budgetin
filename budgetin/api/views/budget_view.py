@@ -285,7 +285,6 @@ class BudgetViewSet(viewsets.ModelViewSet):
         self.create_update_all_biro()
         
         for index, data in df.iterrows():
-            print(index)
             errors = self.insert_to_db(request, data, (index+2), errors)
             
         if errors:
