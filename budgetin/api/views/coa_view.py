@@ -9,7 +9,7 @@ from api.serializers import CoaSerializer, CoaResponseSerializer
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
-from api.utils.file import read_excel, read_file
+from api.utils.file import read_excel, read_file, get_import_template_path, load_file, export_excel
 from api.exceptions import ValidationException
 
 def is_duplicate_coa_create(name, hyperion_name):
@@ -67,7 +67,7 @@ class CoaViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False, url_path='import')
     def import_from_excel(self, request):
         file = read_file(request)
-        df = read_excel(file, 'coa')
+        df = read_excel(file, TableEnum.COA.value)
         errors = []
         
         for index, data in df.iterrows():
@@ -110,3 +110,10 @@ class CoaViewSet(viewsets.ModelViewSet):
             created_by_id = request.custom_user['id'],
             updated_by_id = request.custom_user['id'],
         )
+    
+    @action(methods=['get'], detail=False, url_path='import/template')
+    def download_import_template(self, request):
+        file_path = get_import_template_path(TableEnum.COA)
+        file = load_file(file_path, 'rb')
+        
+        return export_excel(file, 'import_template_strategy.xlsx')
