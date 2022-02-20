@@ -23,12 +23,16 @@ def read_excel(file, sheet_name):
 def get_import_template_path(table):
     module_dir = os.path.dirname(__file__)
     file_name = 'import_template_' + table.value + '.xlsx'
-    file_path = os.path.join(module_dir, 'template/', file_name)
+    file_path = os.path.join(module_dir, "template\\", file_name)
     
     return file_path
 
-def load_file(path):
+def load_file(path, mode):
     try:
-        return open(path, 'rb')
+        return open(path, mode)
     except:
         raise FileNotFoundException()
+    
+def remove_sheet(book, sheet_name):
+    std=book.get_sheet_by_name(sheet_name)
+    book.remove_sheet(std)

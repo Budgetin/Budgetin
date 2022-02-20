@@ -110,9 +110,12 @@ class StrategyViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):
         file_path = get_import_template_path(TableEnum.STRATEGY)
-        file = load_file(file_path)
+        file = load_file(file_path, 'rb')
 
         response = HttpResponse(content=file)
         response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         response['Content-Disposition'] = 'attachment; filename="import_strategy_template.xlsx"'
+        
+        file.close()
+        
         return response
