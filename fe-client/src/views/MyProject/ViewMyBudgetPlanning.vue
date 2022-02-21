@@ -187,7 +187,7 @@ export default {
     setBreadcrumbs() {
       let name = this.$route.name;
       let param = this.isView ? "View Budget Planning" : "Edit Budget Planning";
-      if (name = "ViewSubmittedBudgetPlanning") {
+      if (name == "ViewSubmittedBudgetPlanning") {
         this.$store.commit("breadcrumbs/SET_LINKS", [
           {
             text: "Home",
@@ -222,7 +222,7 @@ export default {
           },
         ]);
       }
-      else{
+      if(name == "ViewMyBudgetPlanning"){
           this.$store.commit("breadcrumbs/SET_LINKS", [
             {
               text: "My Project",
