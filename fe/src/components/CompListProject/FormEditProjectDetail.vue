@@ -34,7 +34,7 @@
                   outlined
                   return-object
                   dense
-                  disabled>
+                  :disabled="isView">
                 </v-text-field>
               </div>
           </v-col>
