@@ -16,12 +16,13 @@ class Coa(SoftDeleteModel, TimestampModel, UserTrackModel):
     def name_exists(name):
         return Coa.objects.filter(name__iexact=name).count() > 0
     
-    def equal(self, new_coa):
-        return (self.definition_equal(new_coa.definition) and 
-                self.hyperion_name_equal(new_coa.hyperion_name) and 
-                self.is_capex_same(new_coa.is_capex) and
-                self.minimum_item_origin_same(new_coa.minimum_item_origin)
-                )
+    def equal(self, coa):
+        return (
+            self.definition_equal(coa.definition) and 
+            self.hyperion_name_equal(coa.hyperion_name) and 
+            self.is_capex_equal(coa.is_capex) and
+            self.minimum_item_origin_equal(coa.minimum_item_origin)
+        )
     
     def definition_equal(self, definition):
         try:
@@ -35,8 +36,8 @@ class Coa(SoftDeleteModel, TimestampModel, UserTrackModel):
         except:
             return self.hyperion_name == hyperion_name
 
-    def is_capex_same(self, is_capex):
+    def is_capex_equal(self, is_capex):
         return self.is_capex == is_capex
     
-    def minimum_item_origin_same(self, minimum_item_origin):
+    def minimum_item_origin_equal(self, minimum_item_origin):
         return self.minimum_item_origin == minimum_item_origin
