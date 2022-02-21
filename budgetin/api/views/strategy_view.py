@@ -70,39 +70,22 @@ class StrategyViewSet(viewsets.ModelViewSet):
     def import_from_excel(self, request):
         file = read_file(request)
         df = read_excel(file, TableEnum.STRATEGY.value)
-        errors = []
         
         for index, data in df.iterrows():
-            errors.extend(self.insert_to_db(request, data, (index+2)))
-            
-        if errors:
-            raise ValidationException(errors)
+            strategy_name = data['strategy_name']
+
+            if not Strategy.name_exists(strategy_name):
+                self.insert_to_db(request, data)
 
         return Response(status=204)
     
-    def insert_to_db(self, request, data, index):
-        errors = self.validate_data(data, index)
-        
-        if not errors:
-            strategy = self.create_strategy(request, data)
-            AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY)
-
-        return errors
+    def insert_to_db(self, request, data):
+        strategy = self.create_strategy(request, data['strategy_name'])
+        AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY)
             
-    def validate_data(self, data, index):
-        errors = []
-        errors = self.validate_strategy(data, index, errors)
-        return errors
-    
-    def validate_strategy(self, data, index, errors):
-        name = data['strategy_name']
-        if Strategy.name_exists(name):
-            errors.append("Strategy '{}' at line {} already exists".format(name, index))
-        return errors
-    
-    def create_strategy(self, request, data):
+    def create_strategy(self, request, strategy_name):
         return Strategy.objects.create(
-            name = data['strategy_name'],
+            name=strategy_name,
             created_by_id = request.custom_user['id'],
             updated_by_id = request.custom_user['id'],
         )
