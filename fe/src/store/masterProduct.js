@@ -27,6 +27,8 @@ const masterProduct = {
     requestImportProductStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingImportProduct: false, // for loading data
     errorMsgImportProduct: null,
+    loadingImportProductTemplate: false, // for loading download template
+    loadingStatus: "IDLE",
   },
   getters: {
     value: (state) => state.value
@@ -170,6 +172,32 @@ const masterProduct = {
       });
     },
 
+    importProductTemplate({ commit }) {
+      commit("SET_LOADING_INIT");
+
+      return new Promise((resolve, reject) => {
+        getAPI
+          .get(ENDPOINT + "import/template", {
+            responseType: "arraybuffer", //Khusus download file
+          })
+          .then((response) => {
+            resolve(response);
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "import_product_template.xlsx");
+            document.body.appendChild(link);
+            link.click();
+            // commit("SET_LOADING_SUCCESS");
+          })
+          .catch((err) => {
+            reject(err);
+            commit("SET_LOADING_ERROR", err);
+            commit("SET_DOWNLOAD_ERROR", err.message);
+          });
+      });
+    },
+
     importProduct({ commit }, data) {
       commit("GET_INIT_IMPORT_PRODUCT");
       let formData = new FormData();
@@ -189,39 +217,8 @@ const masterProduct = {
           });
       });
     },
-
-    // getEdittedItemHistories({ commit }) {
-    //   const itemID = store.state.masterProduct.edittedItem.id;
-    //   if (!itemID) return;
-    //   getAPI
-    //     .get(ENDPOINT + `${itemID}/histories/`)
-    //     .then((response) => {
-    //       commit("SET_LOADING_GET_EDITTED_ITEM", false);
-    //       commit("SET_EDITTED_ITEM_HISTORIES", response.data);
-    //     })
-    //     .catch((error) => {
-    //       commit("GET_ERROR", error.response.data);
-    //     });
-    // },
-    // getActiveMasterProduct({ commit }) {
-    //   if (store.state.masterProduct.requestActiveStatus !== "SUCCESS")
-    //     getAPI
-    //       .get(ENDPOINT + "?filter{status}=1")
-    //       .then((response) => {
-    //         const cleanData = response.data.Products.map((data) => {
-    //           return {
-    //             id: data.id,
-    //             Product_name: data.Product_name,
-    //             status: String(data.status),
-    //           };
-    //         });
-    //         commit("GET_ACTIVE_DATA_UPDATE", cleanData);
-    //       })
-    //       .catch((error) => {
-    //         commit("GET_ERROR", error);
-    //       });
-    // },
   },
+
   mutations: {
     // get related
     GET_INIT(state) {
@@ -321,6 +318,37 @@ const masterProduct = {
       state.errorMsgImportProduct = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
+      }
+    },
+
+    SET_LOADING_INIT(state) {
+      state.loadingStatus = "PENDING";
+      state.loadingImportProductTemplate = true;
+      // state.isLoading = data;
+    },
+    SET_LOADING_SUCCESS(state) {
+      state.loadingStatus = "SUCCESS";
+      state.loadingImportProductTemplate = false;
+    },
+    SET_LOADING_ERROR(state, error) {
+      state.loadingStatus = "ERROR";
+      state.loadingImportProductTemplate = false;
+      state.errorMsg = error;
+      console.log(error);
+      if (error.response.status == "401"){
+        router.push({ name: 'Login'});
+      }
+    },
+    SET_UPLOAD_ERROR(state, error) {
+      state.errorMessage = error;
+      if (error.response.status == "401") {
+        router.push({ name: "Login" });
+      }
+    },
+    SET_DOWNLOAD_ERROR(state, error) {
+      state.errorMessage = error;
+      if (error.response.status == "401") {
+        router.push({ name: "Login" });
       }
     },
   },
