@@ -11,8 +11,8 @@
     <v-card-text>
       <v-row no-gutters align="center">
         <v-col cols="12" class="mt-2">
-          <a href="Template Budget.xlsx" download>Download Template Budget</a>
-          <!-- <v-btn text @click="downloadTemplate" class="primary--text">Download Template Planning </v-btn> -->
+          <!-- <a href="Template Budget.xlsx" download>Download Template Budget</a> -->
+          <v-btn text @click="onDownloadTemplate" class="primary--text">Download Template Budget</v-btn>
         </v-col>
       </v-row>
       <v-form ref=form lazy-validation @submit.prevent="onSubmitUpload">
@@ -64,6 +64,9 @@ export default {
     // ]),
   },
   methods: {
+    onDownloadTemplate() {
+      this.$emit("downloadClicked");
+    },
     onCancel() {
       this.$emit("cancelClicked");
     },

@@ -232,6 +232,30 @@ const listBudget = {
           });
       });
     },
+    downloadImportBudgetTemplate({ commit }) {
+      commit("SET_LOADING", true);
+      return new Promise((resolve, reject) => {
+        getAPI
+          .get(BUDGET_ENDPOINT + "import/template/", {
+            responseType: "arraybuffer", //Khusus download file
+          })
+          .then((response) => {
+            resolve(response);
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "TemplateBudgetPlanning.xlsx");
+            document.body.appendChild(link);
+            link.click();
+            commit("SET_LOADING", false);
+          })
+          .catch((err) => {
+            reject(err);
+            commit("SET_LOADING", false);
+            commit("SET_DOWNLOAD_ERROR", err.message);
+          });
+      });
+    },
   },
   mutations: {
     // import related
