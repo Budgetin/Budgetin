@@ -10,7 +10,7 @@ from openpyxl import load_workbook
 from openpyxl.writer.excel import save_virtual_workbook
 
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
-from api.models import Product, Strategy, Coa
+from api.models import Product, Strategy, Coa, User
 from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
@@ -90,8 +90,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         if not errors:
             strategy = self.get_strategy(data)
-            product = self.create_product(request, data, strategy)
-            AuditLog.Save(ProductSerializer(product), request, ActionEnum.CREATE, TableEnum.PRODUCT) 
+            product = self.create_or_update_product(request, data, strategy)
         
         return errors
     
@@ -107,13 +106,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         
         if pd.isnull(code):
             errors.append("Row {} - Product code must be filled".format(index))
-        elif Product.code_exists(code):
-            errors.append("Row {} - Product code '{}' already exists".format(index, code))
             
         if pd.isnull(name):
             errors.append("Row {} - Product name must be filled".format(index))
-        elif Product.name_exists(name):
-            errors.append("Row {} - Product '{}' already exists".format(index, name))
 
         return errors
     
@@ -131,14 +126,25 @@ class ProductViewSet(viewsets.ModelViewSet):
             strategy = Strategy.objects.filter(name__iexact=strategy_name).first()
         return strategy
     
-    def create_product(self, request, data, strategy):
-        return Product.objects.create(
+    def create_or_update_product(self, request, data, strategy):
+        new_product = Product(
             product_code = data['product_code'],
             product_name = data['product_name'],
             strategy = strategy,
-            created_by_id = request.custom_user['id'],
-            updated_by_id = request.custom_user['id'],
+            updated_by = User.objects.get(pk=request.custom_user['id']),
         )
+        
+        product = Product.objects.filter(product_code=data['product_code']).first()
+        if not product:
+            new_product.created_by = new_product.updated_by
+            new_product.save()
+            AuditLog.Save(ProductSerializer(new_product), request, ActionEnum.CREATE, TableEnum.PRODUCT) 
+        elif product and not product.equal(new_product):
+            product.product_name = new_product.product_name
+            product.strategy = strategy
+            product.updated_by = new_product.updated_by
+            product.save()
+            AuditLog.Save(ProductSerializer(product), request, ActionEnum.UPDATE, TableEnum.PRODUCT) 
     
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):
