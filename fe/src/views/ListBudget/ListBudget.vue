@@ -206,7 +206,7 @@
         </v-dialog>
       </v-row>
 
-            <v-row no-gutters>
+      <v-row no-gutters>
           <v-dialog v-model="isLoading" persistent width="25rem">
             <v-card >
               <v-card-title class="d-flex justify-center">

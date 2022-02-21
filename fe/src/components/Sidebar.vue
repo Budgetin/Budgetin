@@ -20,7 +20,7 @@
       </v-list>
       <v-divider></v-divider>
       <v-list shaped>
-        <v-list-item replace>
+        <v-list-item link :to="'/dashboard'" replace>
           <v-list-item-icon>
             <v-icon>mdi-chart-scatter-plot</v-icon>
           </v-list-item-icon>

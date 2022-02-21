@@ -69,7 +69,49 @@
       </v-row>
 
       <v-row no-gutters>
-        <v-dialog v-model="dialog" persistent width="37.5rem">
+        <v-dialog v-model="inputOption" persistent width="37.5rem">
+          <method-input-option
+           @cancelClicked="onCancel"
+           @formClicked="onForm"
+           @uploadClicked="onUpload"
+          >
+          </method-input-option>
+        </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-dialog v-model="uploadDialog" persistent width="37.5rem">
+          <upload-file-strategy
+            @cancelClicked="onCancel"
+            @uploadClicked="onSubmitUpload"
+          >
+          </upload-file-strategy>
+        </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
+          <v-dialog v-model="loadingImportStrategy" persistent width="25rem">
+            <v-card >
+              <v-card-title class="d-flex justify-center">
+                Loading
+              </v-card-title>
+
+              <v-card-text>
+                <v-row no-gutters class="d-flex justify-center">
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="blue"
+                    indeterminate
+                  ></v-progress-circular>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-dialog v-model="formDialog" persistent width="37.5rem">
           <form-Strategy
           :form="form"
           :isView="false"
@@ -95,15 +137,18 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import MethodInputOption from "@/components/MethodInputOption"
 import FormStrategy from "@/components/MasterStrategy/FormStrategy";
+import UploadFileStrategy from "@/components/MasterStrategy/UploadFileStrategy";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
   name: "MasterStrategy",
-  components: {FormStrategy,SuccessErrorAlert},
+  components: {MethodInputOption,FormStrategy,SuccessErrorAlert,UploadFileStrategy},
   watch: {},
   data: () => ({
-    dialog: false,
-    isEdit: false,
+    inputOption:false,
+    formDialog: false,
+    uploadDialog:false,
     search: "",
     dataTable: {
       headers: [
@@ -130,10 +175,10 @@ export default {
     this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
+    ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy","loadingImportStrategy"]),
   },
   methods: {
-    ...mapActions("masterStrategy", ["getMasterStrategy", "postMasterStrategy"]),
+    ...mapActions("masterStrategy", ["getMasterStrategy", "postMasterStrategy","importStrategy"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -148,14 +193,37 @@ export default {
       ]);
     },
     onAdd() {
-      this.dialog = !this.dialog;
+      this.inputOption = true;
+      this.formDialog = false;
+      this.uploadDialog = false
+    },
+    onUpload(){
+      this.inputOption = false;
+      this.formDialog = false;
+      this.uploadDialog = true;
+    },
+    onSubmitUpload(file){
+      this.importStrategy(file)
+        .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.onSaveError(error);
+        });
+    },
+    onForm(){
+      this.inputOption = false;
+      this.formDialog = true;
+      this.uploadDialog = false;
+    },
+    onCancel() {
+      this.inputOption = false;
+      this.formDialog = false;
+      this.uploadDialog = false;
     },
     onEdit(item) {
       this.$store.commit("masterStrategy/SET_EDITTED_ITEM", item);
     },    
-    onCancel() {
-      this.dialog = false;
-    },
     onSubmit(e) {
       this.postMasterStrategy(e)
         .then(() => {
@@ -166,14 +234,16 @@ export default {
         });
     },
     onSaveSuccess() {
-      this.dialog = false;
+      this.formDialog = false;
+      this.uploadDialog = false;
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
       this.alert.subtitle = "Master Source has been saved successfully";
     },
     onSaveError(error) {
-      this.dialog = false;
+      this.formDialog = false;
+      this.uploadDialog = false;
       this.alert.show = true;
       this.alert.success = false;
       this.alert.title = "Save Failed";
