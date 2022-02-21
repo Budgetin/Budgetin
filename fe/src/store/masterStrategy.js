@@ -29,11 +29,7 @@ const masterStrategy = {
     value: (state) => state.value
   },
   actions: {
-    getMasterStrategy() {
-      if (store.state.masterStrategy.requestStatus !== "SUCCESS")
-        store.dispatch("masterStrategy/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getMasterStrategy({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)

@@ -22,11 +22,7 @@ const masterEmployee = {
     value: (state) => state.value
   },
   actions: {
-    getMasterEmployee() {
-      if (store.state.masterEmployee.requestStatus !== "SUCCESS")
-        store.dispatch("masterEmployee/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getMasterEmployee({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)
