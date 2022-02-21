@@ -102,6 +102,27 @@
           ></form-coa>
         </v-dialog>
       </v-row>
+
+      <v-row no-gutters>
+          <v-dialog v-model="loadingImportCoa" persistent width="25rem">
+            <v-card >
+              <v-card-title class="d-flex justify-center">
+                Loading
+              </v-card-title>
+
+              <v-card-text>
+                <v-row no-gutters class="d-flex justify-center">
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="blue"
+                    indeterminate
+                  ></v-progress-circular>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+      </v-row>
     </v-container>
 
     <success-error-alert
@@ -158,7 +179,7 @@ export default {
     this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("masterCoa", ["loadingGetMasterCoa", "dataMasterCoa"]),
+    ...mapState("masterCoa", ["loadingGetMasterCoa", "dataMasterCoa","loadingImportCoa"]),
   },
   methods: {
     ...mapActions("masterCoa", ["getMasterCoa", "postMasterCoa","importCoa"]),

@@ -24,6 +24,10 @@ const masterStrategy = {
     requestHistoriesStatus:"IDLE",
     loadingGetEdittedItemHistories: false,
     edittedItemHistories: [],
+
+    requestImportStrategyStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingImportStrategy: false, // for loading data
+    errorMsgImportStrategy: null,
   },
   getters: {
     value: (state) => state.value
@@ -36,7 +40,7 @@ const masterStrategy = {
         .then((response) => {
           const cleanData = response.data
           const sorted = cleanData.sort((a, b) =>
-            a.update_at > b.update_at ? 1 : -1
+            a.id < b.id ? 1 : -1
           );
           commit("GET_SUCCESS", sorted);
         })
@@ -70,7 +74,7 @@ const masterStrategy = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterStrategy/getFromAPI");
+            store.dispatch("masterStrategy/getMasterStrategy");
           })
           .catch((error) => {
             let errorMsg =
@@ -103,8 +107,7 @@ const masterStrategy = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterStrategy/getFromAPI");
-            // store.dispatch("masterCategory/getFromAPI");
+            store.dispatch("masterStrategy/getMasterStrategy");
           })
           .catch((error) => {
             let errorMsg =
@@ -139,7 +142,7 @@ const masterStrategy = {
             const data = response.data;
             commit("SET_DELETE_ITEM", data);
             resolve(data);
-            store.dispatch("masterStrategy/getFromAPI");
+            store.dispatch("masterStrategy/getMasterStrategy");
           })
           .catch((error) => {
             commit("DELETE_ERROR", error);
@@ -167,6 +170,26 @@ const masterStrategy = {
         });
       });
     },
+    
+    importStrategy({ commit }, data) {
+      commit("GET_INIT_IMPORT_STRATEGY");
+      let formData = new FormData();
+      formData.append("file", data.files);
+
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post((ENDPOINT+"import/"), formData)
+          .then((res) => {
+            resolve(res);
+            store.dispatch('masterStrategy/getMasterStrategy')
+            commit("GET_SUCCESS_IMPORT_STRATEGY");
+          })
+          .catch((err) => {
+            reject(err);
+            commit("GET_ERROR_IMPORT_STRATEGY", err.message);
+          });
+      });
+    }
   },
   mutations: {
     // get related
@@ -248,6 +271,24 @@ const masterStrategy = {
       state.deleteStatus = "ERROR";
       state.loadingDeleteItem = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // import related
+    GET_INIT_IMPORT_STRATEGY(state) {
+      state.requestImportStrategyStatus = "PENDING";
+      state.loadingImportStrategy = true;
+    },
+    GET_SUCCESS_IMPORT_STRATEGY(state) {
+      state.requestImportStrategyStatus = "SUCCESS";
+      state.loadingImportStrategy = false;
+    },
+    GET_ERROR_IMPORT_STRATEGY(state, error) {
+      state.requestImportStrategyStatus = "ERROR";
+      state.loadingImportStrategy = false;
+      state.errorMsgImportStrategy = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }

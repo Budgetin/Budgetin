@@ -113,7 +113,7 @@ const masterUser = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterUser/getFromAPI");
+            store.dispatch("masterUser/getMasterUser");
           })
           .catch((error) => {
             let errorMsg =
@@ -146,7 +146,7 @@ const masterUser = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterUser/getFromAPI");
+            store.dispatch("masterUser/getMasterUser");
             // store.dispatch("masterCategory/getFromAPI");
           })
           .catch((error) => {
