@@ -68,7 +68,7 @@ def update_db(request, index, data, errors):
                 to_plus = budget_object
 
                 #Get all data in switching
-                sw_in_data = Switching.objects.filter(to_plus=to_plus).filter(Q(type=SwitchingTypeEnum.SWITCH.value) | Q(type=SwitchingTypeEnum.CORRECTION_SWITCHING_IN.value)).all()
+                sw_in_data = Switching.objects.filter(to_plus = to_plus).filter(Q(type=SwitchingTypeEnum.SWITCH_IN.value) | Q(type=SwitchingTypeEnum.CORRECTION_SWITCHING_IN.value)).all()
                 total = 0
                 for sw in sw_in_data:
                     total += sw.nominal
@@ -85,7 +85,7 @@ def update_db(request, index, data, errors):
                     type = SwitchingTypeEnum.CORRECTION_SWITCHING_IN.value
                 else:
                     final_nominal = nominal - total
-                    type = SwitchingTypeEnum.SWITCH.value
+                    type = SwitchingTypeEnum.SWITCH_IN.value
                 
                 '''If final_nominal is 0 (no changes on the nominal, dont create a new switching)'''
                 if final_nominal:
@@ -100,7 +100,7 @@ def update_db(request, index, data, errors):
                 nominal = switching_out
                 from_minus = budget_object
                 #Get all data in switching
-                sw_in_data = Switching.objects.filter(from_minus=from_minus).filter(Q(type=SwitchingTypeEnum.SWITCH.value) | Q(type=SwitchingTypeEnum.CORRECTION_SWITCHING_OUT.value)).all()
+                sw_in_data = Switching.objects.filter(from_minus=from_minus).filter(Q(type=SwitchingTypeEnum.SWITCH_OUT.value) | Q(type=SwitchingTypeEnum.CORRECTION_SWITCHING_OUT.value)).all()
                 total = 0
                 for sw in sw_in_data:
                     total += sw.nominal
@@ -109,7 +109,7 @@ def update_db(request, index, data, errors):
                     type = SwitchingTypeEnum.CORRECTION_SWITCHING_OUT.value
                 else:
                     final_nominal = nominal - total
-                    type = SwitchingTypeEnum.SWITCH.value
+                    type = SwitchingTypeEnum.SWITCH_OUT.value
 
                 if final_nominal:
                     switching = Switching.objects.create(
@@ -146,14 +146,14 @@ def update_db(request, index, data, errors):
                 nominal = topup
                 to_plus = budget_object
                 #Get all data in switching
-                sw_in_data = Switching.objects.filter(to_plus=to_plus).filter(Q(type=SwitchingTypeEnum.TOPUP.value)|Q(type=SwitchingTypeEnum.CORRETCTION_TOPUP.value)).all()
+                sw_in_data = Switching.objects.filter(to_plus = to_plus).filter(Q(type=SwitchingTypeEnum.TOPUP.value)|Q(type=SwitchingTypeEnum.CORRECTION_TOPUP.value)).all()
                 total = 0
                 for sw in sw_in_data:
                     total += sw.nominal
 
                 if total > nominal:
                     final_nominal = nominal - total
-                    type = SwitchingTypeEnum.CORRETCTION_TOPUP.value
+                    type = SwitchingTypeEnum.CORRECTION_TOPUP.value
                 else:
                     final_nominal = nominal-total
                     type = SwitchingTypeEnum.TOPUP.value
