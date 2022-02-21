@@ -124,25 +124,6 @@
           </v-col>
 
           <!-- CAPEX/OPEX -->
-          <v-col cols="4">
-            Expense Type <strong class="red--text">*</strong>
-            <div class="EditBudgetPlanning__field">
-              <v-select
-                v-model="form.expense_type"
-                :items="expenseType"
-                item-text="label"
-                item-value="value"
-                placeholder="Choose Expense Type"
-                outlined
-                dense
-                return-object
-                :disabled="isView"
-                :rules="validation.required"
-                class="mr-3"
-              >
-              </v-select>
-            </div>
-          </v-col>
           <v-col cols="6"> Expense Type <strong class="red--text">*</strong>
             <div class="EditBudgetPlanning__field">
               <v-select
