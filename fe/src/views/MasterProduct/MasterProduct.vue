@@ -63,13 +63,33 @@
                 </v-tooltip>
               </router-link>
             </template>
-
           </v-data-table>
         </v-col>
       </v-row>
 
       <v-row no-gutters>
-        <v-dialog v-model="dialog" persistent width="37.5rem">
+        <v-dialog v-model="inputOption" persistent width="37.5rem">
+          <method-input-option
+           @cancelClicked="onCancel"
+           @formClicked="onForm"
+           @uploadClicked="onUpload"
+          >
+          </method-input-option>
+        </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-dialog v-model="uploadDialog" persistent width="37.5rem">
+          <upload-file-product
+            @cancelClicked="onCancel"
+            @uploadClicked="onSubmitUpload"
+          >
+          </upload-file-product>
+        </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-dialog v-model="formDialog" persistent width="37.5rem">
           <form-Product
           :form="form"
           :isView="false"
@@ -96,13 +116,18 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import MethodInputOption from "@/components/MethodInputOption"
 import FormProduct from "@/components/MasterProduct/FormProduct";
+import UploadFileProduct from "@/components/MasterProduct/UploadFileProduct";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
   name: "MasterProduct",
-  components: {FormProduct,SuccessErrorAlert},
+  components: {FormProduct,SuccessErrorAlert, MethodInputOption, UploadFileProduct},
   watch: {},
   data: () => ({
+    inputOption:false,
+    formDialog: false,
+    uploadDialog:false,
     dialog: false,
     isEdit: false,
     search: "",
@@ -142,7 +167,7 @@ export default {
     ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
   },
   methods: {
-    ...mapActions("masterProduct", ["getMasterProduct", "postMasterProduct"]),
+    ...mapActions("masterProduct", ["getMasterProduct", "postMasterProduct", "importProduct"]),
     ...mapActions("masterStrategy", ["getMasterStrategy", "postMasterStrategy"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
@@ -158,13 +183,36 @@ export default {
       ]);
     },
     onAdd() {
-      this.dialog = !this.dialog;
+      // this.dialog = !this.dialog;
+      this.inputOption = true;
+    },
+    onUpload(){
+      this.inputOption = false;
+      this.formDialog = false;
+      this.uploadDialog = true;
+    },
+    onSubmitUpload(file){
+      this.importProduct(file)
+        .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.onSaveError(error);
+        });
+    },
+    onForm(){
+      this.inputOption = false;
+      this.formDialog = true;
+      this.uploadDialog = false;
     },
     onEdit(item) {
       this.$store.commit("masterProduct/SET_EDITTED_ITEM", item);
     },    
     onCancel() {
-      this.dialog = false;
+      // this.dialog = false;
+      this.inputOption = false;
+      this.formDialog = false;
+      this.uploadDialog = false;
     },
     onSubmit(e) {
       this.postMasterProduct(e)

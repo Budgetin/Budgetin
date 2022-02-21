@@ -24,6 +24,9 @@ const masterProduct = {
     requestHistoriesStatus:"IDLE",
     loadingGetEdittedItemHistories: false,
     edittedItemHistories: [],
+    requestImportProductStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingImportProduct: false, // for loading data
+    errorMsgImportProduct: null,
   },
   getters: {
     value: (state) => state.value
@@ -166,6 +169,27 @@ const masterProduct = {
         });
       });
     },
+
+    importProduct({ commit }, data) {
+      commit("GET_INIT_IMPORT_PRODUCT");
+      let formData = new FormData();
+      formData.append("file", data.files);
+
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post((ENDPOINT+"import/"), formData)
+          .then((res) => {
+            resolve(res);
+            store.dispatch('masterProduct/getMasterProduct')
+            commit("GET_SUCCESS_IMPORT_PRODUCT");
+          })
+          .catch((err) => {
+            reject(err);
+            commit("GET_ERROR_IMPORT_PRODUCT", err.message);
+          });
+      });
+    },
+
     // getEdittedItemHistories({ commit }) {
     //   const itemID = store.state.masterProduct.edittedItem.id;
     //   if (!itemID) return;
@@ -277,6 +301,24 @@ const masterProduct = {
       state.deleteStatus = "ERROR";
       state.loadingDeleteItem = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // import related
+    GET_INIT_IMPORT_PRODUCT(state) {
+      state.requestImportProductStatus = "PENDING";
+      state.loadingImportProduct = true;
+    },
+    GET_SUCCESS_IMPORT_PRODUCT(state) {
+      state.requestImportProductStatus = "SUCCESS";
+      state.loadingImportProduct = false;
+    },
+    GET_ERROR_IMPORT_PRODUCT(state, error) {
+      state.requestImportProductStatus = "ERROR";
+      state.loadingImportProduct = false;
+      state.errorMsgImportProduct = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
