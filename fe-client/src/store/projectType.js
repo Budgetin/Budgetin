@@ -17,11 +17,7 @@ const projectType = {
     
   },
   actions: {
-    getAllProjectType() {
-      if (store.state.projectType.requestStatus !== "SUCCESS")
-        store.dispatch("projectType/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getAllProjectType({ commit }) {
       commit("GET_INIT");
       return new Promise((resolve, reject) => {
       getAPI
@@ -37,11 +33,7 @@ const projectType = {
         });
       });
     },
-    getExistingProjectType() {
-      if (store.state.projectType.requestStatusExisting !== "SUCCESS")
-        store.dispatch("projectType/getExistingAPI");
-    },
-    getExistingAPI({ commit }) {
+    getExistingProjectType({ commit }) {
       commit("GET_EXISTING_INIT");
       return new Promise((resolve, reject) => {
       getAPI

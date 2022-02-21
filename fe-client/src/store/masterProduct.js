@@ -29,11 +29,7 @@ const masterProduct = {
     value: (state) => state.value
   },
   actions: {
-    getMasterProduct() {
-      if (store.state.masterProduct.requestStatus !== "SUCCESS")
-        store.dispatch("masterProduct/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getMasterProduct({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)

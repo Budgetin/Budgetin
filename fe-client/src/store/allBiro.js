@@ -23,11 +23,7 @@ const allBiro = {
     value: (state) => state.value
   },
   actions: {
-    getAllBiro() {
-      if (store.state.allBiro.requestStatus !== "SUCCESS")
-        store.dispatch("allBiro/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getAllBiro({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)
