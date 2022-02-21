@@ -109,7 +109,7 @@ const listBudget = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listBudget/getFromAPI");
+            store.dispatch("listBudget/getListBudget");
           })
           .catch((error) => {
             let errorMsg =
@@ -142,7 +142,7 @@ const listBudget = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            //store.dispatch("listBudget/getFromAPI");
+            //store.dispatch("listBudget/getListBudget");
           })
           .catch((error) => {
             let errorMsg =

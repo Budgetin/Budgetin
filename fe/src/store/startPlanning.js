@@ -65,7 +65,7 @@ const startPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("startPlanning/getFromAPI");
+            store.dispatch("startPlanning/getStartPlanning");
           })
           .catch((error) => {
             // let errorMsg =
@@ -98,7 +98,7 @@ const startPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("startPlanning/getFromAPI");
+            store.dispatch("startPlanning/getStartPlanning");
           })
           .catch((error) => {
             let errorMsg =
