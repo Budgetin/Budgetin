@@ -21,11 +21,10 @@
                 <v-select
                 v-model="form.year"
                 :items="planningFor"
-                item-text="label"
-                item-value="id"
                 placeholder="Choose Year"
                 outlined
                 return-object
+                dense
                 :disabled="isView"
                 :rules="validation.required">
                 </v-select>
@@ -48,6 +47,7 @@
                 placeholder="Choose Active/Inactive"
                 outlined
                 return-object
+                dense
                 :disabled="isView"
                 :rules="validation.statusRule">
                 </v-select>
@@ -75,6 +75,7 @@
                     outlined
                     v-bind="attrs"
                     v-on="on"
+                    dense
                     placeholder="Pick a Date"
                     :disabled="isView"
                     :rules="validation.required">
@@ -90,7 +91,28 @@
             </v-col>
           </v-col>
 
-          <!-- SEND NOTIFICATION -->
+          <!-- SEND NOTIFICATION Add-->
+          <!-- <v-col cols="6"> Send Notification <strong class="red--text">*</strong>
+            <v-col
+              class="d-flex"
+              cols="12"
+              sm="6">
+              <div class="StartPlanning__field">
+                <v-select
+                v-model="form.notification"
+                :items="statusNotification"
+                item-text="label"
+                item-value="id"
+                placeholder="Choose Yes/No"
+                outlined
+                return-object
+                :rules="validation.required">
+                </v-select>
+              </div>
+            </v-col>
+          </v-col> -->
+
+          <!-- SEND NOTIFICATION View/Edit -->
           <v-col cols="6"> Send Notification <strong class="red--text">*</strong>
             <v-col
               class="d-flex"
@@ -105,8 +127,8 @@
                 placeholder="Choose Yes/No"
                 outlined
                 return-object
+                dense
                 :disabled="isView"
-                required
                 :rules="validation.required">
                 </v-select>
               </div>
@@ -222,7 +244,8 @@ export default {
       yearRule: [
         v => { if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;
         return 'Year has to be integer and contains 4 digits'; }
-      ]
+      ],
+
       // yearRule: v  => {
       //   //if (!v.trim()) return true;
       //   if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;
@@ -248,7 +271,7 @@ export default {
       return 'mdi-checkbox-blank-outline'
     },
     planningFor() {
-      return Array.from({length: 3}, (value, index) => this.year + index + 1)
+      return Array.from({length: 3}, (value, index) => this.year + index)
     }
   },
 

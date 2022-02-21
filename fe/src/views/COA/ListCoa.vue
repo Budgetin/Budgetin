@@ -69,7 +69,28 @@
       </v-row>
 
       <v-row no-gutters>
-        <v-dialog v-model="dialog" persistent width="37.5rem">
+        <v-dialog v-model="inputOption" persistent width="37.5rem">
+          <method-input-option
+           @cancelClicked="onCancel"
+           @formClicked="onForm"
+           @uploadClicked="onUpload"
+          >
+          </method-input-option>
+        </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-dialog v-model="uploadDialog" persistent width="37.5rem">
+          <upload-file-coa
+            @cancelClicked="onCancel"
+            @uploadClicked="onSubmitUpload"
+          >
+          </upload-file-coa>
+        </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-dialog v-model="formDialog" persistent width="37.5rem">
           <form-coa
           :form="form"
           :isView="false"
@@ -77,7 +98,7 @@
           :dataMasterCoa="dataMasterCoa"
           @editClicked="onEdit"
           @cancelClicked="onCancel"
-          @submitClicked="onSubmit"
+          @submitClicked="onSubmitForm"
           ></form-coa>
         </v-dialog>
       </v-row>
@@ -95,14 +116,18 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import MethodInputOption from "@/components/MethodInputOption"
 import FormCoa from "@/components/MasterCOA/FormCoa";
+import UploadFileCoa from "@/components/MasterCOA/UploadFileCoa";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
   name: "MasterCoa",
-  components: {FormCoa,SuccessErrorAlert},
+  components: {MethodInputOption,FormCoa,SuccessErrorAlert,UploadFileCoa},
   watch: {},
   data: () => ({
-    dialog: false,
+    inputOption:false,
+    formDialog: false,
+    uploadDialog:false,
     search: "",
     dataTable: {
       headers: [
@@ -136,7 +161,7 @@ export default {
     ...mapState("masterCoa", ["loadingGetMasterCoa", "dataMasterCoa"]),
   },
   methods: {
-    ...mapActions("masterCoa", ["getMasterCoa", "postMasterCoa"]),
+    ...mapActions("masterCoa", ["getMasterCoa", "postMasterCoa","importCoa"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -151,16 +176,37 @@ export default {
       ]);
     },
     onAdd() {
-      this.dialog = !this.dialog;
+      this.inputOption = true;
+    },
+    onUpload(){
+      this.inputOption = false;
+      this.formDialog = false;
+      this.uploadDialog = true;
+    },
+    onSubmitUpload(file){
+      this.importCoa(file)
+        .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.onSaveError(error);
+        });
+    },
+    onForm(){
+      this.inputOption = false;
+      this.formDialog = true;
+      this.uploadDialog = false;
     },
     onEdit(item) {
       this.$store.commit("masterCoa/SET_EDITTED_ITEM", item);
       this.$store.commit("masterCoa/SET_EDITTED_ITEM_HISTORIES", item);
     },    
     onCancel() {
-      this.dialog = false;
+      this.inputOption = false;
+      this.formDialog = false;
+      this.uploadDialog = false;
     },
-    onSubmit(e) {
+    onSubmitForm(e) {
       this.postMasterCoa(e)
         .then(() => {
           this.onSaveSuccess();
@@ -170,14 +216,14 @@ export default {
         });
     },
     onSaveSuccess() {
-      this.dialog = false;
+      this.formDialog = false;
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
       this.alert.subtitle = "Master Source has been saved successfully";
     },
     onSaveError(error) {
-      this.dialog = false;
+      this.formDialog = false;
       this.alert.show = true;
       this.alert.success = false;
       this.alert.title = "Save Failed";

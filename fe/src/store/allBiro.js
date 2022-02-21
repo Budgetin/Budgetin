@@ -23,11 +23,7 @@ const allBiro = {
     value: (state) => state.value
   },
   actions: {
-    getAllBiro() {
-      if (store.state.allBiro.requestStatus !== "SUCCESS")
-        store.dispatch("allBiro/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getAllBiro({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)
@@ -76,7 +72,7 @@ const allBiro = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiro/getFromAPI");
+            store.dispatch("allBiro/getAllBiro");
           })
           .catch((error) => {
             let errorMsg =
@@ -109,7 +105,7 @@ const allBiro = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiro/getFromAPI");
+            store.dispatch("allBiro/getAllBiro");
           })
           .catch((error) => {
             let errorMsg =

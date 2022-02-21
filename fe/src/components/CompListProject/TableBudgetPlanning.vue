@@ -23,6 +23,9 @@
                         <v-icon v-on="on" color="primary" @click="onEdit(item)">
                             mdi-eye
                         </v-icon>
+                        <!-- <v-icon v-on="on" color="primary" @click="onInputOption">
+                            mdi-eye
+                        </v-icon> -->
                     </template>
                     <span>View/Edit</span>
                 </v-tooltip>
@@ -35,6 +38,37 @@
         </v-data-table>
       </v-col>
     </v-row>
+
+    <!-- <v-row no-gutters>
+      <v-dialog v-model="inputOption" persistent width="25rem">
+        <v-card>
+          <v-card-title>
+            What do you want to Edit?
+            <v-spacer></v-spacer>
+            <v-btn icon small @click="onCancel">
+              <v-icon color="primary"> mdi-close </v-icon>
+            </v-btn>
+          </v-card-title>
+          
+          <v-card-text>
+            <v-row >
+              <v-col cols="6" class="mt-2" >
+                <div class="choose-project-type_box" align="center" justify="center" @click="onUpload">
+                  <img :src="require('../../assets/upload.png')" height="80rem" /><br>
+                  Edit DCSP ID or Project Type
+                </div>
+              </v-col>
+              <v-col cols="6" class="mt-2" align="center" justify="center">
+                <div class="choose-project-type_box" align="center" justify="center" @click="onAdd">
+                  <img :src="require('../../assets/input_form.png')" height="80rem" style="padding:0.2rem;"/><br>
+                  Edit Budget Planning
+                </div>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+    </v-row> -->
   </v-container>
 </template>
 
@@ -47,8 +81,10 @@ export default {
   props: ["budgetPlanning"],
   data: () => ({
     isView: true,
+    inputOption: false,
     showItem: [],
     budgetItem: [],
+    budgetDetail: [],
     form: {
       id: "",
       created_by: "",
@@ -112,6 +148,7 @@ export default {
               allocate: "",
               coa: "",
               is_active: "",
+              project_detail: "",
             },
           ],
         },
@@ -121,12 +158,14 @@ export default {
     dataTable: {
       budgetPlanningHeaders: [
         { text: "Action", value: "actions", align: "center", sortable: false},
-        { text: "ID", value: "id"},
+        // { text: "ID", value: "id"},
         { text: "Year", value: "year"},
-        { text: "Budget Status", value: "is_active"},
-        // { text: "Strategy", value: "product.strategy.name", width: "25%" },
+        // { text: "Year", value: "project_detail.planning.year"},
+        // { text: "Project ID", value: "project_detail.dcsp_id"},
+        // { text: "Project Type", value: "project_detail.project_type"},
         { text: "COA", value: "coa"},
         { text: "CAPEX/OPEX", value: "expense_type"},
+        { text: "Budget Status", value: "is_active"},
         { text: "Budget This Year", value: "planning_nominal"},
         { text: "Q1", value: "planning_q1"},
         { text: "Q2", value: "planning_q2"},
@@ -138,33 +177,76 @@ export default {
 
   mounted() {
     this.showItem = this.budgetPlanning.project_detail;
-
     // console.log(this.showItem);
     this.budgetItem = [];
     for (let i = 0; i < this.showItem.length; i++) {
-        for (let j = 0; j < this.showItem[i].budget.length; j++) {
-            this.budgetItem.push(this.showItem[i].budget[j]);
-        }
-    }
+      for (let j = 0; j < this.showItem[i].budget.length; j++) {
+          this.budgetItem.push(this.showItem[i].budget[j]);
+          // console.log(this.budgetItem[i].id);
+      }
+    };
     // console.log(this.budgetItem);
+    this.getDetailItem();
   },
-  created() {},
-
+  // created() {
+  //   this.getDetailItem();
+  // },
   computed: {
+    ...mapState("allBudget", ["loadingGetAllBudget", "dataAllBudget"]),
+
     status: function () {
       return this.budgetPlanning.project_detail ? false : true;
     },
   },
   methods: {
+    ...mapActions("allBudget", ["getAllBudgetById"]),
+
+    getDetailItem() {
+      // console.log("GET DETAIL ITEM");
+      // console.log(this.budgetItem.length);
+      // console.log(this.budgetItem);
+
+      this.budgetDetail = [];
+      for(let i = 0; i < this.budgetItem.length; i++) {
+        this.getAllBudgetById(this.budgetItem[i].id).then(() => {
+          this.budgetDetail.push(JSON.parse(
+              JSON.stringify(this.$store.state.allBudget.edittedItem)
+          ));
+        });
+      };
+      console.log(this.budgetDetail);
+    },
     onOK() {
       return this.$router.go(-1);
     },
     onEdit(item) {
       this.$store.commit("listProject/SET_EDITTED_ITEM", item);
     },
+    onInputOption(){
+      this.inputOption = true;
+    },
   },
 };
 </script>
+
+<style scoped>
+::v-deep .choose-project-type_box{
+  border:3px rgb(228, 228, 228) solid;
+  border-radius:20px;
+  padding:0.5rem;
+  width: 10rem;
+  font-weight: 600;
+  cursor:pointer;
+}
+
+::v-deep .choose-project-type_box:hover{
+  border:3px rgb(93, 158, 243) solid;
+  border-radius:20px;
+  padding:0.5rem;
+  width: 10rem;
+  cursor:pointer;
+}
+</style>
 
 <style lang="scss" scoped>
 .searchBar {

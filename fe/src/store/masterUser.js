@@ -26,11 +26,7 @@ const masterUser = {
     value: (state) => state.value
   },
   actions: {
-    getMasterUser() {
-      if (store.state.masterUser.requestStatus !== "SUCCESS")
-        store.dispatch("masterUser/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getMasterUser({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)

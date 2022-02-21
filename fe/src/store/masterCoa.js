@@ -23,23 +23,24 @@ const masterCoa = {
     requestHistoriesStatus:"IDLE",
     loadingGetEdittedItemHistories: false,
     edittedItemHistories: [],
+
+    requestImportCoaStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingImportCoa: false, // for loading data
+    errorMsgImportCoa: null,
+
   },
   getters: {
     value: (state) => state.value
   },
   actions: {
-    getMasterCoa() {
-      if (store.state.masterCoa.requestStatus !== "SUCCESS")
-        store.dispatch("masterCoa/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getMasterCoa({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)
         .then((response) => {
           const cleanData = response.data
           const sorted = cleanData.sort((a, b) =>
-            a.update_at > b.update_at ? 1 : -1
+            a.id < b.id ? 1 : -1
           );
           commit("GET_SUCCESS", sorted);
         })
@@ -140,6 +141,7 @@ const masterCoa = {
             const data = response.data;
             commit("SET_DELETE_ITEM", data);
             resolve(data);
+            store.dispatch("masterStatus/getFromAPI");
             store.dispatch("masterCoa/getFromAPI");
           })
           .catch((error) => {
@@ -167,6 +169,26 @@ const masterCoa = {
           commit("GET_ERROR", error);
           reject(error);
         });
+      });
+    },
+
+    importCoa({ commit }, data) {
+      commit("GET_INIT_IMPORT_COA");
+      let formData = new FormData();
+      formData.append("file", data.files);
+
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post((ENDPOINT+"import/"), formData)
+          .then((res) => {
+            resolve(res);
+            store.dispatch('masterCoa/getMasterCoa')
+            commit("GET_SUCCESS_IMPORT_COA");
+          })
+          .catch((err) => {
+            reject(err);
+            commit("GET_ERROR_IMPORT_COA", err.message);
+          });
       });
     },
 
@@ -251,6 +273,24 @@ const masterCoa = {
       state.deleteStatus = "ERROR";
       state.loadingDeleteItem = false;
       state.errorMsg = error;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // import related
+    GET_INIT_IMPORT_COA(state) {
+      state.requestImportCoaStatus = "PENDING";
+      state.loadingImportCoa = true;
+    },
+    GET_SUCCESS_IMPORT_COA(state) {
+      state.requestImportCoaStatus = "SUCCESS";
+      state.loadingImportCoa = false;
+    },
+    GET_ERROR_IMPORT_COA(state, error) {
+      state.requestImportCoaStatus = "ERROR";
+      state.loadingImportCoa = false;
+      state.errorMsgImportCoa = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }

@@ -158,13 +158,16 @@ export default {
       },
       // setter
       set: function(newValue) {
-        this.form.minimum_item_origin = this.numberWithDots(newValue)
+        if(newValue){
+          this.form.minimum_item_origin = this.numberWithDots(newValue)
+        }
       }
     }
   },
   methods: {
     onSubmit() {
       let validate = this.$refs.form.validate();
+      this.form.minimum_item_origin = this.form.is_capex ? this.form.minimum_item_origin : 0
       if (validate) {
         const payload = {
           id: this.form?.id,

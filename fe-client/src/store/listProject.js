@@ -27,10 +27,7 @@ const listProject = {
     value: (state) => state.value
   },
   actions: {
-    getListProject() {
-        store.dispatch("listProject/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getListProject({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)
@@ -71,7 +68,7 @@ const listProject = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listProject/getFromAPI");
+            store.dispatch("listProject/getListProject");
           })
           .catch((error) => {
             let errorMsg =
@@ -104,7 +101,7 @@ const listProject = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listProject/getFromAPI");
+            store.dispatch("listProject/getListProject");
           })
           .catch((error) => {
             let errorMsg =
@@ -137,7 +134,7 @@ const listProject = {
             const data = response.data;
             commit("SET_DELETE_ITEM", data);
             resolve(data);
-            store.dispatch("listProject/getFromAPI");
+            store.dispatch("listProject/getListProject");
           })
           .catch((error) => {
             commit("DELETE_ERROR", error);

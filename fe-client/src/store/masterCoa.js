@@ -29,10 +29,6 @@ const masterCoa = {
   },
   actions: {
     getMasterCoa({ commit }) {
-      if (store.state.masterCoa.requestStatus !== "SUCCESS")
-        store.dispatch("masterCoa/getFromAPI");
-    },
-    getFromAPI({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)

@@ -23,11 +23,7 @@ const allBiroItHc = {
     value: (state) => state.value
   },
   actions: {
-    getAllBiroItHc() {
-      if (store.state.allBiroItHc.requestStatus !== "SUCCESS")
-        store.dispatch("allBiroItHc/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getAllBiroItHc({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)
@@ -76,7 +72,7 @@ const allBiroItHc = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiroItHc/getFromAPI");
+            store.dispatch("allBiroItHc/getAllBiroItHc");
           })
           .catch((error) => {
             let errorMsg =
@@ -109,7 +105,7 @@ const allBiroItHc = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiroItHc/getFromAPI");
+            store.dispatch("allBiroItHc/getAllBiroItHc");
           })
           .catch((error) => {
             let errorMsg =

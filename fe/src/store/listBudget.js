@@ -3,7 +3,7 @@ import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js";
 const BUDGET_ENDPOINT = "/api/budget/";
 const PLANNING_ENPOINT = "/api/planning/";
-const UPLOAD_PLANNING = "/api/import/list_budget/";
+const UPLOAD_PLANNING = "/api/budget/import/";
 const UPLOAD_REALIZATION = "/api/import/realisasi/";
 
 const listBudget = {
@@ -34,10 +34,7 @@ const listBudget = {
 //==Page ListBudget.vue
 
     //Get List Budget (Active)
-    getListBudget() {
-        store.dispatch("listBudget/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getListBudget({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(BUDGET_ENDPOINT + "active/")
@@ -53,10 +50,7 @@ const listBudget = {
         });
     },
 
-    getListInactiveBudget() {
-        store.dispatch("listBudget/getFromInactiveAPI");
-    },
-    getFromInactiveAPI({ commit }) {
+    getListInactiveBudget({ commit }) {
       commit("GET_INACTIVE_INIT");
       getAPI
         .get(BUDGET_ENDPOINT + "inactive/")
@@ -72,10 +66,7 @@ const listBudget = {
         });
     },
 
-    getListActivePlanning() {
-        store.dispatch("listBudget/getFromActiveAPI");
-    },
-    getFromActiveAPI({ commit }) {
+    getListActivePlanning({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(PLANNING_ENPOINT + "active")
@@ -118,7 +109,7 @@ const listBudget = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("listBudget/getFromAPI");
+            store.dispatch("listBudget/getListBudget");
           })
           .catch((error) => {
             let errorMsg =
@@ -151,7 +142,7 @@ const listBudget = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            //store.dispatch("listBudget/getFromAPI");
+            //store.dispatch("listBudget/getListBudget");
           })
           .catch((error) => {
             let errorMsg =
@@ -221,7 +212,7 @@ const listBudget = {
 
       return new Promise((resolve, reject) => {
         getAPI
-          .get(BUDGET_ENDPOINT + "download/", {
+          .get(BUDGET_ENDPOINT + "export/", {
             responseType: "arraybuffer", //Khusus download file
           })
           .then((response) => {

@@ -84,9 +84,9 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'ViewMyProject',
+                  name: 'ViewBudgetDetail',
                   params: { 
-                            id: item.project_detail.project.id
+                            id_budget_planning: item.id
                           },
                 }"
               >
@@ -179,9 +179,9 @@
               <router-link
                 style="text-decoration: none"
                 :to="{
-                  name: 'ViewMyProject',
+                  name: 'ViewBudgetDetail',
                   params: { 
-                            id: item.project_detail.project.id
+                            id_budget_planning: item.id
                           },
                 }"
               >

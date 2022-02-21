@@ -22,11 +22,7 @@ const monitorPlanning = {
     value: (state) => state.value
   },
   actions: {
-    getMonitorPlanning() {
-      if (store.state.monitorPlanning.requestStatus !== "SUCCESS")
-        store.dispatch("monitorPlanning/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getMonitorPlanning({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)
@@ -85,7 +81,7 @@ const monitorPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("monitorPlanning/getFromAPI");
+            store.dispatch("monitorPlanning/getMonitorPlanning");
           })
           .catch((error) => {
             let errorMsg =
@@ -118,7 +114,7 @@ const monitorPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("monitorPlanning/getFromAPI");
+            store.dispatch("monitorPlanning/getMonitorPlanning");
           })
           .catch((error) => {
             let errorMsg =

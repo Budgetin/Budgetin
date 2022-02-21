@@ -33,11 +33,7 @@ const allBudget = {
     value: (state) => state.value
   },
   actions: {
-    getAllBudget() {
-      if (store.state.allBudget.requestStatus !== "SUCCESS")
-        store.dispatch("allBudget/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getAllBudget({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)
@@ -78,7 +74,7 @@ const allBudget = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBudget/getFromAPI");
+            store.dispatch("allBudget/getAllBudget");
           })
           .catch((error) => {
             let errorMsg =
@@ -111,7 +107,7 @@ const allBudget = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBudget/getFromAPI");
+            store.dispatch("allBudget/getAllBudget");
           })
           .catch((error) => {
             let errorMsg =
@@ -144,7 +140,7 @@ const allBudget = {
             const data = response.data;
             commit("SET_DELETE_ITEM", data);
             resolve(data);
-            store.dispatch("allBudget/getFromAPI");
+            store.dispatch("allBudget/getAllBudget");
           })
           .catch((error) => {
             commit("DELETE_ERROR", error);
@@ -161,7 +157,7 @@ const allBudget = {
             const data = response.data;
             commit("SET_CANCEL_ITEM", data);
             resolve(data);
-            store.dispatch("allBudget/getFromAPI");
+            store.dispatch("allBudget/getAllBudget");
           })
           .catch((error) => {
             commit("CANCEL_ERROR", error);
@@ -178,7 +174,7 @@ const allBudget = {
             const data = response.data;
             commit("SET_RESTORE_ITEM", data);
             resolve(data);
-            store.dispatch("allBudget/getFromAPI");
+            store.dispatch("allBudget/getAllBudget");
           })
           .catch((error) => {
             commit("RESTORE_ERROR", error);
