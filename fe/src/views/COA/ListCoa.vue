@@ -210,7 +210,7 @@ export default {
           this.onSaveSuccess();
         })
         .catch((error) => {
-          this.onSaveError(error);
+          this.onSaveError(error.response.data);
         });
     },
     onForm(){
@@ -239,6 +239,7 @@ export default {
     onSaveSuccess() {
       this.formDialog = false;
       this.uploadDialog = false;
+      this.uploadDialog = false;
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
@@ -246,11 +247,12 @@ export default {
     },
     onSaveError(error) {
       this.formDialog = false;
+      this.uploadDialog = false;;
       this.uploadDialog = false;
       this.alert.show = true;
       this.alert.success = false;
       this.alert.title = "Save Failed";
-      this.alert.subtitle = error;
+      this.alert.subtitle = error.message;
     },
     onAlertOk() {
       this.alert.show = false;

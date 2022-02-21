@@ -185,7 +185,7 @@ const masterStrategy = {
           })
           .catch((err) => {
             reject(err);
-            commit("GET_ERROR_IMPORT_STRATEGY", err.message);
+            commit("GET_ERROR_IMPORT_STRATEGY", err);
           });
       });
     }

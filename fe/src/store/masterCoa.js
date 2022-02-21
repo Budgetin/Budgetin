@@ -172,6 +172,7 @@ const masterCoa = {
     },
 
     importCoa({ commit }, data) {
+      console.log(data)
       commit("GET_INIT_IMPORT_COA");
       let formData = new FormData();
       formData.append("file", data.files);
@@ -186,7 +187,7 @@ const masterCoa = {
           })
           .catch((err) => {
             reject(err);
-            commit("GET_ERROR_IMPORT_COA", err.message);
+            commit("GET_ERROR_IMPORT_COA", err);
           });
       });
     },
@@ -287,6 +288,7 @@ const masterCoa = {
       state.loadingImportCoa = false;
     },
     GET_ERROR_IMPORT_COA(state, error) {
+      console.log(error.response);
       state.requestImportCoaStatus = "ERROR";
       state.loadingImportCoa = false;
       state.errorMsgImportCoa = error;
