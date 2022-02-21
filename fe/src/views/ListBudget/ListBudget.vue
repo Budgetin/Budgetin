@@ -192,7 +192,8 @@
         <v-dialog v-model="dialogUpload" persistent width="25rem">
           <upload-file-budget
             @cancelClicked="onCancel"
-            @uploadClicked="uploadBudget">
+            @uploadClicked="uploadBudget"
+            @downloadClicked="downloadTemplate">
           </upload-file-budget>
         </v-dialog>
       </v-row>
@@ -449,7 +450,7 @@ export default {
     ...mapState("choosedColumn", ["listColumn"]),
   },
   methods: {
-    ...mapActions("listBudget", ["getListBudget", "getListInactiveBudget", "postListBudget","importBudget","importRealization","downloadBudget"]),
+    ...mapActions("listBudget", ["getListBudget", "getListInactiveBudget", "postListBudget","importBudget","importRealization","downloadBudget","downloadImportBudgetTemplate"]),
     getSelectedHeader() {
       if (this.listColumn.length == 1) {
         this.dataTable.selectedHeader = [].concat(this.dataTable.Listheader);
@@ -534,6 +535,19 @@ export default {
           this.alert.show = true;
           this.alert.success = false;
           this.alert.title = "Upload Failed";
+          this.alert.subtitle = error.message;
+        });
+    },
+    downloadTemplate(){
+      this.downloadImportBudgetTemplate()
+        .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.dialog = false;
+          this.alert.show = true;
+          this.alert.success = false;
+          this.alert.title = "Download Failed";
           this.alert.subtitle = error.message;
         });
     },
