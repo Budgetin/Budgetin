@@ -14,7 +14,7 @@ from api.models import Product, Strategy, User
 from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_excel, read_file, get_import_template_path, remove_sheet, export_excel
+from api.utils.file import read_excel, read_file, get_import_template_path, remove_sheet, export_excel, export_errors_as_excel
 from api.exceptions import ValidationException
 
 def is_product_duplicate(product_id, product_code, product_name):
@@ -81,7 +81,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             errors.extend(self.insert_to_db(request, data, (index+2)))
         
         if errors:
-            raise ValidationException(errors)
+            return export_errors_as_excel(errors)
 
         return Response(status=204)    
 

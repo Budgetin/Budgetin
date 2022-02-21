@@ -83,8 +83,27 @@
           <upload-file-product
             @cancelClicked="onCancel"
             @uploadClicked="onSubmitUpload"
+            @downloadClicked="onDownload"
           >
           </upload-file-product>
+        </v-dialog>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-dialog v-model="loadingImportProductTemplate" persistent width="25rem">
+          <v-card>
+            <v-card-title class="d-flex justify-center"> Loading </v-card-title>
+            <v-card-text>
+              <v-row no-gutters class="d-flex justify-center">
+                <v-progress-circular
+                  :size="70"
+                  :width="7"
+                  color="blue"
+                  indeterminate
+                ></v-progress-circular>
+              </v-row>
+            </v-card-text>
+          </v-card>
         </v-dialog>
       </v-row>
 
@@ -163,11 +182,11 @@ export default {
     this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("masterProduct", ["loadingGetMasterProduct", "dataMasterProduct"]),
+    ...mapState("masterProduct", ["loadingGetMasterProduct", "dataMasterProduct", "loadingImportProductTemplate"]),
     ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
   },
   methods: {
-    ...mapActions("masterProduct", ["getMasterProduct", "postMasterProduct", "importProduct"]),
+    ...mapActions("masterProduct", ["getMasterProduct", "postMasterProduct", "importProduct", "importProductTemplate"]),
     ...mapActions("masterStrategy", ["getMasterStrategy", "postMasterStrategy"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
@@ -181,6 +200,15 @@ export default {
           },
         },
       ]);
+    },
+    onDownload(){
+      this.importProductTemplate()
+        .then(() => {
+          this.onDownloadSuccess();
+        })
+        .catch((error) => {
+          this.onDownloadError(error);
+        });
     },
     onAdd() {
       // this.dialog = !this.dialog;
@@ -235,6 +263,20 @@ export default {
       this.alert.show = true;
       this.alert.success = false;
       this.alert.title = "Save Failed";
+      this.alert.subtitle = error;
+    },
+    onDownloadSuccess() {
+      this.dialog = false;
+      this.alert.show = true;
+      this.alert.success = true;
+      this.alert.title = "Download Success";
+      this.alert.subtitle = "Product Template has been downloaded successfully";
+    },
+    onDownloadError(error) {
+      this.dialog = false;
+      this.alert.show = true;
+      this.alert.success = false;
+      this.alert.title = "Download Failed";
       this.alert.subtitle = error;
     },
     onAlertOk() {
