@@ -27,10 +27,7 @@ const listProject = {
     value: (state) => state.value
   },
   actions: {
-    getListProject() {
-        store.dispatch("listProject/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getListProject({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)

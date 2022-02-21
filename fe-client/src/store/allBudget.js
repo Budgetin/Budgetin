@@ -33,11 +33,7 @@ const allBudget = {
     value: (state) => state.value
   },
   actions: {
-    getAllBudget() {
-      if (store.state.allBudget.requestStatus !== "SUCCESS")
-        store.dispatch("allBudget/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getAllBudget({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)

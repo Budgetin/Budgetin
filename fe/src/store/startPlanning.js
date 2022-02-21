@@ -24,11 +24,7 @@ const startPlanning = {
     value: (state) => state.value
   },
   actions: {
-    getStartPlanning() {
-      if (store.state.startPlanning.requestStatus !== "SUCCESS")
-        store.dispatch("startPlanning/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getStartPlanning({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)

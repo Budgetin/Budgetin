@@ -27,11 +27,7 @@ const projectDetail = {
     value: (state) => state.value
   },
   actions: {
-    getProjectDetail() {
-      if (store.state.projectDetail.requestStatus !== "SUCCESS")
-        store.dispatch("projectDetail/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getProjectDetail({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(ENDPOINT)

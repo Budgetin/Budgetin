@@ -34,10 +34,7 @@ const listBudget = {
 //==Page ListBudget.vue
 
     //Get List Budget (Active)
-    getListBudget() {
-        store.dispatch("listBudget/getFromAPI");
-    },
-    getFromAPI({ commit }) {
+    getListBudget({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(BUDGET_ENDPOINT + "active/")
@@ -53,10 +50,7 @@ const listBudget = {
         });
     },
 
-    getListInactiveBudget() {
-        store.dispatch("listBudget/getFromInactiveAPI");
-    },
-    getFromInactiveAPI({ commit }) {
+    getListInactiveBudget({ commit }) {
       commit("GET_INACTIVE_INIT");
       getAPI
         .get(BUDGET_ENDPOINT + "inactive/")
@@ -72,10 +66,7 @@ const listBudget = {
         });
     },
 
-    getListActivePlanning() {
-        store.dispatch("listBudget/getFromActiveAPI");
-    },
-    getFromActiveAPI({ commit }) {
+    getListActivePlanning({ commit }) {
       commit("GET_INIT");
       getAPI
         .get(PLANNING_ENPOINT + "active")
