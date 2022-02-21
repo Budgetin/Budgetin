@@ -82,7 +82,7 @@ class CoaViewSet(viewsets.ModelViewSet):
         errors = self.validate_data(data, index)
 
         if not errors:
-            coa = self.create_or_update_coa(request, data)
+            self.create_or_update_coa(request, data)
 
         return errors
     
