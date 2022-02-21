@@ -1,51 +1,7 @@
 [
     {
-        "id": 1,
-        "product_code": "BA001",
-        "product_name": "Acquiring",
-        "created_by": 1,
-        "strategy_id": 1
-    },
-    {
-        "id": 2,
-        "product_code": "BA002",
-        "product_name": "API",
-        "created_by": 1,
-        "strategy_id": 1
-    },
-    {
-        "id": 3,
-        "product_code": "BA003",
-        "product_name": "ATM",
-        "created_by": 1,
-        "strategy_id": 1
-    },
-    {
-        "id": 4,
-        "product_code": "BA004",
-        "product_name": "Automation",
-        "created_by": 1,
-        "strategy_id": 1
-    },
-    {
-        "id": 5,
-        "product_code": "BA005",
-        "product_name": "BCA Prioritas",
-        "created_by": 1,
-        "strategy_id": 1
-    },
-    {
-        "id": 6,
-        "product_code": "BA006",
-        "product_name": "BO Support",
-        "created_by": 1,
-        "strategy_id": 1
-    },
-    {
-        "id": 7,
-        "product_code": "BA007",
-        "product_name": "Cash Operation",
-        "created_by": 1,
-        "strategy_id": 1
+        "product_code": "None",
+        "product_name": "None",
+        "strategy_id": null
     }
 ]
