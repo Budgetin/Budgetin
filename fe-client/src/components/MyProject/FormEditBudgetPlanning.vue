@@ -142,6 +142,7 @@
               >
               </v-select>
             </div>
+          </v-col>
           <v-col cols="6"> Expense Type <strong class="red--text">*</strong>
             <div class="EditBudgetPlanning__field">
               <v-select

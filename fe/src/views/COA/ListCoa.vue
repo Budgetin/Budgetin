@@ -82,7 +82,8 @@
       <v-row no-gutters>
         <v-dialog v-model="uploadDialog" persistent width="37.5rem">
           <upload-file-coa
-            @uploadClicked="submitUpload"
+            @cancelClicked="onCancel"
+            @uploadClicked="onSubmitUpload"
           >
           </upload-file-coa>
         </v-dialog>
@@ -97,7 +98,7 @@
           :dataMasterCoa="dataMasterCoa"
           @editClicked="onEdit"
           @cancelClicked="onCancel"
-          @submitClicked="onSubmit"
+          @submitClicked="onSubmitForm"
           ></form-coa>
         </v-dialog>
       </v-row>
@@ -117,7 +118,7 @@
 import { mapState, mapActions } from "vuex";
 import MethodInputOption from "@/components/MethodInputOption"
 import FormCoa from "@/components/MasterCOA/FormCoa";
-import UploadFileCoa from "@/components/MasterCOA/FormCoa";
+import UploadFileCoa from "@/components/MasterCOA/UploadFileCoa";
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 export default {
   name: "MasterCoa",
@@ -160,7 +161,7 @@ export default {
     ...mapState("masterCoa", ["loadingGetMasterCoa", "dataMasterCoa"]),
   },
   methods: {
-    ...mapActions("masterCoa", ["getMasterCoa", "postMasterCoa"]),
+    ...mapActions("masterCoa", ["getMasterCoa", "postMasterCoa","importCoa"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
         {
@@ -182,6 +183,15 @@ export default {
       this.formDialog = false;
       this.uploadDialog = true;
     },
+    onSubmitUpload(file){
+      this.importCoa(file)
+        .then(() => {
+          this.onSaveSuccess();
+        })
+        .catch((error) => {
+          this.onSaveError(error);
+        });
+    },
     onForm(){
       this.inputOption = false;
       this.formDialog = true;
@@ -196,7 +206,7 @@ export default {
       this.formDialog = false;
       this.uploadDialog = false;
     },
-    onSubmit(e) {
+    onSubmitForm(e) {
       this.postMasterCoa(e)
         .then(() => {
           this.onSaveSuccess();

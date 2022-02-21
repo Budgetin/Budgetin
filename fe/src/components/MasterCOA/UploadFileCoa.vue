@@ -11,7 +11,7 @@
     <v-card-text>
       <v-row no-gutters align="center">
         <v-col cols="12" class="mt-2">
-          <a href="Template Budget.xlsx" download>Download Template COA</a>
+          <a href="import_template_coa.xlsx" download>Download Template COA</a>
           <!-- <v-btn text @click="downloadTemplate" class="primary--text">Download Template Planning </v-btn> -->
         </v-col>
       </v-row>
@@ -22,7 +22,7 @@
               :rules="validation.uploadRule"
               accept=".xlsx"
               show-size
-              label="Upload Budget"
+              label="Upload COA"
               v-model="files"
             ></v-file-input>
           </v-col>
@@ -40,15 +40,9 @@
 </template>
 
 <script>
-// import template from "@/assets/ImportTemplate.xlsx"
-import { mapState, mapActions, mapGetters } from "vuex";
 export default {
-  name: "UploadFileBudget",
-  created() {
-    //this.getAllProjectType();
-  },
+  name: "UploadFileCoa",
   data: () => ({
-    name:"",
     files: [],
     validation: {
       uploadRule: [
@@ -57,12 +51,6 @@ export default {
       ],
     },
   }),
-
-  computed: {
-    // ...mapState("projectType", ["loadingGetListPlanning",
-    //   "dataProjectType"
-    // ]),
-  },
   methods: {
     onCancel() {
       this.$emit("cancelClicked");
