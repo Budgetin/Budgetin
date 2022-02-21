@@ -62,6 +62,14 @@ const routes = [
     component: Index,
     children: [
       {
+        path: "dashboard",
+        name: "Dashboard",
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
+        component: () => import("@/views/Dashboard/Dashboard"),
+      },
+      {
         path: "coa",
         name: "Coa",
         beforeEnter: (to, from, next) => {
