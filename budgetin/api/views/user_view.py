@@ -34,7 +34,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
-        user = User.objects.get(pk=kwargs['pk'])
+        user = User.objects.select_related('created_by','updated_by').get(pk=kwargs['pk'])
         user.format_timestamp("%d %B %Y")
         
         serializer = UserResponseSerializer(user, many=False)
@@ -68,4 +68,12 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def imo(self, request, pk=None):
         imod = get_imo_d_employee()
-        return Response(imod)
+        users =  User.objects.all().values()
+        arr_user = []
+        for user in users:
+            arr_user.append(user['username'])
+        res = []
+        for imo in imod:
+            if imo['username'] not in arr_user:
+                res.append(imo)
+        return Response(res)
