@@ -14,8 +14,8 @@ from django.db.models.base import ObjectDoesNotExist
 from api.models import ProjectDetail
 
 def update_db(request, index, data):
-    dcsp_id = data['Project Id']
-    project_detail = get_projectdetail(data['Id'], index)
+    dcsp_id = data['project_id']
+    project_detail = get_projectdetail(data['id'], index)
     project_detail.update(dcsp_id = dcsp_id)
     AuditLog.Save(ProjectDetailSerializer(project_detail), request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
 

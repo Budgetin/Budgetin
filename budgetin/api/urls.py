@@ -10,6 +10,6 @@ urlpatterns = [
     path('login/user/', views.LoginUserView.as_view()),
     path('logout/', views.LogoutView.as_view()),
     path('import/list_budget/', views.ImportListBudget.as_view()),
-    path('import/realisasi/', views.ImportRealisasi.as_view()),
+    path('realisasi/import/', views.ImportRealisasi.as_view()),
     path('import/dcsp/', views.ImportDCSP.as_view()),
 ]
