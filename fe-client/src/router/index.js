@@ -134,6 +134,14 @@ const routes = [
         component: () => import("@/views/ListBudget/ListBudgetExisting"),
       },
       {
+        path: "/myBudget/view/:id_budget_planning/",
+        name: "ViewBudgetDetail",
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
+        component: () => import("@/views/MyProject/ViewMyBudgetPlanning"),
+      },
+      {
         path: "myProject",
         name: "MyProject",
         beforeEnter: (to, from, next) => {
