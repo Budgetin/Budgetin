@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db import transaction
 
-from api.models import Coa
+from api.models import Coa, User
 from api.serializers import CoaSerializer, CoaResponseSerializer
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 from api.utils.auditlog import AuditLog
@@ -82,8 +82,7 @@ class CoaViewSet(viewsets.ModelViewSet):
         errors = self.validate_data(data, index)
 
         if not errors:
-            coa = self.create_coa(request, data)
-            AuditLog.Save(CoaSerializer(coa), request, ActionEnum.CREATE, TableEnum.COA) 
+            coa = self.create_or_update_coa(request, data)
 
         return errors
     
@@ -94,22 +93,40 @@ class CoaViewSet(viewsets.ModelViewSet):
     
     def validate_coa(self, data, index, errors):
         name = data['coa_name']
+        is_capex = data['is_capex']
+        minimum_item_origin = data['minimum_item_origin']
         
         if pd.isnull(name):
             errors.append("Row {} - Coa name must be filled".format(index))
-        elif Coa.name_exists(name):
-            errors.append("Row {} - Coa '{}' already exists".format(index, name))
+        if not pd.isnull(is_capex) and is_capex.lower() == 'yes' and pd.isnull(minimum_item_origin):
+            errors.append("Row {} - Minimum item origin must be filled if COA can be considered as capex".format(index))
+            
         return errors
     
-    def create_coa(self, request, data):
-        return Coa.objects.create(
+    def create_or_update_coa(self, request, data):
+        new_coa = Coa(
             name = data['coa_name'],
             definition = data['coa_definition'] if not pd.isnull(data['coa_definition']) else None,
             hyperion_name = data['hyperion_name'] if not pd.isnull(data['hyperion_name']) else None,
-            is_capex = True,
-            created_by_id = request.custom_user['id'],
-            updated_by_id = request.custom_user['id'],
+            is_capex = True if not pd.isnull(data['is_capex']) and data['is_capex'].lower() == 'yes' else False,
+            minimum_item_origin = data['minimum_item_origin'] if not pd.isnull(data['minimum_item_origin']) else None,
+            updated_by = User.objects.get(pk=request.custom_user['id'])
         )
+        
+        coa = Coa.objects.filter(name=data['coa_name']).first()
+        if coa and not coa.equal(new_coa):
+            coa.definition = new_coa.definition
+            coa.hyperion_name = new_coa.hyperion_name
+            coa.is_capex = new_coa.is_capex
+            coa.minimum_item_origin = new_coa.minimum_item_origin
+            coa.updated_by = new_coa.updated_by
+            coa.save()
+            AuditLog.Save(CoaSerializer(coa), request, ActionEnum.UPDATE, TableEnum.COA) 
+        elif not coa:
+            new_coa.created_by = new_coa.created_by
+            new_coa.save()
+            AuditLog.Save(CoaSerializer(new_coa), request, ActionEnum.CREATE, TableEnum.COA) 
+
     
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):
