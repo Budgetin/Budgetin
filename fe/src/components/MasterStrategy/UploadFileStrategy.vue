@@ -11,7 +11,7 @@
     <v-card-text>
       <v-row no-gutters align="center">
         <v-col cols="12" class="mt-2">
-          <a href="import_template_coa.xlsx" download>Download Template COA</a>
+          <a href="import_template_strategy.xlsx" download>Download Template Strategy</a>
           <!-- <v-btn text @click="downloadTemplate" class="primary--text">Download Template Planning </v-btn> -->
         </v-col>
       </v-row>
@@ -22,7 +22,7 @@
               :rules="validation.uploadRule"
               accept=".xlsx"
               show-size
-              label="Upload COA"
+              label="Upload Strategy"
               v-model="files"
             ></v-file-input>
           </v-col>

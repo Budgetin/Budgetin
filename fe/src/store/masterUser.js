@@ -150,24 +150,8 @@ const masterUser = {
             // store.dispatch("masterCategory/getFromAPI");
           })
           .catch((error) => {
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  if (error.response.data.hasOwnProperty("User_name")) {
-                    errorMsg += error.response.data.User_name;
-                  }
-                  break;
-
-                default:
-                  errorMsg += `${error.response.statusText}: Please recheck your input or try again later`;
-                  break;
-              }
-            }
-            reject(errorMsg);
-            commit("POST_PATCH_ERROR", error.response.data);
+            reject(error);
+            commit("POST_PATCH_ERROR", error);
           });
       });
     },

@@ -122,7 +122,7 @@ export default {
           id: this.form?.id,
           username : this.form.name.username?this.form.name.username:this.form.name,
           role: this.form.role,
-          is_active: this.form.status,
+          is_active: this.form.status.id ? this.form.status.id : this.form.status ,
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
         this.$refs.form.reset()
