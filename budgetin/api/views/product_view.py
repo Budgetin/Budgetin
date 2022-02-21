@@ -90,7 +90,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         if not errors:
             strategy = self.get_strategy(data)
-            product = self.create_or_update_product(request, data, strategy)
+            self.create_or_update_product(request, data, strategy)
         
         return errors
     
@@ -121,7 +121,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_strategy(self, data):
         strategy_name = data['strategy_name']
         if pd.isnull(strategy_name):
-            strategy = None
+            strategy, _ = Strategy.objects.get_or_create(name='None')
         else:
             strategy = Strategy.objects.filter(name__iexact=strategy_name).first()
         return strategy
