@@ -114,7 +114,11 @@ class CoaViewSet(viewsets.ModelViewSet):
         )
         
         coa = Coa.objects.filter(name=data['coa_name']).first()
-        if coa and not coa.equal(new_coa):
+        if not coa:
+            new_coa.created_by = new_coa.created_by
+            new_coa.save()
+            AuditLog.Save(CoaSerializer(new_coa), request, ActionEnum.CREATE, TableEnum.COA) 
+        elif coa and not coa.equal(new_coa):
             coa.definition = new_coa.definition
             coa.hyperion_name = new_coa.hyperion_name
             coa.is_capex = new_coa.is_capex
@@ -122,10 +126,6 @@ class CoaViewSet(viewsets.ModelViewSet):
             coa.updated_by = new_coa.updated_by
             coa.save()
             AuditLog.Save(CoaSerializer(coa), request, ActionEnum.UPDATE, TableEnum.COA) 
-        elif not coa:
-            new_coa.created_by = new_coa.created_by
-            new_coa.save()
-            AuditLog.Save(CoaSerializer(new_coa), request, ActionEnum.CREATE, TableEnum.COA) 
 
     
     @action(methods=['get'], detail=False, url_path='import/template')
