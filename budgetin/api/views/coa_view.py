@@ -1,4 +1,5 @@
 import pandas as pd
+from io import BytesIO
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -9,7 +10,7 @@ from api.serializers import CoaSerializer, CoaResponseSerializer
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
-from api.utils.file import read_excel, read_file, get_import_template_path, load_file, export_excel
+from api.utils.file import read_excel, read_file, get_import_template_path, load_file, export_excel, export_errors_as_excel
 from api.exceptions import ValidationException
 
 def is_duplicate_coa_create(name, hyperion_name):
@@ -73,8 +74,8 @@ class CoaViewSet(viewsets.ModelViewSet):
         for index, data in df.iterrows():
             errors.extend(self.insert_to_db(request, data, (index+2)))
         
-        if errors:
-            raise ValidationException(errors)
+        if errors:            
+            return export_errors_as_excel(errors)
         
         return Response(status=204)
     

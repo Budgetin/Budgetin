@@ -1,5 +1,6 @@
 import pandas
 import os
+from io import BytesIO
 from django.utils.datastructures import MultiValueDictKeyError
 from django.http import HttpResponse
 
@@ -30,6 +31,17 @@ def export_excel(content, filename):
         pass
     return response
 
+def export_errors_as_excel(errors):
+    df = pandas.DataFrame(errors, columns=['errors'])
+    b = BytesIO()
+    writer = pandas.ExcelWriter(b, engine='openpyxl')
+    df.to_excel(writer, index=False)
+    writer.save()            
+    
+    response = export_excel(b.getvalue(), 'validation_error.xlsx')
+    response.status_code = 400
+    
+    return response
 
 def get_import_template_path(table):
     module_dir = os.path.dirname(__file__)
