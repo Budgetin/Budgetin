@@ -10,7 +10,7 @@ from openpyxl import load_workbook
 from openpyxl.writer.excel import save_virtual_workbook
 
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
-from api.models import Product, Strategy, Coa, User
+from api.models import Product, Strategy, User
 from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
@@ -151,33 +151,31 @@ class ProductViewSet(viewsets.ModelViewSet):
         file_path = get_import_template_path(TableEnum.PRODUCT)
         book = load_workbook(filename=file_path)
 
-        self.write_coa_sheet(book, file_path)
+        self.write_strategy_sheet(book, file_path)
 
         book.close()                
         return export_excel(content=BytesIO(save_virtual_workbook(book)), filename='import_template_product.xlsx')
     
-    def write_coa_sheet(self, book, file_path):
-        columns = ['coa_name', 'hyperion_name', 'coa_definition']
-        coas = self.get_all_coa()
+    def write_strategy_sheet(self, book, file_path):
+        columns = ['strategy_name']
+        coas = self.get_all_strategy()
         
         writer = pd.ExcelWriter(file_path, engine = 'openpyxl')
         writer.book = book
         
-        if 'existing_coa' in book.sheetnames:
-            remove_sheet(book, 'existing_coa')            
+        if 'existing_strategy' in book.sheetnames:
+            remove_sheet(book, 'existing_strategy')            
             
         df = pd.DataFrame(coas, columns=columns)
-        df.to_excel(writer, sheet_name = 'existing_coa', index=False)
+        df.to_excel(writer, sheet_name = 'existing_strategy', index=False)
         writer.save()
         writer.close()
     
-    def get_all_coa(self):
-        coas = Coa.objects.all()
+    def get_all_strategy(self):
+        strategies = Strategy.objects.all()
         result = []
-        for coa in coas:
+        for strategy in strategies:
             temp = []
-            temp.append(coa.name)
-            temp.append(coa.hyperion_name)
-            temp.append(coa.definition)
+            temp.append(strategy.name)
             result.append(temp)
         return result
