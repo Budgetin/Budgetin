@@ -265,7 +265,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         serializer = BudgetResponseSerializer(budgets, many=True)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=False, url_path='download')
+    @action(methods=['get'], detail=False, url_path='export')
     def export(self, request):
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
                                                 'project_detail__project', 'project_detail__project_type', 
@@ -284,6 +284,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         self.create_update_all_biro()
         
         for index, data in df.iterrows():
+            print(index)
             errors = self.insert_to_db(request, data, (index+2), errors)
             
         if errors:
@@ -379,29 +380,43 @@ class BudgetViewSet(viewsets.ModelViewSet):
         return project_detail
     
     def create_or_update_budget(self, request, data, project_detail, coa):
-        budget, created = Budget.objects.update_or_create(
-            project_detail = project_detail,
-            coa = coa,
-            defaults={
-                'expense_type': data["capex_opex"],
-                'planning_q1': data["Q1"] * data["total_budget"],
-                'planning_q2': data["Q2"] * data["total_budget"],
-                'planning_q3': data["Q3"] * data["total_budget"],
-                'planning_q4': data["Q4"] * data["total_budget"],
-                'updated_by_id': request.custom_user['id'],
-            }
-        )
+        budget = Budget.objects.select_related(
+            'project_detail', 'project_detail__project'
+        ).filter(project_detail=project_detail, coa=coa).first()
         
-        if created:
+        if budget:
+            project = budget.project_detail.project
+            project.total_investment_value -= (budget.planning_q1 + budget.planning_q2 + budget.planning_q3 + budget.planning_q4)
+            
+            budget.expense_type = data['capex_opex']
+            budget.planning_q1 = data["Q1"] * data["total_budget"]
+            budget.planning_q2 = data["Q2"] * data["total_budget"]
+            budget.planning_q3 = data["Q3"] * data["total_budget"]
+            budget.planning_q4 = data["Q4"] * data["total_budget"]
+            budget.updated_by_id = request.custom_user['id']
+            budget.save()
+            
+            project.total_investment_value += (budget.planning_q1 + budget.planning_q2 + budget.planning_q3 + budget.planning_q4)
+            project.save()
+            AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
+        else:
             project = Project.objects.filter(project_detail=project_detail).first()
             project.add_total_investment(data['total_budget'])
             
-            budget.created_by_id = request.custom_user['id']
-            budget.save()
-            AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
-        else:
-            AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
+            budget = Budget.objects.create(
+                project_detail = project_detail,
+                coa = coa,
+                expense_type = data['capex_opex'],
+                planning_q1 = data["Q1"] * data["total_budget"],
+                planning_q2 = data["Q2"] * data["total_budget"],
+                planning_q3 = data["Q3"] * data["total_budget"],
+                planning_q4 = data["Q4"] * data["total_budget"],
+                created_by_id = request.custom_user['id'],
+                updated_by_id = request.custom_user['id'],
+            )
             
+            AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
+        
     def validate_data(self, data, index):
         errors = []
         errors = self.validate_product(data, index, errors)
