@@ -7,15 +7,20 @@ const ENDPOINT = "/api/coa/";
 const masterCoa = {
   namespaced: true,
   state: {
+    // get All data Master Coa
+    requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetMasterCoa: false, // for loading table
+    dataMasterCoa: [], // for v-data-table
+    errorMsg: null,
+
+    // get All data Master Coa by ID
+
+
     loadingGetEdittedItem: false,
     loadingPostPatchMasterCoa: false, // for loading post/patch
-    dataMasterCoa: [], // for v-data-table
     dataActiveMasterCoa: [], //for dropdown
-    requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    errorMsg: null,
     edittedItem: null,
     loadingDeleteItem:false,
     deleteStatus: "IDLE",
@@ -30,7 +35,7 @@ const masterCoa = {
 
   },
   getters: {
-    value: (state) => state.value
+    // value: (state) => state.value
   },
   actions: {
     getMasterCoa({ commit }) {
@@ -76,24 +81,12 @@ const masterCoa = {
             store.dispatch("masterCoa/getMasterCoa");
           })
           .catch((error) => {
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  if (error.response.data.hasOwnProperty("Coa_name")) {
-                    errorMsg += error.response.data.Coa_name;
-                  }
-                  break;
-
-                default:
-                  errorMsg += `Please recheck your input or try again later`;
-                  break;
-              }
+            commit("POST_PATCH_ERROR", error);
+            if(error.response.data.message){
+              reject(error.response.data.message);
+            }else{
+              reject(error);
             }
-            commit("POST_PATCH_ERROR", errorMsg);
-            reject(errorMsg);
           });
       });
     },
@@ -109,24 +102,12 @@ const masterCoa = {
             store.dispatch("masterCoa/getMasterCoa");
           })
           .catch((error) => {
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  if (error.response.data.hasOwnProperty("Coa_name")) {
-                    errorMsg += error.response.data.Coa_name;
-                  }
-                  break;
-
-                default:
-                  errorMsg += `${error.response.statusText}: Please recheck your input or try again later`;
-                  break;
-              }
+            commit("POST_PATCH_ERROR", error);
+            if(error.response.data.message){
+              reject(error.response.data.message);
+            }else{
+              reject(error);
             }
-            reject(errorMsg);
-            commit("POST_PATCH_ERROR", error.response.data);
           });
       });
     },
@@ -179,13 +160,21 @@ const masterCoa = {
 
       return new Promise((resolve, reject) => {
         getAPI
-          .post((ENDPOINT+"import/"), formData)
+          .post((ENDPOINT+"import/"), formData , {
+            responseType: "arraybuffer", //Khusus download file
+          })
           .then((res) => {
             resolve(res);
             store.dispatch('masterCoa/getMasterCoa')
             commit("GET_SUCCESS_IMPORT_COA");
           })
           .catch((err) => {
+            const url = window.URL.createObjectURL(new Blob([err.response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "Error Upload Master Coa.xlsx");
+            document.body.appendChild(link);
+            link.click();
             reject(err);
             commit("GET_ERROR_IMPORT_COA", err);
           });
@@ -204,20 +193,17 @@ const masterCoa = {
       state.loadingGetMasterCoa = false;
       state.dataMasterCoa = dataMasterCoa;
     },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveMasterCoa) {
-      state.requestActiveStatus = "IDLE";
-      state.dataActiveMasterCoa = dataActiveMasterCoa;
-    },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
       state.loadingGetMasterCoa = false;
       state.errorMsg = error;
       state.dataMasterCoa = [];
-      state.dataActiveMasterCoa = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
     },
+
+
 
     // post / patch related
     POST_PATCH_INIT(state) {
@@ -229,6 +215,7 @@ const masterCoa = {
       state.loadingPostPatchMasterCoa = false;
     },
     POST_PATCH_ERROR(state, error) {
+      console.log(error.response);
       state.requestStatus = "ERROR";
       state.loadingPostPatchMasterCoa = false;
       state.errorMsg = error;

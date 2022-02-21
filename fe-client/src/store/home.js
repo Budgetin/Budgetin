@@ -12,41 +12,29 @@ const home = {
     requestTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetTask: false, // for loading table
     dataHome: [], // for v-data-table
-    errorMsg: null,
+    
     // get task by id
     requestTaskByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetTaskById: false, // for loading table
     dataTaskById: null, // for store data
-    errorMsgTaskById: null,
+    
     // get List My Planning based on task id
     requestSubmittedTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetSubmittedTask: false, // for loading table
     dataSubmittedTask: [], // for v-data-table
-    errorMsgSubmittedTask: null,
+    
     // set monitoring status as Submitted
     requestSubmitPlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingPostSubmitPlanning: false, // for loading table
-    errorMsgSubmitPlanning: null,
+    
     // save planning
     requestSavePlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingPostSavePlanning: false, // for loading table
-    errorMsgSavePlanning: null,
+    
     // download My Planning
     requestDownloadPlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingDownloadPlanning: false, // for loading data
-    errorMsgDownloadPlanning: null,
 
-    loadingGetEdittedItem: false,
-    loadingPostPatchHome: false, // for loading post/patch
-    requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    edittedItem: null,
-    loadingDeleteItem:false,
-    deleteStatus: "IDLE",
-    deleteItem: [],
-    requestHistoriesStatus:"IDLE",
-    loadingGetEdittedItemHistories: false,
-    edittedItemHistories: [],
   },
   getters: {
     value: (state) => state.dataHome
@@ -169,7 +157,6 @@ const home = {
     GET_ERROR(state, error) {
       state.requestTaskStatus = "ERROR";
       state.loadingGetTask = false;
-      state.errorMsg = error;
       state.dataHome = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
@@ -189,7 +176,6 @@ const home = {
     GET_ERROR_TASK_BY_ID(state, error) {
       state.requestTaskByIdStatus = "ERROR";
       state.loadingGetTaskById = false;
-      state.errorMsgTaskById = error;
       state.dataTaskById = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
@@ -209,7 +195,6 @@ const home = {
     GET_ERROR_SUBMITTED_TASK_ITEM(state, error) {
       state.requestTaskStatus = "ERROR";
       state.loadingGetSubmittedTaskItem = false;
-      state.errorMsgSubmittedTask = error;
       state.dataSubmittedTask = [];
       console.log(error)
       if(error.response.status =="401"){
@@ -226,10 +211,9 @@ const home = {
       state.requestSubmitPlanningStatus = "SUCCESS";
       state.loadingPostSubmitPlanning = false;
     },
-    GET_ERROR_SUBMIT_PLANNING(state, error) {
+    POST_ERROR_SUBMIT_PLANNING(state, error) {
       state.requestSubmitPlanningStatus = "ERROR";
       state.loadingPostSubmitPlanning = false;
-      state.errorMsgSubmitPlanning = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }

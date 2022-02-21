@@ -210,7 +210,7 @@ export default {
           this.onSaveSuccess();
         })
         .catch((error) => {
-          this.onSaveError(error.response.data);
+          this.onSaveError("Check Your Download Folder to View Error");
         });
     },
     onForm(){
@@ -252,7 +252,7 @@ export default {
       this.alert.show = true;
       this.alert.success = false;
       this.alert.title = "Save Failed";
-      this.alert.subtitle = error.message;
+      this.alert.subtitle = error;
     },
     onAlertOk() {
       this.alert.show = false;

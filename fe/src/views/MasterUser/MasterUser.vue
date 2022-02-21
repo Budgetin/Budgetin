@@ -172,7 +172,7 @@ export default {
       this.dialog = !this.dialog;
     },
     onEdit(item) {
-      this.$store.commit("masterUser/SET_EDITTED_ITEM", item);
+      this.$store.commit("masterUser/GET_USER_BY_ID_SUCCESS", item);
     },    
     onCancel() {
       this.dialog = false;

@@ -3,27 +3,37 @@ import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js"
 
 const ENDPOINT = "/api/user/";
+const LOGENDPOINT="/api/auditlog?table=user&entity=";
 
 const masterUser = {
   namespaced: true,
   state: {
-    loadingGetMasterUser: false, // for loading table
-    loadingGetEdittedItem: false,
-    loadingPostPatchMasterUser: false, // for loading post/patch
-    dataMasterUser: [], // for v-data-table
-    dataActiveMasterUser: [], //for dropdown
+    // get list of user
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetMasterUser: false, // for loading table
+    dataMasterUser: [], // for v-data-table
+
+    // get data employee
+    requestEmployeeStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetEmployee: false, // for loading table
+    dataEmployee: [], // for dropdown
+  
+    // get data user by id
+    requestUserByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetUserById: false, // for loading table
+    dataUserById: [], // for form
+
+    // post/patch master user
     postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    errorMsg: null,
-    edittedItem: null,
-    edittedItemHistories: [],
-    requestHistoriesStatus:"IDLE",
-    loadingGetEdittedItemHistories: false,
-    edittedItemHistories: [],
+    loadingPostPatchMasterUser: false, // for loading post/patch
+
+    // get history user by id
+    requestHistoryMasterUserStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetHistoryMasterUser: false, // for loading table
+    dataHistoryMasterUser: [], // for form
+
   },
   getters: {
-    value: (state) => state.value
   },
   actions: {
     getMasterUser({ commit }) {
@@ -50,7 +60,7 @@ const masterUser = {
             }
           });
           const sorted = cleanData.sort((a, b) =>
-            a.update_at > b.update_at ? 1 : -1
+            a.id < b.id ? 1 : -1
           );
           commit("GET_SUCCESS", sorted);
         })
@@ -58,28 +68,38 @@ const masterUser = {
           commit("GET_ERROR", error);
         });
     },
+    
     getEmployee({ commit }) {
-      commit("GET_DROPDOWN");
-      getAPI
-        .get(ENDPOINT+'imo/')
-        .then((response) => {
-          const cleanData = response.data
-          const sorted = cleanData.sort((a, b) =>
-            a.display_name > b.update_at ? 1 : -1
-          );
-          commit("GET_SUCCESS", sorted);
-        })
-        .catch((error) => {
-          commit("GET_ERROR", error);
-        });
-    },
-    getMasterUserById({ commit }, id) {
-      // commit("SET_EDITTED_ITEM_HISTORIES", []);
-      commit("SET_LOADING_GET_EDITTED_ITEM", true);
-
+      commit("GET_INIT_EMPLOYEE");
+      const url = `${ENDPOINT}imo/`;
       return new Promise((resolve, reject) => {
         getAPI
-          .get(ENDPOINT + `${id}/`)
+          .get(url)
+          .then((response) => {
+            const cleanData = response.data
+            const sorted = cleanData.sort((a, b) =>
+              a.display_name > b.display_name ? 1 : -1
+            );
+            commit("GET_EMPLOYEE_SUCCESS", sorted);
+            resolve(response)
+          })
+          .catch((error) => {
+            commit("GET_EMPLOYEE_ERROR", error);
+            if(error.response.data.message){
+              reject(error.response.data.message);
+            }else{
+              reject(error);
+            }
+          });
+      });
+    },
+        
+    getMasterUserById({ commit }, id) {
+      commit("GET_INIT_USER_BY_ID");
+      const url = `${ENDPOINT}${id}/`;
+      return new Promise((resolve, reject) => {
+        getAPI
+          .get(url)
           .then((response) => {
             const data = response.data;
             let getData = {
@@ -94,49 +114,45 @@ const masterUser = {
                 status: {
                   id: data.is_active,
                   label: data.is_active?"Active":"Inactive"
-                }
+                },
+                updated_by: data.updated_by,
+                updated_at: data.updated_at
             }
-            commit("SET_EDITTED_ITEM", getData);
+            commit("GET_USER_BY_ID_SUCCESS", getData);
             resolve(getData);
           })
           .catch((error) => {
-            commit("GET_ERROR", error);
-            reject(error);
+            commit("GET_USER_BY_ID_ERROR", error);
+            if(error.response.data.message){
+              reject(error.response.data.message);
+            }else{
+              reject(error);
+            }
           });
       });
     },
+
     postMasterUser({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
         getAPI
           .post(ENDPOINT, payload)
           .then((response) => {
-            resolve(response);
             commit("POST_PATCH_SUCCESS");
             store.dispatch("masterUser/getMasterUser");
+            resolve(response);
           })
           .catch((error) => {
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  if (error.response.data.hasOwnProperty("User_name")) {
-                    errorMsg += error.response.data.User_name;
-                  }
-                  break;
-
-                default:
-                  errorMsg += `Please recheck your input or try again later`;
-                  break;
-              }
+            commit("POST_PATCH_ERROR", error);
+            if(error.response.data.message){
+              reject(error.response.data.message);
+            }else{
+              reject(error);
             }
-            commit("POST_PATCH_ERROR", errorMsg);
-            reject(errorMsg);
           });
       });
     },
+
     patchMasterUser({ commit }, payload) {
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
@@ -144,58 +160,99 @@ const masterUser = {
         getAPI
           .patch(url, payload)
           .then((response) => {
-            resolve(response);
             commit("POST_PATCH_SUCCESS");
             store.dispatch("masterUser/getMasterUser");
-            // store.dispatch("masterCategory/getFromAPI");
+            resolve(response);
           })
           .catch((error) => {
-            reject(error);
             commit("POST_PATCH_ERROR", error);
+            if(error.response.data.message){
+              reject(error.response.data.message);
+            }else{
+              reject(error);
+            }
           });
       });
     },
+    
     getHistory({ commit }, id) {
-      commit("SET_REQUEST_STATUS"); 
+      commit("GET_INIT_HISTORY_MASTER_USER"); 
+      let url = `${LOGENDPOINT}${id}`;
       return new Promise((resolve, reject) => {
-      getAPI
-        .get("/api/auditlog?table=user&entity=" + `${id}`)
-        .then((response) => {
-          const data = response.data;
-          const sorted = data.sort((a, b) =>
-          a.id < b.id ? 1 : -1
-        );
-          commit("SET_EDITTED_ITEM_HISTORIES", sorted); 
-          resolve(sorted);
-        })
-        .catch((error) => {
-          commit("GET_ERROR", error);
-          reject(error);
-        });
+        getAPI
+          .get(url)
+          .then((response) => {
+            const data = response.data;
+            const sorted = data.sort((a, b) =>
+            a.id < b.id ? 1 : -1
+          );
+            commit("GET_HISTORY_MASTER_USER_SUCCESS", sorted); 
+            resolve(sorted);
+          })
+          .catch((error) => {
+            commit("GET_HISTORY_MASTER_USER_ERROR", error);
+            if(error.response.data.message){
+              reject(error.response.data.message);
+            }else{
+              reject(error);
+            }
+          });
       });
     },
   },
   mutations: {
-    // get related
+    // Get List of User related
     GET_INIT(state) {
       state.requestStatus = "PENDING";
       state.loadingGetMasterUser = true;
     },
-    GET_SUCCESS(state, dataMasterUser) {
+    GET_SUCCESS(state, data) {
       state.requestStatus = "SUCCESS";
       state.loadingGetMasterUser = false;
-      state.dataMasterUser = dataMasterUser;
-    },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveMasterUser) {
-      state.requestActiveStatus = "IDLE";
-      state.dataActiveMasterUser = dataActiveMasterUser;
+      state.dataMasterUser = data;
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
       state.loadingGetMasterUser = false;
-      state.errorMsg = error;
       state.dataMasterUser = [];
-      state.dataActiveMasterUser = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // Get List of Employee related
+    GET_INIT_EMPLOYEE(state) {
+      state.requestEmployeeStatus = "PENDING";
+      state.loadingGetEmployee = true;
+    },
+    GET_EMPLOYEE_SUCCESS(state, data) {
+      state.requestEmployeeStatus = "SUCCESS";
+      state.loadingGetEmployee = false;
+      state.dataEmployee = data;
+    },
+    GET_EMPLOYEE_ERROR(state, error) {
+      state.requestEmployeeStatus = "ERROR";
+      state.loadingGetEmployee = false;
+      state.dataEmployee = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // Get User by Id
+    GET_INIT_USER_BY_ID(state) {
+      state.requestUserByIdStatus = "PENDING";
+      state.loadingGetUserById = true;
+    },
+    GET_USER_BY_ID_SUCCESS(state, data) {
+      state.requestUserByIdStatus = "SUCCESS";
+      state.loadingGetUserById = false;
+      state.dataUserById = data;
+    },
+    GET_USER_BY_ID_ERROR(state, error) {
+      state.requestUserByIdStatus = "ERROR";
+      state.loadingGetUserById = false;
+      state.dataUserById = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
@@ -207,41 +264,34 @@ const masterUser = {
       state.loadingPostPatchMasterUser = true;
     },
     POST_PATCH_SUCCESS(state) {
-      state.requestStatus = "SUCCESS";
+      state.postPatchStatus = "SUCCESS";
       state.loadingPostPatchMasterUser = false;
     },
     POST_PATCH_ERROR(state, error) {
-      state.requestStatus = "ERROR";
+      state.postPatchStatus = "ERROR";
       state.loadingPostPatchMasterUser = false;
-      state.errorMsg = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
     },
-    SET_EDITTED_ITEM(state, payload) {
-      state.edittedItem = payload;
-    },
-    SET_LOADING_GET_EDITTED_ITEM(state, payload) {
-      state.loadingGetEdittedItem = payload;
-    },
 
-    // history relate
-    SET_EDITTED_ITEM_HISTORIES(state, edittedItemHistories) {
-      state.requestHistoriesStatus = "SUCCESS";
-      state.loadingGetEdittedItemHistories = false;
-      state.edittedItemHistories = edittedItemHistories;
+    // Get History List of User related
+    GET_INIT_HISTORY_MASTER_USER(state) {
+      state.requestHistoryMasterUserStatus = "PENDING";
+      state.loadingGetHistoryMasterUser = true;
     },
-    SET_REQUEST_STATUS(state) {
-      state.requestHistoriesStatus = "PENDING";
-      state.loadingGetEdittedItemHistories = true;
-      state.edittedItemHistories = [];
+    GET_HISTORY_MASTER_USER_SUCCESS(state, data) {
+      state.requestHistoryMasterUserStatus = "SUCCESS";
+      state.loadingGetHistoryMasterUser = false;
+      state.dataHistoryMasterUser = data;
     },
-
-    ON_CHANGE(state, payload) {
-      state.value = payload;
-    },
-    ON_CHANGE_PAGING(state, payload) {
-      state.current = payload;
+    GET_HISTORY_MASTER_USER_ERROR(state, error) {
+      state.requestHistoryMasterUserStatus = "ERROR";
+      state.loadingGetHistoryMasterUser = false;
+      state.dataHistoryMasterUser = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
   },
 };
