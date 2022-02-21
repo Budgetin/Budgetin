@@ -96,9 +96,9 @@ class CoaViewSet(viewsets.ModelViewSet):
         name = data['coa_name']
         
         if pd.isnull(name):
-            errors.append("Coa name must be filled at line {}".format(index))
+            errors.append("Row {} - Coa name must be filled".format(index))
         elif Coa.name_exists(name):
-            errors.append("Coa '{}' at line {} already exists".format(name, index))
+            errors.append("Row {} - Coa '{}' already exists".format(index, name))
         return errors
     
     def create_coa(self, request, data):
