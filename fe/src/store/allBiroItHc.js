@@ -72,7 +72,7 @@ const allBiroItHc = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiroItHc/getFromAPI");
+            store.dispatch("allBiroItHc/getAllBiroItHc");
           })
           .catch((error) => {
             let errorMsg =
@@ -105,7 +105,7 @@ const allBiroItHc = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiroItHc/getFromAPI");
+            store.dispatch("allBiroItHc/getAllBiroItHc");
           })
           .catch((error) => {
             let errorMsg =

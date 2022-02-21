@@ -81,7 +81,7 @@ const monitorPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("monitorPlanning/getFromAPI");
+            store.dispatch("monitorPlanning/getMonitorPlanning");
           })
           .catch((error) => {
             let errorMsg =
@@ -114,7 +114,7 @@ const monitorPlanning = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("monitorPlanning/getFromAPI");
+            store.dispatch("monitorPlanning/getMonitorPlanning");
           })
           .catch((error) => {
             let errorMsg =

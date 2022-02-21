@@ -72,7 +72,7 @@ const allBiro = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiro/getFromAPI");
+            store.dispatch("allBiro/getAllBiro");
           })
           .catch((error) => {
             let errorMsg =
@@ -105,7 +105,7 @@ const allBiro = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("allBiro/getFromAPI");
+            store.dispatch("allBiro/getAllBiro");
           })
           .catch((error) => {
             let errorMsg =

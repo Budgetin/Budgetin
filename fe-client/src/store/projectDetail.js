@@ -68,7 +68,7 @@ const projectDetail = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("projectDetail/getFromAPI");
+            store.dispatch("projectDetail/getProjectDetail");
           })
           .catch((error) => {
             let errorMsg =
@@ -101,7 +101,7 @@ const projectDetail = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("projectDetail/getFromAPI");
+            store.dispatch("projectDetail/getProjectDetail");
           })
           .catch((error) => {
             let errorMsg =
@@ -134,7 +134,7 @@ const projectDetail = {
             const data = response.data;
             commit("SET_DELETE_ITEM", data);
             resolve(data);
-            store.dispatch("projectDetail/getFromAPI");
+            store.dispatch("projectDetail/getProjectDetail");
           })
           .catch((error) => {
             commit("DELETE_ERROR", error);
