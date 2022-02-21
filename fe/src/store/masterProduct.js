@@ -39,7 +39,7 @@ const masterProduct = {
         .then((response) => {
           const cleanData = response.data
           const sorted = cleanData.sort((a, b) =>
-            a.update_at > b.update_at ? 1 : -1
+            a.id < b.id ? 1 : -1
           );
           commit("GET_SUCCESS", sorted);
         })
@@ -73,7 +73,7 @@ const masterProduct = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterProduct/getFromAPI");
+            store.dispatch("masterProduct/getMasterProduct");
           })
           .catch((error) => {
             let errorMsg =
@@ -106,7 +106,7 @@ const masterProduct = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterProduct/getFromAPI");
+            store.dispatch("masterProduct/getMasterProduct");
             // store.dispatch("masterCategory/getFromAPI");
           })
           .catch((error) => {
@@ -141,7 +141,7 @@ const masterProduct = {
             const data = response.data;
             commit("SET_DELETE_ITEM", data);
             resolve(data);
-            store.dispatch("masterProduct/getFromAPI");
+            store.dispatch("masterProduct/getMasterProduct");
           })
           .catch((error) => {
             commit("DELETE_ERROR", error);

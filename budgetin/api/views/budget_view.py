@@ -346,13 +346,12 @@ class BudgetViewSet(viewsets.ModelViewSet):
         product = product
         is_tech = True if data['is_tech'] == 'Tech' else False
         
-        project, created = Project.objects.update_or_create(project_name__iexact=project_name, defaults={
+        project, created = Project.objects.update_or_create(project_name__iexact=project_name, product=product, defaults={
             'project_name': project_name,
             'project_description': project_description,
             'start_year': start_year,
             'end_year': end_year,
             'biro': biro,
-            'product': product,
             'is_tech': is_tech,
             'created_by_id': request.custom_user['id'],
             'updated_by_id': request.custom_user['id'],
@@ -367,9 +366,8 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def get_or_create_project_detail(self, request, data, project, planning):
         project_type = ProjectType.objects.filter(name__iexact=data['project_type']).first()
         
-        project_detail, created = ProjectDetail.objects.get_or_create(project=project, planning=planning, defaults={
+        project_detail, created = ProjectDetail.objects.get_or_create(project=project, planning=planning, project_type=project_type, defaults={
             'dcsp_id': data['project_id'],
-            'project_type': project_type,
             'created_by_id': request.custom_user['id'],
             'updated_by_id': request.custom_user['id'],
         })
@@ -428,21 +426,21 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def validate_product(self, data, index, errors):
         code = data['product_code']
         if pd.isnull(code):
-            errors.append("Product code must be filled at line {}".format(index))
+            errors.append("Row {} - Product code must be filled".format(index))
         elif not Product.code_exists(code):
-            errors.append("Product code '{}' at line {} doesn't exists".format(code, index))
+            errors.append("Row {} - Product code '{}' doesn't exists".format(index, code))
         return errors
     
     def validate_coa(self, data, index, errors):
         name = data['coa_name']
         if not Coa.name_exists(name):
-            errors.append("Coa '{}' at line {} doesn't exists".format(name, index))
+            errors.append("Row {} - Coa '{}' doesn't exists".format(index, name))
         return errors
     
     def validate_biro(self, data, index, errors):
         code = data['biro']
         if not Biro.code_exists(code):
-            errors.append("Biro '{}' at line {} doesn't exists".format(code, index))
+            errors.append("Row {} - Biro '{}' doesn't exists".format(index, code))
         return errors
     
     def validate_project(self, data, index, errors):
@@ -450,24 +448,27 @@ class BudgetViewSet(viewsets.ModelViewSet):
         description = data['project_description'] if not pd.isnull(data['project_description']) else None
         is_tech = True if data['is_tech'] == 'Tech' else False
         project_type = data['project_type']
+        product_code = data['product_code']
         biro = data['biro']
         year = data['year']
         
         if pd.isnull(name):
-            errors.append("Project name must be filled at line {}".format(index))
+            errors.append("Row {} - Project name must be filled".format(index))
         if pd.isnull(is_tech):
-            errors.append("Is Tech must be filled at line {}".format(index))
+            errors.append("Row {} - Is Tech must be filled".format(index))
         if pd.isnull(project_type):
-            errors.append("Project type must be filled at line {}".format(index))
+            errors.append("Row {} - Project type must be filled".format(index))
         
-        existing_project = Project.objects.select_related('biro').filter(project_name__iexact=name).first()
+        existing_project = Project.objects.select_related('biro', 'product').filter(project_name__iexact=name).first()
         if existing_project:
             if description and description != existing_project.project_description:
-                errors.append("Inconsistent project description at line {}. Existing project description is '{}'".format(index, existing_project.project_description))
+                errors.append("Row {} - Inconsistent project description. Existing project description is '{}'".format(index, existing_project.project_description))
             if not pd.isnull(is_tech) and is_tech != existing_project.is_tech:
-                errors.append("Inconsistent project tech/non tech at line {}. Existing project is a type of '{}'".format(index, 'Tech' if existing_project.is_tech else 'Non Tech'))
+                errors.append("Row {} - Inconsistent project tech/non tech. Existing project is a type of '{}'".format(index, 'Tech' if existing_project.is_tech else 'Non Tech'))
             if not pd.isnull(biro) and biro.lower() != existing_project.biro.code.lower():
-                errors.append("Inconsistent project biro at line {}. Existing project is owned by '{}'".format(index, existing_project.biro.zcode))
+                errors.append("Row {} - Inconsistent project biro. Existing project is owned by '{}'".format(index, existing_project.biro.code))
+            if not pd.isnull(product_code) and product_code.lower() != existing_project.product.product_code.lower():
+                errors.append("Row {} - Inconsistent project product. Existing project is a type of product '{}'".format(index, existing_project.product.product_code))
             
             if not pd.isnull(project_type):
                 existing_project = Project.objects.prefetch_related(
@@ -480,7 +481,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
                     existing_project_detail = existing_project.project_detail.filter(planning__year=year).first()
                     existing_project_type = existing_project_detail.project_type.name
                     if project_type.lower() != existing_project_type.lower():
-                        errors.append("Inconsistent project type at line {}. Existing project type is '{}'".format(index, existing_project_type))
+                        errors.append("Row {} - Inconsistent project type. Existing project type is '{}'".format(index, existing_project_type))
         return errors
 
     def create_strategy(self, request, data):

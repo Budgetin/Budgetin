@@ -10,7 +10,7 @@ from openpyxl import load_workbook
 from openpyxl.writer.excel import save_virtual_workbook
 
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
-from api.models import Product, Strategy, Coa
+from api.models import Product, Strategy, User
 from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
@@ -90,8 +90,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         if not errors:
             strategy = self.get_strategy(data)
-            product = self.create_product(request, data, strategy)
-            AuditLog.Save(ProductSerializer(product), request, ActionEnum.CREATE, TableEnum.PRODUCT) 
+            self.create_or_update_product(request, data, strategy)
         
         return errors
     
@@ -106,72 +105,77 @@ class ProductViewSet(viewsets.ModelViewSet):
         name = data['product_name']
         
         if pd.isnull(code):
-            errors.append("Product code must be filled at line {}".format(index))
-        elif Product.code_exists(code):
-            errors.append("Product code '{}' at line {} already exists".format(code, index))
+            errors.append("Row {} - Product code must be filled".format(index))
             
         if pd.isnull(name):
-            errors.append("Product name must be filled at line {}".format(index))
-        elif Product.name_exists(name):
-            errors.append("Product name '{}' at line {} already exists".format(name, index))
+            errors.append("Row {} - Product name must be filled".format(index))
 
         return errors
     
     def validate_strategy(self, data, index, errors):
         strategy_name = data['strategy_name']
         if not pd.isnull(strategy_name) and not Strategy.name_exists(strategy_name):
-            errors.append("Strategy '{}' at line {} does not exists".format(strategy_name, index))
+            errors.append("Row {} - Strategy '{}' does not exists".format(index, strategy_name))
         return errors
     
     def get_strategy(self, data):
         strategy_name = data['strategy_name']
         if pd.isnull(strategy_name):
-            strategy = None
+            strategy, _ = Strategy.objects.get_or_create(name='None')
         else:
             strategy = Strategy.objects.filter(name__iexact=strategy_name).first()
         return strategy
     
-    def create_product(self, request, data, strategy):
-        return Product.objects.create(
+    def create_or_update_product(self, request, data, strategy):
+        new_product = Product(
             product_code = data['product_code'],
             product_name = data['product_name'],
             strategy = strategy,
-            created_by_id = request.custom_user['id'],
-            updated_by_id = request.custom_user['id'],
+            updated_by = User.objects.get(pk=request.custom_user['id']),
         )
+        
+        product = Product.objects.filter(product_code=data['product_code']).first()
+        if not product:
+            new_product.created_by = new_product.updated_by
+            new_product.save()
+            AuditLog.Save(ProductSerializer(new_product), request, ActionEnum.CREATE, TableEnum.PRODUCT) 
+        elif product and not product.equal(new_product):
+            product.product_name = new_product.product_name
+            product.strategy = strategy
+            product.updated_by = new_product.updated_by
+            product.save()
+            AuditLog.Save(ProductSerializer(product), request, ActionEnum.UPDATE, TableEnum.PRODUCT) 
     
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):
         file_path = get_import_template_path(TableEnum.PRODUCT)
         book = load_workbook(filename=file_path)
 
-        self.write_coa_sheet(book, file_path)
+        self.write_strategy_sheet(book, file_path)
 
         book.close()                
         return export_excel(content=BytesIO(save_virtual_workbook(book)), filename='import_template_product.xlsx')
     
-    def write_coa_sheet(self, book, file_path):
-        columns = ['coa_name', 'hyperion_name', 'coa_definition']
-        coas = self.get_all_coa()
+    def write_strategy_sheet(self, book, file_path):
+        columns = ['strategy_name']
+        coas = self.get_all_strategy()
         
         writer = pd.ExcelWriter(file_path, engine = 'openpyxl')
         writer.book = book
         
-        if 'existing_coa' in book.sheetnames:
-            remove_sheet(book, 'existing_coa')            
+        if 'existing_strategy' in book.sheetnames:
+            remove_sheet(book, 'existing_strategy')            
             
         df = pd.DataFrame(coas, columns=columns)
-        df.to_excel(writer, sheet_name = 'existing_coa', index=False)
+        df.to_excel(writer, sheet_name = 'existing_strategy', index=False)
         writer.save()
         writer.close()
     
-    def get_all_coa(self):
-        coas = Coa.objects.all()
+    def get_all_strategy(self):
+        strategies = Strategy.objects.all()
         result = []
-        for coa in coas:
+        for strategy in strategies:
             temp = []
-            temp.append(coa.name)
-            temp.append(coa.hyperion_name)
-            temp.append(coa.definition)
+            temp.append(strategy.name)
             result.append(temp)
         return result

@@ -73,7 +73,7 @@ const masterCoa = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterCoa/getFromAPI");
+            store.dispatch("masterCoa/getMasterCoa");
           })
           .catch((error) => {
             let errorMsg =
@@ -106,8 +106,7 @@ const masterCoa = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterCoa/getFromAPI");
-            // store.dispatch("masterCategory/getFromAPI");
+            store.dispatch("masterCoa/getMasterCoa");
           })
           .catch((error) => {
             let errorMsg =
@@ -141,8 +140,8 @@ const masterCoa = {
             const data = response.data;
             commit("SET_DELETE_ITEM", data);
             resolve(data);
-            store.dispatch("masterStatus/getFromAPI");
-            store.dispatch("masterCoa/getFromAPI");
+            // store.dispatch("masterStatus/getFromAPI");
+            store.dispatch("masterCoa/getMasterCoa");
           })
           .catch((error) => {
             commit("DELETE_ERROR", error);

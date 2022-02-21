@@ -41,7 +41,7 @@
 
 <script>
 export default {
-  name: "UploadFileProduct",
+  name: "UploadFileCoa",
   data: () => ({
     files: [],
     validation: {
@@ -57,8 +57,6 @@ export default {
     },
     onSubmitUpload() {
       let validate = this.$refs.form.validate();
-      console.log(validate)
-      console.log(this.files)
 
       if (validate) {
         let data = {

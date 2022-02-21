@@ -39,7 +39,7 @@ const masterStrategy = {
         .then((response) => {
           const cleanData = response.data
           const sorted = cleanData.sort((a, b) =>
-            a.update_at > b.update_at ? 1 : -1
+            a.id < b.id ? 1 : -1
           );
           commit("GET_SUCCESS", sorted);
         })
@@ -73,7 +73,7 @@ const masterStrategy = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterStrategy/getFromAPI");
+            store.dispatch("masterStrategy/getMasterStrategy");
           })
           .catch((error) => {
             let errorMsg =
@@ -106,8 +106,7 @@ const masterStrategy = {
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
-            store.dispatch("masterStrategy/getFromAPI");
-            // store.dispatch("masterCategory/getFromAPI");
+            store.dispatch("masterStrategy/getMasterStrategy");
           })
           .catch((error) => {
             let errorMsg =
@@ -142,7 +141,7 @@ const masterStrategy = {
             const data = response.data;
             commit("SET_DELETE_ITEM", data);
             resolve(data);
-            store.dispatch("masterStrategy/getFromAPI");
+            store.dispatch("masterStrategy/getMasterStrategy");
           })
           .catch((error) => {
             commit("DELETE_ERROR", error);
@@ -170,6 +169,26 @@ const masterStrategy = {
         });
       });
     },
+    
+    importStrategy({ commit }, data) {
+      commit("GET_INIT_IMPORT_STRATEGY");
+      let formData = new FormData();
+      formData.append("file", data.files);
+
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post((ENDPOINT+"import/"), formData)
+          .then((res) => {
+            resolve(res);
+            store.dispatch('masterStrategy/getMasterStrategy')
+            commit("GET_SUCCESS_IMPORT_STRATEGY");
+          })
+          .catch((err) => {
+            reject(err);
+            commit("GET_ERROR_IMPORT_STRATEGY", err.message);
+          });
+      });
+    }
   },
 
   importStrategy({ commit }, data) {

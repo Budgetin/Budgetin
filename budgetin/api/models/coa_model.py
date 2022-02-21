@@ -15,3 +15,29 @@ class Coa(SoftDeleteModel, TimestampModel, UserTrackModel):
     @staticmethod
     def name_exists(name):
         return Coa.objects.filter(name__iexact=name).count() > 0
+    
+    def equal(self, coa):
+        return (
+            self.definition_equal(coa.definition) and 
+            self.hyperion_name_equal(coa.hyperion_name) and 
+            self.is_capex_equal(coa.is_capex) and
+            self.minimum_item_origin_equal(coa.minimum_item_origin)
+        )
+    
+    def definition_equal(self, definition):
+        try:
+            return self.definition.lower() == definition.lower()
+        except:
+            return self.definition == definition
+    
+    def hyperion_name_equal(self, hyperion_name):
+        try:
+            return self.hyperion_name.lower() == hyperion_name.lower()
+        except:
+            return self.hyperion_name == hyperion_name
+
+    def is_capex_equal(self, is_capex):
+        return self.is_capex == is_capex
+    
+    def minimum_item_origin_equal(self, minimum_item_origin):
+        return self.minimum_item_origin == minimum_item_origin

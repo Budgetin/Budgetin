@@ -67,7 +67,7 @@ const routes = [
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);
         },
-        component: () => import("@/views/DashboardQlikSense/Dashboard"),
+        component: () => import("@/views/Dashboard/Dashboard"),
       },
       {
         path: "coa",
