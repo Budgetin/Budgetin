@@ -72,16 +72,25 @@ const routes = [
       {
         path: "/home/:id/submitted",
         name: 'SubmittedList',
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
         component: () => import("@/views/Home/SubmittedList"),
       },
       {
         path: "/home/:id/submitted/new",
         name: 'AddNewProjectBudget',
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
         component: () => import("@/views/Home/AddNewProjectBudget"),
       },
       {
         path: "/home/:id/submitted/existing",
         name: 'AddExistingProjectBudget',
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
         component: () => import("@/views/Home/AddExistingProjectBudget"),
       },
       {
@@ -90,7 +99,15 @@ const routes = [
         beforeEnter: (to, from, next) => {
           checkSession(next, to.fullPath);
         },
-        component: () => import("@/views/MyProject/ViewMyPlanning"),
+        component: () => import("@/views/Home/ViewMyPlanning"),
+      },
+      {
+        path: "/home/:id/submitted/:id_project/view/:id_budget_planning/viewBudgetPlanning",
+        name: "ViewSubmittedBudgetPlanning",
+        beforeEnter: (to, from, next) => {
+          checkSession(next, to.fullPath);
+        },
+        component: () => import("@/views/MyProject/ViewMyBudgetPlanning"),
       },
       {
         path: "/myBudget",

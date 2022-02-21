@@ -64,6 +64,7 @@
               outlined
               dense
               :disabled="isView"
+              required
               :rules="validation.required"
               placeholder="Select Strategy"
             ></v-select>

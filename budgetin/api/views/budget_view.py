@@ -59,7 +59,6 @@ class BudgetViewSet(viewsets.ModelViewSet):
             budget.format_timestamp("%d %B %Y")
             
         serializer = BudgetResponseSerializer(budgets, many=True)
-        Response(serializer.get_coa())
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
