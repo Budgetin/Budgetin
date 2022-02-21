@@ -3,7 +3,7 @@ import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js";
 const BUDGET_ENDPOINT = "/api/budget/";
 const PLANNING_ENPOINT = "/api/planning/";
-const UPLOAD_PLANNING = "/api/import/list_budget/";
+const UPLOAD_PLANNING = "/api/budget/import/";
 const UPLOAD_REALIZATION = "/api/import/realisasi/";
 
 const listBudget = {
@@ -221,7 +221,7 @@ const listBudget = {
 
       return new Promise((resolve, reject) => {
         getAPI
-          .get(BUDGET_ENDPOINT + "download/", {
+          .get(BUDGET_ENDPOINT + "export/", {
             responseType: "arraybuffer", //Khusus download file
           })
           .then((response) => {

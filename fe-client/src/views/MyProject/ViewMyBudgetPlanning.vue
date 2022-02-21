@@ -185,7 +185,6 @@ export default {
       );
     },
     setBreadcrumbs() {
-      console.log(this.$route);
       let name = this.$route.name;
       let param = this.isView ? "View Budget Planning" : "Edit Budget Planning";
       if (name == "ViewSubmittedBudgetPlanning") {
