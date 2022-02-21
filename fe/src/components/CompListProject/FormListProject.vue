@@ -81,7 +81,7 @@
                 item-text="product_name"
                 item-value="id"
                 placeholder="Choose Product"
-                :disabled="isView"
+                disabled
                 dense
                 outlined
                 return-object
@@ -141,7 +141,7 @@
                 item-text="code"
                 item-value="id"
                 placeholder="Choose Biro"
-                :disabled="isView"
+                disabled
                 dense
                 outlined
                 return-object
@@ -199,7 +199,6 @@
                   outlined
                   return-object
                   dense
-                  :rules="validation.required"
                   :disabled="isView"
                   class="mr-3">
                 </v-text-field>

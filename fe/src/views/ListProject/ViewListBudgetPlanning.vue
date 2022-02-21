@@ -12,6 +12,7 @@
             @submitClicked="onSubmit"
             @okClicked="onOK"
             @deleteClicked="onDelete"
+            @cancelBudgetClicked="onCancelBudget"
             @restoreClicked="onRestore"
             class="view-list-budget-planning__detail">
             </form-edit-budget-planning>
@@ -41,6 +42,14 @@
         :title="delete_alert.title"
         :subtitle="delete_alert.subtitle"
         @okClicked="onAlertDeleteOk"
+        />
+
+        <success-error-alert
+        :success="cancel_alert.success"
+        :show="cancel_alert.show"
+        :title="cancel_alert.title"
+        :subtitle="cancel_alert.subtitle"
+        @okClicked="onAlertCancelOk"
         />
 
         <success-error-alert
@@ -122,6 +131,12 @@ export default {
             title: null,
             subtitle: null,
         },
+        cancel_alert: {
+            show: false,
+            success: null,
+            title: null,
+            subtitle: null,
+        },
         restore_alert: {
             show: false,
             success: null,
@@ -140,7 +155,13 @@ export default {
         ...mapState("masterCoa", ["dataMasterCoa"]),
     },
     methods: {
-        ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById", "getHistory", "deleteAllBudgetById", "restoreAllBudgetById"]),
+        ...mapActions("allBudget", [
+            "patchAllBudget",
+            "getAllBudgetById",
+            "getHistory",
+            "deleteAllBudgetById",
+            "cancelAllBudgetById",
+            "restoreAllBudgetById"]),
         ...mapActions("masterCoa", ["getMasterCoa"]),
         
         setBreadcrumbs() {
@@ -203,6 +224,15 @@ export default {
                 this.onDeleteError(error);
             });
         },
+        onCancelBudget() {
+            this.cancelAllBudgetById(this.$route.params.id_budget_planning)
+            .then(() => {
+                this.onCancelSuccess();
+            })
+            .catch((error) => {
+                this.onCancelError(error);
+            });
+        },
         onRestore() {
             this.restoreAllBudgetById(this.$route.params.id_budget_planning)
             .then(() => {
@@ -253,14 +283,30 @@ export default {
         onDeleteSuccess() {
             this.delete_alert.show = true;
             this.delete_alert.success = true;
-            this.delete_alert.title = "Cancel Success";
-            this.delete_alert.subtitle = "Budget has been cancelled";
+            this.delete_alert.title = "Delete Success";
+            this.delete_alert.subtitle = "Budget has been deleted";
         },
         onDeleteError(error) {
             this.delete_alert.show = true;
             this.delete_alert.success = false;
             this.delete_alert.title = "Failed to cancel";
             this.delete_alert.subtitle = error;
+        },
+        onAlertCancelOk() {
+            this.cancel_alert.show = false;
+            this.$router.go(-1);
+        },
+        onCancelSuccess() {
+            this.cancel_alert.show = true;
+            this.cancel_alert.success = true;
+            this.cancel_alert.title = "Cancel Success";
+            this.cancel_alert.subtitle = "Budget has been cancelled";
+        },
+        onCancelError(error) {
+            this.cancel_alert.show = true;
+            this.cancel_alert.success = false;
+            this.cancel_alert.title = "Failed to cancel";
+            this.cancel_alert.subtitle = error;
         },
         onAlertRestoreOk() {
             this.restore_alert.show = false;

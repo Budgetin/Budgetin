@@ -3,7 +3,7 @@
     <v-card-title class="mb-5">
       {{ cardTitle }} Budget Planning
       <v-spacer></v-spacer>
-      <v-btn v-if="isView" icon small @click="$emit('editClicked')" class="mr-3">
+      <v-btn v-if="isView && form.project_detail.planning.is_active == true" icon small @click="$emit('editClicked')" class="mr-3">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
 
@@ -50,55 +50,76 @@
       <v-form ref="form" class="EditBudgetPlanning__form" lazy-validation @submit.prevent="onSubmit">
         <v-row no-gutters>
           <!-- YEAR -->
-          <v-col cols="4"> Year 
-              <div class="EditBudgetPlanning__field">
-                <v-text-field
-                v-model="form.project_detail.planning.year"
-                outlined
-                return-object
-                dense
-                disabled
-                class="mr-3">
-                </v-text-field>
-              </div>
+          <v-col cols="6"> Year 
+            <div class="EditBudgetPlanning__field">
+              <v-text-field
+              v-model="form.project_detail.planning.year"
+              outlined
+              return-object
+              dense
+              disabled
+              class="mr-3">
+              </v-text-field>
+            </div>
           </v-col>
+          
+          <!-- BUDGET STATUS -->
+          <v-col cols="6"> Budget Status
+            <div class="EditBudgetPlanning__field">
+              <v-select
+              v-model="form.is_active"
+              :items="statusIsBudget"
+              item-text="label"
+              item-value="id"
+              placeholder="Choose Active/Inactive"
+              outlined
+              dense
+              return-object
+              disabled
+              :rules="validation.required"
+              class="mr-3">
+              </v-select>
+            </div>
+          </v-col>
+        </v-row>
 
+        <v-row no-gutters>
           <!-- COA -->
-          <v-col cols="4"> COA <strong class="red--text">*</strong>
-              <div class="EditBudgetPlanning__field">
-                <v-select
-                v-model="form.coa"
-                :items="dataMasterCoa"
-                item-text="name"
-                item-value="name"
-                placeholder="Choose COA"
-                outlined
-                dense
-                return-object
-                :disabled="isView"
-                :rules="validation.required"
-                class="mr-3">
-                </v-select>
-              </div>
+          <v-col cols="6"> COA <strong class="red--text">*</strong>
+            <div class="EditBudgetPlanning__field">
+              <v-select
+              v-model="form.coa"
+              :items="dataMasterCoa"
+              item-text="name"
+              item-value="name"
+              placeholder="Choose COA"
+              outlined
+              dense
+              return-object
+              :disabled="isView"
+              :rules="validation.required"
+              class="mr-3">
+              </v-select>
+            </div>
           </v-col>
 
           <!-- CAPEX/OPEX -->
-          <v-col cols="4"> Expense Type <strong class="red--text">*</strong>
-              <div class="EditBudgetPlanning__field">
-                <v-select
-                v-model="form.expense_type"
-                :items="expenseType"
-                item-text="label"
-                item-value="value"
-                placeholder="Choose Expense Type"
-                outlined
-                dense
-                return-object
-                :disabled="isView"
-                :rules="validation.required"
-                class="mr-3">
-                </v-select>
-              </div>
+          <v-col cols="6"> Expense Type <strong class="red--text">*</strong>
+            <div class="EditBudgetPlanning__field">
+              <v-select
+              v-model="form.expense_type"
+              :items="expenseType"
+              item-text="label"
+              item-value="value"
+              placeholder="Choose Expense Type"
+              outlined
+              dense
+              return-object
+              :disabled="isView"
+              :rules="validation.required"
+              class="mr-3">
+              </v-select>
+            </div>
           </v-col>
         </v-row>
 
@@ -248,6 +269,7 @@ export default {
   // },
   computed: {
     ...mapState("masterCoa", ["getMasterCoa", "dataMasterCoa"]),
+    ...mapState("statusInfo", ["statusIsBudget"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";

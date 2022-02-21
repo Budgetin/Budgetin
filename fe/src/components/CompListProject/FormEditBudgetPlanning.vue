@@ -1,28 +1,53 @@
 <template>
   <v-card>
     <v-card-title class="mb-5">
-      {{ cardTitle }} a Budget Planning
+      {{ cardTitle }} Budget Planning
       <v-spacer></v-spacer>
-      <v-btn v-if="isView" icon small @click="$emit('editClicked')">
+      <v-btn v-if="isView && form.project_detail.planning.is_active == true" icon small @click="$emit('editClicked')" class="mr-3">
         <v-icon color="primary"> mdi-square-edit-outline </v-icon>
       </v-btn>
 
+      <!-- DELETE BUDGET, CANNOT BE RESTORED -->
       <a-popconfirm
-      v-if="form.is_active == true"
+      v-if="form.is_active == true && form.project_detail.planning.is_active == true"
+      title="Are you sure you want to delete this budget?"
+      ok-text="Yes"
+      cancel-text="No"
+      @confirm="$emit('deleteClicked')"
+      class="mr-2">
+        <a-popover>
+          <template slot="content">
+            <p>Delete Budget</p>
+          </template>
+            <v-icon color="error" v-if="!isNew"> mdi-delete </v-icon>
+        </a-popover>
+      </a-popconfirm>
+
+      <!-- CANCEL BUDGET -->
+      <a-popconfirm
+      v-if="form.is_active == true && form.project_detail.planning.is_active == false"
       title="Are you sure you want to cancel this budget?"
       ok-text="Yes"
       cancel-text="No"
-      @confirm="$emit('deleteClicked')">
-        <v-icon color="error" v-if="!isNew"> mdi-delete </v-icon>
+      @confirm="$emit('cancelBudgetClicked')"
+      class="mr-2">
+        <a-popover>
+          <template slot="content">
+            <p>Cancel Budget</p>
+          </template>
+          <v-icon color="error" v-if="!isNew"> mdi-file-cancel-outline </v-icon>
+        </a-popover>
       </a-popconfirm>
 
+      <!-- RESTORE BUDGET THAT HAS BEEN CANCELLED -->
       <a-popconfirm
-      v-if="form.is_active == false"
+      v-if="form.is_active == false && form.project_detail.planning.is_active == false"
       title="Are you sure you want to restore this budget?"
       ok-text="Yes"
       cancel-text="No"
-      @confirm="$emit('restoreClicked')">
-        <v-icon color="primary" v-if="!isNew"> mdi-delete-restore </v-icon>
+      @confirm="$emit('restoreClicked')"
+      class="mr-2">
+        <v-icon color="primary" v-if="!isNew"> mdi-file-restore-outline </v-icon>
       </a-popconfirm>
     </v-card-title>
 
@@ -30,7 +55,7 @@
       <v-form ref="form" class="EditBudgetPlanning__form" lazy-validation @submit.prevent="onSubmit">
         <v-row no-gutters>
           <!-- YEAR -->
-          <v-col cols="4"> Year 
+          <v-col cols="6"> Year 
               <div class="EditBudgetPlanning__field">
                 <v-text-field
                 v-model="form.project_detail.planning.year"
@@ -43,8 +68,29 @@
               </div>
           </v-col>
 
+          <!-- BUDGET STATUS -->
+          <v-col cols="6"> Budget Status
+            <div class="EditBudgetPlanning__field">
+              <v-select
+              v-model="form.is_active"
+              :items="statusIsBudget"
+              item-text="label"
+              item-value="id"
+              placeholder="Choose Active/Inactive"
+              outlined
+              dense
+              return-object
+              disabled
+              :rules="validation.required"
+              class="mr-3">
+              </v-select>
+            </div>
+          </v-col>
+        </v-row>
+
+        <v-row no-gutters>
           <!-- COA -->
-          <v-col cols="4"> COA <strong class="red--text">*</strong>
+          <v-col cols="6"> COA <strong class="red--text">*</strong>
               <div class="EditBudgetPlanning__field">
                 <v-select
                 v-model="form.coa"
@@ -63,7 +109,7 @@
           </v-col>
 
           <!-- CAPEX/OPEX -->
-          <v-col cols="4"> Expense Type <strong class="red--text">*</strong>
+          <v-col cols="6"> Expense Type <strong class="red--text">*</strong>
               <div class="EditBudgetPlanning__field">
                 <v-select
                 v-model="form.expense_type"
@@ -222,6 +268,7 @@ export default {
   
   computed: {
     ...mapState("masterCoa", ["getMasterCoa", "dataMasterCoa"]),
+    ...mapState("statusInfo", ["statusIsBudget"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
