@@ -115,7 +115,7 @@ class CoaViewSet(viewsets.ModelViewSet):
         
         coa = Coa.objects.filter(name=data['coa_name']).first()
         if not coa:
-            new_coa.created_by = new_coa.created_by
+            new_coa.created_by = new_coa.updated_by
             new_coa.save()
             AuditLog.Save(CoaSerializer(new_coa), request, ActionEnum.CREATE, TableEnum.COA) 
         elif coa and not coa.equal(new_coa):
