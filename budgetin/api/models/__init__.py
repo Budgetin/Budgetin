@@ -11,3 +11,4 @@ from .strategy_model import Strategy
 from .user_model import User
 from .audit_log_model import AuditLog
 from .realization_model import Realization
+from .switching_model import Switching

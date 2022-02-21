@@ -1,14 +1,16 @@
+import os
 from rest_framework import viewsets 
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db import transaction
+from django.http import HttpResponse
 
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 from api.models import Strategy
 from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_excel
+from api.utils.file import read_excel, read_file, get_import_template_path, load_file, export_excel
 from api.exceptions import ValidationException
 
 def is_duplicate_create(name):
@@ -66,28 +68,48 @@ class StrategyViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     @action(methods=['post'], detail=False, url_path='import')
     def import_from_excel(self, request):
-        file = request.FILES['file'].read()
-        df = read_excel(file, 'strategy')
+        file = read_file(request)
+        df = read_excel(file, TableEnum.STRATEGY.value)
+        errors = []
         
-        for index, row in df.iterrows():
-            self.insert_to_db(request, row, (index+2))
-        
+        for index, data in df.iterrows():
+            errors.extend(self.insert_to_db(request, data, (index+2)))
+            
+        if errors:
+            raise ValidationException(errors)
+
         return Response(status=204)
     
     def insert_to_db(self, request, data, index):
-        name = data['strategy_name']
-        if self.strategy_already_exists(name):
-            raise ValidationException('Strategy {} at line {} already exists'.format(name, index))
+        errors = self.validate_data(data, index)
+        
+        if not errors:
+            strategy = self.create_strategy(request, data)
+            AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY)
 
-        strategy = self.create_strategy(request, name)
-        AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.UPDATE, TableEnum.STRATEGY) 
+        return errors
             
-    def strategy_already_exists(self, name):
-        return Strategy.objects.filter(name=name).count() > 0
+    def validate_data(self, data, index):
+        errors = []
+        errors = self.validate_strategy(data, index, errors)
+        return errors
     
-    def create_strategy(self, request, name):
+    def validate_strategy(self, data, index, errors):
+        name = data['strategy_name']
+        if Strategy.name_exists(name):
+            errors.append("Strategy '{}' at line {} already exists".format(name, index))
+        return errors
+    
+    def create_strategy(self, request, data):
         return Strategy.objects.create(
-            name = name,
+            name = data['strategy_name'],
             created_by_id = request.custom_user['id'],
             updated_by_id = request.custom_user['id'],
         )
+        
+    @action(methods=['get'], detail=False, url_path='import/template')
+    def download_import_template(self, request):
+        file_path = get_import_template_path(TableEnum.STRATEGY)
+        file = load_file(file_path, 'rb')
+        
+        return export_excel(file, 'import_template_strategy.xlsx')

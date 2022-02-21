@@ -7,7 +7,7 @@ from api.permissions import IsAuthenticated, IsUser
 from api.serializers import MonitoringSerializer, BudgetResponseSerializer
 from api.utils.enum import MonitoringStatusEnum
 
-from api.utils.export_budget import export_as_excel
+from api.utils.export_budget import export_budget_as_excel
 
 class TaskViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated, IsUser]
@@ -66,5 +66,5 @@ class TaskViewSet(viewsets.ViewSet):
         queryset = queryset.filter(project_detail__planning__id=planning_id)
         queryset = queryset.filter(project_detail__project__biro__ithc_biro=user_ithc_biro)
         
-        return export_as_excel(queryset)
+        return export_budget_as_excel(queryset)
         

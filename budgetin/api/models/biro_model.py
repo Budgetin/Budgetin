@@ -12,3 +12,7 @@ class Biro(SoftDeleteModel, TimestampModel):
     group_code = models.CharField(max_length=10)
 
     all_object = models.Manager()
+    
+    @staticmethod
+    def code_exists(name):
+        return Biro.objects.filter(code__iexact=name).count() > 0

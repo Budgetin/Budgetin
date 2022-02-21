@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from api.models import Budget
 from api.permissions import IsAuthenticated, IsUser
 from api.serializers import BudgetResponseSerializer
-from api.utils.export_budget import export_as_excel
+from api.utils.export_budget import export_budget_as_excel
 
 class MyBudgetViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated, IsUser]
@@ -69,4 +69,4 @@ class MyBudgetViewSet(viewsets.ViewSet):
                                                 'project_detail__project__product__strategy', 'updated_by', 'created_by').all()
         budgets = budgets.filter(project_detail__project__biro__ithc_biro=user_ithc_biro)
         
-        return export_as_excel(budgets)
+        return export_budget_as_excel(budgets)

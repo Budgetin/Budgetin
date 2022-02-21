@@ -16,7 +16,7 @@
             <router-link
                 style="text-decoration: none"
                 :to="{
-                    name: 'ViewMyBudgetPlanning',
+                    name: route_to,
                     params: { id_budget_planning: item.id },
                 }">
                 <v-tooltip bottom>
@@ -45,7 +45,7 @@ import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
 export default {
   name: "TableBudgetPlanning",
   components: {BinaryStatusChip},
-  props: ["budgetPlanning"],
+  props: ["budgetPlanning","route_to"],
   data: () => ({
     isView: true,
     showItem: [],

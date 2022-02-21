@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row no-gutters>
-      <!-- VIEW MY BUDGET PLANNING -->
+      <!-- VIEW SUBMITTED BUDGET PLANNING -->
       <form-edit-budget-planning
         :form="form"
         :isView="isView"
@@ -67,7 +67,7 @@ import FormEditBudgetPlanning from "@/components/MyProject/FormEditBudgetPlannin
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert";
 import TimelineLog from "@/components/TimelineLog";
 export default {
-  name: "ViewMyBudgetPlanning",
+  name: "ViewSubmittedBudgetPlanning",
   components: {
     FormEditBudgetPlanning,
     SuccessErrorAlert,
@@ -175,6 +175,7 @@ export default {
     ...mapActions("masterCoa", ["getMasterCoa"]),
 
     getDetailItem() {
+      console.log(this.$route.params.id_budget_planning);
       this.getAllBudgetById(this.$route.params.id_budget_planning).then(() => {
         this.setForm();
       });
@@ -185,81 +186,43 @@ export default {
       );
     },
     setBreadcrumbs() {
-      let name = this.$route.name;
       let param = this.isView ? "View Budget Planning" : "Edit Budget Planning";
-      if (name = "ViewSubmittedBudgetPlanning") {
-        this.$store.commit("breadcrumbs/SET_LINKS", [
-          {
-            text: "Home",
-            link: true,
-            exact: true,
-            disabled: false,
-            to: {
-              name: "Home",
-            },
+
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Home",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "Home",
           },
-          {
-            text: "Submitted List",
-            link: true,
-            exact: true,
-            disabled: false,
-            to: {
-              name: "SubmittedList",
-            },
+        },
+        {
+          text: "Submitted List",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "SubmittedList",
           },
-          {
-            text: "View Detail",
-            link: true,
-            exact: true,
-            disabled: false,
-            to: {
-              name: "ViewMyPlanning",
-            },
+        },
+        {
+          text: "View Detail",
+          link: true,
+          exact: true,
+          disabled: false,
+          to: {
+            name: "ViewMyPlanning",
           },
-          {
-            text: param,
-            disabled: true,
-          },
-        ]);
-      }
-      else{
-          this.$store.commit("breadcrumbs/SET_LINKS", [
-            {
-              text: "My Project",
-              link: true,
-              exact: true,
-              disabled: false,
-              to: {
-                name: "MyProject",
-              },
-            },
-            {
-              text: "View My Project",
-              link: true,
-              exact: true,
-              disabled: false,
-              to: {
-                name: "ViewMyProject",
-              },
-            },
-            {
-              text: param,
-              disabled: true,
-            },
-          ]);
-      }
+        },
+        {
+          text: param,
+          disabled: true,
+        },
+      ]);
     },
-    getHistoryItem() {
-      this.getHistory(this.$route.params.id_budget_planning).then(() => {
-        this.itemsHistory = JSON.parse(
-          JSON.stringify(this.$store.state.allBudget.edittedItemHistories)
-        );
-        for (let i = 0; i < this.itemsHistory.length; i++) {
-          this.itemsHistory[i].table = "budgetPlanning";
-          // console.log(this.itemsHistory[i]);
-        }
-      });
-    },
+
     onEdit() {
       this.isView = false;
       this.setBreadcrumbs();

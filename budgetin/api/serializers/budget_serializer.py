@@ -16,7 +16,8 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'product_code', 'strategy']
         
     def get_strategy(self, product):
-        return product.strategy.name
+        if product.strategy:
+            return product.strategy.name
         
 class BiroSerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,10 +61,7 @@ class BudgetResponseSerializer(serializers.ModelSerializer):
     updated_by = serializers.SerializerMethodField()
     class Meta:
         model = Budget
-        fields = ['id', 'is_budget', 'expense_type', 'planning_nominal', 'planning_q1', 'planning_q2', 'planning_q3', 'planning_q4', 
-                  'realization_jan', 'realization_feb', 'realization_mar', 'realization_apr', 'realization_may',
-                  'realization_jun', 'realization_jul', 'realization_aug', 'realization_sep', 'realization_oct',
-                  'realization_nov', 'realization_dec', 'switching_in', 'switching_out', 'top_up', 'returns',
+        fields = ['id', 'is_budget', 'expense_type', 'planning_nominal', 'planning_q1', 'planning_q2', 'planning_q3', 'planning_q4',
                   'allocate', 'coa', 'project_detail', 'created_by', 'updated_by', 'is_active', 'created_at', 'updated_at']
         
     def get_coa(self, budget):

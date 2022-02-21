@@ -72,7 +72,8 @@
                 style="text-decoration: none"
                 :to="{
                   name: 'ViewMyPlanning',
-                  params: { id_project: item.project_detail.project.id },
+                  params: { 
+                    id_project: item.project_detail.project.id },
                 }"
               >
                 <v-tooltip bottom>
