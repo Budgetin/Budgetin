@@ -78,15 +78,15 @@ class ProductViewSet(viewsets.ModelViewSet):
         errors = []
         
         for index, data in df.iterrows():
-            errors.extend(self.insert_to_db(request, data, (index+2)))
+            errors = self.insert_to_db(request, data, (index+2), errors)
         
         if errors:
             return export_errors_as_excel(errors)
 
         return Response(status=204)    
 
-    def insert_to_db(self, request, data, index):
-        errors = self.validate_data(data, index)
+    def insert_to_db(self, request, data, index, errors):
+        errors.extend(self.validate_data(data, index))
 
         if not errors:
             strategy = self.get_strategy(data)
