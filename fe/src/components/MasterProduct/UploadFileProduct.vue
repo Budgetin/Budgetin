@@ -11,8 +11,9 @@
     <v-card-text>
       <v-row no-gutters align="center">
         <v-col cols="12" class="mt-2">
-          <!-- <a href="Template Budget.xlsx" download>Download Template Budget</a> -->
-          <v-btn text @click="onDownloadTemplate" class="primary--text">Download Template Budget</v-btn>
+          <v-btn text color="primary" @click="$emit('downloadClicked')">Download Template Product</v-btn>
+          <!-- <a href="import_template_product.xlsx" download>Download Template Product</a> -->
+          <!-- <v-btn text @click="downloadTemplate" class="primary--text">Download Template Planning </v-btn> -->
         </v-col>
       </v-row>
       <v-form ref=form lazy-validation @submit.prevent="onSubmitUpload">
@@ -22,7 +23,7 @@
               :rules="validation.uploadRule"
               accept=".xlsx"
               show-size
-              label="Upload Budget"
+              label="Upload Product"
               v-model="files"
             ></v-file-input>
           </v-col>
@@ -40,15 +41,9 @@
 </template>
 
 <script>
-// import template from "@/assets/ImportTemplate.xlsx"
-import { mapState, mapActions, mapGetters } from "vuex";
 export default {
-  name: "UploadFileBudget",
-  created() {
-    //this.getAllProjectType();
-  },
+  name: "UploadFileProduct",
   data: () => ({
-    name:"",
     files: [],
     validation: {
       uploadRule: [
@@ -57,16 +52,8 @@ export default {
       ],
     },
   }),
-
-  computed: {
-    // ...mapState("projectType", ["loadingGetListPlanning",
-    //   "dataProjectType"
-    // ]),
-  },
+  
   methods: {
-    onDownloadTemplate() {
-      this.$emit("downloadClicked");
-    },
     onCancel() {
       this.$emit("cancelClicked");
     },

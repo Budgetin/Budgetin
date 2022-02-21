@@ -24,7 +24,6 @@ const masterStrategy = {
     requestHistoriesStatus:"IDLE",
     loadingGetEdittedItemHistories: false,
     edittedItemHistories: [],
-
     requestImportStrategyStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingImportStrategy: false, // for loading data
     errorMsgImportStrategy: null,
@@ -191,6 +190,27 @@ const masterStrategy = {
       });
     }
   },
+
+  importStrategy({ commit }, data) {
+    commit("GET_INIT_IMPORT_STRATEGY");
+    let formData = new FormData();
+    formData.append("file", data.files);
+
+    return new Promise((resolve, reject) => {
+      getAPI
+        .post((ENDPOINT+"import/"), formData)
+        .then((res) => {
+          resolve(res);
+          store.dispatch('masterStrategy/getMasterStrategy')
+          commit("GET_SUCCESS_IMPORT_STRATEGY");
+        })
+        .catch((err) => {
+          reject(err);
+          commit("GET_ERROR_IMPORT_STRATEGY", err.message);
+        });
+    });
+  },
+
   mutations: {
     // get related
     GET_INIT(state) {

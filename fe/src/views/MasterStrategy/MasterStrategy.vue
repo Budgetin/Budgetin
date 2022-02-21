@@ -63,7 +63,6 @@
                 </v-tooltip>
               </router-link>
             </template>
-
           </v-data-table>
         </v-col>
       </v-row>
