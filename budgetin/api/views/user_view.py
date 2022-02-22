@@ -13,11 +13,11 @@ from api.utils.hit_api import get_imo_d_employee, get_ithc_employee_info
 from api.exceptions.validation_exception import ValidationException
 
 def is_duplicate_user(username):
-    if User.objects.filter(username=username):
+    if User.objects.filter(username__iexact=username):
         raise ValidationException('User ' + username + ' already exists')
 
 def is_duplicate_user_update(id, username):
-    if User.objects.filter(username=username).exclude(pk=id):
+    if User.objects.filter(username__iexact=username).exclude(pk=id):
         raise ValidationException('User ' + username + ' already exists')
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -42,6 +42,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
+        request.data['username'] = request.data['username'].strip()
         is_duplicate_user(request.data['username'])
         employee_info = get_ithc_employee_info(request.data['username'])
         request.data['employee_id'] = employee_info['employee_id']
@@ -54,6 +55,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
+        request.data['username'] = request.data['username'].strip()
         is_duplicate_user_update(kwargs['pk'], request.data['username'])
         request.data['updated_by'] = request.custom_user['id']
         user = super().update(request, *args, **kwargs)
