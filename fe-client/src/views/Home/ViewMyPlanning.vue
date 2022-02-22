@@ -197,7 +197,7 @@ export default {
     ...mapActions("myProject", [
       "patchMyProject",
       "getMyProjectById",
-      "getHistory",
+      "getHistoryMyProject",
     ]),
     ...mapActions("listProject", ["getListProjectById"]),
     ...mapActions("masterProduct", ["getMasterProduct"]),
@@ -231,27 +231,27 @@ export default {
     getDetailItem() {
       this.getListProjectById(this.$route.params.id_project).then(() => {
         this.projectDetail = JSON.parse(
-          JSON.stringify(this.$store.state.listProject.edittedItem)
+          JSON.stringify(this.$store.state.listProject.dataListProjectById)
         );
         this.budgetPlanning = JSON.parse(
-          JSON.stringify(this.$store.state.listProject.edittedItem)
+          JSON.stringify(this.$store.state.listProject.dataListProjectById)
         );
         this.budgetRealization = JSON.parse(
-          JSON.stringify(this.$store.state.listProject.edittedItem)
+          JSON.stringify(this.$store.state.listProject.dataListProjectById)
         );
         this.setForm();
       });
     },
     setForm() {
       this.form = JSON.parse(
-        JSON.stringify(this.$store.state.listProject.edittedItem)
+        JSON.stringify(this.$store.state.listProject.dataListProjectById)
       );
     },
     getHistoryItem() {
-      this.getHistory(this.$route.params.id_project).then(() => {
+      this.getHistoryMyProject(this.$route.params.id_project).then(() => {
         // console.log("Masuk getHistory");
         this.itemsHistory = JSON.parse(
-          JSON.stringify(this.$store.state.myProject.edittedItemHistories)
+          JSON.stringify(this.$store.state.myProject.dataHistoryMyProject)
         );
         // console.log("Masuk JSON getHistory");
       });

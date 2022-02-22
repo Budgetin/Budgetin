@@ -161,7 +161,7 @@ export default {
 
         },
         onEdit(item) {
-            this.$store.commit("myProject/SET_EDITTED_ITEM", item);
+            this.$store.commit("myProject/GET_SUCCESS_MY_PROJECT_BY_ID", item);
         },
         onOK() {
             return this.$router.go(-1);
