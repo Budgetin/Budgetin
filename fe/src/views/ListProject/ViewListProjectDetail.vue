@@ -5,7 +5,7 @@
             <form-edit-project-detail
             :form="form"
             :isView="isView"
-            :dataProjectDetail="dataProjectDetail"
+            :dataProjectDetail="dataListAllProjectDetail"
             :dataProjectType="dataListAllProjectType"
             @editClicked="onEdit"
             @cancelClicked="onCancel"
@@ -84,11 +84,11 @@ export default {
         this.getAllProjectType();
     },
     computed: {
-        ...mapState("projectDetail", ["loadingGetProjectDetail", "dataProjectDetail"]),
+        ...mapState("projectDetail", ["dataListAllProjectDetail"]),
         ...mapState("projectType", ["dataListAllProjectType"]),
     },
     methods: {
-        ...mapActions("projectDetail", ["patchProjectDetail", "getProjectDetailById", "getHistory"]),
+        ...mapActions("projectDetail", ["saveProjectDetailById", "getProjectDetailById", "getListProjectDetailHistoryById"]),
         ...mapActions("projectType", ["getAllProjectType"]),
         
         setBreadcrumbs() {
@@ -119,9 +119,9 @@ export default {
             ]);
         },
         getHistoryItem() {
-            this.getHistory(this.$route.params.id_project_detail).then(() => {
+            this.getListProjectDetailHistoryById(this.$route.params.id_project_detail).then(() => {
                 this.itemsHistory = JSON.parse(
-                    JSON.stringify(this.$store.state.projectDetail.edittedItemHistories));
+                    JSON.stringify(this.$store.state.projectDetail.dataListProjectDetailHistoryById));
             });
         },
         getDetailItem() {
@@ -131,7 +131,7 @@ export default {
         },
         setForm() {
             this.form = JSON.parse(
-                JSON.stringify(this.$store.state.projectDetail.edittedItem)
+                JSON.stringify(this.$store.state.projectDetail.dataProjectDetailById)
             );
         },
         onEdit() {
@@ -144,7 +144,7 @@ export default {
             this.setBreadcrumbs();
         },
         onSubmit(e) {
-            this.patchProjectDetail(e)
+            this.saveProjectDetailById(e)
             .then(() => {
                 this.onSaveSuccess();
             })
