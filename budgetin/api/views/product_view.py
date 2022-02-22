@@ -20,12 +20,16 @@ from api.utils.excel import read_excel, export_excel, write_sheet, export_errors
 from api.exceptions import ValidationException
 
 def is_product_duplicate(product_id, product_code, product_name):
-    if Product.objects.filter(product_code=product_code).exclude(id=product_id) or Product.objects.filter(product_name=product_name).exclude(id=product_id):
-        raise ValidationException('Product ' + product_code + ' already exists')
+    if Product.objects.filter(product_code=product_code).exclude(id=product_id):
+        raise ValidationException('Product with product code ' + product_code + ' already exists')
+    if Product.objects.filter(product_name=product_name).exclude(id=product_id):
+        raise ValidationException('Product with product name ' + product_name + ' already exists')
 
 def is_product_duplicate_create(product_code, product_name):
-    if Product.objects.filter(product_code=product_code) or Product.objects.filter(product_name=product_name):
-        raise ValidationException('Product ' + product_code + ' already exists')
+    if Product.objects.filter(product_code=product_code):
+        raise ValidationException('Product with product code' + product_code + ' already exists')
+    if Product.objects.filter(product_name=product_name):
+        raise ValidationException('Product with product name' + product_name + ' already exists')
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -51,7 +55,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
-        request.data['created_by'] = request.custom_user['id']
+        request.data['created_by'] = request.custom_user['id']        
+        request.data['product_name'] = request.data['product_name'].strip()
+        request.data['product_code'] = request.data['product_code'].strip()
         is_product_duplicate_create(request.data['product_code'],request.data['product_name'])
         product = super().create(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.CREATE, TableEnum.PRODUCT)
@@ -60,6 +66,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
+        request.data['product_name'] = request.data['product_name'].strip()
+        request.data['product_code'] = request.data['product_code'].strip()
         is_product_duplicate(kwargs['pk'],request.data['product_code'],request.data['product_name'])
         product = super().update(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.UPDATE, TableEnum.PRODUCT)

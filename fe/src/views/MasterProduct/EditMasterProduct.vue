@@ -64,7 +64,7 @@ export default {
     ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
   },
   methods: {
-    ...mapActions("masterProduct", ["patchMasterProduct","getMasterProductById","deleteMasterProductById","getHistory"]),
+    ...mapActions("masterProduct", ["patchMasterProduct","getMasterProductById","deleteMasterProduct","getHistory"]),
     ...mapActions("masterStrategy", ["getMasterStrategy"]),
     setBreadcrumbs() {
       let param = this.isView ? "View Product" : "Edit Product";
@@ -92,12 +92,12 @@ export default {
     getHistoryItem() {
       this.getHistory(this.$route.params.id).then(() => {
         this.items = JSON.parse(
-        JSON.stringify(this.$store.state.masterProduct.edittedItemHistories))
+        JSON.stringify(this.$store.state.masterProduct.dataHistoryMasterProduct))
       });
     },
     setForm() {
       this.form = JSON.parse(
-        JSON.stringify(this.$store.state.masterProduct.edittedItem)
+        JSON.stringify(this.$store.state.masterProduct.dataMasterProductById)
       );
     },
     onEdit() {
@@ -105,7 +105,7 @@ export default {
       this.setBreadcrumbs();
     },
     onDelete(){
-      this.deleteMasterProductById(this.$route.params.id)
+      this.deleteMasterProduct(this.$route.params.id)
         .then(() => {
           this.onDeleteSuccess();
         })

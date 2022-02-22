@@ -13,11 +13,11 @@ from api.utils.excel import read_excel, export_excel
 from api.exceptions import ValidationException
 
 def is_duplicate_create(name):
-    if Strategy.objects.filter(name=name):
+    if Strategy.objects.filter(name__iexact=name):
         raise ValidationException('Strategy ' + name + ' already exists')
 
 def is_duplicate(id, name):
-    if Strategy.objects.filter(name=name).exclude(pk=id):
+    if Strategy.objects.filter(name__iexact=name).exclude(pk=id):
         raise ValidationException('Strategy ' + name + ' already exists')
 
 class StrategyViewSet(viewsets.ModelViewSet):
@@ -44,6 +44,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
+        request.data['name'] = request.data['name'].split()
         is_duplicate_create(request.data['name'])
         strategy = super().create(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.CREATE, TableEnum.STRATEGY)
@@ -52,6 +53,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
+        request.data['name'] = request.data['name'].split()
         is_duplicate(kwargs['pk'], request.data['name'])
         strategy = super().update(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.UPDATE, TableEnum.STRATEGY)

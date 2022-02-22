@@ -1,6 +1,6 @@
 <template>
     <v-container class="mt-5">
-        <v-row>Username: {{data.serialized_data.username}} - {{data.serialized_data.display_name}}</v-row>
+        <v-row>Username: {{data.serialized_data.username}} - {{data.serialized_data.name}}</v-row>
         <v-row>Role: {{data.serialized_data.role}}</v-row>
         <v-row>Status: {{getActive}}</v-row>
 

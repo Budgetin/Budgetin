@@ -83,7 +83,6 @@ export default {
       this.$router.go(-1);
     },
     onSubmit(e) {
-      console.log(e)
       this.submitPlanning(e)
       .then(() => {
           this.onSaveSuccess();

@@ -186,7 +186,7 @@ export default {
     ...mapState("masterStrategy", ["loadingGetMasterStrategy", "dataMasterStrategy"]),
   },
   methods: {
-    ...mapActions("masterProduct", ["getMasterProduct", "postMasterProduct", "importProduct", "importProductTemplate"]),
+    ...mapActions("masterProduct", ["getMasterProduct", "postMasterProduct", "importProduct", "importTemplateProduct"]),
     ...mapActions("masterStrategy", ["getMasterStrategy", "postMasterStrategy"]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
@@ -202,7 +202,7 @@ export default {
       ]);
     },
     onDownload(){
-      this.importProductTemplate()
+      this.importTemplateProduct()
         .then(() => {
           this.onDownloadSuccess();
         })
@@ -234,7 +234,7 @@ export default {
       this.uploadDialog = false;
     },
     onEdit(item) {
-      this.$store.commit("masterProduct/SET_EDITTED_ITEM", item);
+      this.$store.commit("masterProduct/GET_MASTER_PRODUCT_BY_ID_SUCCESS", item);
     },    
     onCancel() {
       // this.dialog = false;
@@ -252,21 +252,22 @@ export default {
         });
     },
     onSaveSuccess() {
-      this.dialog = false;
+      this.formDialog = false;
+      this.uploadDialog = false;
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
       this.alert.subtitle = "Master Source has been saved successfully";
     },
     onSaveError(error) {
-      this.dialog = false;
+      this.formDialog = false;
+      this.uploadDialog = false;
       this.alert.show = true;
       this.alert.success = false;
       this.alert.title = "Save Failed";
       this.alert.subtitle = error;
     },
     onDownloadSuccess() {
-      this.dialog = false;
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Download Success";

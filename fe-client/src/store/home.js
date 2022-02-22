@@ -12,41 +12,29 @@ const home = {
     requestTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetTask: false, // for loading table
     dataHome: [], // for v-data-table
-    errorMsg: null,
+    
     // get task by id
     requestTaskByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetTaskById: false, // for loading table
     dataTaskById: null, // for store data
-    errorMsgTaskById: null,
+    
     // get List My Planning based on task id
-    requestSubmittedTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    loadingGetSubmittedTask: false, // for loading table
+    requestSubmittedTaskItemStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetSubmittedTaskItem: false, // for loading table
     dataSubmittedTask: [], // for v-data-table
-    errorMsgSubmittedTask: null,
+    
     // set monitoring status as Submitted
     requestSubmitPlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingPostSubmitPlanning: false, // for loading table
-    errorMsgSubmitPlanning: null,
+    
     // save planning
     requestSavePlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingPostSavePlanning: false, // for loading table
-    errorMsgSavePlanning: null,
+    
     // download My Planning
     requestDownloadPlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingDownloadPlanning: false, // for loading data
-    errorMsgDownloadPlanning: null,
 
-    loadingGetEdittedItem: false,
-    loadingPostPatchHome: false, // for loading post/patch
-    requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    edittedItem: null,
-    loadingDeleteItem:false,
-    deleteStatus: "IDLE",
-    deleteItem: [],
-    requestHistoriesStatus:"IDLE",
-    loadingGetEdittedItemHistories: false,
-    edittedItemHistories: [],
   },
   getters: {
     value: (state) => state.dataHome
@@ -80,11 +68,11 @@ const home = {
           .get(ENDPOINT + `${id}/`)
           .then((response) => {
             const cleanData = response.data
-            commit("GET_SUCCESS_TASK_BY_ID", cleanData);
+            commit("GET_TASK_BY_ID_SUCCESS", cleanData);
             resolve(cleanData);
           })
           .catch((error) => {
-            commit("GET_ERROR_TASK_BY_ID", error);
+            commit("GET_TASK_BY_ID_ERROR", error);
             reject(error.message);
           });
       });
@@ -161,15 +149,14 @@ const home = {
       state.requestTaskStatus = "PENDING";
       state.loadingGetTask = true;
     },
-    GET_SUCCESS(state, dataHome) {
+    GET_SUCCESS(state, data) {
       state.requestTaskStatus = "SUCCESS";
       state.loadingGetTask = false;
-      state.dataHome = dataHome;
+      state.dataHome = data;
     },
     GET_ERROR(state, error) {
       state.requestTaskStatus = "ERROR";
       state.loadingGetTask = false;
-      state.errorMsg = error;
       state.dataHome = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
@@ -181,15 +168,14 @@ const home = {
       state.requestTaskByIdStatus = "PENDING";
       state.loadingGetTaskById = true;
     },
-    GET_SUCCESS_TASK_BY_ID(state, dataTask) {
+    GET_TASK_BY_ID_SUCCESS(state, dataTask) {
       state.requestTaskByIdStatus = "SUCCESS";
       state.loadingGetTaskById = false;
       state.dataTaskById = dataTask;
     },
-    GET_ERROR_TASK_BY_ID(state, error) {
+    GET_TASK_BY_ID_ERROR(state, error) {
       state.requestTaskByIdStatus = "ERROR";
       state.loadingGetTaskById = false;
-      state.errorMsgTaskById = error;
       state.dataTaskById = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
@@ -198,20 +184,18 @@ const home = {
     
     // get Submitted based Task related
     GET_INIT_SUBMITTED_TASK_ITEM(state) {
-      state.requestSubmittedTaskStatus = "PENDING";
+      state.requestSubmittedTaskItemStatus = "PENDING";
       state.loadingGetSubmittedTaskItem = true;
     },
-    GET_SUCCESS_SUBMITTED_TASK_ITEM(state, payload) {
-      state.requestSubmittedTaskStatus = "SUCCESS";
+    GET_SUCCESS_SUBMITTED_TASK_ITEM(state, data) {
+      state.requestSubmittedTaskItemStatus = "SUCCESS";
       state.loadingGetSubmittedTaskItem = false;
-      state.dataSubmittedTask = payload;
+      state.dataSubmittedTask = data;
     },
     GET_ERROR_SUBMITTED_TASK_ITEM(state, error) {
-      state.requestTaskStatus = "ERROR";
+      state.requestSubmittedTaskItemStatus = "ERROR";
       state.loadingGetSubmittedTaskItem = false;
-      state.errorMsgSubmittedTask = error;
       state.dataSubmittedTask = [];
-      console.log(error)
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
@@ -226,10 +210,9 @@ const home = {
       state.requestSubmitPlanningStatus = "SUCCESS";
       state.loadingPostSubmitPlanning = false;
     },
-    GET_ERROR_SUBMIT_PLANNING(state, error) {
+    POST_ERROR_SUBMIT_PLANNING(state, error) {
       state.requestSubmitPlanningStatus = "ERROR";
       state.loadingPostSubmitPlanning = false;
-      state.errorMsgSubmitPlanning = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
@@ -247,7 +230,6 @@ const home = {
     POST_ERROR_PLANNING(state, error) {
       state.requestSavePlanningStatus = "ERROR";
       state.loadingPostSavePlanning = false;
-      state.errorMsgSavePlanning = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
@@ -265,7 +247,6 @@ const home = {
     GET_ERROR_DOWNLOAD_PLANNING(state, error) {
       state.requestDownloadPlanningStatus = "ERROR";
       state.loadingGetDownloadPlanning = false;
-      state.errorMsg = error;
       state.dataHome = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});

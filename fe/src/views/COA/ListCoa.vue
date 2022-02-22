@@ -210,7 +210,7 @@ export default {
           this.onSaveSuccess();
         })
         .catch((error) => {
-          this.onSaveError(error);
+          this.onSaveError("Check Your Download Folder to View Error");
         });
     },
     onForm(){
@@ -219,8 +219,8 @@ export default {
       this.uploadDialog = false;
     },
     onEdit(item) {
-      this.$store.commit("masterCoa/SET_EDITTED_ITEM", item);
-      this.$store.commit("masterCoa/SET_EDITTED_ITEM_HISTORIES", item);
+      this.$store.commit("masterCoa/GET_MASTER_COA_BY_ID_SUCCESS", item);
+      this.$store.commit("masterCoa/GET_HISTORY_MASTER_COA_SUCCESS", item);
     },    
     onCancel() {
       this.inputOption = false;
@@ -239,6 +239,7 @@ export default {
     onSaveSuccess() {
       this.formDialog = false;
       this.uploadDialog = false;
+      this.uploadDialog = false;
       this.alert.show = true;
       this.alert.success = true;
       this.alert.title = "Save Success";
@@ -246,6 +247,7 @@ export default {
     },
     onSaveError(error) {
       this.formDialog = false;
+      this.uploadDialog = false;;
       this.uploadDialog = false;
       this.alert.show = true;
       this.alert.success = false;

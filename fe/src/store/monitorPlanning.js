@@ -19,7 +19,6 @@ const monitorPlanning = {
     edittedItemHistories: [],
   },
   getters: {
-    value: (state) => state.value
   },
   actions: {
     getMonitorPlanning({ commit }) {

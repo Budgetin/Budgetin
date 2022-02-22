@@ -21,6 +21,7 @@ class TableEnum(Enum):
     STRATEGY = "strategy"
     USER = "user"
     REALIZATION = "realization"
+    SWITCHING = "switching"
 
 
 class RoleEnum(Enum):

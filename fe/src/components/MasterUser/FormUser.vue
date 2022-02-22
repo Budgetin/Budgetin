@@ -13,19 +13,27 @@
         <!-- User Code -->
         <v-row no-gutters>
           <v-col cols="6"> Username<strong class="red--text">*</strong> </v-col>
-          
-          <v-col cols="6">
+          <v-col cols="6" >
             <v-autocomplete
-              :items="dataMasterEmployee"
+              v-if="isNew"
+              :items="dataEmployee"
               v-model="form.name"
-              item-text="option"
+              item-text="name"
               item-value="username"
               outlined
               dense
-              :disabled="!isNew"
               :rules="validation.required"
               placeholder="Select Employee"
             ></v-autocomplete>
+            <v-text-field
+              v-if="!isNew"
+              v-model="form.name.name"
+              outlined
+              dense
+              disabled
+              :rules="validation.required"
+              placeholder="Select Employee"
+            ></v-text-field>
           </v-col>
         </v-row>
         <!-- Role  -->
@@ -95,7 +103,7 @@
 import { mapState } from "vuex";
 export default {
   name: "FormUser",
-  props: ["form", "dataMasterEmployee", "isView", "isNew"],
+  props: ["form", "dataEmployee", "isView", "isNew"],
   data: () => ({
     type: ["Admin"],
     validation: {
@@ -105,7 +113,6 @@ export default {
   }),
   computed: {
     ...mapState("statusInfo", ["statusInfoMaster"]),
-    ...mapState("masterEmployee", ["getMasterEmployee"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
@@ -122,7 +129,7 @@ export default {
           id: this.form?.id,
           username : this.form.name.username?this.form.name.username:this.form.name,
           role: this.form.role,
-          is_active: this.form.status.id ? this.form.status.id : this.form.status ,
+          is_active: this.form.status.id != null ? this.form.status.id : this.form.status ,
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
         this.$refs.form.reset()
