@@ -63,7 +63,7 @@ export default {
   methods: {
     ...mapActions("masterCoa", [
       "patchMasterCoa",
-      "getMasterCoaById","deleteMasterCoaById","getHistory"
+      "getMasterCoaById","deleteMasterCoa","getHistory"
     ]),
     setBreadcrumbs() {
       let param = this.isView ? "View Coa" : "Edit Coa";
@@ -91,12 +91,12 @@ export default {
     getHistoryItem() {
       this.getHistory(this.$route.params.id).then(() => {
         this.items = JSON.parse(
-        JSON.stringify(this.$store.state.masterCoa.edittedItemHistories))
+        JSON.stringify(this.$store.state.masterCoa.dataHistoryMasterCoa))
       });
     },
     setForm() {
       this.form = JSON.parse(
-        JSON.stringify(this.$store.state.masterCoa.edittedItem)
+        JSON.stringify(this.$store.state.masterCoa.dataMasterCoaById)
       );
     },
     onEdit() {
@@ -104,7 +104,7 @@ export default {
       this.setBreadcrumbs();
     },
     onDelete(){
-      this.deleteMasterCoaById(this.$route.params.id)
+      this.deleteMasterCoa(this.$route.params.id)
         .then(() => {
           this.onDeleteSuccess();
         })

@@ -80,7 +80,7 @@
           :isView="false"
           :isNew="true"
           :dataMasterUser="dataMasterUser"
-          :dataMasterEmployee ="dataMasterEmployee"
+          :dataEmployee ="dataEmployee"
           @editClicked="onEdit"
           @cancelClicked="onCancel"
           @submitClicked="onSubmit"
@@ -115,7 +115,7 @@ export default {
     dataTable: {
       headers: [
         { text: "Username", value: "name.username"},
-        { text: "Name", value: "name.display_name"},
+        { text: "Name", value: "name.name"},
         { text: "Role", value: "role"},
         { text: "Status", value: "status.id", align: "center"},
         { text: "Update By", value: "updated_by"},
@@ -144,16 +144,16 @@ export default {
   }),
   created() {
     this.getMasterUser();
-    this.getMasterEmployee();
+    this.getEmployee();
     this.setBreadcrumbs();
   },
   computed: {
     ...mapState("masterUser", ["loadingGetMasterUser", "dataMasterUser"]),
-    ...mapState("masterEmployee", ["loadingGetMasterEmployee", "dataMasterEmployee"]),
+    ...mapState("masterEmployee", ["loadingGetEmployee", "dataEmployee"]),
   },
   methods: {
     ...mapActions("masterUser", ["getMasterUser", "postMasterUser"]),
-    ...mapActions("masterEmployee", ["getMasterEmployee"]),
+    ...mapActions("masterEmployee", ["getEmployee"]),
     setBreadcrumbs() {
       let param = this.isView ? "View User" : "Edit User";
       this.$store.commit("breadcrumbs/SET_LINKS", [
@@ -172,7 +172,7 @@ export default {
       this.dialog = !this.dialog;
     },
     onEdit(item) {
-      this.$store.commit("masterUser/SET_EDITTED_ITEM", item);
+      this.$store.commit("masterUser/GET_USER_BY_ID_SUCCESS", item);
     },    
     onCancel() {
       this.dialog = false;

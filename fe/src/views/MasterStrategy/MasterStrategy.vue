@@ -221,7 +221,7 @@ export default {
       this.uploadDialog = false;
     },
     onEdit(item) {
-      this.$store.commit("masterStrategy/SET_EDITTED_ITEM", item);
+      this.$store.commit("masterStrategy/GET_SUCCESS_STRATEGY_BY_ID", item);
     },    
     onSubmit(e) {
       this.postMasterStrategy(e)

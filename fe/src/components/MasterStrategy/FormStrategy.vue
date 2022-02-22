@@ -100,6 +100,10 @@ export default {
 </script>
 
 <style lang="scss" scopped>
+.v-icon{
+  cursor: pointer;
+}
+
 .v-card__text {
   color: unset !important;
 }

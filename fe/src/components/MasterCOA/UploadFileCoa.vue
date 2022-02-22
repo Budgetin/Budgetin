@@ -63,7 +63,7 @@ export default {
           files: this.files,
         };
         this.$emit("uploadClicked", data);
-        this.$refs.form.reset()
+        this.$refs.form.reset();
         this.onCancel();
       }
     },
