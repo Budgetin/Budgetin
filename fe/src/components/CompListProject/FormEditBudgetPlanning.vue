@@ -71,19 +71,15 @@
           <!-- BUDGET STATUS -->
           <v-col cols="6"> Budget Status
             <div class="EditBudgetPlanning__field">
-              <v-select
-              v-model="form.is_active"
-              :items="statusIsBudget"
-              item-text="label"
-              item-value="id"
-              placeholder="Choose Active/Inactive"
-              outlined
-              dense
-              return-object
-              disabled
-              :rules="validation.required"
-              class="mr-3">
-              </v-select>
+              <v-text-field
+                v-model="budgetStatus"
+                outlined
+                return-object
+                placeholder="-"
+                dense
+                disabled
+                class="mr-3">
+                </v-text-field>
             </div>
           </v-col>
         </v-row>
@@ -249,7 +245,6 @@ export default {
   name: "FormEditBudgetPlanning",
   props: ["form", "isNew", "isView"],
   mixins: [formatting],
-
   data: () => ({
     validation: {
       required: [
@@ -268,10 +263,12 @@ export default {
   
   computed: {
     ...mapState("masterCoa", ["getMasterCoa", "dataMasterCoa"]),
-    ...mapState("statusInfo", ["statusIsBudget"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+    },
+    budgetStatus(){
+      return this.form.is_active == true ? "Active" : "Inactive";
     },
     errorMsg() {
       return this.$store.state.source.errorMsg;
@@ -280,65 +277,65 @@ export default {
       // getter
       get: function() {
         if(this.form.planning_nominal){
-          this.form.planning_nominal = this.numberWithDots(this.form.planning_nominal)
+          this.form.planning_nominal = this.numberWithDots(this.form.planning_nominal);
           return this.form.planning_nominal;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.planning_nominal = this.numberWithDots(newValue)
+        this.form.planning_nominal = this.numberWithDots(newValue);
       }
     },
     planningQ1: {
       // getter
       get: function() {
         if(this.form.planning_q1){
-          this.form.planning_q1 = this.numberWithDots(this.form.planning_q1)
+          this.form.planning_q1 = this.numberWithDots(this.form.planning_q1);
           return this.form.planning_q1;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.planning_q1 = this.numberWithDots(newValue)
+        this.form.planning_q1 = this.numberWithDots(newValue);
       }
     },
     planningQ2: {
       // getter
       get: function() {
         if(this.form.planning_q2){
-          this.form.planning_q2 = this.numberWithDots(this.form.planning_q2)
+          this.form.planning_q2 = this.numberWithDots(this.form.planning_q2);
           return this.form.planning_q2;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.planning_q2 = this.numberWithDots(newValue)
+        this.form.planning_q2 = this.numberWithDots(newValue);
       }
     },
     planningQ3: {
       // getter
       get: function() {
         if(this.form.planning_q3){
-          this.form.planning_q3 = this.numberWithDots(this.form.planning_q3)
+          this.form.planning_q3 = this.numberWithDots(this.form.planning_q3);
           return this.form.planning_q3;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.planning_q3 = this.numberWithDots(newValue)
+        this.form.planning_q3 = this.numberWithDots(newValue);
       }
     },
     planningQ4: {
       // getter
       get: function() {
         if(this.form.planning_q4){
-          this.form.planning_q4 = this.numberWithDots(this.form.planning_q4)
+          this.form.planning_q4 = this.numberWithDots(this.form.planning_q4);
           return this.form.planning_q4;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.planning_q4 = this.numberWithDots(newValue)
+        this.form.planning_q4 = this.numberWithDots(newValue);
       }
     },
   },
@@ -358,7 +355,7 @@ export default {
             planning_q4: this.planningQ4 ? parseInt(this.form.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) : 0,
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
-        this.$refs.form.reset();
+        //this.$refs.form.reset();
       }
     },
     onCancel() {

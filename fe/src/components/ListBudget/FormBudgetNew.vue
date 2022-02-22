@@ -222,7 +222,7 @@
               <div>
                 <v-select
                   v-model="form.planning"
-                  :items="dataActiveListBudget"
+                  :items="dataListActivePlanning"
                   item-text="year"
                   item-value="id"
                   placeholder="Year"
@@ -554,7 +554,7 @@ export default {
   }),
   computed: {
     ...mapState("listBudget", [
-      "dataActiveListBudget"
+      "dataListActivePlanning"
     ]),
     ...mapState("projectType", [
       "dataProjectType"

@@ -24,7 +24,7 @@ const statusInfo = {
     statusCAPEXOPEX: [
       { id: 1, label: "CAPEX" },
       { id: 2, label: "OPEX" },
-    ],
+    ]
   },
 };
 

@@ -30,8 +30,8 @@
           <!---------------------------- ACTIVE ---------------------------->
 
           <v-data-table
-            :items="dataListBudget"
-            :loading="loadingGetListBudget"
+            :items="dataListActiveBudget"
+            :loading="loadingGetListActiveBudget"
             :headers="listColumn"
             :search="search"
             v-if="tab==0"
@@ -301,6 +301,7 @@ export default {
     dialogUpload: false,
     inputOption : false,
     isEdit: false,
+    isLoading: false,
     search: "",
     tab: null,
     items: ['Active', 'Inactive'],
@@ -440,17 +441,17 @@ export default {
     },
   }),
   created() {
-    this.getListBudget();
+    this.getListActiveBudget();
     this.getListInactiveBudget();
     this.getSelectedHeader();
     this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("listBudget", ["loadingGetListBudget", "loadingGetListInactiveBudget", "dataListBudget", "dataListInactiveBudget", "isLoading"]),
+    ...mapState("listBudget", ["loadingGetListActiveBudget", "loadingGetListInactiveBudget", "dataListActiveBudget", "dataListInactiveBudget"],),
     ...mapState("choosedColumn", ["listColumn"]),
   },
   methods: {
-    ...mapActions("listBudget", ["getListBudget", "getListInactiveBudget", "postListBudget","importBudget","importRealization","downloadBudget","downloadImportBudgetTemplate"]),
+    ...mapActions("listBudget", ["getListActiveBudget", "getListInactiveBudget","importBudget","importRealization","downloadBudget","downloadImportBudgetTemplate"]),
     getSelectedHeader() {
       if (this.listColumn.length == 1) {
         this.dataTable.selectedHeader = [].concat(this.dataTable.Listheader);
@@ -526,11 +527,14 @@ export default {
       this.alert.show = false;
     },
     uploadBudget(data){
+      this.isLoading = true;
       this.importBudget(data)
         .then(() => {
           this.onSaveSuccess();
+          this.isLoading = false;
         })
         .catch((error) => {
+          this.isLoading = false;
           this.dialog = false;
           this.alert.show = true;
           this.alert.success = false;
@@ -539,11 +543,14 @@ export default {
         });
     },
     downloadTemplate(){
+      this.isLoading = true;
       this.downloadImportBudgetTemplate()
         .then(() => {
+          this.isLoading = false;
           this.onSaveSuccess();
         })
         .catch((error) => {
+          this.isLoading = false;
           this.dialog = false;
           this.alert.show = true;
           this.alert.success = false;
@@ -552,11 +559,14 @@ export default {
         });
     },
     uploadRealization(data){
+      this.isLoading = true;
       this.importRealization(data)
         .then(() => {
+          this.isLoading = false;
           this.onSaveSuccess();
         })
         .catch((error) => {
+          this.isLoading = false;
           this.dialog = false;
           this.alert.show = true;
           this.alert.success = false;
@@ -565,11 +575,14 @@ export default {
         });
     },
     onExport() {
+      this.isLoading = true;
       this.downloadBudget()
         .then(() => {
+          this.isLoading = false;
           this.onSaveSuccess();
         })
         .catch((error) => {
+          this.isLoading = false;
           this.dialog = false;
           this.alert.show = true;
           this.alert.success = false;

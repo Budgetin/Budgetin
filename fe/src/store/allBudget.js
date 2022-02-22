@@ -1,7 +1,7 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js"
-const ENDPOINT = "api/budget/";
+const ENDPOINT = "api/budget/"; // /deactivate --> cancel cancelBudgetByid
 
 const allBudget = {
   namespaced: true,

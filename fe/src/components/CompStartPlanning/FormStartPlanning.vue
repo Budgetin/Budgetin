@@ -91,27 +91,6 @@
             </v-col>
           </v-col>
 
-          <!-- SEND NOTIFICATION Add-->
-          <!-- <v-col cols="6"> Send Notification <strong class="red--text">*</strong>
-            <v-col
-              class="d-flex"
-              cols="12"
-              sm="6">
-              <div class="StartPlanning__field">
-                <v-select
-                v-model="form.notification"
-                :items="statusNotification"
-                item-text="label"
-                item-value="id"
-                placeholder="Choose Yes/No"
-                outlined
-                return-object
-                :rules="validation.required">
-                </v-select>
-              </div>
-            </v-col>
-          </v-col> -->
-
           <!-- SEND NOTIFICATION View/Edit -->
           <v-col cols="6"> Send Notification <strong class="red--text">*</strong>
             <v-col
@@ -150,12 +129,14 @@
                 placeholder="Choose Biro"
                 multiple
                 chips
-                outlined>
+                outlined
+                :rules="validation.selectRequired">
                   <template v-slot:prepend-item>
                     <v-list-item
                       ripple
                       @mousedown.prevent
-                      @click="toggle">
+                      @click="toggle"
+                      :rules="validation.required">
                       <v-list-item-action>
                         <v-icon :color="selected.length > 0 ? 'indigo darken-4' : ''">
                           {{ icon }}
@@ -245,12 +226,9 @@ export default {
         v => { if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;
         return 'Year has to be integer and contains 4 digits'; }
       ],
-
-      // yearRule: v  => {
-      //   //if (!v.trim()) return true;
-      //   if (!isNaN(parseFloat(v)) && v >= 1000 && v <= 9999) return true;
-      //   return 'Year has to be integer and contains 4 digits';
-      // },
+      selectRequired: [
+        (v) =>  v.length > 0 || "This field is required",
+      ]
     },
   }),
 
@@ -271,7 +249,7 @@ export default {
       return 'mdi-checkbox-blank-outline'
     },
     planningFor() {
-      return Array.from({length: 3}, (value, index) => this.year + index)
+      return Array.from({length: 10}, (value, index) => this.year + index)
     }
   },
 
@@ -288,12 +266,12 @@ export default {
             // notification: this.form.notification.id ? 1 : 0,
             notification: this.form.notification.id,
             // biros: this.selected ? this.selected : 0,
-            biros: this.selected,
+            biros: this.selectAll,
             // body: this.form.body ? this.form.body : 0,
             body: this.form.body,
           };
           this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
-          // console.log(this.selectAll);
+          console.log(this.selectAll);
         } else {
           const payload = {
             id: this.form.id,

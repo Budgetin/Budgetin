@@ -11,6 +11,8 @@
     "ant-design-vue": "^1.7.8",
     "axios": "^0.25.0",
     "core-js": "^3.6.5",
+    "jest": "^27.5.1",
+    "jest-vue-preprocessor": "^1.7.1",
     "material-design-icons": "^3.0.1",
     "powerbi-client": "^2.19.1",
     "vue": "^2.6.11",

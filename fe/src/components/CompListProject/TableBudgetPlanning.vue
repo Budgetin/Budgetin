@@ -177,50 +177,24 @@ export default {
 
   mounted() {
     this.showItem = this.budgetPlanning.project_detail;
-    // console.log(this.showItem);
     this.budgetItem = [];
     for (let i = 0; i < this.showItem.length; i++) {
       for (let j = 0; j < this.showItem[i].budget.length; j++) {
           this.budgetItem.push(this.showItem[i].budget[j]);
-          // console.log(this.budgetItem[i].id);
       }
     };
-    // console.log(this.budgetItem);
-    this.getDetailItem();
   },
-  // created() {
-  //   this.getDetailItem();
-  // },
   computed: {
-    ...mapState("allBudget", ["loadingGetAllBudget", "dataAllBudget"]),
-
     status: function () {
       return this.budgetPlanning.project_detail ? false : true;
     },
   },
   methods: {
-    ...mapActions("allBudget", ["getAllBudgetById"]),
-
-    getDetailItem() {
-      // console.log("GET DETAIL ITEM");
-      // console.log(this.budgetItem.length);
-      // console.log(this.budgetItem);
-
-      this.budgetDetail = [];
-      for(let i = 0; i < this.budgetItem.length; i++) {
-        this.getAllBudgetById(this.budgetItem[i].id).then(() => {
-          this.budgetDetail.push(JSON.parse(
-              JSON.stringify(this.$store.state.allBudget.edittedItem)
-          ));
-        });
-      };
-      console.log(this.budgetDetail);
-    },
     onOK() {
       return this.$router.go(-1);
     },
     onEdit(item) {
-      this.$store.commit("listProject/SET_EDITTED_ITEM", item);
+      this.$store.commit("listProject/GET_SUCCESS_LIST_PROJECT_BY_ID", item);
     },
     onInputOption(){
       this.inputOption = true;

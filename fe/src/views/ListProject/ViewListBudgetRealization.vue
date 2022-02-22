@@ -5,7 +5,7 @@
             <form-edit-budget-realization
             :form="form"
             :isView="isView"
-            :dataAllBudget="dataAllBudget"
+            :dataAllBudget="dataBudgetById"
             :dataMasterCoa="dataMasterCoa"
             @editClicked="onEdit"
             @cancelClicked="onCancel"
@@ -106,11 +106,11 @@ export default {
         this.getMasterCoa();
     },
     computed: {
-        ...mapState("allBudget", ["loadingGetAllBudget", "dataAllBudget"]),
+        ...mapState("listBudget", ["dataBudgetById"]),
         ...mapState("masterCoa", ["dataMasterCoa"]),
     },
     methods: {
-        ...mapActions("allBudget", ["patchAllBudget", "getAllBudgetById", "getHistory"]),
+        ...mapActions("listBudget", ["saveBudgetById", "getBudgetById", "getListBudgetHistoryById"]),
         ...mapActions("masterCoa", ["getMasterCoa"]),
         
         setBreadcrumbs() {
@@ -141,23 +141,22 @@ export default {
             ]);
         },
         getHistoryItem() {
-            this.getHistory(this.$route.params.id_budget_realization).then(() => {
+            this.getListBudgetHistoryById(this.$route.params.id_budget_realization).then(() => {
                 this.itemsHistory = JSON.parse(
-                    JSON.stringify(this.$store.state.allBudget.edittedItemHistories));
+                    JSON.stringify(this.$store.state.listBudget.dataListBudgetHistoryById));
                 for(let i=0; i<this.itemsHistory.length; i++) {
                     this.itemsHistory[i].table = "budgetRealization"
-                    // console.log(this.itemsHistory[i]);
                 }
             });
         },
         getDetailItem() {
-            this.getAllBudgetById(this.$route.params.id_budget_realization).then(() => {
+            this.getBudgetById(this.$route.params.id_budget_realization).then(() => {
                 this.setForm();
             });
         },
         setForm() {
             this.form = JSON.parse(
-                JSON.stringify(this.$store.state.allBudget.edittedItem)
+                JSON.stringify(this.$store.state.listBudget.dataBudgetById)
             );
         },
         onEdit() {
@@ -170,7 +169,7 @@ export default {
             this.setBreadcrumbs();
         },
         onSubmit(e) {
-            this.patchAllBudget(e)
+            this.saveBudgetById(e)
             .then(() => {
                 this.onSaveSuccess();
             })

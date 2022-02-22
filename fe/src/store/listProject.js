@@ -6,29 +6,30 @@ const ENDPOINT = "/api/project/";
 const listProject = {
   namespaced: true,
   state: {
+    //getListProject
+    requestListProjectStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetListProject: false, // for loading table
-    loadingGetEdittedItem: false,
-    loadingPostPatchListProject: false, // for loading post/patch
     dataListProject: [], // for v-data-table
-    dataActiveListProject: [], //for dropdown
-    requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    errorMsg: null,
-    edittedItem: null,
-    loadingDeleteItem:false,
-    deleteStatus: "IDLE",
-    deleteItem: [],
-    edittedItemHistories: [],
-    requestHistoriesStatus:"IDLE",
-    loadingGetEdittedItemHistories: false,
+
+    //getListProjectById
+    requestListProjectByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetListProjectById: false, // for loading table
+    dataListProjectById: null,
+
+    //postListProject & patchListProject
+    requestPostPatchListProjectStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingPostPatchListProject: false, // for loading post/patch
+
+    //getHistoryListProject
+    requestGetHistoryListProjectStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetHistoryListProject: false, // for loading post/patch
+    dataHistoryListProject: [],
   },
   getters: {
-    value: (state) => state.value
   },
   actions: {
     getListProject({ commit }) {
-      commit("GET_INIT");
+      commit("GET_INIT_LIST_PROJECT");
       getAPI
         .get(ENDPOINT)
         .then((response) => {
@@ -36,30 +37,30 @@ const listProject = {
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
           );
-          commit("GET_SUCCESS", sorted);
+          commit("GET_SUCCESS_LIST_PROJECT", sorted);
         })
         .catch((error) => {
-          commit("GET_ERROR", error);
+          commit("GET_ERROR_LIST_PROJECT", error);
         });
     },
-    getListProjectById({ commit }, id) {
-      // commit("SET_EDITTED_ITEM_HISTORIES", []);
-      commit("SET_LOADING_GET_EDITTED_ITEM", true);
 
+    getListProjectById({ commit }, id) {
+      commit("GET_INIT_LIST_PROJECT_BY_ID", true);
       return new Promise((resolve, reject) => {
         getAPI
           .get(ENDPOINT + `${id}/`)
           .then((response) => {
             const data = response.data;
-            commit("SET_EDITTED_ITEM", data);
+            commit("GET_SUCCESS_LIST_PROJECT_BY_ID", data);
             resolve(data);
           })
           .catch((error) => {
-            commit("GET_ERROR", error);
+            commit("GET_ERROR_LIST_PROJECT_BY_ID", error);
             reject(error);
           });
       });
     },
+
     postListProject({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
@@ -71,27 +72,12 @@ const listProject = {
             store.dispatch("listProject/getListProject");
           })
           .catch((error) => {
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  if (error.response.data.hasOwnProperty("year")) {
-                    errorMsg += error.response.data.year;
-                  }
-                  break;
-
-                default:
-                  errorMsg += `Please recheck your input or try again later`;
-                  break;
-              }
-            }
-            commit("POST_PATCH_ERROR", errorMsg);
-            reject(errorMsg);
+            commit("POST_PATCH_ERROR", error.response.data);
+            reject(error.message);
           });
       });
     },
+
     patchListProject({ commit }, payload) {
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
@@ -104,46 +90,14 @@ const listProject = {
             store.dispatch("listProject/getListProject");
           })
           .catch((error) => {
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  if (error.response.data.hasOwnProperty("year")) {
-                    errorMsg += error.response.data.year;
-                  }
-                  break;
-
-                default:
-                  errorMsg += `${error.response.statusText}: Please recheck your input or try again later`;
-                  break;
-              }
-            }
-            reject(errorMsg);
             commit("POST_PATCH_ERROR", error.response.data);
+            reject(error.message);
           });
       });
     },
-    deleteListProjectById({ commit }, id) {
-      commit("SET_LOADING_DELETE_ITEM", true);
-      return new Promise((resolve, reject) => {
-        getAPI
-          .delete(ENDPOINT + `${id}/`)
-          .then((response) => {
-            const data = response.data;
-            commit("SET_DELETE_ITEM", data);
-            resolve(data);
-            store.dispatch("listProject/getListProject");
-          })
-          .catch((error) => {
-            commit("DELETE_ERROR", error);
-            reject(error);
-          });
-      });
-    },
-    getHistory({ commit }, id) {
-      commit("SET_REQUEST_STATUS"); 
+    
+    getHistoryListProject({ commit }, id) {
+      commit("GET_INIT_LIST_PROJECT_HISTORY"); 
       return new Promise((resolve, reject) => {
       getAPI
         .get("/api/auditlog?table=project&entity=" + `${id}`)
@@ -152,35 +106,31 @@ const listProject = {
           const sorted = data.sort((a, b) =>
           a.id < b.id ? 1 : -1
         );
-          commit("SET_EDITTED_ITEM_HISTORIES", sorted); 
+          commit("GET_SUCCESS_LIST_PROJECT_HISTORY", sorted); 
           resolve(sorted);
         })
         .catch((error) => {
-          commit("GET_ERROR", error);
+          commit("GET_ERROR_LIST_PROJECT_HISTORY", error);
           reject(error);
         });
       });
     },
   },
+
   mutations: {
-    // get related
-    GET_INIT(state) {
-      state.requestStatus = "PENDING";
+    // getListProject related
+    GET_INIT_LIST_PROJECT(state) {
+      state.requestListProjectStatus = "PENDING";
       state.loadingGetListProject = true;
     },
-    GET_SUCCESS(state, dataListProject) {
-      state.requestStatus = "SUCCESS";
+    GET_SUCCESS_LIST_PROJECT(state, dataListProject) {
+      state.requestListProjectStatus = "SUCCESS";
       state.loadingGetListProject = false;
       state.dataListProject = dataListProject;
     },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveListProject) {
-      state.requestActiveStatus = "IDLE";
-      state.dataActiveListProject = dataActiveListProject;
-    },
-    GET_ERROR(state, error) {
-      state.requestStatus = "ERROR";
+    GET_ERROR_LIST_PROJECT(state, error) {
+      state.requestListProjectStatus = "ERROR";
       state.loadingGetListProject = false;
-      state.errorMsg = error;
       state.dataListProject = [];
       state.dataActiveListProject = [];
       if(error.response.status =="401"){
@@ -188,47 +138,64 @@ const listProject = {
       }
     },
 
-    // post / patch related
-    POST_PATCH_INIT(state) {
-      state.postPatchStatus = "PENDING";
-      state.loadingPostPatchListProject = true;
+    // getListProjectById related
+    GET_INIT_LIST_PROJECT_BY_ID(state) {
+      // state.loadingGetEdittedItem = payload;
+      state.requestListProjectByIdStatus = "PENDING";
+      state.loadingGetListProjectById = true;
     },
-    POST_PATCH_SUCCESS(state) {
-      state.requestStatus = "SUCCESS";
-      state.loadingPostPatchListProject = false;
+    GET_SUCCESS_LIST_PROJECT_BY_ID(state, payload) {
+      // state.edittedItem = payload;
+      state.requestListProjectByIdStatus = "SUCCESS";
+      state.loadingGetListProjectById = false;
+      state.dataListProjectById = payload;
     },
-    POST_PATCH_ERROR(state, error) {
-      state.requestStatus = "ERROR";
-      state.loadingPostPatchListProject = false;
-      state.errorMsg = error;
+    GET_ERROR_LIST_PROJECT_BY_ID(state, error) {
+      state.requestListProjectByIdStatus = "ERROR";
+      state.loadingGetListProjectById = false;
+      state.dataListProjectById = null;
+      state.dataActiveListProject = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
     },
-    SET_EDITTED_ITEM(state, payload) {
-      state.edittedItem = payload;
+
+    // post/patch related
+    POST_PATCH_INIT(state) {
+      state.requestPostPatchListProjectStatus = "PENDING";
+      state.loadingPostPatchListProject = true;
     },
-    SET_LOADING_GET_EDITTED_ITEM(state, payload) {
-      state.loadingGetEdittedItem = payload;
+    POST_PATCH_SUCCESS(state) {
+      state.requestPostPatchListProjectStatus = "SUCCESS";
+      state.loadingPostPatchListProject = false;
+    },
+    POST_PATCH_ERROR(state, error) {
+      state.requestPostPatchListProjectStatus = "ERROR";
+      state.loadingPostPatchListProject = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
     // history relate
-    SET_EDITTED_ITEM_HISTORIES(state, edittedItemHistories) {
-      state.requestHistoriesStatus = "SUCCESS";
-      state.loadingGetEdittedItemHistories = false;
-      state.edittedItemHistories = edittedItemHistories;
+    GET_INIT_LIST_PROJECT_HISTORY(state) {
+      state.requestGetHistoryListProjectStatus = "PENDING";
+      state.loadingGetHistoryListProject = true;
+      state.dataHistoryListProject = [];
     },
-    SET_REQUEST_STATUS(state) {
-      state.requestHistoriesStatus = "PENDING";
-      state.loadingGetEdittedItemHistories = true;
-      state.edittedItemHistories = [];
+    GET_SUCCESS_LIST_PROJECT_HISTORY(state, dataHistoryListProject) {
+      // state.edittedItem = payload;
+      state.requestGetHistoryListProjectStatus = "SUCCESS";
+      state.loadingGetHistoryListProject = false;
+      state.dataHistoryListProject = dataHistoryListProject;
     },
-
-    ON_CHANGE(state, payload) {
-      state.value = payload;
-    },
-    ON_CHANGE_PAGING(state, payload) {
-      state.current = payload;
+    GET_ERROR_LIST_PROJECT_HISTORY(state, error) {
+      state.requestGetHistoryListProjectStatus = "ERROR";
+      state.loadingGetHistoryListProject = false;
+      state.dataHistoryListProject = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
   },
 };

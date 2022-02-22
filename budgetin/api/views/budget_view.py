@@ -92,7 +92,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         return Response(model_to_dict(project))
 
     def create_or_update_project(self, request):
-        planning = Planning.objects.filter(planning__id=request.data['planning'])
+        planning = Planning.objects.get(pk=request.data['planning'])
         if 'project_id' not in request.data:
             project = Project.objects.create(
                 project_name = request.data['project_name'],
