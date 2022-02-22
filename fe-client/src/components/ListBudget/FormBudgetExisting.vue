@@ -571,7 +571,7 @@ export default {
   computed: {
     ...mapState("listProject", [
       "dataListProject",
-      "edittedItem"
+      "dataListProjectById"
     ]),
     ...mapState("listBudget", [
       "dataActiveListBudget"
@@ -671,7 +671,7 @@ export default {
 
       if(this.form.project && this.form.project.id){
         this.getListProjectById(this.form.project.id).then(() => {
-          var project_detail = this.edittedItem.project_detail.find((x)=> x.planning.id==this.form.planning.id);
+          var project_detail = this.dataListProjectById.project_detail.find((x)=> x.planning.id==this.form.planning.id);
           if(project_detail){
             this.projectTypeEnable = false;
             const result = this.dataProjectType.filter((project_type) => {
@@ -701,7 +701,7 @@ export default {
     onSelectFor(){
       if(this.form.project && this.form.project.id && this.form.planning && this.form.planning.id){
         this.getMyProjectById(this.form.project.id).then(() => {
-          var project_detail = this.edittedItem.project_detail.find((x)=> x.planning.id==this.form.planning.id);
+          var project_detail = this.dataMyProjectById.project_detail.find((x)=> x.planning.id==this.form.planning.id);
           if(project_detail){
             this.projectTypeEnable = false;
             const result = this.dataProjectType.filter((project_type) => {
