@@ -71,19 +71,15 @@
           <!-- BUDGET STATUS -->
           <v-col cols="6"> Budget Status
             <div class="EditBudgetPlanning__field">
-              <v-select
-              v-model="form.is_active"
-              :items="statusIsBudget"
-              item-text="label"
-              item-value="id"
-              placeholder="Choose Active/Inactive"
-              outlined
-              dense
-              return-object
-              disabled
-              :rules="validation.required"
-              class="mr-3">
-              </v-select>
+              <v-text-field
+                v-model="budgetStatus"
+                outlined
+                return-object
+                placeholder="-"
+                dense
+                disabled
+                class="mr-3">
+                </v-text-field>
             </div>
           </v-col>
         </v-row>
@@ -249,7 +245,6 @@ export default {
   name: "FormEditBudgetPlanning",
   props: ["form", "isNew", "isView"],
   mixins: [formatting],
-
   data: () => ({
     validation: {
       required: [
@@ -268,10 +263,12 @@ export default {
   
   computed: {
     ...mapState("masterCoa", ["getMasterCoa", "dataMasterCoa"]),
-    ...mapState("statusInfo", ["statusIsBudget"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
+    },
+    budgetStatus(){
+      return this.form.is_active == true ? "Active" : "Inactive";
     },
     errorMsg() {
       return this.$store.state.source.errorMsg;
@@ -358,7 +355,7 @@ export default {
             planning_q4: this.planningQ4 ? parseInt(this.form.planning_q4.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) : 0,
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
-        this.$refs.form.reset();
+        //this.$refs.form.reset();
       }
     },
     onCancel() {

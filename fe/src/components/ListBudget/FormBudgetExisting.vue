@@ -225,7 +225,7 @@
                 <div>
                   <v-select
                     v-model="form.planning"
-                    :items="dataActiveListBudget"
+                    :items="dataListActivePlanning"
                     item-text="year"
                     item-value="id"
                     placeholder="Year"
@@ -612,10 +612,10 @@ export default {
   computed: {
     ...mapState("listProject", [
       "dataListProject",
-      "edittedItem"
+      "dataListProjectById"
     ]),
     ...mapState("listBudget", [
-      "dataActiveListBudget"
+      "dataListActivePlanning"
     ]),
     ...mapState("projectType", [
       "dataProjectType",
@@ -720,7 +720,7 @@ export default {
     onSelectFor(){
       if(this.form.project && this.form.project.id && this.form.planning && this.form.planning.id){
         this.getListProjectById(this.form.project.id).then(() => {
-          var project_detail = this.edittedItem.project_detail.find((x)=> x.planning.id==this.form.planning.id);
+          var project_detail = this.dataListProjectById.project_detail.find((x)=> x.planning.id==this.form.planning.id);
           if(project_detail){
             this.projectTypeEnable = false;
             const result = this.dataProjectType.filter((project_type) => {
