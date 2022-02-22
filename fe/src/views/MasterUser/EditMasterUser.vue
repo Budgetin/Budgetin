@@ -7,7 +7,7 @@
           <form-User
             :form="form"
             :isView="isView"
-            :dataMasterEmployee="dataMasterEmployee"
+            :dataEmployee="dataEmployee"
             @editClicked="onEdit"
             @okClicked="onOK"
             @cancelClicked="onCancel"
@@ -48,16 +48,16 @@ export default {
   components: { TimelineLog,FormUser,SuccessErrorAlert},
   created() {
     this.getEdittedItem();
-    this.getMasterEmployee();
+    this.getEmployee();
     this.getHistoryItem();
     this.setBreadcrumbs();
   },
   computed: {
-    ...mapState("masterEmployee", ["loadingGetMasterEmployee", "dataMasterEmployee"]),
+    ...mapState("masterEmployee", ["loadingGetEmployee", "dataEmployee"]),
   },
   methods: {
     ...mapActions("masterUser", ["patchMasterUser","getMasterUserById","getHistory"]),
-    ...mapActions("masterEmployee", ["getMasterEmployee"]),
+    ...mapActions("masterEmployee", ["getEmployee"]),
     setBreadcrumbs() {
       let param = this.isView ? "View User" : "Edit User";
       this.$store.commit("breadcrumbs/SET_LINKS", [
@@ -84,12 +84,12 @@ export default {
     getHistoryItem() {
       this.getHistory(this.$route.params.id).then(() => {
         this.items = JSON.parse(
-        JSON.stringify(this.$store.state.masterUser.edittedItemHistories))
+        JSON.stringify(this.$store.state.masterUser.dataHistoryMasterUser))
       });
     },
     setForm() {
       this.form = JSON.parse(
-        JSON.stringify(this.$store.state.masterUser.edittedItem)
+        JSON.stringify(this.$store.state.masterUser.dataUserById)
       );
     },
     onEdit() {

@@ -25,7 +25,6 @@ const masterCoa = {
     edittedItemHistories: [],
   },
   getters: {
-    value: (state) => state.value
   },
   actions: {
     getMasterCoa({ commit }) {
@@ -58,9 +57,9 @@ const masterCoa = {
           commit("GET_ERROR", error);
         });
     },
+
     getMasterCoaById({ commit }, id) {
       commit("SET_LOADING_GET_EDITTED_ITEM", true);
-
       return new Promise((resolve, reject) => {
         getAPI
           .get(ENDPOINT + `${id}/`)
@@ -75,6 +74,7 @@ const masterCoa = {
           });
       });
     },
+
     postMasterCoa({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
@@ -107,6 +107,7 @@ const masterCoa = {
           });
       });
     },
+
     patchMasterCoa({ commit }, payload) {
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
@@ -120,29 +121,13 @@ const masterCoa = {
             // store.dispatch("masterCategory/getFromAPI");
           })
           .catch((error) => {
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  if (error.response.data.hasOwnProperty("Coa_name")) {
-                    errorMsg += error.response.data.Coa_name;
-                  }
-                  break;
-
-                default:
-                  errorMsg += `${error.response.statusText}: Please recheck your input or try again later`;
-                  break;
-              }
-            }
-            reject(errorMsg);
             commit("POST_PATCH_ERROR", error.response.data);
+            reject(errorMsg);
           });
       });
     },
 
-    deleteMasterCoaById({ commit }, id) {
+    deleteMasterCoa({ commit }, id) {
       commit("SET_LOADING_DELETE_ITEM", true);
       return new Promise((resolve, reject) => {
         getAPI

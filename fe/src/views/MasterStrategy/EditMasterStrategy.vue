@@ -86,12 +86,12 @@ export default {
     getHistoryItem() {
       this.getHistory(this.$route.params.id).then(() => {
         this.items = JSON.parse(
-        JSON.stringify(this.$store.state.masterStrategy.edittedItemHistories))
+        JSON.stringify(this.$store.state.masterStrategy.dataHistoryMasterStrategy))
       });
     },
     setForm() {
       this.form = JSON.parse(
-        JSON.stringify(this.$store.state.masterStrategy.edittedItem)
+        JSON.stringify(this.$store.state.masterStrategy.dataMasterStrategyById)
       );
     },
     onEdit() {

@@ -33,26 +33,6 @@ const projectType = {
         });
       });
     },
-    getExistingProjectType({ commit }) {
-      commit("GET_EXISTING_INIT");
-      return new Promise((resolve, reject) => {
-      getAPI
-        .get(ENDPOINT)
-        .then((response) => {
-          const cleanData = response.data
-          var index = cleanData.findIndex(function(o){
-            return o.name === 'New';
-          });
-          if (index !== -1) cleanData.splice(index, 1);
-          commit("GET_EXISTING_SUCCESS", cleanData);
-          resolve(response);
-        })
-        .catch((error) => {
-          commit("GET_EXISTING_ERROR", error);
-          reject(errorMsg);
-        });
-      });
-    },
   },
 
   mutations: {

@@ -80,7 +80,7 @@
 
         <!-- Minimum Value -->
         <v-row no-gutters v-if="form.is_capex">
-          <v-col cols="6"> Minimum Value </v-col>
+          <v-col cols="6"> Minimum Value <strong class="red--text">*</strong> </v-col>
           <v-col cols="6">
             <v-text-field
               v-model="nominal"
@@ -186,6 +186,9 @@ export default {
 </script>
 
 <style lang="scss" scopped>
+.v-icon{
+  cursor: pointer;
+}
 .v-card__text {
   color: unset !important;
 }

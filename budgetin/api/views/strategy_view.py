@@ -1,24 +1,23 @@
-import os
 from rest_framework import viewsets 
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db import transaction
-from django.http import HttpResponse
 
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 from api.models import Strategy
 from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_excel, read_file, get_import_template_path, load_file, export_excel
+from api.utils.file import read_file, get_import_template_path, load_file
+from api.utils.excel import read_excel, export_excel
 from api.exceptions import ValidationException
 
 def is_duplicate_create(name):
-    if Strategy.objects.filter(name=name):
+    if Strategy.objects.filter(name__iexact=name):
         raise ValidationException('Strategy ' + name + ' already exists')
 
 def is_duplicate(id, name):
-    if Strategy.objects.filter(name=name).exclude(pk=id):
+    if Strategy.objects.filter(name__iexact=name).exclude(pk=id):
         raise ValidationException('Strategy ' + name + ' already exists')
 
 class StrategyViewSet(viewsets.ModelViewSet):
@@ -45,6 +44,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
         request.data['created_by'] = request.custom_user['id']
+        request.data['name'] = request.data['name'].split()
         is_duplicate_create(request.data['name'])
         strategy = super().create(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.CREATE, TableEnum.STRATEGY)
@@ -53,6 +53,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
+        request.data['name'] = request.data['name'].split()
         is_duplicate(kwargs['pk'], request.data['name'])
         strategy = super().update(request, *args, **kwargs)
         AuditLog.Save(strategy, request, ActionEnum.UPDATE, TableEnum.STRATEGY)

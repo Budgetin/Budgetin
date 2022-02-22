@@ -687,7 +687,7 @@ export default {
         this.projectTypeEnable = false;
       }
 
-      onSelectFor();
+      this.onSelectFor();
     },
 
     onSelectFor(){
