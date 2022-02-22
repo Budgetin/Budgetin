@@ -20,7 +20,8 @@ def update_db(request, index, data, errors):
     
     if project_detail != 'project-detail-error':
         if not errors:
-            project_detail.update(dcsp_id = dcsp_id)
+            project_detail.dcsp_id = dcsp_id
+            project_detail.save()
             AuditLog.Save(ProjectDetailSerializer(project_detail), request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
 
 def get_projectdetail(pk, index, errors):
@@ -49,18 +50,18 @@ class ImportDCSP(APIView):
     def post(self, request, format=None):
         file_obj = request.FILES['file'].read()
         try:
-            df = pandas.read_excel(file_obj, sheet_name='Realisasi')
+            df = pandas.read_excel(file_obj, sheet_name='DCSP')
         except ValueError:
-            raise SheetNotFoundException('Realisasi')
+            raise SheetNotFoundException('DCSP')
 
         errors = []
 
         for index, row in df.iterrows():
             line_error = self.validate_input(index, row)
-            errors.append(line_error)
+            errors.extend(line_error)
             if not line_error:
                 update_db(request, (index+2), row, errors)
-
+        print(errors)
         if errors:
-            export_errors_as_excel(errors)
+            return export_errors_as_excel(errors)
         return Response(status=204)

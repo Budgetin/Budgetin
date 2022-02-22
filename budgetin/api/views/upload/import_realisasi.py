@@ -95,7 +95,7 @@ def update_db(request, index, data, errors):
                         to_plus = to_plus,
                         type = type
                     )
-                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE, TableEnum.SWITCHING)
                     
             if switching_out:
                 nominal = switching_out
@@ -118,7 +118,7 @@ def update_db(request, index, data, errors):
                         from_minus = from_minus,
                         type = type
                     )
-                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE, TableEnum.SWITCHING)
 
             if returns:
                 nominal = returns
@@ -143,7 +143,7 @@ def update_db(request, index, data, errors):
                         from_minus = from_minus,
                         type = type
                     )
-                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE, TableEnum.SWITCHING)
 
             if topup:
                 nominal = topup
@@ -167,7 +167,7 @@ def update_db(request, index, data, errors):
                         to_plus = to_plus,
                         type = type
                     )
-                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE, TableEnum.SWITCHING)
         except TypeError:
             errors.append("Row {} - Wrong input type, number type input expected on collumn D afterward".format(index))
 
@@ -196,7 +196,7 @@ def get_budget(index, project_detail, coa, errors):
     try:
         return Budget.objects.filter(project_detail=project_detail).filter(coa=coa).get()
     except ObjectDoesNotExist:
-        errors.append("Row {} - Budget not found".format(index))
+        errors.append("Row {} - Budget with coa {} not found".format(index, coa))
         return "budget-error"
 
 def is_nan(data):
@@ -239,5 +239,5 @@ class ImportRealisasi():
                 update_db(request, (index+2), row, errors)
 
         if errors:
-            export_errors_as_excel(errors)
+            return export_errors_as_excel(errors)
         return Response(status=204)
