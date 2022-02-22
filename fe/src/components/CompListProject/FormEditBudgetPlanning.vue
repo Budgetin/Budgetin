@@ -280,65 +280,65 @@ export default {
       // getter
       get: function() {
         if(this.form.planning_nominal){
-          this.form.planning_nominal = this.numberWithDots(this.form.planning_nominal)
+          this.form.planning_nominal = this.numberWithDots(this.form.planning_nominal);
           return this.form.planning_nominal;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.planning_nominal = this.numberWithDots(newValue)
+        this.form.planning_nominal = this.numberWithDots(newValue);
       }
     },
     planningQ1: {
       // getter
       get: function() {
         if(this.form.planning_q1){
-          this.form.planning_q1 = this.numberWithDots(this.form.planning_q1)
+          this.form.planning_q1 = this.numberWithDots(this.form.planning_q1);
           return this.form.planning_q1;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.planning_q1 = this.numberWithDots(newValue)
+        this.form.planning_q1 = this.numberWithDots(newValue);
       }
     },
     planningQ2: {
       // getter
       get: function() {
         if(this.form.planning_q2){
-          this.form.planning_q2 = this.numberWithDots(this.form.planning_q2)
+          this.form.planning_q2 = this.numberWithDots(this.form.planning_q2);
           return this.form.planning_q2;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.planning_q2 = this.numberWithDots(newValue)
+        this.form.planning_q2 = this.numberWithDots(newValue);
       }
     },
     planningQ3: {
       // getter
       get: function() {
         if(this.form.planning_q3){
-          this.form.planning_q3 = this.numberWithDots(this.form.planning_q3)
+          this.form.planning_q3 = this.numberWithDots(this.form.planning_q3);
           return this.form.planning_q3;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.planning_q3 = this.numberWithDots(newValue)
+        this.form.planning_q3 = this.numberWithDots(newValue);
       }
     },
     planningQ4: {
       // getter
       get: function() {
         if(this.form.planning_q4){
-          this.form.planning_q4 = this.numberWithDots(this.form.planning_q4)
+          this.form.planning_q4 = this.numberWithDots(this.form.planning_q4);
           return this.form.planning_q4;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.planning_q4 = this.numberWithDots(newValue)
+        this.form.planning_q4 = this.numberWithDots(newValue);
       }
     },
   },

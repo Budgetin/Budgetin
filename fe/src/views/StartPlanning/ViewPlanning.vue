@@ -87,7 +87,7 @@ export default {
     },
 
     methods: {
-        ...mapActions("startPlanning", ["patchStartPlanning", "getStartPlanningById", "getHistory"]),
+        ...mapActions("startPlanning", ["patchStartPlanning", "getStartPlanningById", "getHistoryStartPlanning"]),
         ...mapActions("allBiroItHc", ["getAllBiroItHc"]),
         
         setBreadcrumbs() {
@@ -111,11 +111,11 @@ export default {
 
         getHistoryItem() {
             // console.log("Masuk getHistoryItem");
-            this.getHistory(this.$route.params.id).then(() => {
-                // console.log("Masuk getHistory");
+            this.getHistoryStartPlanning(this.$route.params.id).then(() => {
+                // console.log("Masuk getHistoryStartPlanning");
                 this.itemsHistory = JSON.parse(
-                    JSON.stringify(this.$store.state.startPlanning.edittedItemHistories));
-                    // console.log("Masuk JSON getHistory");
+                    JSON.stringify(this.$store.state.startPlanning.dataHistoryStartPlanning));
+                    // console.log("Masuk JSON getHistoryStartPlanning");
             });
         },
         getEdittedItem() {
@@ -126,7 +126,7 @@ export default {
         setForm() {
             // console.log("Masuk Set Form");
             this.form = JSON.parse(
-                JSON.stringify(this.$store.state.startPlanning.edittedItem)
+                JSON.stringify(this.$store.state.startPlanning.dataStartPlanningById)
             );
             // console.log(this.form);
         },

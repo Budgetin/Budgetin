@@ -115,7 +115,6 @@ export default {
 
     created() {
         this.getEdittedItem();
-        this.getMonitorPlanningById();
         this.setBreadcrumbs();
     },
     
@@ -123,14 +122,13 @@ export default {
         cardTitle() {
             return this.isNew ? "Add" : this.isView ? "View" : "Edit";
         },
-        ...mapState("monitorPlanning", ["loadingGetMonitorPlanning"]),
+        ...mapState("monitorPlanning", ["loadingGetMonitorPlanning", "dataMonitorPlanningById"]),
     },
 
     methods: {
         ...mapActions("monitorPlanning", ["getMonitorPlanningById", "postMonitorPlanning"]),
 
         setBreadcrumbs() {
-            // let param = this.isView ? "Monitor Planning" : "Edit Monitor Planning Status";
             this.$store.commit("breadcrumbs/SET_LINKS", [
                 {
                     text: "Start Planning",
@@ -150,9 +148,8 @@ export default {
         
         getEdittedItem() {
             this.getMonitorPlanningById(this.$route.params.id).then(() => {
-            
             this.monitorData = JSON.parse(
-                JSON.stringify(this.$store.state.monitorPlanning.edittedItem))
+                JSON.stringify(this.$store.state.monitorPlanning.dataMonitorPlanningById))
             });
         },
 
@@ -190,7 +187,7 @@ export default {
         },
         
         onEdit(item) {
-            this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
+            this.$store.commit("monitorPlanning/GET_SUCCESS_MONITOR_PLANNING_BY_ID", item);
         },
         onOK() {
             return this.$router.go(-1);

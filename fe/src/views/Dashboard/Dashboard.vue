@@ -1,7 +1,8 @@
 <template>
-  <v-container>
+  <v-container style="height: 1000px">
     <v-row no-gutters justify="space-between">
-      <iframe src='http://10.20.212.231/single/?appid=3e419129-d21b-41c2-b547-b9871eb73bc1&sheet=c3006dfe-4109-464f-bbbb-3b8d985c9c76&opt=currsel%2Cctxmenu' style='border:none;width:100%;height:100%;'></iframe>
+      <!-- <iframe src='http://10.20.212.231/single/?appid=3e419129-d21b-41c2-b547-b9871eb73bc1&sheet=c3006dfe-4109-464f-bbbb-3b8d985c9c76&opt=currsel%2Cctxmenu' style='border:none;width:100%;height:100%;'></iframe> -->
+      <iframe src="https://sense-demo.qlik.com/single/?appid=b23be62b-79d1-4761-b576-00ebc19acfb3&sheet=GZGbMWW&opt=ctxmenu,currsel" style="border:none;width:100%;height:1000px;"></iframe>
     </v-row>
   </v-container>
 </template>

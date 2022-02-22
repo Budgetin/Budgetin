@@ -37,7 +37,6 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 import FormMonitorPlanning from '@/components/CompStartPlanning/FormMonitorPlanning';
-// import FormLogHistory from '@/components/CompStartPlanning/FormLogHistory';
 import SuccessErrorAlert from "@/components/alerts/SuccessErrorAlert.vue";
 import TimelineLog from "@/components/TimelineLog";
 export default {
@@ -86,7 +85,7 @@ export default {
     },
 
     methods: {
-        ...mapActions("monitorPlanning", ["patchMonitorPlanning", "getMonitorPlanningDetailById", "getHistory"]),
+        ...mapActions("monitorPlanning", ["patchMonitorPlanning", "getMonitorPlanningDetailById", "getHistoryMonitorPlanning"]),
 
         setBreadcrumbs() {
             let param = this.isView ? "View Monitor Planning" : "Edit Monitor Planning";
@@ -118,10 +117,10 @@ export default {
         
         getHistoryItem() {
             // console.log("Masuk getHistoryItem");
-            this.getHistory(this.$route.params.id_monitor).then(() => {
+            this.getHistoryMonitorPlanning(this.$route.params.id_monitor).then(() => {
                 // console.log("Masuk getHistory");
                 this.itemsHistory = JSON.parse(
-                    JSON.stringify(this.$store.state.monitorPlanning.edittedItemHistories));
+                    JSON.stringify(this.$store.state.monitorPlanning.dataHistoryMonitorPlanning));
                     // console.log("Masuk JSON getHistory");
             });
         },
@@ -135,7 +134,7 @@ export default {
         setForm() {
             // console.log("Masuk Set Form");
             this.form = JSON.parse(
-                JSON.stringify(this.$store.state.monitorPlanning.edittedItem)
+                JSON.stringify(this.$store.state.monitorPlanning.dataMonitorPlanningDetailById)
             );
             // console.log(this.form);
         },

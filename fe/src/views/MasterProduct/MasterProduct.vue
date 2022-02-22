@@ -204,7 +204,7 @@ export default {
     onDownload(){
       this.importTemplateProduct()
         .then(() => {
-          this.onDownloadSuccess();
+          // this.onDownloadSuccess();
         })
         .catch((error) => {
           this.onDownloadError(error);

@@ -175,7 +175,7 @@ export default {
         ...mapState("masterProduct", ["loadingGetMasterProduct", "dataMasterProduct"]),
     },
     methods: {
-        ...mapActions("listProject", ["patchListProject", "getListProjectById", "getHistory"]),
+        ...mapActions("listProject", ["patchListProject", "getListProjectById", "getHistoryListProject"]),
         ...mapActions("masterProduct", ["getMasterProduct"]),
         ...mapActions("allBiro", ["getAllBiro"]),
 
@@ -200,29 +200,27 @@ export default {
         getDetailItem() {
             this.getListProjectById(this.$route.params.id).then(() => {
                 this.projectDetail = JSON.parse(
-                    JSON.stringify(this.$store.state.listProject.edittedItem)
+                    JSON.stringify(this.$store.state.listProject.dataListProjectById)
                 );
                 this.budgetPlanning = JSON.parse(
-                    JSON.stringify(this.$store.state.listProject.edittedItem)
+                    JSON.stringify(this.$store.state.listProject.dataListProjectById)
                 );
                 this.budgetRealization = JSON.parse(
-                    JSON.stringify(this.$store.state.listProject.edittedItem)
+                    JSON.stringify(this.$store.state.listProject.dataListProjectById)
                 );
                 this.setForm();
             });
         },
         setForm() {
             this.form = JSON.parse(
-                JSON.stringify(this.$store.state.listProject.edittedItem)
+                JSON.stringify(this.$store.state.listProject.dataListProjectById)
             );
         },
         getHistoryItem() {
             // console.log("Masuk getHistoryItem");
-            this.getHistory(this.$route.params.id).then(() => {
-                // console.log("Masuk getHistory");
+            this.getHistoryListProject(this.$route.params.id).then(() => {
                 this.itemsHistory = JSON.parse(
-                    JSON.stringify(this.$store.state.listProject.edittedItemHistories));
-                    // console.log("Masuk JSON getHistory");
+                    JSON.stringify(this.$store.state.listProject.dataHistoryListProject));
             });
         },
         onEdit() {

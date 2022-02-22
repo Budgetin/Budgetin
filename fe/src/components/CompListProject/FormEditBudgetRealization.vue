@@ -405,221 +405,221 @@ export default {
       // getter
       get: function() {
         if(this.form.allocate){
-          this.form.allocate = this.numberWithDots(this.form.allocate)
+          this.form.allocate = this.numberWithDots(this.form.allocate);
           return this.form.allocate;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.allocate = this.numberWithDots(newValue)
+        this.form.allocate = this.numberWithDots(newValue);
       }
     },
     topUpNominal: {
       // getter
       get: function() {
         if(this.form.top_up){
-          this.form.top_up = this.numberWithDots(this.form.top_up)
+          this.form.top_up = this.numberWithDots(this.form.top_up);
           return this.form.top_up;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.top_up = this.numberWithDots(newValue)
+        this.form.top_up = this.numberWithDots(newValue);
       }
     },
     returnNominal: {
       // getter
       get: function() {
         if(this.form.return){
-          this.form.return = this.numberWithDots(this.form.return)
+          this.form.return = this.numberWithDots(this.form.return);
           return this.form.return;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.return = this.numberWithDots(newValue)
+        this.form.return = this.numberWithDots(newValue);
       }
     },
     switchingInNominal: {
       // getter
       get: function() {
         if(this.form.switching_in){
-          this.form.switching_in = this.numberWithDots(this.form.switching_in)
+          this.form.switching_in = this.numberWithDots(this.form.switching_in);
           return this.form.switching_in;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.switching_in = this.numberWithDots(newValue)
+        this.form.switching_in = this.numberWithDots(newValue);
       }
     },
     switchingOutNominal: {
       // getter
       get: function() {
         if(this.form.switching_out){
-          this.form.switching_out = this.numberWithDots(this.form.switching_out)
+          this.form.switching_out = this.numberWithDots(this.form.switching_out);
           return this.form.switching_out;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.switching_out = this.numberWithDots(newValue)
+        this.form.switching_out = this.numberWithDots(newValue);
       }
     },
     janNominal: {
       // getter
       get: function() {
         if(this.form.realization_jan){
-          this.form.realization_jan = this.numberWithDots(this.form.realization_jan)
+          this.form.realization_jan = this.numberWithDots(this.form.realization_jan);
           return this.form.realization_jan;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_jan = this.numberWithDots(newValue)
+        this.form.realization_jan = this.numberWithDots(newValue);
       }
     },
     febNominal: {
       // getter
       get: function() {
         if(this.form.realization_feb){
-          this.form.realization_feb = this.numberWithDots(this.form.realization_feb)
+          this.form.realization_feb = this.numberWithDots(this.form.realization_feb);
           return this.form.realization_feb;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_feb = this.numberWithDots(newValue)
+        this.form.realization_feb = this.numberWithDots(newValue);
       }
     },
     marNominal: {
       // getter
       get: function() {
         if(this.form.realization_mar){
-          this.form.realization_mar = this.numberWithDots(this.form.realization_mar)
+          this.form.realization_mar = this.numberWithDots(this.form.realization_mar);
           return this.form.realization_mar;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_mar = this.numberWithDots(newValue)
+        this.form.realization_mar = this.numberWithDots(newValue);
       }
     },
     aprNominal: {
       // getter
       get: function() {
         if(this.form.realization_apr){
-          this.form.realization_apr = this.numberWithDots(this.form.realization_apr)
+          this.form.realization_apr = this.numberWithDots(this.form.realization_apr);
           return this.form.realization_apr;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_apr = this.numberWithDots(newValue)
+        this.form.realization_apr = this.numberWithDots(newValue);
       }
     },
     mayNominal: {
       // getter
       get: function() {
         if(this.form.realization_may){
-          this.form.realization_may = this.numberWithDots(this.form.realization_may)
+          this.form.realization_may = this.numberWithDots(this.form.realization_may);
           return this.form.realization_may;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_may = this.numberWithDots(newValue)
+        this.form.realization_may = this.numberWithDots(newValue);
       }
     },
     junNominal: {
       // getter
       get: function() {
         if(this.form.realization_jun){
-          this.form.realization_jun = this.numberWithDots(this.form.realization_jun)
+          this.form.realization_jun = this.numberWithDots(this.form.realization_jun);
           return this.form.realization_jun;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_jun = this.numberWithDots(newValue)
+        this.form.realization_jun = this.numberWithDots(newValue);
       }
     },
     julNominal: {
       // getter
       get: function() {
         if(this.form.realization_jul){
-          this.form.realization_jul = this.numberWithDots(this.form.realization_jul)
+          this.form.realization_jul = this.numberWithDots(this.form.realization_jul);
           return this.form.realization_jul;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_jul = this.numberWithDots(newValue)
+        this.form.realization_jul = this.numberWithDots(newValue);
       }
     },
     augNominal: {
       // getter
       get: function() {
         if(this.form.realization_aug){
-          this.form.realization_aug = this.numberWithDots(this.form.realization_aug)
+          this.form.realization_aug = this.numberWithDots(this.form.realization_aug);
           return this.form.realization_aug;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_aug = this.numberWithDots(newValue)
+        this.form.realization_aug = this.numberWithDots(newValue);
       }
     },
     sepNominal: {
       // getter
       get: function() {
         if(this.form.realization_sep){
-          this.form.realization_sep = this.numberWithDots(this.form.realization_sep)
+          this.form.realization_sep = this.numberWithDots(this.form.realization_sep);
           return this.form.realization_sep;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_sep = this.numberWithDots(newValue)
+        this.form.realization_sep = this.numberWithDots(newValue);
       }
     },
     octNominal: {
       // getter
       get: function() {
         if(this.form.realization_oct){
-          this.form.realization_oct = this.numberWithDots(this.form.realization_oct)
+          this.form.realization_oct = this.numberWithDots(this.form.realization_oct);
           return this.form.realization_oct;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_oct = this.numberWithDots(newValue)
+        this.form.realization_oct = this.numberWithDots(newValue);
       }
     },
     novNominal: {
       // getter
       get: function() {
         if(this.form.realization_nov){
-          this.form.realization_nov = this.numberWithDots(this.form.realization_nov)
+          this.form.realization_nov = this.numberWithDots(this.form.realization_nov);
           return this.form.realization_nov;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_nov = this.numberWithDots(newValue)
+        this.form.realization_nov = this.numberWithDots(newValue);
       }
     },
     decNominal: {
       // getter
       get: function() {
         if(this.form.realization_dec){
-          this.form.realization_dec = this.numberWithDots(this.form.realization_dec)
+          this.form.realization_dec = this.numberWithDots(this.form.realization_dec);
           return this.form.realization_dec;
         }
       },
       // setter
       set: function(newValue) {
-        this.form.realization_dec = this.numberWithDots(newValue)
+        this.form.realization_dec = this.numberWithDots(newValue);
       }
     },
   },
