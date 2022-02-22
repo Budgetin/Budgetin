@@ -261,7 +261,7 @@
               <div>
                 <v-select
                   v-model="getProjectType"
-                  :items="dataProjectType"
+                  :items="dataListAllProjectType"
                   item-text="name"
                   item-value="id"
                   placeholder="Type"
@@ -557,7 +557,7 @@ export default {
       "dataListActivePlanning"
     ]),
     ...mapState("projectType", [
-      "dataProjectType"
+      "dataListAllProjectType"
     ]),
     ...mapState("statusInfo", [
       "statusTechNonTech"
@@ -578,7 +578,7 @@ export default {
       return this.$store.state.source.errorMsg;
     },
     getProjectType(){
-      return this.dataProjectType.find((x)=> x.name=="New");
+      return this.dataListAllProjectType.find((x)=> x.name=="New");
     },
     getRCC(){
       if(this.form.biro.id && this.form.biro.rcc != null){

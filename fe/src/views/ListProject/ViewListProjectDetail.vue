@@ -6,7 +6,7 @@
             :form="form"
             :isView="isView"
             :dataProjectDetail="dataProjectDetail"
-            :dataProjectType="dataProjectType"
+            :dataProjectType="dataListAllProjectType"
             @editClicked="onEdit"
             @cancelClicked="onCancel"
             @submitClicked="onSubmit"
@@ -85,7 +85,7 @@ export default {
     },
     computed: {
         ...mapState("projectDetail", ["loadingGetProjectDetail", "dataProjectDetail"]),
-        ...mapState("projectType", ["dataProjectType"]),
+        ...mapState("projectType", ["dataListAllProjectType"]),
     },
     methods: {
         ...mapActions("projectDetail", ["patchProjectDetail", "getProjectDetailById", "getHistory"]),

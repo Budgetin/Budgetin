@@ -618,7 +618,7 @@ export default {
       "dataListActivePlanning"
     ]),
     ...mapState("projectType", [
-      "dataProjectType",
+      "dataListAllProjectType",
     ]),
     ...mapState("statusInfo", [
       "statusTechNonTech"
@@ -723,7 +723,7 @@ export default {
           var project_detail = this.dataListProjectById.project_detail.find((x)=> x.planning.id==this.form.planning.id);
           if(project_detail){
             this.projectTypeEnable = false;
-            const result = this.dataProjectType.filter((project_type) => {
+            const result = this.dataListAllProjectType.filter((project_type) => {
               return project_type.name == project_detail.project_type;
             });
 
@@ -735,7 +735,7 @@ export default {
             this.budget_table = [];
             this.form.project_type = "";
             this.projectTypeEnable = true;
-            const cleanData = JSON.parse(JSON.stringify(this.dataProjectType));
+            const cleanData = JSON.parse(JSON.stringify(this.dataListAllProjectType));
             var index = cleanData.findIndex(function(o){
               return o.name === 'New';
             });

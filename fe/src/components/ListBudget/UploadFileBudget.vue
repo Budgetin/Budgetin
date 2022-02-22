@@ -45,7 +45,6 @@ import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   name: "UploadFileBudget",
   created() {
-    //this.getAllProjectType();
   },
   data: () => ({
     name:"",
@@ -59,9 +58,6 @@ export default {
   }),
 
   computed: {
-    // ...mapState("projectType", ["loadingGetListPlanning",
-    //   "dataProjectType"
-    // ]),
   },
   methods: {
     onDownloadTemplate() {

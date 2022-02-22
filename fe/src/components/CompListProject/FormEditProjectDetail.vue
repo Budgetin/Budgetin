@@ -169,7 +169,6 @@ export default {
   
   computed: {
     ...mapState("statusInfo", ["statusInfoPlanning"]),
-    ...mapState("projectType", ["getAllProjectType", "dataProjectType"]),
 
     cardTitle() {
       return this.isNew ? "Add" : this.isView ? "View" : "Edit";
