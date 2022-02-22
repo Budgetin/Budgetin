@@ -72,8 +72,8 @@ class UserViewSet(viewsets.ModelViewSet):
         arr_user = []
         for user in users:
             arr_user.append(user['username'])
-        res = []
-        for imo in imod:
-            if imo['username'] not in arr_user:
-                res.append(imo)
-        return Response(res)
+            
+        for idx, imo in enumerate(imod):
+            if imo['username'] in arr_user:
+                imod.pop(idx)
+        return Response(imod)
