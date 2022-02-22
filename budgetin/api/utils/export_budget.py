@@ -2,7 +2,7 @@ import pandas as pd
 
 from io import BytesIO
 
-from api.utils.file import export_excel
+from api.utils.excel import export_excel
 
 def export_budget_as_excel(budgets):
     data_temp = []

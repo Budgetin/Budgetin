@@ -16,7 +16,8 @@ from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum, RoleEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated
 from api.utils.export_budget import export_budget_as_excel
-from api.utils.file import read_excel, read_file, get_import_template_path, remove_sheet, export_excel
+from api.utils.file import read_file, get_import_template_path
+from api.utils.excel import read_excel, export_excel, write_sheet, is_empty, export_errors_as_excel
 from api.utils.hit_api import get_all_biro
 from api.exceptions import ValidationException
 
@@ -284,11 +285,10 @@ class BudgetViewSet(viewsets.ModelViewSet):
         self.create_update_all_biro()
         
         for index, data in df.iterrows():
-            print(index)
             errors = self.insert_to_db(request, data, (index+2), errors)
             
         if errors:
-            raise ValidationException(errors)
+            return export_errors_as_excel(errors)
 
         return Response(status=204)
     
@@ -324,7 +324,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         return errors
     
     def get_product(self, product_code):
-        if pd.isnull(product_code):
+        if is_empty(product_code):
             return Product.objects.get_or_create(
                 product_code = 'None',
                 product_name = 'None',
@@ -336,7 +336,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
             return Product.objects.filter(product_code__iexact=product_code).first()
         
     def get_coa(self, coa_name):
-        if pd.isnull(coa_name):
+        if is_empty(coa_name):
             return Coa.objects.get_or_create(
                 name = 'None',
                 hyperion_name = 'None',
@@ -355,13 +355,13 @@ class BudgetViewSet(viewsets.ModelViewSet):
     
     def validate_product(self, data, index, errors):
         code = data['product_code']
-        if not pd.isnull(code) and not Product.code_exists(code):
+        if not is_empty(code) and not Product.code_exists(code):
             errors.append("Row {} - Product code '{}' doesn't exists".format(index, code))
         return errors
     
     def validate_coa(self, data, index, errors):
         name = data['coa_name']
-        if not pd.isnull(name) and not Coa.name_exists(name):
+        if not is_empty(name) and not Coa.name_exists(name):
             errors.append("Row {} - Coa '{}' doesn't exists".format(index, name))
         return errors
     
@@ -378,22 +378,22 @@ class BudgetViewSet(viewsets.ModelViewSet):
         year = data['year']
         itfam_id = data['itfam_id']
         
-        if pd.isnull(name):
+        if is_empty(name):
             errors.append("Row {} - Project name must be filled".format(index))
-        if pd.isnull(project_type):
+        if is_empty(project_type):
             errors.append("Row {} - Project type must be filled".format(index))
         
-        if not pd.isnull(itfam_id):
+        if not is_empty(itfam_id):
             existing_project = Project.objects.select_related('biro', 'product').filter(itfam_id=str(round(itfam_id))).first()
         else:
             existing_project = Project.objects.select_related('biro', 'product').filter(project_name__iexact=name).first()
         
         if existing_project:
             # biro harus sama dengan existing
-            if not pd.isnull(biro) and biro.lower() != existing_project.biro.code.lower():
+            if not is_empty(biro) and biro.lower() != existing_project.biro.code.lower():
                 errors.append("Row {} - Inconsistent project biro. Existing project is owned by '{}'".format(index, existing_project.biro.code))
                 
-            if not pd.isnull(project_type):
+            if not is_empty(project_type):
                 existing_project = Project.objects.prefetch_related(
                     'project_detail', 
                     'project_detail__planning',
@@ -428,16 +428,16 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def create_or_update_project_from_excel(self, request, data, biro, product):
         new_project = Project(
             project_name = data['project_name'],
-            project_description = data['project_description'] if not pd.isnull(data['project_description']) else None,
-            start_year = data['start_year'] if not pd.isnull(data['start_year']) else None,
-            end_year = data['end_year'] if not pd.isnull(data['end_year']) else None,
+            project_description = data['project_description'] if not is_empty(data['project_description']) else None,
+            start_year = data['start_year'] if not is_empty(data['start_year']) else None,
+            end_year = data['end_year'] if not is_empty(data['end_year']) else None,
             product = product,
             biro = biro,
-            is_tech = True if not pd.isnull(data['is_tech']) and data['is_tech'] == 'yes' else False,
+            is_tech = True if not is_empty(data['is_tech']) and data['is_tech'] == 'yes' else False,
             updated_by = User.objects.get(pk=request.custom_user['id']),
         )
         
-        if not pd.isnull( data['itfam_id']):
+        if not is_empty( data['itfam_id']):
             project = Project.objects.filter(itfam_id=str(round(data['itfam_id']))).first()
         else:
             project = Project.objects.filter(project_name__iexact=data['project_name'], biro=biro).first()
@@ -466,7 +466,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
             planning = planning,
             project = project,
             project_type = project_type,
-            dcsp_id = data['project_id'] if not pd.isnull(data['project_id']) else None,
+            dcsp_id = data['project_id'] if not is_empty(data['project_id']) else None,
             updated_by = User.objects.get(pk=request.custom_user['id'])
         )
         
@@ -531,24 +531,20 @@ class BudgetViewSet(viewsets.ModelViewSet):
         self.write_coa_sheet(book, file_path)
 
         book.close()                
-        return export_excel(content=BytesIO(save_virtual_workbook(book)), filename='import_template_product.xlsx')
+        file_content = BytesIO(save_virtual_workbook(book))
+        return export_excel(content=file_content, filename='import_template_product.xlsx')
     
     def write_product_sheet(self, book, file_path):
-        columns = ['product_code', 'product_name', 'strategy']
-        products = self.get_all_product()
-        
-        writer = pd.ExcelWriter(file_path, engine = 'openpyxl')
-        writer.book = book
-        
-        if 'existing_product' in book.sheetnames:
-            remove_sheet(book, 'existing_product')            
-            
-        df = pd.DataFrame(products, columns=columns)
-        df.to_excel(writer, sheet_name = 'existing_product', index=False)
-        writer.save()
-        writer.close()
+        dataframe = self.get_product_dataframe()
+        write_sheet(
+            book=book,
+            file_path=file_path,
+            dataframe=dataframe,
+            sheet_name='existing_product'
+        )
     
     def get_all_product(self):
+        columns = ['product_code', 'product_name', 'strategy']
         products = Product.objects.select_related('strategy').all()
         result = []
         for product in products:
@@ -559,24 +555,19 @@ class BudgetViewSet(viewsets.ModelViewSet):
             temp.append(product.product_name)
             temp.append(strategy.name if strategy else '')
             result.append(temp)
-        return result
+        return pd.DataFrame(products, columns=columns)
     
     def write_coa_sheet(self, book, file_path):
-        columns = ['coa_name', 'hyperion_name', 'coa_definition']
-        coas = self.get_all_coa()
-        
-        writer = pd.ExcelWriter(file_path, engine = 'openpyxl')
-        writer.book = book
-        
-        if 'existing_coa' in book.sheetnames:
-            remove_sheet(book, 'existing_coa')            
-            
-        df = pd.DataFrame(coas, columns=columns)
-        df.to_excel(writer, sheet_name = 'existing_coa', index=False)
-        writer.save()
-        writer.close()
+        dataframe = self.get_coa_dataframe()
+        write_sheet(
+            book=book,
+            file_path=file_path,
+            dataframe=dataframe,
+            sheet_name='existing_coa'
+        )
     
-    def get_all_coa(self):
+    def get_coa_dataframe(self):
+        columns = ['coa_name', 'hyperion_name', 'coa_definition']
         coas = Coa.objects.all()
         result = []
         for coa in coas:
@@ -585,5 +576,6 @@ class BudgetViewSet(viewsets.ModelViewSet):
             temp.append(coa.hyperion_name)
             temp.append(coa.definition)
             result.append(temp)
-        return result
+            
+        return pd.DataFrame(coas, columns=columns)
     
