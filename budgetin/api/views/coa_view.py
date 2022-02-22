@@ -104,29 +104,36 @@ class CoaViewSet(viewsets.ModelViewSet):
         return errors
     
     def create_or_update_coa(self, request, data):
-        new_coa = Coa(
-            name = data['coa_name'],
-            definition = data['coa_definition'] if not is_empty(data['coa_definition']) else None,
-            hyperion_name = data['hyperion_name'] if not is_empty(data['hyperion_name']) else None,
-            is_capex = True if not is_empty(data['is_capex']) and data['is_capex'].lower() == 'yes' else False,
-            minimum_item_origin = data['minimum_item_origin'] if not is_empty(data['minimum_item_origin']) else None,
-            updated_by = User.objects.get(pk=request.custom_user['id'])
-        )
+        update_dict = {
+            'name': data['coa_name'],
+            'definition': data['coa_definition'] if not is_empty(data['coa_definition']) else None,
+            'hyperion_name': data['hyperion_name'] if not is_empty(data['hyperion_name']) else None,
+            'is_capex': True if not is_empty(data['is_capex']) and data['is_capex'].lower() == 'yes' else False,
+            'minimum_item_origin': data['minimum_item_origin'] if not is_empty(data['minimum_item_origin']) else None,
+            'updated_by': User.objects.get(pk=request.custom_user['id'])
+        }
         
+        new_coa = Coa(**update_dict)
         coa = Coa.objects.filter(name=data['coa_name']).first()
         if not coa:
-            new_coa.created_by = new_coa.updated_by
-            new_coa.save()
-            AuditLog.Save(CoaSerializer(new_coa), request, ActionEnum.CREATE, TableEnum.COA) 
+            self.create_new_coa(request, new_coa)
         elif coa and not coa.equal(new_coa):
-            coa.definition = new_coa.definition
-            coa.hyperion_name = new_coa.hyperion_name
-            coa.is_capex = new_coa.is_capex
-            coa.minimum_item_origin = new_coa.minimum_item_origin
-            coa.updated_by = new_coa.updated_by
-            coa.save()
-            AuditLog.Save(CoaSerializer(coa), request, ActionEnum.UPDATE, TableEnum.COA) 
+            self.update_coa(request, coa, update_dict)
+            
+    def create_new_coa(self, request, new_coa):
+        new_coa.created_by = new_coa.updated_by
+        new_coa.save()
+        AuditLog.Save(CoaSerializer(new_coa), request, ActionEnum.CREATE, TableEnum.COA) 
 
+    def update_coa(self, request, coa, update_dict):
+        coa = self.update_fields(coa, update_dict)
+        coa.save()
+        AuditLog.Save(CoaSerializer(coa), request, ActionEnum.UPDATE, TableEnum.COA) 
+
+    def update_fields(self, model, update_dict):
+        for key, value in update_dict.items():
+            setattr(model, key, value)
+        return model
     
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):
