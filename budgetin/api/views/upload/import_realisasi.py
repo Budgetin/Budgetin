@@ -95,7 +95,7 @@ def update_db(request, index, data, errors):
                         to_plus = to_plus,
                         type = type
                     )
-                    AuditLog.Save(SwitchingSerializer(switching).data, request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
                     
             if switching_out:
                 nominal = switching_out
@@ -118,7 +118,7 @@ def update_db(request, index, data, errors):
                         from_minus = from_minus,
                         type = type
                     )
-                    AuditLog.Save(SwitchingSerializer(switching).data, request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
 
             if returns:
                 nominal = returns
@@ -143,7 +143,7 @@ def update_db(request, index, data, errors):
                         from_minus = from_minus,
                         type = type
                     )
-                    AuditLog.Save(SwitchingSerializer(switching).data, request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
 
             if topup:
                 nominal = topup
@@ -167,7 +167,7 @@ def update_db(request, index, data, errors):
                         to_plus = to_plus,
                         type = type
                     )
-                    AuditLog.Save(SwitchingSerializer(switching).data, request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
         except TypeError:
             errors.append("Row {} - Wrong input type, number type input expected on collumn D afterward".format(index))
 
