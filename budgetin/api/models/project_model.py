@@ -26,3 +26,41 @@ class Project(SoftDeleteModel, TimestampModel, UserTrackModel):
     def name_exists(name):
         return Project.objects.filter(project_name__iexact=name).count() > 0
     
+    def equal(self, project):
+        return (
+            self.project_name_equal(project.project_name) and
+            self.project_description_equal(project.project_description) and
+            self.biro_equal(project.biro) and
+            self.start_year_equal(project.start_year) and
+            self.end_year_equal(project.end_year) and
+            self.total_investment_value_equal(project.total_investment_value) and 
+            self.product_equal(project.product) and
+            self.is_tech_equal(project.is_tech)
+        )
+    
+    def project_name_equal(self, project_name):
+        return self.project_name.lower() == project_name.lower()
+    
+    def project_description_equal(self, description):
+        try:
+            return self.project_description.lower() == description.lower()
+        except:
+            return self.project_description == description
+    
+    def biro_equal(self, biro):
+        return self.biro == biro
+    
+    def start_year_equal(self, start_year):
+        return self.start_year == start_year
+    
+    def end_year_equal(self, end_year):
+        return self.end_year == end_year
+    
+    def total_investment_value_equal(self, total_investment_value):
+        return self.total_investment_value == total_investment_value
+    
+    def product_equal(self, product):
+        return self.product == product
+    
+    def is_tech_equal(self, is_tech):
+        return self.is_tech == is_tech
