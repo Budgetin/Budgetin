@@ -35,21 +35,15 @@ import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   name: "FormChooseProjectType",
   created() {
-    //this.getAllProjectType();
   },
   data: () => ({}),
   computed: {
-    // ...mapState("projectType", ["loadingGetListPlanning",
-    //   "dataProjectType"
-    // ]),
+
     errorMsg() {
       return this.$store.state.source.errorMsg;
     },
   },
   methods: {
-    // ...mapActions("projectType", [
-    //   "getAllProjectType"
-    // ]),
     onNewClick(){
       this.$emit("newClicked");
     },
