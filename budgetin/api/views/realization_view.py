@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from api.models import Realization
+from api.models import Realization, ProjectDetail, Budget
 from api.serializers import RealizationSerializer, RealizationResponseSerializer
 from api.views.upload.import_realisasi import ImportRealisasi
 from api.utils import AuditLog
@@ -21,9 +21,11 @@ class RealizationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        queryset = Realization.objects.get(pk=kwargs['pk'])
+        #get project detail id
+        queryset = Realization.objects.select_related('budget'
+        ).filter(budget__project_detail_id=kwargs['pk']).all()
         
-        serializer = RealizationResponseSerializer(queryset, many=False)
+        serializer = RealizationResponseSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def update(self, request, *args, **kwargs):
@@ -41,4 +43,5 @@ class RealizationViewSet(viewsets.ModelViewSet):
     
     @action(methods=['post'], detail=False, url_path='import')
     def import_realisasi(self, request):
-        ImportRealisasi().start(request)
+        return ImportRealisasi().start(request)
+        

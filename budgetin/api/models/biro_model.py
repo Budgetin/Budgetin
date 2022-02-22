@@ -14,5 +14,5 @@ class Biro(SoftDeleteModel, TimestampModel):
     all_object = models.Manager()
     
     @staticmethod
-    def code_exists(name):
-        return Biro.objects.filter(code__iexact=name).count() > 0
+    def code_exists(code):
+        return Biro.objects.filter(code__iexact=code).count() > 0

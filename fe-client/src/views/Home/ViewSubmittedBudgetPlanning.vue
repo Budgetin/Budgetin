@@ -175,7 +175,7 @@ export default {
     ...mapActions("masterCoa", ["getMasterCoa"]),
 
     getDetailItem() {
-      console.log(this.$route.params.id_budget_planning);
+      // console.log(this.$route.params.id_budget_planning);
       this.getAllBudgetById(this.$route.params.id_budget_planning).then(() => {
         this.setForm();
       });

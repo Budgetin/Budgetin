@@ -11,4 +11,5 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view()),
     path('import/list_budget/', views.ImportListBudget.as_view()),
     path('import/dcsp/', views.ImportDCSP.as_view()),
+    path('dashboard/biro_budget/', views.BiroBudgetView.as_view()),
 ]

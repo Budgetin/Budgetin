@@ -183,8 +183,7 @@
                   return-object
                   dense
                   :disabled="isView"
-                  class="mr-3"
-                  :rules="validation.required">
+                  class="mr-3">
                 </v-text-field>
               </div>
             <!-- </v-col> -->

@@ -145,16 +145,12 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def create_budget(self, request, project_detail):
         if len(request.data['budget']) == 0:
             if not self.is_budget_exists(project_detail):
-                budget = Budget.objects.create(
-                    project_detail=project_detail,
-                    coa=None,
-                    created_by_id = request.custom_user['id'],
-                    updated_by_id = request.custom_user['id']
-                )
+                budget = self.create_empty_budget(request, project_detail)
                 AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
         else:
             for budget in request.data['budget']:
-                updated_budget, budget_created = Budget.objects.update_or_create(project_detail=project_detail, coa=None, defaults={
+                coa, _ = Coa.objects.get_or_create(name="None")
+                updated_budget, budget_created = Budget.objects.update_or_create(project_detail=project_detail, coa=coa, defaults={
                     'coa_id': budget['coa'],
                     'expense_type': budget['expense_type'],
                     'planning_q1': budget['planning_q1'],
@@ -280,15 +276,27 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def import_from_excel(self, request):
         file = read_file(request)
         df = read_excel(file, 'budget')
+        products = Product.objects.all()
+        coas = Coa.objects.all()
+        
         errors = []
         
-        self.create_update_all_biro()
+        self.create_update_all_biro() # fetch from ithc
+        biros = Biro.objects.all()
         
         for index, data in df.iterrows():
-            errors = self.insert_to_db(request, data, (index+2), errors)
+            print(index)
+            errors.extend(self.validate_product(data, index, errors, products))
+            errors.extend(self.validate_coa(data, index, errors, coas))
+            errors.extend(self.validate_biro(data, index, errors, biros))
+            errors.extend(self.validate_project(data, index, errors))
+            
+            if not errors:
+                self.insert_to_db(request, data, products, coas, biros)
             
         if errors:
-            return export_errors_as_excel(errors)
+            raise ValidationException(errors)
+            # return export_errors_as_excel(errors)
 
         return Response(status=204)
     
@@ -309,107 +317,80 @@ class BudgetViewSet(viewsets.ModelViewSet):
             }
         )
     
-    def insert_to_db(self, request, data, index, errors):
-        errors.extend(self.validate_data(data, index))
-        
-        if not errors:
-            product = self.get_product(data['product_code'])
-            coa = self.get_coa(data['coa_name'])
-            biro = Biro.objects.filter(code__iexact=data['biro']).first()
-            planning = self.get_or_create_planning(request, data['year'])
-            project = self.create_or_update_project_from_excel(request, data, biro, product)
-            project_detail = self.get_or_create_project_detail(request, data, project, planning)
-            self.create_or_update_budget(request, data, project_detail, coa)
-            
-        return errors
-    
-    def get_product(self, product_code):
-        if is_empty(product_code):
-            return Product.objects.get_or_create(
-                product_code = 'None',
-                product_name = 'None',
-                strategy = Strategy.objects.get_or_create(
-                    name = 'None'
-                )
-            )
-        else:
-            return Product.objects.filter(product_code__iexact=product_code).first()
-        
-    def get_coa(self, coa_name):
-        if is_empty(coa_name):
-            return Coa.objects.get_or_create(
-                name = 'None',
-                hyperion_name = 'None',
-                definition = 'None',
-            )
-        else:
-            return Coa.objects.filter(name__iexact=coa_name).first()
-    
-    def validate_data(self, data, index):
-        errors = []
-        errors = self.validate_product(data, index, errors)
-        errors = self.validate_coa(data, index, errors)
-        errors = self.validate_biro(data, index, errors)
-        errors = self.validate_project(data, index, errors)
-        return errors
-    
-    def validate_product(self, data, index, errors):
+    def validate_product(self, data, index, errors, products):
         code = data['product_code']
-        if not is_empty(code) and not Product.code_exists(code):
-            errors.append("Row {} - Product code '{}' doesn't exists".format(index, code))
+        if not is_empty(code):
+            code = code.strip()
+            product = [product for product in products if product.product_code.lower() == code.lower()]
+
+            if not product:
+                errors.append("Row {} - Product code '{}' doesn't exists".format(index, code))
         return errors
     
-    def validate_coa(self, data, index, errors):
+    def validate_coa(self, data, index, errors, coas):
         name = data['coa_name']
-        if not is_empty(name) and not Coa.name_exists(name):
-            errors.append("Row {} - Coa '{}' doesn't exists".format(index, name))
+        if not is_empty(name):
+            name = name.strip()
+            coa = [coa for coa in coas if coa.name.lower() == name.lower()]
+            
+            if not coa:
+                errors.append("Row {} - Coa '{}' doesn't exists".format(index, name))
         return errors
     
-    def validate_biro(self, data, index, errors):
+    def validate_biro(self, data, index, errors, biros):
         code = data['biro']
-        if not Biro.code_exists(code):
-            errors.append("Row {} - Biro '{}' doesn't exists".format(index, code))
+        if not is_empty(code):
+            code = code.strip()
+            biro = [biro for biro in biros if biro.code.lower() == code.lower()]
+            
+            if not biro:
+                errors.append("Row {} - Biro '{}' doesn't exists".format(index, code))
         return errors
     
     def validate_project(self, data, index, errors):
         name = data['project_name']
         project_type = data['project_type']
-        biro = data['biro']
-        year = data['year']
-        itfam_id = data['itfam_id']
         
         if is_empty(name):
             errors.append("Row {} - Project name must be filled".format(index))
         if is_empty(project_type):
             errors.append("Row {} - Project type must be filled".format(index))
-        
-        if not is_empty(itfam_id):
-            existing_project = Project.objects.select_related('biro', 'product').filter(itfam_id=str(round(itfam_id))).first()
-        else:
-            existing_project = Project.objects.select_related('biro', 'product').filter(project_name__iexact=name).first()
-        
-        if existing_project:
-            # biro harus sama dengan existing
-            if not is_empty(biro) and biro.lower() != existing_project.biro.code.lower():
-                errors.append("Row {} - Inconsistent project biro. Existing project is owned by '{}'".format(index, existing_project.biro.code))
-                
-            if not is_empty(project_type):
-                existing_project = Project.objects.prefetch_related(
-                    'project_detail', 
-                    'project_detail__planning',
-                    'project_detail__project_type'
-                ).filter(project_name__iexact=name, project_detail__planning__year=year).first()
-                
-                # Kalau ada existing project_detail (tahun nya sama)
-                if existing_project:
-                    existing_project_detail = existing_project.project_detail.filter(planning__year=year).first()
-                    existing_project_type = existing_project_detail.project_type.name
-                    # project_type harus sama untuk project ditahun yang sama
-                    if project_type.lower() != existing_project_type.lower():
-                        errors.append("Row {} - Inconsistent project type. Existing project type is '{}'".format(index, existing_project_type))
             
         return errors
-
+    
+    def insert_to_db(self, request, data, products, coas, biros):
+        product = self.get_product(data['product_code'], products)
+        coa = self.get_coa(data['coa_name'], coas)
+        biro = [biro for biro in biros if biro.code.lower() == data['biro'].strip().lower()][0]
+        planning = self.get_or_create_planning(request, data['year'])
+        project = self.create_or_update_project_from_excel(request, data, biro, product)
+        project_detail = self.get_or_create_project_detail(request, data, project, planning)
+        self.create_or_update_budget(request, data, project_detail, coa)
+    
+    def get_product(self, product_code, products):
+        if is_empty(product_code):
+            strategy, _ = Strategy.objects.get_or_create(name='None')
+            product, _ = Product.objects.get_or_create(
+                product_code = 'None',
+                product_name = 'None',
+                strategy = strategy
+            )
+            return product
+        else:
+            product_code = product_code.strip()
+            return [product for product in products if product.product_code.lower() == product_code.lower()][0]
+        
+    def get_coa(self, name, coas):
+        if is_empty(name):
+            coa, _ = Coa.objects.get_or_create(
+                name = 'None',
+                hyperion_name = 'None',
+                definition = 'None',
+            )
+            return coa
+        else:
+            name = name.strip()
+            return [coa for coa in coas if coa.name.lower() == name.lower()][0]
     
     def get_or_create_planning(self, request, year):
         planning, created = Planning.objects.get_or_create(year=year, defaults={
@@ -426,101 +407,136 @@ class BudgetViewSet(viewsets.ModelViewSet):
         return planning
     
     def create_or_update_project_from_excel(self, request, data, biro, product):
-        new_project = Project(
-            project_name = data['project_name'],
-            project_description = data['project_description'] if not is_empty(data['project_description']) else None,
-            start_year = data['start_year'] if not is_empty(data['start_year']) else None,
-            end_year = data['end_year'] if not is_empty(data['end_year']) else None,
-            product = product,
-            biro = biro,
-            is_tech = True if not is_empty(data['is_tech']) and data['is_tech'] == 'yes' else False,
-            updated_by = User.objects.get(pk=request.custom_user['id']),
-        )
+        update_dict = {
+            'project_description': data['project_description'] if not is_empty(data['project_description']) else None,
+            'start_year': data['start_year'] if not is_empty(data['start_year']) else None,
+            'end_year': data['end_year'] if not is_empty(data['end_year']) else None,
+            'product': product,
+            'biro': biro,
+            'is_tech': True if not is_empty(data['is_tech']) and data['is_tech'] == 'yes' else False,
+            'total_investment_value': data['total_investment_value'] if not is_empty(data['total_investment_value']) else 0,
+            'updated_by': User.objects.get(pk=request.custom_user['id'])
+        }
         
         if not is_empty( data['itfam_id']):
-            project = Project.objects.filter(itfam_id=str(round(data['itfam_id']))).first()
+            itfam_id_str = data['itfam_id']
+            project = Project.objects.filter(itfam_id=itfam_id_str).first()
         else:
-            project = Project.objects.filter(project_name__iexact=data['project_name'], biro=biro).first()
+            project = Project.objects.filter(project_name__iexact=data['project_name']).first()
             
+        new_project = Project(
+            project_name = data['project_name'],
+            **update_dict
+        )
+        
         if not project:
-            new_project.created_by = new_project.updated_by
-            new_project.save()
-            new_project.generate_itfamid(data['year'])
-            AuditLog.Save(ProjectSerializer(new_project), request, ActionEnum.CREATE, TableEnum.PROJECT)
-            return new_project
+            return self.create_new_project(request, new_project, data['year'])
         elif project and not project.equal(new_project):
-            project.project_name = new_project.project_name
-            project.project_description = new_project.project_description
-            project.start_year = new_project.start_year
-            project.end_year = new_project.end_year
-            project.product = new_project.product        
-            project.is_tech = new_project.is_tech
-            project.save()
-            AuditLog.Save(ProjectSerializer(project), request, ActionEnum.UPDATE, TableEnum.PROJECT)
+            return self.update_project(request, project, update_dict)
+            
+        return project
+
+    def create_new_project(self, request, new_project, year):
+        new_project.created_by = new_project.updated_by
+        new_project.save()
+        new_project.generate_itfamid(year)
+        AuditLog.Save(ProjectSerializer(new_project), request, ActionEnum.CREATE, TableEnum.PROJECT)
+        return new_project
+        
+    def update_project(self, request, project, update_dict):
+        project = self.update_fields(project, update_dict)
+        project.save()
+        AuditLog.Save(ProjectSerializer(project), request, ActionEnum.UPDATE, TableEnum.PROJECT)
         return project
     
     def get_or_create_project_detail(self, request, data, project, planning):
         project_type = ProjectType.objects.filter(name__iexact=data['project_type']).first()
-        
+        update_dict = {
+            'dcsp_id': data['project_id'] if not is_empty(data['project_id']) else None,
+            'updated_by': User.objects.get(pk=request.custom_user['id'])
+        }
+            
+        project_detail = ProjectDetail.objects.filter(project=project, planning=planning, project_type=project_type).first()
         new_project_detail = ProjectDetail(
             planning = planning,
             project = project,
             project_type = project_type,
-            dcsp_id = data['project_id'] if not is_empty(data['project_id']) else None,
-            updated_by = User.objects.get(pk=request.custom_user['id'])
+            **update_dict
         )
         
-        project_detail = ProjectDetail.objects.filter(project=project, planning=planning, project_type=project_type).first()
-        
         if not project_detail:
-            new_project_detail.created_by = new_project_detail.updated_by
-            new_project_detail.save()
-            AuditLog.Save(ProjectDetailSerializer(new_project_detail), request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
-            return new_project_detail
+            return self.create_new_project_detail(request, new_project_detail)
         elif project_detail and not project_detail.equal(new_project_detail):
-            project_detail.dcsp_id = new_project_detail.dcsp_id
-            project_detail.save()
-            AuditLog.Save(ProjectDetailSerializer(project_detail), request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
+            return self.update_project_detail(request, project_detail, update_dict)
+        
+        return project_detail
+    
+    def create_new_project_detail(self, request, new_project_detail):
+        new_project_detail.created_by = new_project_detail.updated_by
+        new_project_detail.save()
+        AuditLog.Save(ProjectDetailSerializer(new_project_detail), request, ActionEnum.CREATE, TableEnum.PROJECT_DETAIL)
+        return new_project_detail
+    
+    def update_project_detail(self, request, project_detail, update_dict):
+        project_detail = self.update_fields(project_detail, update_dict)
+        project_detail.save()
+        AuditLog.Save(ProjectDetailSerializer(project_detail), request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
         return project_detail
     
     def create_or_update_budget(self, request, data, project_detail, coa):
-        new_budget = Budget(
-            project_detail = project_detail,
-            coa = coa,
-            expense_type = data['capex_opex'],
-            planning_q1 = data["Q1"] * data["total_budget"],
-            planning_q2 = data["Q2"] * data["total_budget"],
-            planning_q3 = data["Q3"] * data["total_budget"],
-            planning_q4 = data["Q4"] * data["total_budget"],
-            updated_by = User.objects.get(pk=request.custom_user['id'])
-        )
+        is_budget = True if not is_empty(data['is_budget']) and data['is_budget'] == 'yes' else False
         
-        budget = Budget.objects.select_related(
-            'project_detail', 'project_detail__project'
-        ).filter(project_detail=project_detail, coa=coa).first()
-        
-        if not budget:
-            new_budget.created_by = new_budget.updated_by
-            new_budget.save()
-            AuditLog.Save(BudgetSerializer(new_budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
-            return new_budget
-        elif budget and not budget.equal(new_budget):
-            project = budget.project_detail.project
-            project.total_investment_value -= (budget.planning_q1 + budget.planning_q2 + budget.planning_q3 + budget.planning_q4)
-            project.total_investment_value += (new_budget.planning_q1 + new_budget.planning_q2 + new_budget.planning_q3 + new_budget.planning_q4)
-            project.save()
-            AuditLog.Save(ProjectSerializer(project), request, ActionEnum.UPDATE, TableEnum.PROJECT)
+        if not is_budget:
+            budget = self.create_empty_budget(request, project_detail)
+        else:
+            update_dict = {
+                'expense_type': data['capex_opex'],
+                'planning_q1': data["Q1"] * data["total_budget"],
+                'planning_q2': data["Q2"] * data["total_budget"],
+                'planning_q3': data["Q3"] * data["total_budget"],
+                'planning_q4': data["Q4"] * data["total_budget"],
+                'updated_by': User.objects.get(pk=request.custom_user['id']),
+            }
             
-            budget.expense_type = new_budget.expense_type
-            budget.planning_q1 = new_budget.planning_q1
-            budget.planning_q2 = new_budget.planning_q2
-            budget.planning_q3 = new_budget.planning_q3
-            budget.planning_q4 = new_budget.planning_q4
-            budget.updated_by = new_budget.updated_by
-            budget.save()
-            AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
+            budget = Budget.objects.select_related('project_detail', 'project_detail__project')
+            budget = budget.filter(project_detail=project_detail, coa=coa).first()
+            new_budget = Budget(
+                project_detail=project_detail,
+                coa=coa,
+                **update_dict
+            )
             
+            if not budget:
+                return self.create_new_budget(request, new_budget)
+            elif budget and not budget.equal(new_budget):
+                return self.update_budget(request, budget, update_dict)
+                
         return budget
+    
+    def create_empty_budget(self, request, project_detail):
+        coa, _ = Coa.objects.get_or_create(name='None')
+        budget = Budget.objects.create(
+            project_detail=project_detail,
+            coa=coa,
+            created_by_id = request.custom_user['id'],
+            updated_by_id = request.custom_user['id']
+        ) 
+        return budget
+    
+    def create_new_budget(self, request, new_budget):
+        new_budget.created_by = new_budget.updated_by
+        new_budget.save()
+        AuditLog.Save(BudgetSerializer(new_budget), request, ActionEnum.CREATE, TableEnum.BUDGET)
+    
+    def update_budget(self, request, budget, update_dict):
+        budget = self.update_fields(budget, update_dict)
+        budget.save()
+        AuditLog.Save(BudgetSerializer(budget), request, ActionEnum.UPDATE, TableEnum.BUDGET)
+    
+    def update_fields(self, model, update_dict):
+        for key, value in update_dict.items():
+            setattr(model, key, value)
+        return model
         
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):
@@ -543,7 +559,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
             sheet_name='existing_product'
         )
     
-    def get_all_product(self):
+    def get_product_dataframe(self):
         columns = ['product_code', 'product_name', 'strategy']
         products = Product.objects.select_related('strategy').all()
         result = []
