@@ -6,7 +6,10 @@ from api.exceptions import  SheetNotFoundException
 
 def read_excel(file, sheet_name):
     try:
-        df = pandas.read_excel(file, sheet_name=sheet_name)
+        df = pandas.read_excel(file, sheet_name=sheet_name, converters={
+            'project_id': str,
+            'itfam_id': str,
+        })
     except ValueError:
         raise SheetNotFoundException(sheet_name)
     

@@ -409,7 +409,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
         }
         
         if not is_empty( data['itfam_id']):
-            itfam_id_str = str(round(data['itfam_id']))
+            itfam_id_str = data['itfam_id']
             project = Project.objects.filter(itfam_id=itfam_id_str).first()
         else:
             project = Project.objects.filter(project_name__iexact=data['project_name']).first()
@@ -442,7 +442,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def get_or_create_project_detail(self, request, data, project, planning):
         project_type = ProjectType.objects.filter(name__iexact=data['project_type']).first()
         update_dict = {
-            'dcsp_id': str(round(data['project_id'])) if not is_empty(data['project_id']) else None,
+            'dcsp_id': data['project_id'] if not is_empty(data['project_id']) else None,
             'updated_by': User.objects.get(pk=request.custom_user['id'])
         }
             
