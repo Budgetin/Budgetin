@@ -24,11 +24,7 @@ const statusInfo = {
     statusCAPEXOPEX: [
       { id: 1, label: "CAPEX" },
       { id: 2, label: "OPEX" },
-    ],
-    statusIsBudget: [
-      { id: true, label: "Active" },
-      { id: false, label: "Inactive" },
-    ],
+    ]
   },
 };
 

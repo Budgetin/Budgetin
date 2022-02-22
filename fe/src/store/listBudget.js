@@ -1,41 +1,110 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js";
+
 const BUDGET_ENDPOINT = "/api/budget/";
 const PLANNING_ENPOINT = "/api/planning/";
-const UPLOAD_PLANNING = "/api/budget/import/";
-const UPLOAD_REALIZATION = "/api/import/realisasi/";
+const UPLOAD_REALIZATION = "/api/import/";
+const AUDITLOG_ENDPOINT = "/api/auditlog/"
+
+const DOWNLOAD_BUDGET_FILE_NAME = "ListBudget.xlsx";
+const DOWNLOAD_IMPORT_BUDGET_TEMPLATE_FILENAME = "TemplateBudgetPlanning.xlsx";
 
 const listBudget = {
   namespaced: true,
   state: {
-    isLoading : false, //for loading when import planning
-    errorMessage : "",
-    loadingGetListBudget: false, // for loading table
+    // get List All Budget
+    requestListAllBudgetStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetListAllBudget: false, // for loading table
+    dataListAllBudget: [], // for v-data-table
+    // get List Active Budget
+    requestListActiveBudgetStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetListActiveBudget: false, // for loading table
+    dataListActiveBudget: [], // for v-data-table
+    // get List Inactive Budget
+    requestListInactiveBudgetStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetListInactiveBudget: false, // for loading table
-    loadingGetEdittedItem: false,
-    loadingPostPatchListBudget: false, // for loading post/patch
-    dataListBudget: [], // for v-data-table
     dataListInactiveBudget: [], // for v-data-table
-    dataActiveListBudget: [], //for dropdown
-    requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    requestInactiveStatus: "IDLE", //listplanning inactive
-    requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    errorMsg: null,
-    edittedItem: null,
-    edittedItemHistories: [],
+    // get Budget by Id
+    requestBudgetByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetBudgetById: false, // for loading table
+    dataBudgetById: null, // for data item
+    // save Budget by Id
+    requestSaveBudgetByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingSaveBudgetById: false, // for loading
+    // delete Budget by Id
+    requestDeleteBudgetByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingDeleteBudgetById: false, // for loading
+    // cancel Budget by Id
+    requestCancelBudgetByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingCancelBudgetById: false, // for loading
+    // restore Budget by Id
+    requestRestoreBudgetByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingRestoreBudgetById: false, // for loading
+    // save Budget Planning
+    requestSaveBudgetPlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingSaveBudgetPlanning: false, // for loading
+    // get List Active Planning
+    requestListActivePlanningStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetListActivePlanning: false, // for loading table
+    dataListActivePlanning: [], // for v-data-table
+    // import Budget
+    requestImportBudgetStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingImportBudget: false, // for loading
+    // import Realization
+    requestImportRealizationStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingImportRealization: false, // for loading
+    // Download Budget
+    requestDownloadBudgetStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingDownloadBudget: false, // for loading
+    // Download Import Budget Template
+    requestDownloadImportBudgetTemplateStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingDownloadImportBudgetTemplate: false, // for loading
+    // get List Budget History By Id
+    requestListBudgetHistoryByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetListBudgetHistoryById: false, // for loading table
+    dataListBudgetHistoryById: [], // for v-data-table
+
+
+    // isLoading : false, //for loading when import planning
+    // errorMessage : "", // standard
+    // loadingGetListBudget: false, // for loading table
+    // loadingGetListInactiveBudget: false, // for loading table
+    // loadingGetEdittedItem: false, //
+    // loadingPostPatchListBudget: false, // for loading post/patch
+    // dataListBudget: [], // for v-data-table
+    // dataListInactiveBudget: [], // for v-data-table
+    // dataActiveListBudget: [], //for dropdown
+    // requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    // requestInactiveStatus: "IDLE", //listplanning inactive
+    // requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    // postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    // errorMsg: null,
+    // edittedItem: null,
+    // edittedItemHistories: [],
   },
   getters: {
     value: (state) => state.value,
   },
   actions: {
-    
-//==Page ListBudget.vue
+    getAllBudget({ commit }) {
+      commit("GET_INIT_ALL_BUDGET");
+      getAPI
+        .get(BUDGET_ENDPOINT)
+        .then((response) => {
+          const cleanData = response.data
+          const sorted = cleanData.sort((a, b) =>
+            a.update_at > b.update_at ? 1 : -1
+          );
+          commit("GET_SUCCESS_ALL_BUDGET", sorted);
+        })
+        .catch((error) => {
+          commit("GET_ERROR_ALL_BUDGET", error.message);
+        });
+    },
 
-    //Get List Budget (Active)
-    getListBudget({ commit }) {
-      commit("GET_INIT");
+    getListActiveBudget({ commit }) {
+      commit("GET_INIT_ACTIVE_BUDGET");
       getAPI
         .get(BUDGET_ENDPOINT + "active/")
         .then((response) => {
@@ -43,15 +112,15 @@ const listBudget = {
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
           );
-          commit("GET_SUCCESS", sorted);
+          commit("GET_SUCCESS_ACTIVE_BUDGET", sorted);
         })
         .catch((error) => {
-          commit("GET_ERROR", error);
+          commit("GET_ERROR_ACTIVE_BUDGET", error.message);
         });
     },
 
     getListInactiveBudget({ commit }) {
-      commit("GET_INACTIVE_INIT");
+      commit("GET_INIT_INACTIVE_BUDGET");
       getAPI
         .get(BUDGET_ENDPOINT + "inactive/")
         .then((response) => {
@@ -59,15 +128,121 @@ const listBudget = {
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
           );
-          commit("GET_INACTIVE_SUCCESS", sorted);
+          commit("GET_SUCCESS_INACTIVE_BUDGET", sorted);
         })
         .catch((error) => {
-          commit("GET_INACTIVE_ERROR", error);
+          commit("GET_ERROR_INACTIVE_BUDGET", error.message);
         });
     },
 
+    getBudgetById({ commit }, id) {
+      commit("GET_INIT_BUDGET_BY_ID");
+      return new Promise((resolve, reject) => {
+        getAPI
+          .get(BUDGET_ENDPOINT + `${id}/`)
+          .then((response) => {
+            const data = response.data;
+            commit("GET_SUCCESS_BUDGET_BY_ID", data);
+            resolve(data);
+          })
+          .catch((error) => {
+            commit("GET_ERROR_BUDGET_BY_ID", error.message);
+            reject(error.message);
+          });
+      });
+    },
+
+    saveBudgetById({ commit }, payload) {
+      commit("PATCH_INIT_SAVE_BUDGET_BY_ID");
+      const url = `${BUDGET_ENDPOINT}${payload.id}/`;
+      return new Promise((resolve, reject) => {
+        getAPI
+          .patch(url, payload)
+          .then((response) => {
+            resolve(response);
+            commit("PATCH_SUCCESS_SAVE_BUDGET_BY_ID");
+            // store.dispatch("allBudget/getAllBudget");
+          })
+          .catch((error) => {
+            commit("PATCH_ERROR_SAVE_BUDGET_BY_ID", error.message);
+            reject(error.message);
+          });
+      });
+    },
+
+    deleteBudgetById({ commit }, id) {
+      commit("DELETE_INIT_DELETE_BUDGET_BY_ID");
+      return new Promise((resolve, reject) => {
+        getAPI
+          .delete(BUDGET_ENDPOINT + `${id}/`)
+          .then((response) => {
+            // const data = response.data;
+            commit("DELETE_SUCCESS_DELETE_BUDGET_BY_ID");
+            resolve(response);
+            // store.dispatch("allBudget/getAllBudget");
+          })
+          .catch((error) => {
+            commit("DELETE_ERROR_DELETE_BUDGET_BY_ID", error.message);
+            reject(error.message);
+          });
+      });
+    },
+
+    cancelBudgetById({ commit }, id) {
+      commit("POST_INIT_CANCEL_BUDGET_BY_ID");
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(BUDGET_ENDPOINT + `${id}/` + "deactivate/")
+          .then((response) => {
+            // const data = response.data;
+            commit("POST_SUCCESS_CANCEL_BUDGET_BY_ID");
+            resolve(response);
+            // store.dispatch("allBudget/getAllBudget");
+          })
+          .catch((error) => {
+            commit("POST_ERROR_CANCEL_BUDGET_BY_ID", error.message);
+            reject(error.message);
+          });
+      });
+    },
+
+    restoreBudgetById({ commit }, id) {
+      commit("POST_INIT_RESTORE_BUDGET_BY_ID");
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(BUDGET_ENDPOINT + `${id}/` + "restore/")
+          .then((response) => {
+            // const data = response.data;
+            commit("POST_SUCCESS_RESTORE_BUDGET_BY_ID");
+            resolve(response);
+            // store.dispatch("allBudget/getAllBudget");
+          })
+          .catch((error) => {
+            commit("POST_ERROR_RESTORE_BUDGET_BY_ID", error.message);
+            reject(error.message);
+          });
+      });
+    },
+
+    saveBudgetPlanning({ commit }, payload) {
+      commit("POST_INIT_SAVE_BUDGET_PLANNING");
+      return new Promise((resolve, reject) => {
+        getAPI
+          .post(BUDGET_ENDPOINT, payload)
+          .then((response) => {
+            resolve(response);
+            commit("POST_SUCCESS_SAVE_BUDGET_PLANNING");
+            // store.dispatch("listBudget/getListActiveBudget");
+          })
+          .catch((error) => {
+            commit("POST_ERROR_SAVE_BUDGET_PLANNING", error.message);
+            reject(error.message);
+          });
+      });
+    },
+    
     getListActivePlanning({ commit }) {
-      commit("GET_INIT");
+      commit("GET_INIT_ACTIVE_PLANNING");
       getAPI
         .get(PLANNING_ENPOINT + "active")
         .then((response) => {
@@ -75,140 +250,53 @@ const listBudget = {
           const sorted = cleanData.sort((a, b) =>
             a.update_at > b.update_at ? 1 : -1
           );
-          commit("GET_ACTIVE_DATA_UPDATE", sorted);
+          commit("GET_SUCCESS_ACTIVE_PLANNING", sorted);
         })
         .catch((error) => {
-          commit("GET_ERROR", error);
+          commit("GET_ERROR_ACTIVE_PLANNING", error.message);
         });
     },
-    
-    getListBudgetById({ commit }, id) {
-      // commit("SET_EDITTED_ITEM_HISTORIES", []);
-      commit("SET_LOADING_GET_EDITTED_ITEM", true);
-
-      return new Promise((resolve, reject) => {
-        getAPI
-          .get(BUDGET_ENDPOINT + `${id}/`)
-          .then((response) => {
-            const data = response.data;
-            commit("SET_EDITTED_ITEM", data);
-            resolve(data);
-          })
-          .catch((error) => {
-            commit("GET_ERROR", error);
-            reject(error);
-          });
-      });
-    },
-
-    postListBudget({ commit }, payload) {
-      commit("POST_PATCH_INIT");
-      return new Promise((resolve, reject) => {
-        getAPI
-          .post(BUDGET_ENDPOINT, payload)
-          .then((response) => {
-            resolve(response);
-            commit("POST_PATCH_SUCCESS");
-            store.dispatch("listBudget/getListBudget");
-          })
-          .catch((error) => {
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  if (error.response.data.hasOwnProperty("Budget_name")) {
-                    errorMsg += error.response.data.Budget_name;
-                  }
-                  break;
-
-                default:
-                  errorMsg += `Please recheck your input or try again later`;
-                  break;
-              }
-            }
-            commit("POST_PATCH_ERROR", errorMsg);
-            reject(errorMsg);
-          });
-      });
-    },
-
-    postNewBudget({ commit }, payload) {
-      commit("POST_PATCH_INIT");
-      return new Promise((resolve, reject) => {
-        getAPI
-          .post(BUDGET_ENDPOINT, payload)
-          .then((response) => {
-            resolve(response);
-            commit("POST_PATCH_SUCCESS");
-            //store.dispatch("listBudget/getListBudget");
-          })
-          .catch((error) => {
-            let errorMsg =
-              "Unknown error. Please try again later. If this problem persisted, please contact System Administrator";
-            if (error.response) {
-              errorMsg = "";
-              switch (error.response.status) {
-                case 400:
-                  if (error.response.data.hasOwnProperty("Budget_name")) {
-                    errorMsg += error.response.data.Budget_name;
-                  }
-                  break;
-
-                default:
-                  errorMsg += `Please recheck your input or try again later`;
-                  break;
-              }
-            }
-            commit("POST_PATCH_ERROR", errorMsg);
-            reject(errorMsg);
-          });
-      });
-    },
-
 
     importBudget({ commit }, data) {
-      commit("SET_LOADING", true);
+      commit("POST_INIT_IMPORT_BUDGET");
       let formData = new FormData();
       formData.append("file", data.files);
 
       return new Promise((resolve, reject) => {
         getAPI
-          .post(UPLOAD_PLANNING, formData)
-          .then((res) => {
-            resolve(res);
-            commit("SET_LOADING", false);
+          .post(BUDGET_ENDPOINT + "import/", formData)
+          .then((response) => {
+            resolve(response);
+            commit("POST_SUCCESS_IMPORT_BUDGET");
           })
-          .catch((err) => {
-            reject(err);
-            commit("SET_LOADING", false);
-            commit("SET_UPLOAD_ERROR", err.message);
+          .catch((error) => {
+            commit("POST_ERROR_IMPORT_BUDGET", error.message);
+            reject(error.message);
           });
       });
     },
 
     importRealization({ commit }, data) {
-      commit("SET_LOADING", true);
+      commit("POST_INIT_IMPORT_REALIZATION");
       let formData = new FormData();
       formData.append("file", data.files);
 
       return new Promise((resolve, reject) => {
         getAPI
-          .post(UPLOAD_REALIZATION, formData)
+          .post(UPLOAD_REALIZATION + "realisasi/", formData)
           .then((res) => {
             resolve(res);
-            commit("SET_LOADING", false);
+            commit("POST_SUCCESS_IMPORT_REALIZATION");
           })
-          .catch((err) => {
-            reject(err);
-            commit("SET_LOADING", false);
-            commit("SET_UPLOAD_ERROR", err.message);
+          .catch((error) => {
+            commit("POST_ERROR_IMPORT_REALIZATION", error.message);
+            reject(error.message);
           });
       });
     },
+
     downloadBudget({ commit }, data) {
-      commit("SET_LOADING", true);
+      commit("GET_INIT_DOWNLOAD_BUDGET");
 
       return new Promise((resolve, reject) => {
         getAPI
@@ -220,20 +308,20 @@ const listBudget = {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", "ListPlanning.xlsx");
+            link.setAttribute("download", DOWNLOAD_BUDGET_FILE_NAME);
             document.body.appendChild(link);
             link.click();
-            commit("SET_LOADING", false);
+            commit("GET_SUCCESS_DOWNLOAD_BUDGET");
           })
-          .catch((err) => {
-            reject(err);
-            commit("SET_LOADING", false);
-            commit("SET_DOWNLOAD_ERROR", err.message);
+          .catch((error) => {
+            commit("GET_ERROR_DOWNLOAD_BUDGET", error.message);
+            reject(error.message);
           });
       });
     },
+
     downloadImportBudgetTemplate({ commit }) {
-      commit("SET_LOADING", true);
+      commit("GET_INIT_DOWNLOAD_IMPORT_BUDGET_TEMPLATE");
       return new Promise((resolve, reject) => {
         getAPI
           .get(BUDGET_ENDPOINT + "import/template/", {
@@ -244,117 +332,304 @@ const listBudget = {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", "TemplateBudgetPlanning.xlsx");
+            link.setAttribute("download", DOWNLOAD_IMPORT_BUDGET_TEMPLATE_FILENAME);
             document.body.appendChild(link);
             link.click();
-            commit("SET_LOADING", false);
+            commit("GET_SUCCESS_DOWNLOAD_IMPORT_BUDGET_TEMPLATE");
           })
-          .catch((err) => {
-            reject(err);
-            commit("SET_LOADING", false);
-            commit("SET_DOWNLOAD_ERROR", err.message);
+          .catch((error) => {
+            commit("GET_ERROR_DOWNLOAD_IMPORT_BUDGET_TEMPLATE", error.message);
+            reject(error.message);
           });
+      });
+    },
+
+    getListBudgetHistoryById({ commit }, id) {
+      commit("GET_INIT_LIST_BUDGET_HISTORY_BY_ID"); 
+      return new Promise((resolve, reject) => {
+      getAPI
+        .get(AUDITLOG_ENDPOINT + "?table=budget&entity=" + `${id}`)
+        .then((response) => {
+          const data = response.data;
+          const sorted = data.sort((a, b) =>
+          a.id < b.id ? 1 : -1
+        );
+          commit("GET_SUCCESS_LIST_BUDGET_HISTORY_BY_ID", sorted); 
+          resolve(sorted);
+        })
+        .catch((error) => {
+          commit("GET_ERROR_LIST_BUDGET_HISTORY_BY_ID", error.message);
+          reject(error.message);
+        });
       });
     },
   },
   mutations: {
-    // import related
-    SET_LOADING(state, data) {
-      state.isLoading = data;
+    // get List All Budget related
+    GET_INIT_ALL_BUDGET(state) {
+      state.requestListAllBudgetStatus = "PENDING";
+      state.loadingGetListAllBudget = true;
     },
-    SET_UPLOAD_ERROR(state, error) {
-      state.errorMessage = error;
-      if (error.response.status == "401") {
-        router.push({ name: "Login" });
-      }
+    GET_SUCCESS_ALL_BUDGET(state, dataListAllBudget) {
+      state.requestListAllBudgetStatus = "SUCCESS";
+      state.loadingGetListAllBudget = false;
+      state.dataListAllBudget = dataListAllBudget;
     },
-    SET_DOWNLOAD_ERROR(state, error) {
-      state.errorMessage = error;
-      if (error.response.status == "401") {
-        router.push({ name: "Login" });
-      }
-    },
-
-
-    // get related
-    GET_INIT(state) {
-      state.requestStatus = "PENDING";
-      state.loadingGetListBudget = true;
-    },
-    GET_SUCCESS(state, dataListBudget) {
-      state.requestStatus = "SUCCESS";
-      state.loadingGetListBudget = false;
-      state.dataListBudget = dataListBudget;
-    },
-    GET_INACTIVE_INIT(state) {
-      state.requestInactiveStatus = "PENDING";
-      state.loadingGetListBudget = true;
-    },
-    GET_INACTIVE_SUCCESS(state, dataListInactiveBudget) {
-      state.requestInactiveStatus = "SUCCESS";
-      state.loadingGetListInactiveBudget = false;
-      state.dataListInactiveBudget = dataListInactiveBudget;
-    },
-    GET_ACTIVE_DATA_UPDATE(state, dataActiveListBudget) {
-      state.requestActiveStatus = "IDLE";
-      state.dataActiveListBudget = dataActiveListBudget;
-    },
-    GET_ERROR(state, error) {
-      state.requestStatus = "ERROR";
-      state.loadingGetListBudget = false;
-      state.errorMsg = error;
-      state.dataListBudget = [];
-      state.dataActiveListBudget = [];
+    GET_ERROR_ALL_BUDGET(state, error) {
+      state.requestListAllBudgetStatus = "ERROR";
+      state.loadingGetListAllBudget = false;
+      state.dataListAllBudget = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
     },
-    GET_INACTIVE_ERROR(state, error) {
-      state.requestInactiveStatus = "ERROR";
-      state.loadingGetListInactiveBudget = false;
-      state.errorMsg = error;
-      state.dataListInactiveBudget = [];
-      state.dataActiveListBudget = [];
-    },
 
-    // post / patch related
-    POST_PATCH_INIT(state) {
-      state.postPatchStatus = "PENDING";
-      state.loadingPostPatchListBudget = true;
+    // get List Active Budget related
+    GET_INIT_ACTIVE_BUDGET(state) {
+      state.requestListActiveBudgetStatus = "PENDING";
+      state.loadingGetListActiveBudget = true;
     },
-    POST_PATCH_SUCCESS(state) {
-      state.postPatchStatus = "SUCCESS";
-      state.loadingPostPatchListBudget = false;
+    GET_SUCCESS_ACTIVE_BUDGET(state, dataListActiveBudget) {
+      state.requestListActiveBudgetStatus = "SUCCESS";
+      state.loadingGetListActiveBudget = false;
+      state.dataListActiveBudget = dataListActiveBudget;
     },
-    POST_PATCH_ERROR(state, error) {
-      state.postPatchStatus = "ERROR";
-      state.loadingPostPatchListBudget = false;
-      state.errorMsg = error;
-      if (error.response.status == "401") {
-        router.push({ name: "Login" });
+    GET_ERROR_ACTIVE_BUDGET(state, error) {
+      state.requestListActiveBudgetStatus = "ERROR";
+      state.loadingGetListActiveBudget = false;
+      state.dataListActiveBudget = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
       }
     },
-    SET_EDITTED_ITEM(state, payload) {
-      state.edittedItem = payload;
+
+    // get List Inactive Budget related
+    GET_INIT_INACTIVE_BUDGET(state) {
+      state.requestListInactiveBudgetStatus = "PENDING";
+      state.loadingGetListInactiveBudget = true;
     },
-    SET_LOADING_GET_EDITTED_ITEM(state, payload) {
-      state.loadingGetEdittedItem = payload;
+    GET_SUCCESS_INACTIVE_BUDGET(state, dataListInactiveBudget) {
+      state.requestListInactiveBudgetStatus = "SUCCESS";
+      state.loadingGetListInactiveBudget = false;
+      state.dataListInactiveBudget = dataListInactiveBudget;
+    },
+    GET_ERROR_INACTIVE_BUDGET(state, error) {
+      state.requestListInactiveBudgetStatus = "ERROR";
+      state.loadingGetListInactiveBudget = false;
+      state.dataListInactiveBudget = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
-    // history related
-    SET_EDITTED_ITEM_HISTORIES(state, payload) {
-      state.edittedItemHistories = payload;
+    // get Budget By Id related
+    GET_INIT_BUDGET_BY_ID(state) {
+      state.requestBudgetByIdStatus = "PENDING";
+      state.loadingGetBudgetById = true;
+    },
+    GET_SUCCESS_BUDGET_BY_ID(state, dataBudgetById) {
+      state.requestBudgetByIdStatus = "SUCCESS";
+      state.loadingGetBudgetById = false;
+      state.dataBudgetById = dataBudgetById;
+    },
+    GET_ERROR_BUDGET_BY_ID(state, error) {
+      state.requestBudgetByIdStatus = "ERROR";
+      state.loadingGetBudgetById = false;
+      state.dataBudgetById = null;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
-    SET_REQUEST_STATUS(state, payload) {
-      state.requestStatus = payload;
+    // save Budget By Id related
+    PATCH_INIT_SAVE_BUDGET_BY_ID(state) {
+      state.requestSaveBudgetByIdStatus = "PENDING";
+      state.loadingSaveBudgetById = true;
+    },
+    PATCH_SUCCESS_SAVE_BUDGET_BY_ID(state) {
+      state.requestSaveBudgetByIdStatus = "SUCCESS";
+      state.loadingSaveBudgetById = false;
+    },
+    PATCH_ERROR_SAVE_BUDGET_BY_ID(state, error) {
+      state.requestSaveBudgetByIdStatus = "ERROR";
+      state.loadingSaveBudgetById = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+    
+    // delete Budget By Id related
+    DELETE_INIT_DELETE_BUDGET_BY_ID(state) {
+      state.requestDeleteBudgetByIdStatus = "PENDING";
+      state.loadingDeleteBudgetById = true;
+    },
+    DELETE_SUCCESS_DELETE_BUDGET_BY_ID(state) {
+      state.requestDeleteBudgetByIdStatus = "SUCCESS";
+      state.loadingDeleteBudgetById = false;
+    },
+    DELETE_ERROR_DELETE_BUDGET_BY_ID(state, error) {
+      state.requestDeleteBudgetByIdStatus = "ERROR";
+      state.loadingDeleteBudgetById = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
-    ON_CHANGE(state, payload) {
-      state.value = payload;
+    // cancel Budget By Id related
+    POST_INIT_CANCEL_BUDGET_BY_ID(state) {
+      state.requestCancelBudgetByIdStatus = "PENDING";
+      state.loadingCancelBudgetById = true;
     },
-    ON_CHANGE_PAGING(state, payload) {
-      state.current = payload;
+    POST_SUCCESS_CANCEL_BUDGET_BY_ID(state) {
+      state.requestCancelBudgetByIdStatus = "SUCCESS";
+      state.loadingCancelBudgetById = false;
+    },
+    POST_ERROR_CANCEL_BUDGET_BY_ID(state, error) {
+      state.requestCancelBudgetByIdStatus = "ERROR";
+      state.loadingCancelBudgetById = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // restore Budget By Id related
+    POST_INIT_RESTORE_BUDGET_BY_ID(state) {
+      state.requestRestoreBudgetByIdStatus = "PENDING";
+      state.loadingRestoreBudgetById = true;
+    },
+    POST_SUCCESS_RESTORE_BUDGET_BY_ID(state) {
+      state.requestRestoreBudgetByIdStatus = "SUCCESS";
+      state.loadingRestoreBudgetById = false;
+    },
+    POST_ERROR_RESTORE_BUDGET_BY_ID(state, error) {
+      state.requestRestoreBudgetByIdStatus = "ERROR";
+      state.loadingRestoreBudgetById = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // save Budget Planning related
+    POST_INIT_SAVE_BUDGET_PLANNING(state) {
+      state.requestSaveBudgetPlanningStatus = "PENDING";
+      state.loadingSaveBudgetPlanning = true;
+    },
+    POST_SUCCESS_SAVE_BUDGET_PLANNING(state) {
+      state.requestSaveBudgetPlanningStatus = "SUCCESS";
+      state.loadingSaveBudgetPlanning = false;
+    },
+    POST_ERROR_SAVE_BUDGET_PLANNING(state, error) {
+      state.requestSaveBudgetPlanningStatus = "ERROR";
+      state.loadingSaveBudgetPlanning = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // get List Active Planning related
+    GET_INIT_ACTIVE_PLANNING(state) {
+      state.requestListActivePlanningStatus = "PENDING";
+      state.loadingGetListActivePlanning = true;
+    },
+    GET_SUCCESS_ACTIVE_PLANNING(state, dataListActivePlanning) {
+      state.requestListActivePlanningStatus = "SUCCESS";
+      state.loadingGetListActivePlanning = false;
+      state.dataListActivePlanning = dataListActivePlanning;
+    },
+    GET_ERROR_ACTIVE_PLANNING(state, error) {
+      state.requestListActivePlanningStatus = "ERROR";
+      state.loadingGetListActivePlanning = false;
+      state.dataListActivePlanning = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // import Budget related
+    POST_INIT_IMPORT_BUDGET(state) {
+      state.requestImportBudgetStatus = "PENDING";
+      state.loadingImportBudget = true;
+    },
+    POST_SUCCESS_IMPORT_BUDGET(state) {
+      state.requestImportBudgetStatus = "SUCCESS";
+      state.loadingImportBudget = false;
+    },
+    POST_ERROR_IMPORT_BUDGET(state, error) {
+      state.requestImportBudgetStatus = "ERROR";
+      state.loadingImportBudget = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // import Realization related
+    POST_INIT_IMPORT_REALIZATION(state) {
+      state.requestImportRealizationStatus = "PENDING";
+      state.loadingImportRealization = true;
+    },
+    POST_SUCCESS_IMPORT_REALIZATION(state) {
+      state.requestImportRealizationStatus = "SUCCESS";
+      state.loadingImportRealization = false;
+    },
+    POST_ERROR_IMPORT_REALIZATION(state, error) {
+      state.requestImportRealizationStatus = "ERROR";
+      state.loadingImportRealization = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // download Budget related
+    GET_INIT_DOWNLOAD_BUDGET(state) {
+      state.requestDownloadBudgetStatus = "PENDING";
+      state.loadingDownloadBudget = true;
+    },
+    GET_SUCCESS_DOWNLOAD_BUDGET(state) {
+      state.requestDownloadBudgetStatus = "SUCCESS";
+      state.loadingDownloadBudget = false;
+    },
+    GET_ERROR_DOWNLOAD_BUDGET(state, error) {
+      state.requestDownloadBudgetStatus = "ERROR";
+      state.loadingDownloadBudget = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // download Import Budget Template related
+    GET_INIT_DOWNLOAD_IMPORT_BUDGET_TEMPLATE(state) {
+      state.requestDownloadImportBudgetTemplateStatus = "PENDING";
+      state.loadingDownloadImportBudgetTemplate = true;
+    },
+    GET_SUCCESS_DOWNLOAD_IMPORT_BUDGET_TEMPLATE(state) {
+      state.requestDownloadImportBudgetTemplateStatus = "SUCCESS";
+      state.loadingDownloadImportBudgetTemplate = false;
+    },
+    GET_ERROR_DOWNLOAD_IMPORT_BUDGET_TEMPLATE(state, error) {
+      state.requestDownloadImportBudgetTemplateStatus = "ERROR";
+      state.loadingDownloadImportBudgetTemplate = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // get List Budget History By Id related
+    GET_INIT_LIST_BUDGET_HISTORY_BY_ID(state) {
+      state.requestListBudgetHistoryByIdStatus = "PENDING";
+      state.loadingGetListBudgetHistoryById = true;
+    },
+    GET_SUCCESS_LIST_BUDGET_HISTORY_BY_ID(state, dataListBudgetHistoryById) {
+      state.requestListBudgetHistoryByIdStatus = "SUCCESS";
+      state.loadingGetListBudgetHistoryById = false;
+      state.dataListBudgetHistoryById = dataListBudgetHistoryById;
+    },
+    GET_ERROR_LIST_BUDGET_HISTORY_BY_ID(state, error) {
+      state.requestListActiveBudgetStatus = "ERROR";
+      state.loadingGetListActiveBudget = false;
+      state.dataListBudgetHistoryById = [];
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
   },
 };

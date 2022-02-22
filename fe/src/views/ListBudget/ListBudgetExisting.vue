@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     ...mapActions("listBudget", [
-      "postNewBudget",
+      "saveBudgetPlanning",
     ]),
     setBreadcrumbs() {
       this.$store.commit("breadcrumbs/SET_LINKS", [
@@ -69,7 +69,7 @@ export default {
       this.$router.go(-1);
     },
     onSubmit(e) {
-      this.postNewBudget(e)
+      this.saveBudgetPlanning(e)
       .then(() => {
           this.onSaveSuccess();
         })

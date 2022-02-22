@@ -139,14 +139,17 @@ class ProductViewSet(viewsets.ModelViewSet):
     
     def create_or_update_product(self, request, data, strategy):
         update_dict = {
-            'product_code': data['product_code'],
             'product_name' : data['product_name'],
             'strategy': strategy,
             'updated_by': User.objects.get(pk=request.custom_user['id'])
         }
         
-        new_product = Product(**update_dict)
         product = Product.objects.filter(product_code=data['product_code']).first()
+        new_product = Product(
+            product_code = data['product_code'],
+            **update_dict
+        )
+        
         if not product:
             self.create_new_product(request, new_product)
         elif product and not product.equal(new_product):
