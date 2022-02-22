@@ -197,7 +197,6 @@ export default {
                     JSON.stringify(this.$store.state.allBudget.edittedItemHistories));
                 for(let i=0; i<this.itemsHistory.length; i++) {
                     this.itemsHistory[i].table = "budgetPlanning"
-                    // console.log(this.itemsHistory[i]);
                 }
             });
         },

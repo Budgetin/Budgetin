@@ -184,15 +184,12 @@ export default {
         id: null,
         label: "",
       },
-      // is_active: "",
       created_by: "",
       updated_by: "",
       updated_at: "",
-      //due_date: "",
       due_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10),
-      // send_notification: "",
       notification: {
         id: null,
         label: "",
@@ -278,10 +275,10 @@ export default {
       this.alert.show = false;
     },
     onMonitor(item) {
-      this.$store.commit("monitorPlanning/SET_EDITTED_ITEM", item);
+      this.$store.commit("monitorPlanning/GET_SUCCESS_MONITOR_PLANNING_BY_ID", item);
     },
     onEdit(item) {
-      this.$store.commit("startPlanning/SET_EDITTED_ITEM", item);
+      this.$store.commit("startPlanning/GET_SUCCESS_START_PLANNING_BY_ID", item);
     },
     onOK() {
       return this.$router.go(-1);

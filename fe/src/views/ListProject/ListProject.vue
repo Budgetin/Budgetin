@@ -163,7 +163,7 @@ export default {
 
         },
         onEdit(item) {
-            this.$store.commit("listProject/SET_EDITTED_ITEM", item);
+            this.$store.commit("listProject/GET_SUCCESS_LIST_PROJECT_BY_ID", item);
         },
         onOK() {
             return this.$router.go(-1);

@@ -207,7 +207,8 @@ export default {
     statusMonitor: [
       {label: 'To Do'},
       {label: 'Draft'},
-      {label: 'Submitted'}
+      {label: 'Submitted'},
+      {label: 'Optional'}
     ],
   }),
   

@@ -186,41 +186,18 @@ export default {
       }
     };
     // console.log(this.budgetItem);
-    this.getDetailItem();
   },
-  // created() {
-  //   this.getDetailItem();
-  // },
   computed: {
-    ...mapState("allBudget", ["loadingGetAllBudget", "dataAllBudget"]),
-
     status: function () {
       return this.budgetPlanning.project_detail ? false : true;
     },
   },
   methods: {
-    ...mapActions("allBudget", ["getAllBudgetById"]),
-
-    getDetailItem() {
-      // console.log("GET DETAIL ITEM");
-      // console.log(this.budgetItem.length);
-      // console.log(this.budgetItem);
-
-      this.budgetDetail = [];
-      for(let i = 0; i < this.budgetItem.length; i++) {
-        this.getAllBudgetById(this.budgetItem[i].id).then(() => {
-          this.budgetDetail.push(JSON.parse(
-              JSON.stringify(this.$store.state.allBudget.edittedItem)
-          ));
-        });
-      };
-      console.log(this.budgetDetail);
-    },
     onOK() {
       return this.$router.go(-1);
     },
     onEdit(item) {
-      this.$store.commit("listProject/SET_EDITTED_ITEM", item);
+      this.$store.commit("listProject/GET_SUCCESS_LIST_PROJECT_BY_ID", item);
     },
     onInputOption(){
       this.inputOption = true;

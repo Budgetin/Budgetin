@@ -188,7 +188,7 @@ const masterProduct = {
             link.setAttribute("download", "import_product_template.xlsx");
             document.body.appendChild(link);
             link.click();
-            // commit("SET_LOADING_SUCCESS");
+            commit("SET_LOADING_SUCCESS");
           })
           .catch((err) => {
             reject(err);
