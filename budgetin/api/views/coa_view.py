@@ -105,7 +105,6 @@ class CoaViewSet(viewsets.ModelViewSet):
     
     def create_or_update_coa(self, request, data):
         update_dict = {
-            'name': data['coa_name'],
             'definition': data['coa_definition'] if not is_empty(data['coa_definition']) else None,
             'hyperion_name': data['hyperion_name'] if not is_empty(data['hyperion_name']) else None,
             'is_capex': True if not is_empty(data['is_capex']) and data['is_capex'].lower() == 'yes' else False,
@@ -113,8 +112,12 @@ class CoaViewSet(viewsets.ModelViewSet):
             'updated_by': User.objects.get(pk=request.custom_user['id'])
         }
         
-        new_coa = Coa(**update_dict)
         coa = Coa.objects.filter(name=data['coa_name']).first()
+        new_coa = Coa(
+            name = data['coa_name'],
+            **update_dict
+        )
+        
         if not coa:
             self.create_new_coa(request, new_coa)
         elif coa and not coa.equal(new_coa):
