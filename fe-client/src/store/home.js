@@ -19,8 +19,8 @@ const home = {
     dataTaskById: null, // for store data
     
     // get List My Planning based on task id
-    requestSubmittedTaskStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    loadingGetSubmittedTask: false, // for loading table
+    requestSubmittedTaskItemStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetSubmittedTaskItem: false, // for loading table
     dataSubmittedTask: [], // for v-data-table
     
     // set monitoring status as Submitted
@@ -68,11 +68,11 @@ const home = {
           .get(ENDPOINT + `${id}/`)
           .then((response) => {
             const cleanData = response.data
-            commit("GET_SUCCESS_TASK_BY_ID", cleanData);
+            commit("GET_TASK_BY_ID_SUCCESS", cleanData);
             resolve(cleanData);
           })
           .catch((error) => {
-            commit("GET_ERROR_TASK_BY_ID", error);
+            commit("GET_TASK_BY_ID_ERROR", error);
             reject(error.message);
           });
       });
@@ -149,10 +149,10 @@ const home = {
       state.requestTaskStatus = "PENDING";
       state.loadingGetTask = true;
     },
-    GET_SUCCESS(state, dataHome) {
+    GET_SUCCESS(state, data) {
       state.requestTaskStatus = "SUCCESS";
       state.loadingGetTask = false;
-      state.dataHome = dataHome;
+      state.dataHome = data;
     },
     GET_ERROR(state, error) {
       state.requestTaskStatus = "ERROR";
@@ -168,12 +168,12 @@ const home = {
       state.requestTaskByIdStatus = "PENDING";
       state.loadingGetTaskById = true;
     },
-    GET_SUCCESS_TASK_BY_ID(state, dataTask) {
+    GET_TASK_BY_ID_SUCCESS(state, dataTask) {
       state.requestTaskByIdStatus = "SUCCESS";
       state.loadingGetTaskById = false;
       state.dataTaskById = dataTask;
     },
-    GET_ERROR_TASK_BY_ID(state, error) {
+    GET_TASK_BY_ID_ERROR(state, error) {
       state.requestTaskByIdStatus = "ERROR";
       state.loadingGetTaskById = false;
       state.dataTaskById = [];
@@ -184,19 +184,18 @@ const home = {
     
     // get Submitted based Task related
     GET_INIT_SUBMITTED_TASK_ITEM(state) {
-      state.requestSubmittedTaskStatus = "PENDING";
+      state.requestSubmittedTaskItemStatus = "PENDING";
       state.loadingGetSubmittedTaskItem = true;
     },
-    GET_SUCCESS_SUBMITTED_TASK_ITEM(state, payload) {
-      state.requestSubmittedTaskStatus = "SUCCESS";
+    GET_SUCCESS_SUBMITTED_TASK_ITEM(state, data) {
+      state.requestSubmittedTaskItemStatus = "SUCCESS";
       state.loadingGetSubmittedTaskItem = false;
-      state.dataSubmittedTask = payload;
+      state.dataSubmittedTask = data;
     },
     GET_ERROR_SUBMITTED_TASK_ITEM(state, error) {
-      state.requestTaskStatus = "ERROR";
+      state.requestSubmittedTaskItemStatus = "ERROR";
       state.loadingGetSubmittedTaskItem = false;
       state.dataSubmittedTask = [];
-      console.log(error)
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
@@ -231,7 +230,6 @@ const home = {
     POST_ERROR_PLANNING(state, error) {
       state.requestSavePlanningStatus = "ERROR";
       state.loadingPostSavePlanning = false;
-      state.errorMsgSavePlanning = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
@@ -249,7 +247,6 @@ const home = {
     GET_ERROR_DOWNLOAD_PLANNING(state, error) {
       state.requestDownloadPlanningStatus = "ERROR";
       state.loadingGetDownloadPlanning = false;
-      state.errorMsg = error;
       state.dataHome = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});

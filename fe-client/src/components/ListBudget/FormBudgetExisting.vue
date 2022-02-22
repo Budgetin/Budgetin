@@ -695,9 +695,38 @@ export default {
           }
         });
       }
-
-      
+      this.onSelectFor();   
     },
+
+    onSelectFor(){
+      if(this.form.project && this.form.project.id && this.form.planning && this.form.planning.id){
+        this.getMyProjectById(this.form.project.id).then(() => {
+          var project_detail = this.edittedItem.project_detail.find((x)=> x.planning.id==this.form.planning.id);
+          if(project_detail){
+            this.projectTypeEnable = false;
+            const result = this.dataProjectType.filter((project_type) => {
+              return project_type.name == project_detail.project_type;
+            });
+            
+            this.listProjectType = JSON.parse(JSON.stringify(result));
+            this.form.project_type = this.listProjectType[0];
+            this.budget_table = project_detail.budget;
+
+          }else{
+            this.budget_table = [];
+            this.form.project_type = "";
+            this.projectTypeEnable = true;
+            const cleanData = JSON.parse(JSON.stringify(this.dataProjectType));
+            var index = cleanData.findIndex(function(o){
+              return o.name === 'New';
+            });
+            if (index !== -1) cleanData.splice(index, 1);
+            this.listProjectType = cleanData;
+          }
+        });
+      }
+    },
+
     onInput(budget){
       if(budget.planning_q1){
         budget.planning_q1 = this.numberWithDots(budget.planning_q1);

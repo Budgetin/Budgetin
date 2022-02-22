@@ -12,11 +12,6 @@ const masterUser = {
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetMasterUser: false, // for loading table
     dataMasterUser: [], // for v-data-table
-
-    // get data employee
-    requestEmployeeStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    loadingGetEmployee: false, // for loading table
-    dataEmployee: [], // for dropdown
   
     // get data user by id
     requestUserByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
@@ -46,9 +41,9 @@ const masterUser = {
                 id: data.id,
                 name: {
                   id: data.employee_id,
-                  display_name: data.display_name,
+                  name: data.display_name,
                   username: data.username,
-                  option: String(data.display_name+" - "+data.username),                  
+                  option: String(data.name+" - "+data.username),                  
                 },
                 role: data.role,
                 status: {
@@ -68,31 +63,6 @@ const masterUser = {
           commit("GET_ERROR", error);
         });
     },
-    
-    getEmployee({ commit }) {
-      commit("GET_INIT_EMPLOYEE");
-      const url = `${ENDPOINT}imo/`;
-      return new Promise((resolve, reject) => {
-        getAPI
-          .get(url)
-          .then((response) => {
-            const cleanData = response.data
-            const sorted = cleanData.sort((a, b) =>
-              a.display_name > b.display_name ? 1 : -1
-            );
-            commit("GET_EMPLOYEE_SUCCESS", sorted);
-            resolve(response)
-          })
-          .catch((error) => {
-            commit("GET_EMPLOYEE_ERROR", error);
-            if(error.response.data.message){
-              reject(error.response.data.message);
-            }else{
-              reject(error);
-            }
-          });
-      });
-    },
         
     getMasterUserById({ commit }, id) {
       commit("GET_INIT_USER_BY_ID");
@@ -106,7 +76,7 @@ const masterUser = {
                 id: data.id,
                 name: {
                   id: data.employee_id,
-                  display_name: data.display_name,
+                  name: data.display_name,
                   username: data.username,
                   option: String(data.display_name+" - "+data.username),                  
                 },
@@ -215,25 +185,6 @@ const masterUser = {
       state.requestStatus = "ERROR";
       state.loadingGetMasterUser = false;
       state.dataMasterUser = [];
-      if(error.response.status =="401"){
-        router.push({ name: 'Login'});
-      }
-    },
-
-    // Get List of Employee related
-    GET_INIT_EMPLOYEE(state) {
-      state.requestEmployeeStatus = "PENDING";
-      state.loadingGetEmployee = true;
-    },
-    GET_EMPLOYEE_SUCCESS(state, data) {
-      state.requestEmployeeStatus = "SUCCESS";
-      state.loadingGetEmployee = false;
-      state.dataEmployee = data;
-    },
-    GET_EMPLOYEE_ERROR(state, error) {
-      state.requestEmployeeStatus = "ERROR";
-      state.loadingGetEmployee = false;
-      state.dataEmployee = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }

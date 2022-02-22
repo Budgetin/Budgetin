@@ -3,6 +3,7 @@ import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js"
 
 const ENDPOINT = "/api/coa/";
+const LOGENDPOINT="/api/auditlog?table=coa&entity=";
 
 const masterCoa = {
   namespaced: true,
@@ -11,27 +12,27 @@ const masterCoa = {
     requestStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingGetMasterCoa: false, // for loading table
     dataMasterCoa: [], // for v-data-table
-    errorMsg: null,
 
-    // get All data Master Coa by ID
+    // get All data Master Coa by ID    
+    requestMasterCoaByIdStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetMasterCoaById: false, // for loading table
+    dataMasterCoaById: [], // for v-data-table
+    
+    // Post/Patch Master COA   
+    requestpostPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingDeleteMasterCoa: false, // for loading table
 
+    // Delete data Master Coa by ID    
+    requestDeleteStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetMasterCoaById: false, // for loading table
 
-    loadingGetEdittedItem: false,
-    loadingPostPatchMasterCoa: false, // for loading post/patch
-    dataActiveMasterCoa: [], //for dropdown
-    requestActiveStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    postPatchStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
-    edittedItem: null,
-    loadingDeleteItem:false,
-    deleteStatus: "IDLE",
-    deleteItem: [],
-    requestHistoriesStatus:"IDLE",
-    loadingGetEdittedItemHistories: false,
-    edittedItemHistories: [],
+    // get History data Master Coa by ID    
+    requestHistoryMasterCoaStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
+    loadingGetHistoryMasterCoa: false, // for loading table
 
+    // import Master Coa / Add Coa by upload file
     requestImportCoaStatus: "IDLE", // possible values: IDLE (does nothing), SUCCESS (get success), ERROR (get error)
     loadingImportCoa: false, // for loading data
-    errorMsgImportCoa: null,
 
   },
   getters: {
@@ -53,23 +54,25 @@ const masterCoa = {
           commit("GET_ERROR", error);
         });
     },
+    
     getMasterCoaById({ commit }, id) {
-      commit("SET_LOADING_GET_EDITTED_ITEM", true);
-
+      commit("GET_INIT_MASTER_COA_BY_ID");
+      const url = `${ENDPOINT}${id}/`
       return new Promise((resolve, reject) => {
         getAPI
-          .get(ENDPOINT + `${id}/`)
+          .get(url)
           .then((response) => {
             const data = response.data;
-            commit("SET_EDITTED_ITEM", data);
+            commit("GET_MASTER_COA_BY_ID_SUCCESS", data);
             resolve(data);
           })
           .catch((error) => {
-            commit("GET_ERROR", error);
+            commit("GET_MASTER_COA_BY_ID_ERROR", error);
             reject(error);
           });
       });
     },
+
     postMasterCoa({ commit }, payload) {
       commit("POST_PATCH_INIT");
       return new Promise((resolve, reject) => {
@@ -90,12 +93,13 @@ const masterCoa = {
           });
       });
     },
+
     patchMasterCoa({ commit }, payload) {
       commit("POST_PATCH_INIT");
       const url = `${ENDPOINT}${payload.id}/`;
       return new Promise((resolve, reject) => {
         getAPI
-          .patch(url, payload)
+          .patch(url,payload)
           .then((response) => {
             resolve(response);
             commit("POST_PATCH_SUCCESS");
@@ -112,71 +116,77 @@ const masterCoa = {
       });
     },
 
-    deleteMasterCoaById({ commit }, id) {
-      commit("SET_LOADING_DELETE_ITEM", true);
+    deleteMasterCoa({ commit },id) {
+      commit("DELETE_INIT");
+      const url = `${ENDPOINT}${id}/`;
       return new Promise((resolve, reject) => {
         getAPI
-          .delete(ENDPOINT + `${id}/`)
+          .delete(url)
           .then((response) => {
-            const data = response.data;
-            commit("SET_DELETE_ITEM", data);
-            resolve(data);
-            // store.dispatch("masterStatus/getFromAPI");
             store.dispatch("masterCoa/getMasterCoa");
+            commit("DELETE_SUCCESS");
+            resolve(response);
           })
           .catch((error) => {
             commit("DELETE_ERROR", error);
-            reject(error);
+            if(error.response.data.message){
+              reject(error.response.data.message);
+            }else{
+              reject(error);
+            }
           });
       });
     },
 
-      //harus return promise
     getHistory({ commit }, id) {
-      commit("SET_REQUEST_STATUS"); 
+      commit("GET_INIT_HISTORY_MASTER_COA"); 
+      const url = `${LOGENDPOINT}${id}`;
       return new Promise((resolve, reject) => {
-      getAPI
-        .get("/api/auditlog?table=coa&entity=" + `${id}`)
-        .then((response) => {
-          const data = response.data;
-          const sorted = data.sort((a, b) =>
-          a.id < b.id ? 1 : -1
-        );
-          commit("SET_EDITTED_ITEM_HISTORIES", sorted); 
-          resolve(sorted);
-        })
-        .catch((error) => {
-          commit("GET_ERROR", error);
-          reject(error);
-        });
+        getAPI
+          .get(url)
+          .then((response) => {
+            const data = response.data;
+            const sorted = data.sort((a, b) =>
+            a.id < b.id ? 1 : -1
+          );
+            commit("GET_HISTORY_MASTER_COA_SUCCESS", sorted); 
+            resolve(sorted);
+          })
+          .catch((error) => {
+            commit("GET_HISTORY_MASTER_COA_ERROR", error);
+            if(error.response.data.message){
+              reject(error.response.data.message);
+            }else{
+              reject(error);
+            }
+          });
       });
     },
 
     importCoa({ commit }, data) {
-      console.log(data)
       commit("GET_INIT_IMPORT_COA");
       let formData = new FormData();
       formData.append("file", data.files);
-
+      const url = `${ENDPOINT}import/`;
       return new Promise((resolve, reject) => {
         getAPI
-          .post((ENDPOINT+"import/"), formData , {
+          .post(url, formData , {
             responseType: "arraybuffer", //Khusus download file
           })
           .then((res) => {
-            resolve(res);
             store.dispatch('masterCoa/getMasterCoa')
             commit("GET_SUCCESS_IMPORT_COA");
+            resolve(res);
           })
-          .catch((err) => {
-            const url = window.URL.createObjectURL(new Blob([err.response.data]));
+          .catch((error) => {
+            const path = window.URL.createObjectURL(new Blob([error.response.data]));
             const link = document.createElement("a");
-            link.href = url;
+            link.href = path;
             link.setAttribute("download", "Error Upload Master Coa.xlsx");
             document.body.appendChild(link);
             link.click();
-            reject(err);
-            commit("GET_ERROR_IMPORT_COA", err);
+            reject(error);
+            commit("GET_ERROR_IMPORT_COA", error);
           });
       });
     },
@@ -188,78 +198,87 @@ const masterCoa = {
       state.requestStatus = "PENDING";
       state.loadingGetMasterCoa = true;
     },
-    GET_SUCCESS(state, dataMasterCoa) {
+    GET_SUCCESS(state, data) {
       state.requestStatus = "SUCCESS";
       state.loadingGetMasterCoa = false;
-      state.dataMasterCoa = dataMasterCoa;
+      state.dataMasterCoa = data;
     },
     GET_ERROR(state, error) {
       state.requestStatus = "ERROR";
       state.loadingGetMasterCoa = false;
-      state.errorMsg = error;
       state.dataMasterCoa = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
     },
 
-
-
-    // post / patch related
-    POST_PATCH_INIT(state) {
-      state.postPatchStatus = "PENDING";
-      state.loadingPostPatchMasterCoa = true;
+    // get by ID related
+    GET_INIT_MASTER_COA_BY_ID(state) {
+      state.requestMasterCoaByIdStatus = "PENDING";
+      state.loadingGetMasterCoaById = true;
     },
-    POST_PATCH_SUCCESS(state) {
-      state.requestStatus = "SUCCESS";
-      state.loadingPostPatchMasterCoa = false;
+    GET_MASTER_COA_BY_ID_SUCCESS(state, data) {
+      state.requestMasterCoaByIdStatus = "SUCCESS";
+      state.loadingGetMasterCoaById = false;
+      state.dataMasterCoaById = data;
     },
-    POST_PATCH_ERROR(state, error) {
-      console.log(error.response);
-      state.requestStatus = "ERROR";
-      state.loadingPostPatchMasterCoa = false;
-      state.errorMsg = error;
+    GET_MASTER_COA_BY_ID_ERROR(state, error) {
+      state.requestMasterCoaByIdStatus = "ERROR";
+      state.loadingGetMasterCoaById = false;
+      state.dataMasterCoaById = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
     },
-    SET_EDITTED_ITEM(state, payload) {
-      state.edittedItem = payload;
+
+    // post / patch related
+    POST_PATCH_INIT(state) {
+      state.requestpostPatchStatus = "PENDING";
+      state.loadingPostPatchMasterCoa = true;
     },
-    SET_LOADING_GET_EDITTED_ITEM(state, payload) {
-      state.loadingGetEdittedItem = payload;
+    POST_PATCH_SUCCESS(state) {
+      state.requestpostPatchStatus = "SUCCESS";
+      state.loadingPostPatchMasterCoa = false;
+    },
+    POST_PATCH_ERROR(state, error) {
+      state.requestpostPatchStatus = "ERROR";
+      state.loadingPostPatchMasterCoa = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
     },
 
-    // history relate
-    SET_EDITTED_ITEM_HISTORIES(state, edittedItemHistories) {
-      state.requestHistoriesStatus = "SUCCESS";
-      state.loadingGetEdittedItemHistories = false;
-      state.edittedItemHistories = edittedItemHistories;
+    // Delete related
+    DELETE_INIT(state) {
+      state.requestDeleteStatus = "PENDING";
+      state.loadingDeleteMasterCoa = true;
     },
-    SET_REQUEST_STATUS(state) {
-      state.requestHistoriesStatus = "PENDING";
-      state.loadingGetEdittedItemHistories = true;
-      state.edittedItemHistories = [];
-    },
-
-    ON_CHANGE(state, payload) {
-      state.value = payload;
-    },
-    ON_CHANGE_PAGING(state, payload) {
-      state.current = payload;
-    },
-
-    // delete item
-    SET_DELETE_ITEM(state, payload) {
-      state.deleteItem = payload;
-    },
-    SET_LOADING_DELETE_ITEM(state, payload) {
-      state.loadingDeleteItem = payload;
+    DELETE_SUCCESS(state) {
+      state.requestDeleteStatus = "SUCCESS";
+      state.loadingDeleteMasterCoa = false;
     },
     DELETE_ERROR(state, error) {
-      state.deleteStatus = "ERROR";
-      state.loadingDeleteItem = false;
-      state.errorMsg = error;
+      state.requestDeleteStatus = "ERROR";
+      state.loadingDeleteMasterCoa = false;
+      if(error.response.status =="401"){
+        router.push({ name: 'Login'});
+      }
+    },
+
+    // get History Master COA by ID related
+    GET_INIT_HISTORY_MASTER_COA(state) {
+      state.requestHistoryMasterCoaStatus = "PENDING";
+      state.loadingGetHistoryMasterCoa= true;
+    },
+    GET_HISTORY_MASTER_COA_SUCCESS(state, data) {
+      state.requestHistoryMasterCoaStatus = "SUCCESS";
+      state.loadingGetHistoryMasterCoa = false;
+      state.dataHistoryMasterCoa = data;
+    },
+    GET_HISTORY_MASTER_COA_ERROR(state, error) {
+      state.requestHistoryMasterCoaStatus = "ERROR";
+      state.loadingGetHistoryMasterCoa = false;
+      state.dataHistoryMasterCoa = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});
       }
@@ -275,7 +294,6 @@ const masterCoa = {
       state.loadingImportCoa = false;
     },
     GET_ERROR_IMPORT_COA(state, error) {
-      console.log(error.response);
       state.requestImportCoaStatus = "ERROR";
       state.loadingImportCoa = false;
       state.errorMsgImportCoa = error;

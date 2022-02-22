@@ -219,8 +219,8 @@ export default {
       this.uploadDialog = false;
     },
     onEdit(item) {
-      this.$store.commit("masterCoa/SET_EDITTED_ITEM", item);
-      this.$store.commit("masterCoa/SET_EDITTED_ITEM_HISTORIES", item);
+      this.$store.commit("masterCoa/GET_MASTER_COA_BY_ID_SUCCESS", item);
+      this.$store.commit("masterCoa/GET_HISTORY_MASTER_COA_SUCCESS", item);
     },    
     onCancel() {
       this.inputOption = false;
