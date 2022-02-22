@@ -153,7 +153,7 @@ const listProject = {
     GET_ERROR_LIST_PROJECT_BY_ID(state, error) {
       state.requestListProjectByIdStatus = "ERROR";
       state.loadingGetListProjectById = false;
-      state.dataListProjectById = [];
+      state.dataListProjectById = null;
       state.dataActiveListProject = [];
       if(error.response.status =="401"){
         router.push({ name: 'Login'});

@@ -1,7 +1,7 @@
 import store from ".";
 import { getAPI } from "@/plugins/axios-api.js";
 import router from "@/router/index.js"
-const ENDPOINT = "api/budget/";
+const ENDPOINT = "api/budget/"; // /deactivate --> cancel cancelBudgetByid
 
 const allBudget = {
   namespaced: true,
@@ -19,9 +19,6 @@ const allBudget = {
     loadingDeleteItem:false,
     deleteStatus: "IDLE",
     deleteItem: [],
-    loadingCancelItem:false,
-    cancelStatus: "IDLE",
-    cancelItem: [],
     loadingRestoreItem:false,
     restoreStatus: "IDLE",
     restoreItem: [],
@@ -148,23 +145,6 @@ const allBudget = {
           });
       });
     },
-    cancelAllBudgetById({ commit }, id) {
-      commit("SET_LOADING_CANCEL_ITEM", true);
-      return new Promise((resolve, reject) => {
-        getAPI
-          .post(ENDPOINT + `${id}/` + "deactivate/")
-          .then((response) => {
-            const data = response.data;
-            commit("SET_CANCEL_ITEM", data);
-            resolve(data);
-            store.dispatch("allBudget/getAllBudget");
-          })
-          .catch((error) => {
-            commit("CANCEL_ERROR", error);
-            reject(error);
-          });
-      });
-    },
     restoreAllBudgetById({ commit }, id) {
       commit("SET_LOADING_RESTORE_ITEM", true);
       return new Promise((resolve, reject) => {
@@ -281,22 +261,6 @@ const allBudget = {
     DELETE_ERROR(state, error) {
       state.deleteStatus = "ERROR";
       state.loadingDeleteItem = false;
-      state.errorMsg = error;
-      if(error.response.status =="401"){
-        router.push({ name: 'Login'});
-      }
-    },
-
-    // cancel item
-    SET_CANCEL_ITEM(state, payload) {
-      state.cancelItem = payload;
-    },
-    SET_LOADING_CANCEL_ITEM(state, payload) {
-      state.loadingCancelItem = payload;
-    },
-    CANCEL_ERROR(state, error) {
-      state.cancelStatus = "ERROR";
-      state.loadingCancelItem = false;
       state.errorMsg = error;
       if(error.response.status =="401"){
         router.push({ name: 'Login'});

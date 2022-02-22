@@ -5,7 +5,7 @@
             <form-edit-budget-planning
             :form="form"
             :isView="isView"
-            :dataAllBudget="dataAllBudget"
+            :dataAllBudget="dataBudgetById"
             :dataMasterCoa="dataMasterCoa"
             @editClicked="onEdit"
             @cancelClicked="onCancel"
@@ -151,17 +151,17 @@ export default {
         this.getMasterCoa();
     },
     computed: {
-        ...mapState("allBudget", ["loadingGetAllBudget", "dataAllBudget"]),
+        ...mapState("listBudget", ["dataBudgetById"]),
         ...mapState("masterCoa", ["dataMasterCoa"]),
     },
     methods: {
-        ...mapActions("allBudget", [
-            "patchAllBudget",
-            "getAllBudgetById",
-            "getHistory",
-            "deleteAllBudgetById",
-            "cancelAllBudgetById",
-            "restoreAllBudgetById"]),
+        ...mapActions("listBudget", [
+            "saveBudgetById",
+            "getBudgetById",
+            "getListBudgetHistoryById",
+            "deleteBudgetById",
+            "cancelBudgetById",
+            "restoreBudgetById"]),
         ...mapActions("masterCoa", ["getMasterCoa"]),
         
         setBreadcrumbs() {
@@ -192,22 +192,22 @@ export default {
             ]);
         },
         getHistoryItem() {
-            this.getHistory(this.$route.params.id_budget_planning).then(() => {
+            this.getListBudgetHistoryById(this.$route.params.id_budget_planning).then(() => {
                 this.itemsHistory = JSON.parse(
-                    JSON.stringify(this.$store.state.allBudget.edittedItemHistories));
+                    JSON.stringify(this.$store.state.listBudget.dataListBudgetHistoryById));
                 for(let i=0; i<this.itemsHistory.length; i++) {
                     this.itemsHistory[i].table = "budgetPlanning"
                 }
             });
         },
         getDetailItem() {
-            this.getAllBudgetById(this.$route.params.id_budget_planning).then(() => {
+            this.getBudgetById(this.$route.params.id_budget_planning).then(() => {
                 this.setForm();
             });
         },
         setForm() {
             this.form = JSON.parse(
-                JSON.stringify(this.$store.state.allBudget.edittedItem)
+                JSON.stringify(this.$store.state.listBudget.dataBudgetById)
             );
         },
         onEdit() {
@@ -215,7 +215,7 @@ export default {
             this.setBreadcrumbs();
         },
         onDelete() {
-            this.deleteAllBudgetById(this.$route.params.id_budget_planning)
+            this.deleteBudgetById(this.$route.params.id_budget_planning)
             .then(() => {
                 this.onDeleteSuccess();
             })
@@ -224,7 +224,7 @@ export default {
             });
         },
         onCancelBudget() {
-            this.cancelAllBudgetById(this.$route.params.id_budget_planning)
+            this.cancelBudgetById(this.$route.params.id_budget_planning)
             .then(() => {
                 this.onCancelSuccess();
             })
@@ -233,7 +233,7 @@ export default {
             });
         },
         onRestore() {
-            this.restoreAllBudgetById(this.$route.params.id_budget_planning)
+            this.restoreBudgetById(this.$route.params.id_budget_planning)
             .then(() => {
                 this.onRestoreSuccess();
             })
@@ -247,7 +247,7 @@ export default {
             this.setBreadcrumbs();
         },
         onSubmit(e) {
-            this.patchAllBudget(e)
+            this.saveBudgetById(e)
             .then(() => {
                 this.onSaveSuccess();
             })
