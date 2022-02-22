@@ -88,7 +88,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(status=204)    
 
     def insert_to_db(self, request, data, index, errors):
-        errors.extend(self.validate_data(data, index))
+        validation_error = self.validate_data(data, index)
+        errors.extend(validation_error)
 
         if not errors:
             strategy = self.get_strategy(data)
@@ -129,32 +130,32 @@ class ProductViewSet(viewsets.ModelViewSet):
         return strategy
     
     def create_or_update_product(self, request, data, strategy):
-        new_product_dict = {
+        update_dict = {
             'product_code': data['product_code'],
             'product_name' : data['product_name'],
             'strategy': strategy,
             'updated_by': User.objects.get(pk=request.custom_user['id'])
         }
         
-        new_product = Product(**new_product_dict)
+        new_product = Product(**update_dict)
         product = Product.objects.filter(product_code=data['product_code']).first()
         if not product:
             self.create_new_product(request, new_product)
         elif product and not product.equal(new_product):
-            self.update_product(request, product, new_product_dict)
+            self.update_product(request, product, update_dict)
     
     def create_new_product(self, request, new_product):
         new_product.created_by = new_product.updated_by
         new_product.save()
         AuditLog.Save(ProductSerializer(new_product), request, ActionEnum.CREATE, TableEnum.PRODUCT)         
     
-    def update_product(self, request, product, new_product):
-        product = self.update_fields(product, new_product)
+    def update_product(self, request, product, update_dict):
+        product = self.update_fields(product, update_dict)
         product.save()
         AuditLog.Save(ProductSerializer(product), request, ActionEnum.UPDATE, TableEnum.PRODUCT) 
 
-    def update_fields(self, model, new_model_dict):
-        for key, value in new_model_dict.items():
+    def update_fields(self, model, update_dict):
+        for key, value in update_dict.items():
             setattr(model, key, value)
         return model
     
