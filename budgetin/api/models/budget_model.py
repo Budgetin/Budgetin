@@ -15,3 +15,28 @@ class Budget(SoftDeleteModel, TimestampModel, UserTrackModel):
     planning_q4 = models.BigIntegerField(default = 0, blank = True)
     allocate = models.BigIntegerField(default = 0, blank = True)
     is_active = models.BooleanField(default=True, blank = True)
+    
+    def equal(self, budget):
+        return (
+            self.expense_type_equal(budget.expense_type) and
+            self.planning_q1_equal(budget.planning_q1) and
+            self.planning_q2_equal(budget.planning_q2) and
+            self.planning_q3_equal(budget.planning_q3) and
+            self.planning_q4_equal(budget.planning_q4)
+        )
+    
+    def expense_type_equal(self, expense_type):
+        return self.expense_type.lower() == expense_type.lower()
+    
+    def planning_q1_equal(self, planning_q1):
+        return round(self.planning_q1) == round(planning_q1)
+    
+    def planning_q2_equal(self, planning_q2):
+        return round(self.planning_q2) == round(planning_q2)
+    
+    def planning_q3_equal(self, planning_q3):
+        return round(self.planning_q3) == round(planning_q3)
+    
+    def planning_q4_equal(self, planning_q4):
+        return round(self.planning_q4) == round(planning_q4)
+    

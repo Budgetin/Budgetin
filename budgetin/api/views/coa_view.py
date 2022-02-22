@@ -1,5 +1,3 @@
-import pandas as pd
-from io import BytesIO
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -10,16 +8,21 @@ from api.serializers import CoaSerializer, CoaResponseSerializer
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
-from api.utils.file import read_excel, read_file, get_import_template_path, load_file, export_excel, export_errors_as_excel
+from api.utils.file import read_file, get_import_template_path, load_file
+from api.utils.excel import read_excel, remove_sheet, export_excel, is_empty, export_errors_as_excel
 from api.exceptions import ValidationException
 
 def is_duplicate_coa_create(name, hyperion_name):
-    if Coa.objects.filter(name=name) or Coa.objects.filter(hyperion_name=hyperion_name):
+    if Coa.objects.filter(name__iexact=name):
         raise ValidationException('COA ' + name + ' already exists')
+    if Coa.objects.filter(hyperion_name__iexact=hyperion_name):
+        raise ValidationException('COA with hyperion name ' + hyperion_name + ' already exists')
 
 def is_duplicate_coa(id, name, hyperion_name):
-    if Coa.objects.filter(name=name).exclude(id=id) or Coa.objects.filter(hyperion_name=hyperion_name).exclude(id=id):
+    if Coa.objects.filter(name__iexact=name).exclude(id=id):
         raise ValidationException('COA ' + name + ' already exists')
+    if Coa.objects.filter(hyperion_name__iexact=hyperion_name).exclude(id=id):
+        raise ValidationException('COA with hyperion name ' + hyperion_name + ' already exists')
 class CoaViewSet(viewsets.ModelViewSet):
     queryset = Coa.objects.all()
     serializer_class = CoaSerializer
@@ -44,6 +47,8 @@ class CoaViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         request.data['created_by'] = request.custom_user['id']
         request.data['updated_by'] = request.custom_user['id']
+        request.data['name'] = request.data['name'].strip()
+        request.data['hyperion_name'] = request.data['hyperion_name'].strip()
         is_duplicate_coa_create(request.data['name'],request.data['hyperion_name'])
         coa = super().create(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.CREATE, TableEnum.COA)
@@ -52,6 +57,8 @@ class CoaViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
+        request.data['name'] = request.data['name'].strip()
+        request.data['hyperion_name'] = request.data['hyperion_name'].strip()
         is_duplicate_coa(kwargs['pk'],request.data['name'],request.data['hyperion_name'])
         coa = super().update(request, *args, **kwargs)
         AuditLog.Save(coa, request, ActionEnum.UPDATE, TableEnum.COA)
@@ -97,9 +104,9 @@ class CoaViewSet(viewsets.ModelViewSet):
         is_capex = data['is_capex']
         minimum_item_origin = data['minimum_item_origin']
         
-        if pd.isnull(name):
+        if is_empty(name):
             errors.append("Row {} - Coa name must be filled".format(index))
-        if not pd.isnull(is_capex) and is_capex.lower() == 'yes' and pd.isnull(minimum_item_origin):
+        if not is_empty(is_capex) and is_capex.lower() == 'yes' and is_empty(minimum_item_origin):
             errors.append("Row {} - Minimum item origin must be filled if COA can be considered as capex".format(index))
             
         return errors
@@ -107,10 +114,10 @@ class CoaViewSet(viewsets.ModelViewSet):
     def create_or_update_coa(self, request, data):
         new_coa = Coa(
             name = data['coa_name'],
-            definition = data['coa_definition'] if not pd.isnull(data['coa_definition']) else None,
-            hyperion_name = data['hyperion_name'] if not pd.isnull(data['hyperion_name']) else None,
-            is_capex = True if not pd.isnull(data['is_capex']) and data['is_capex'].lower() == 'yes' else False,
-            minimum_item_origin = data['minimum_item_origin'] if not pd.isnull(data['minimum_item_origin']) else None,
+            definition = data['coa_definition'] if not is_empty(data['coa_definition']) else None,
+            hyperion_name = data['hyperion_name'] if not is_empty(data['hyperion_name']) else None,
+            is_capex = True if not is_empty(data['is_capex']) and data['is_capex'].lower() == 'yes' else False,
+            minimum_item_origin = data['minimum_item_origin'] if not is_empty(data['minimum_item_origin']) else None,
             updated_by = User.objects.get(pk=request.custom_user['id'])
         )
         

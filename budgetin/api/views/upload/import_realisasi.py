@@ -4,17 +4,18 @@ import math
 
 from django.db import transaction
 from django.db.models import Q
-from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from api.exceptions import SheetNotFoundException, ValidationException
 from api.utils.enum import ActionEnum, TableEnum, SwitchingTypeEnum
 from api.utils.auditlog import AuditLog
-from api.serializers import RealizationSerializer
+from api.serializers import RealizationSerializer, SwitchingSerializer
+from api.utils.excel import is_empty, export_errors_as_excel
 from api.models import Realization, Switching
 from django.db.models.base import ObjectDoesNotExist
 
 from api.models import Coa, ProjectDetail, Budget, Planning
+from api.utils import AuditLog
 
 def update_db(request, index, data, errors):
     dcsp_id = data.pop('BID').split('-')[0]
@@ -25,8 +26,8 @@ def update_db(request, index, data, errors):
         if project_detail != 'project-detail-error' and coa != 'coa-error':
             budget_object = get_budget(index, project_detail, coa, errors)
 
+    #If there's no error, then insert to DB
     if not errors:
-        #INSERT TO REALIZATION
         try:
             realization, created = Realization.objects.update_or_create(
                 budget=budget_object, 
@@ -94,7 +95,7 @@ def update_db(request, index, data, errors):
                         to_plus = to_plus,
                         type = type
                     )
-                    #DEBT ADD TO AUDITLOG
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
                     
             if switching_out:
                 nominal = switching_out
@@ -117,6 +118,7 @@ def update_db(request, index, data, errors):
                         from_minus = from_minus,
                         type = type
                     )
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
 
             if returns:
                 nominal = returns
@@ -141,6 +143,7 @@ def update_db(request, index, data, errors):
                         from_minus = from_minus,
                         type = type
                     )
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
 
             if topup:
                 nominal = topup
@@ -164,6 +167,7 @@ def update_db(request, index, data, errors):
                         to_plus = to_plus,
                         type = type
                     )
+                    AuditLog.Save(SwitchingSerializer(switching), request, ActionEnum.CREATE.value, TableEnum.SWITCHING.value)
         except TypeError:
             errors.append("Row {} - Wrong input type, number type input expected on collumn D afterward".format(index))
 
@@ -198,9 +202,8 @@ def get_budget(index, project_detail, coa, errors):
 def is_nan(data):
     return 0 if math.isnan(data) else data
 
-class ImportRealisasi(APIView):
+class ImportRealisasi():
     parser_classes = (MultiPartParser, )
-    
 
     #to validate empty inputs
     def validate_input(self, index, data):
@@ -209,17 +212,17 @@ class ImportRealisasi(APIView):
         tahun = data['Tahun']
         errors = []
 
-        if pandas.isnull(dcsp_id):
+        if is_empty(dcsp_id):
             errors.append("Row {} - BID must be filled".format(index))
-        if pandas.isnull(coa):
+        if is_empty(coa):
             errors.append("Row {} - COA must be filled".format(index))
-        if pandas.isnull(tahun):
+        if is_empty(tahun):
             errors.append("Row {} - Tahun must be filled".format(index))
         
         return errors
 
     @transaction.atomic
-    def post(self, request, format=None):
+    def start(self, request):
         file_obj = request.FILES['file'].read()
         try:
             df = pandas.read_excel(file_obj, sheet_name='Realisasi')
@@ -229,7 +232,6 @@ class ImportRealisasi(APIView):
         errors = []
         
         for index, row in df.iterrows():
-            # errors.extend(update_db(request, (index+2), row, errors))
             # Check for empties per row
             line_error = self.validate_input((index+2), row)
             errors.extend(line_error)
@@ -237,5 +239,5 @@ class ImportRealisasi(APIView):
                 update_db(request, (index+2), row, errors)
 
         if errors:
-            raise ValidationException(errors)
+            export_errors_as_excel(errors)
         return Response(status=204)

@@ -1,3 +1,4 @@
+from django.forms import model_to_dict
 import pandas as pd
 from io import BytesIO
 from django.utils.translation import ugettext_lazy as _
@@ -14,16 +15,21 @@ from api.models import Product, Strategy, User
 from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_excel, read_file, get_import_template_path, remove_sheet, export_excel, export_errors_as_excel
+from api.utils.file import read_file, get_import_template_path
+from api.utils.excel import read_excel, export_excel, write_sheet, export_errors_as_excel, is_empty
 from api.exceptions import ValidationException
 
 def is_product_duplicate(product_id, product_code, product_name):
-    if Product.objects.filter(product_code=product_code).exclude(id=product_id) or Product.objects.filter(product_name=product_name).exclude(id=product_id):
-        raise ValidationException('Product ' + product_code + ' already exists')
+    if Product.objects.filter(product_code=product_code).exclude(id=product_id):
+        raise ValidationException('Product with product code ' + product_code + ' already exists')
+    if Product.objects.filter(product_name=product_name).exclude(id=product_id):
+        raise ValidationException('Product with product name ' + product_name + ' already exists')
 
 def is_product_duplicate_create(product_code, product_name):
-    if Product.objects.filter(product_code=product_code) or Product.objects.filter(product_name=product_name):
-        raise ValidationException('Product ' + product_code + ' already exists')
+    if Product.objects.filter(product_code=product_code):
+        raise ValidationException('Product with product code' + product_code + ' already exists')
+    if Product.objects.filter(product_name=product_name):
+        raise ValidationException('Product with product name' + product_name + ' already exists')
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -49,7 +55,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
-        request.data['created_by'] = request.custom_user['id']
+        request.data['created_by'] = request.custom_user['id']        
+        request.data['product_name'] = request.data['product_name'].strip()
+        request.data['product_code'] = request.data['product_code'].strip()
         is_product_duplicate_create(request.data['product_code'],request.data['product_name'])
         product = super().create(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.CREATE, TableEnum.PRODUCT)
@@ -58,6 +66,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         request.data['updated_by'] = request.custom_user['id']
+        request.data['product_name'] = request.data['product_name'].strip()
+        request.data['product_code'] = request.data['product_code'].strip()
         is_product_duplicate(kwargs['pk'],request.data['product_code'],request.data['product_name'])
         product = super().update(request, *args, **kwargs)
         AuditLog.Save(product, request, ActionEnum.UPDATE, TableEnum.PRODUCT)
@@ -86,7 +96,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(status=204)    
 
     def insert_to_db(self, request, data, index, errors):
-        errors.extend(self.validate_data(data, index))
+        validation_error = self.validate_data(data, index)
+        errors.extend(validation_error)
 
         if not errors:
             strategy = self.get_strategy(data)
@@ -104,47 +115,57 @@ class ProductViewSet(viewsets.ModelViewSet):
         code = data['product_code']
         name = data['product_name']
         
-        if pd.isnull(code):
+        if is_empty(code):
             errors.append("Row {} - Product code must be filled".format(index))
             
-        if pd.isnull(name):
+        if is_empty(name):
             errors.append("Row {} - Product name must be filled".format(index))
 
         return errors
     
     def validate_strategy(self, data, index, errors):
         strategy_name = data['strategy_name']
-        if not pd.isnull(strategy_name) and not Strategy.name_exists(strategy_name):
+        if not is_empty(strategy_name) and not Strategy.name_exists(strategy_name):
             errors.append("Row {} - Strategy '{}' does not exists".format(index, strategy_name))
         return errors
     
     def get_strategy(self, data):
         strategy_name = data['strategy_name']
-        if pd.isnull(strategy_name):
+        if is_empty(strategy_name):
             strategy, _ = Strategy.objects.get_or_create(name='None')
         else:
             strategy = Strategy.objects.filter(name__iexact=strategy_name).first()
         return strategy
     
     def create_or_update_product(self, request, data, strategy):
-        new_product = Product(
-            product_code = data['product_code'],
-            product_name = data['product_name'],
-            strategy = strategy,
-            updated_by = User.objects.get(pk=request.custom_user['id']),
-        )
+        update_dict = {
+            'product_code': data['product_code'],
+            'product_name' : data['product_name'],
+            'strategy': strategy,
+            'updated_by': User.objects.get(pk=request.custom_user['id'])
+        }
         
+        new_product = Product(**update_dict)
         product = Product.objects.filter(product_code=data['product_code']).first()
         if not product:
-            new_product.created_by = new_product.updated_by
-            new_product.save()
-            AuditLog.Save(ProductSerializer(new_product), request, ActionEnum.CREATE, TableEnum.PRODUCT) 
+            self.create_new_product(request, new_product)
         elif product and not product.equal(new_product):
-            product.product_name = new_product.product_name
-            product.strategy = strategy
-            product.updated_by = new_product.updated_by
-            product.save()
-            AuditLog.Save(ProductSerializer(product), request, ActionEnum.UPDATE, TableEnum.PRODUCT) 
+            self.update_product(request, product, update_dict)
+    
+    def create_new_product(self, request, new_product):
+        new_product.created_by = new_product.updated_by
+        new_product.save()
+        AuditLog.Save(ProductSerializer(new_product), request, ActionEnum.CREATE, TableEnum.PRODUCT)         
+    
+    def update_product(self, request, product, update_dict):
+        product = self.update_fields(product, update_dict)
+        product.save()
+        AuditLog.Save(ProductSerializer(product), request, ActionEnum.UPDATE, TableEnum.PRODUCT) 
+
+    def update_fields(self, model, update_dict):
+        for key, value in update_dict.items():
+            setattr(model, key, value)
+        return model
     
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):
@@ -154,22 +175,20 @@ class ProductViewSet(viewsets.ModelViewSet):
         self.write_strategy_sheet(book, file_path)
 
         book.close()                
-        return export_excel(content=BytesIO(save_virtual_workbook(book)), filename='import_template_product.xlsx')
+        file_content = BytesIO(save_virtual_workbook(book))
+        return export_excel(content=file_content, filename='import_template_product.xlsx')
     
     def write_strategy_sheet(self, book, file_path):
         columns = ['strategy_name']
         coas = self.get_all_strategy()
+        dataframe = pd.DataFrame(coas, columns=columns)
         
-        writer = pd.ExcelWriter(file_path, engine = 'openpyxl')
-        writer.book = book
-        
-        if 'existing_strategy' in book.sheetnames:
-            remove_sheet(book, 'existing_strategy')            
-            
-        df = pd.DataFrame(coas, columns=columns)
-        df.to_excel(writer, sheet_name = 'existing_strategy', index=False)
-        writer.save()
-        writer.close()
+        write_sheet(
+            book=book, 
+            file_path=file_path,
+            dataframe=dataframe, 
+            sheet_name='existing_strategy',
+        )
     
     def get_all_strategy(self):
         strategies = Strategy.objects.all()
