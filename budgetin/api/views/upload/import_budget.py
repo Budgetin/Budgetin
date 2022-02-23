@@ -42,7 +42,7 @@ class ImportBudget():
             if not errors:
                 planning, plannings = self.get_or_create_planning(request, plannings, data['year'])
                 project, projects = self.create_or_update_project(request, user, projects, biro, product, data)
-                project_detail, project_details = self.get_or_create_project_detail(request, user, project_details, project_types, project, planning, data)
+                project_detail, project_details = self.create_or_update_project_detail(request, user, project_details, project_types, project, planning, data)
                 self.create_or_update_budget(request, user, budgets, project_detail, coa, data)
             
         if errors:
@@ -168,7 +168,7 @@ class ImportBudget():
         AuditLog.Save(ProjectSerializer(project), request, ActionEnum.UPDATE, TableEnum.PROJECT)
         return project
     
-    def get_or_create_project_detail(self, request, user, project_details, project_types, project, planning, data):
+    def create_or_update_project_detail(self, request, user, project_details, project_types, project, planning, data):
         project_name = project.project_name.lower()
         year = planning.year
         project_type = project_types[data['project_type'].strip().lower()]
