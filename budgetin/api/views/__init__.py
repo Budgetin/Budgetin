@@ -22,3 +22,5 @@ from .myproject_view import MyProjectViewSet
 from .mybudget_view import MyBudgetViewSet
 from .realization_view import RealizationViewSet
 from .dashboard.biro_budget import BiroBudgetView
+from .upload.import_budget import ImportBudget
+
