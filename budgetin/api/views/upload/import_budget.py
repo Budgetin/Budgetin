@@ -2,7 +2,8 @@ from django.utils import timezone
 
 from rest_framework.response import Response
 
-from api.models import Budget, Project, ProjectDetail, Planning, Biro, Product, Coa, ProjectType, User, Strategy
+from django.utils.translation import ugettext_lazy as _
+from api.models import Budget, Project, ProjectDetail, Planning, Biro, Product, Coa, ProjectType, User
 from api.serializers import BudgetSerializer, ProjectSerializer, ProjectDetailSerializer, PlanningSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
@@ -14,9 +15,11 @@ class ImportBudget():
         file = read_file(request)
         df = read_excel(file, 'budget')
         
-        # Retrieve data from DB and convert it to Key, Value dictionary.
-        # This is done to reduce DB calls and optimize searching for specified key with O(1) complexity when searching 
-        # e.g for product: {'ba001': product (obj), 'ba002': product(obj)}
+        '''
+            Retrieve data from DB and convert it to Key, Value dictionary.
+            This is done to reduce DB calls and optimize searching for specified key with O(1) complexity when searching 
+            e.g for product: {'ba001': product (obj), 'ba002': product(obj)}
+        '''
         products = dict((product.product_code.lower(), product) for product in Product.objects.all())
         coas = dict((coa.name.lower(), coa) for coa in Coa.objects.all())
         biros = dict((biro.code.lower(), biro) for biro in Biro.objects.all())
@@ -25,18 +28,22 @@ class ImportBudget():
         project_types = dict((project_type.name.lower(), project_type) for project_type in ProjectType.objects.all())
         user = User.objects.get(pk=request.custom_user['id'])
         
-        # Key, Value pair for project_details and budgets are more complex.
-        # e.g for project_detail = {('Rumah Biru', 2021): project_detail (obj), ('Rumah Biru', 2022): project_detail (obj}
+        '''
+            Key, Value pair for project_details and budgets are more complex.
+            e.g for project_detail = {('Rumah Biru', 2021): project_detail (obj), ('Rumah Biru', 2022): project_detail (obj}
+        '''
         project_details = dict(((project_detail.project.project_name.lower(), project_detail.planning.year), project_detail) for project_detail in ProjectDetail.objects.select_related('project', 'planning').all())
         budgets = dict(((budget.project_detail.project.project_name.lower(), budget.project_detail.planning.year, budget.coa.name.lower()), budget) for budget in Budget.objects.select_related('project_detail__project', 'project_detail__planning', 'coa').all())
         
         errors = []
         for index, data in df.iterrows():
             print(index)
+            errors = self.validate_is_budget(data, index+2, errors)
+            errors = self.validate_is_tech(data, index+2, errors)
+            errors = self.validate_project(data, index+2, errors)
             product, errors = self.get_product(data, index+2, errors, products)
             coa, errors = self.get_coa(data, index+2, errors, coas)
             biro, errors = self.get_biro(data, index+2, errors, biros)
-            errors = self.validate_project(data, index+2, errors)
             
             if not errors:
                 planning, plannings = self.get_or_create_planning(request, data, plannings)
@@ -49,48 +56,39 @@ class ImportBudget():
 
         return Response(status=204)
     
-    def get_product(self, data, index, errors, products):
-        code = data['product_code']
-        if is_empty(code):
-            product = products['none']
-            return product, errors
-        else:
-            code = code.strip().lower()
-            if code in products:
-                return products[code], errors
-            else:
-                errors.append("Row {} - Product code '{}' doesn't exists".format(index, code))
-                return _, errors
+    def validate_is_tech(self, data, index, errors):
+        is_tech = data['is_tech']
+        if is_empty(is_tech):
+            errors.append("Row {} - is_tech must be filled".format(index))
+        elif is_tech.strip().lower() != 'yes' and is_tech.strip().lower() != 'no':
+            errors.append("Row {} - is_tech must be filled with yes/no only".format(index))
+        return errors
     
-    def get_coa(self, data, index, errors, coas):
-        name = data['coa_name']
-        if is_empty(name):
-            is_budget = True if not is_empty(data['is_budget']) and data['is_budget'].lower() == 'yes' else False
-            if is_budget:
-                errors.append("Row {} - Coa must be filled if is_budget is 'yes'")
-                return _, errors
-            else:
-                coa = coas['none']
-                return coa, errors
-        else:
-            name = name.strip().lower()
+    def validate_is_budget(self, data, index, errors):
+        is_budget = data['is_budget']
+        if is_empty(is_budget):
+            errors.append("Row {} - is_budget must be filled".format(index))
+        elif is_budget.strip().lower() != 'yes' and is_budget.strip().lower() != 'no':
+            errors.append("Row {} - is_budget must be filled with yes/no only".format(index))
+        elif is_budget.strip().lower() == 'yes':
+            planning_q1 = data['Q1']
+            planning_q2 = data['Q2']
+            planning_q3 = data['Q3']
+            planning_q4 = data['Q4']
+            expense_type = data['capex_opex']
             
-            if name in coas:
-                return coas[name], errors
-            else:
-                errors.append("Row {} - Coa '{}' doesn't exists".format(index, name))
-                return _, errors
-    
-    def get_biro(self, data, index, errors, biros):
-        code = data['biro']
-        if not is_empty(code):
-            code = code.strip().lower()
-            
-            if code in biros:
-                return biros[code], errors
-            else:            
-                errors.append("Row {} - Biro '{}' doesn't exists".format(index, code))
-        return _, errors
+            if is_empty(planning_q1):
+                errors.append("Row {} - planning_q1 must be filled if is_budget is 'yes'")
+            if is_empty(planning_q2):
+                errors.append("Row {} - planning_q2 must be filled if is_budget is 'yes'")
+            if is_empty(planning_q3):
+                errors.append("Row {} - planning_q3 must be filled if is_budget is 'yes'")
+            if is_empty(planning_q4):
+                errors.append("Row {} - planning_q4 must be filled if is_budget is 'yes'")
+            if is_empty(expense_type):
+                errors.append("Row {} - capex_opex must be filled if is_budget is 'yes'")
+
+        return errors       
     
     def validate_project(self, data, index, errors):
         name = data['project_name']
@@ -102,6 +100,49 @@ class ImportBudget():
             errors.append("Row {} - Project type must be filled".format(index))
             
         return errors
+    
+    def get_product(self, data, index, errors, products):
+        code = data['product_code']
+        if is_empty(code):
+            errors.append("Row {} - Product code must be filled".format(index))
+        else:
+            code = code.strip().lower()
+            if code in products:
+                return products[code], errors
+            else:
+                errors.append("Row {} - Product code '{}' doesn't exists".format(index, data['product_code']))
+        return _, errors
+    
+    def get_coa(self, data, index, errors, coas):
+        name = data['coa_name']
+        if is_empty(name):
+            errors.append("Row {} - Coa must be filled".format(index))
+        else:
+            name = name.strip().lower()
+            
+            is_budget = True if not is_empty(data['is_budget']) and data['is_budget'].lower() == 'yes' else False
+            if is_budget and name == 'none':
+                errors.append("Row {} - Coa cannot be none if is_budget is 'yes'")
+                return _, errors
+            
+            if name in coas:
+                return coas[name], errors
+            else:
+                errors.append("Row {} - Coa '{}' doesn't exists".format(index, data['coa_name']))
+        return _, errors
+    
+    def get_biro(self, data, index, errors, biros):
+        code = data['biro']
+        if is_empty(code):
+            errors.append("Row {} - Biro must be filled".format(index))
+        else:
+            code = code.strip().lower()
+            
+            if code in biros:
+                return biros[code], errors
+            else:            
+                errors.append("Row {} - Biro '{}' doesn't exists".format(index, data['biro']))
+        return _, errors
     
     def get_or_create_planning(self, request, data, plannings):
         year = data['year']
@@ -202,7 +243,7 @@ class ImportBudget():
     
     def create_or_update_budget(self, request, data, user, budgets, project_detail, coa):
         is_budget = True if not is_empty(data['is_budget']) and data['is_budget'] == 'yes' else False
-        project_name = project_detail.project.project_name
+        project_name = project_detail.project.project_name.lower()
         year = project_detail.planning.year
         coa_name = coa.name.lower()
         

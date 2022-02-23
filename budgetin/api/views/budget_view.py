@@ -176,6 +176,15 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def is_budget_exists(self, project_detail):
         return Budget.objects.filter(project_detail=project_detail).count() > 0
         
+    def create_empty_budget(self, request, project_detail):
+        coa, _ = Coa.objects.get_or_create(name='None')
+        budget = Budget.objects.create(
+            project_detail=project_detail,
+            coa=coa,
+            created_by_id = request.custom_user['id'],
+            updated_by_id = request.custom_user['id']
+        ) 
+        return budget
     
     @transaction.atomic
     def update(self, request, *args, **kwargs):
