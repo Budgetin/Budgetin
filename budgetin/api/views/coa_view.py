@@ -11,6 +11,7 @@ from api.utils.enum import ActionEnum,TableEnum
 from api.utils.file import read_file, get_import_template_path, load_file
 from api.utils.excel import read_excel, remove_sheet, export_excel, is_empty, export_errors_as_excel
 from api.exceptions import ValidationException
+from api.views.upload.import_coa import ImportCoa
 
 def is_duplicate_coa_create(name, hyperion_name):
     if Coa.objects.filter(name__iexact=name):
@@ -23,6 +24,7 @@ def is_duplicate_coa(id, name, hyperion_name):
         raise ValidationException('COA ' + name + ' already exists')
     if Coa.objects.filter(hyperion_name__iexact=hyperion_name).exclude(id=id):
         raise ValidationException('COA with hyperion name ' + hyperion_name + ' already exists')
+    
 class CoaViewSet(viewsets.ModelViewSet):
     queryset = Coa.objects.all()
     serializer_class = CoaSerializer
@@ -74,77 +76,7 @@ class CoaViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     @action(methods=['post'], detail=False, url_path='import')
     def import_from_excel(self, request):
-        file = read_file(request)
-        df = read_excel(file, TableEnum.COA.value)
-        errors = []
-        
-        for index, data in df.iterrows():
-            errors = self.insert_to_db(request, data, (index+2), errors)
-        
-        if errors:            
-            return export_errors_as_excel(errors)
-        
-        return Response(status=204)
-    
-    def insert_to_db(self, request, data, index, errors):
-        errors.extend(self.validate_data(data, index))
-
-        if not errors:
-            self.create_or_update_coa(request, data)
-
-        return errors
-    
-    def validate_data(self, data, index):
-        errors = []
-        errors = self.validate_coa(data, index, errors)
-        return errors
-    
-    def validate_coa(self, data, index, errors):
-        name = data['coa_name']
-        is_capex = data['is_capex']
-        minimum_item_origin = data['minimum_item_origin']
-        
-        if is_empty(name):
-            errors.append("Row {} - Coa name must be filled".format(index))
-        if not is_empty(is_capex) and is_capex.lower() == 'yes' and is_empty(minimum_item_origin):
-            errors.append("Row {} - Minimum item origin must be filled if COA can be considered as capex".format(index))
-            
-        return errors
-    
-    def create_or_update_coa(self, request, data):
-        update_dict = {
-            'definition': data['coa_definition'] if not is_empty(data['coa_definition']) else None,
-            'hyperion_name': data['hyperion_name'] if not is_empty(data['hyperion_name']) else None,
-            'is_capex': True if not is_empty(data['is_capex']) and data['is_capex'].lower() == 'yes' else False,
-            'minimum_item_origin': data['minimum_item_origin'] if not is_empty(data['minimum_item_origin']) else None,
-            'updated_by': User.objects.get(pk=request.custom_user['id'])
-        }
-        
-        coa = Coa.objects.filter(name=data['coa_name']).first()
-        new_coa = Coa(
-            name = data['coa_name'],
-            **update_dict
-        )
-        
-        if not coa:
-            self.create_new_coa(request, new_coa)
-        elif coa and not coa.equal(new_coa):
-            self.update_coa(request, coa, update_dict)
-            
-    def create_new_coa(self, request, new_coa):
-        new_coa.created_by = new_coa.updated_by
-        new_coa.save()
-        AuditLog.Save(CoaSerializer(new_coa), request, ActionEnum.CREATE, TableEnum.COA) 
-
-    def update_coa(self, request, coa, update_dict):
-        coa = self.update_fields(coa, update_dict)
-        coa.save()
-        AuditLog.Save(CoaSerializer(coa), request, ActionEnum.UPDATE, TableEnum.COA) 
-
-    def update_fields(self, model, update_dict):
-        for key, value in update_dict.items():
-            setattr(model, key, value)
-        return model
+        return ImportCoa().start(request)
     
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):

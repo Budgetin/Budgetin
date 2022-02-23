@@ -8,9 +8,10 @@ from api.models import Strategy
 from api.serializers import StrategySerializer, StrategyResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_file, get_import_template_path, load_file
-from api.utils.excel import read_excel, export_excel
+from api.utils.file import get_import_template_path, load_file
+from api.utils.excel import export_excel
 from api.exceptions import ValidationException
+from api.views.upload.import_strategy import ImportStrategy
 
 def is_duplicate_create(name):
     if Strategy.objects.filter(name__iexact=name):
@@ -69,27 +70,7 @@ class StrategyViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     @action(methods=['post'], detail=False, url_path='import')
     def import_from_excel(self, request):
-        file = read_file(request)
-        df = read_excel(file, TableEnum.STRATEGY.value)
-        
-        for index, data in df.iterrows():
-            strategy_name = data['strategy_name']
-
-            if not Strategy.name_exists(strategy_name):
-                self.insert_to_db(request, data)
-
-        return Response(status=204)
-    
-    def insert_to_db(self, request, data):
-        strategy = self.create_strategy(request, data['strategy_name'])
-        AuditLog.Save(StrategySerializer(strategy), request, ActionEnum.CREATE, TableEnum.STRATEGY)
-            
-    def create_strategy(self, request, strategy_name):
-        return Strategy.objects.create(
-            name=strategy_name,
-            created_by_id = request.custom_user['id'],
-            updated_by_id = request.custom_user['id'],
-        )
+        return ImportStrategy().start(request)
         
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):
