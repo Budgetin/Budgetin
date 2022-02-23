@@ -5,6 +5,7 @@ from django.db import transaction
 
 from api.serializers import CoaSerializer, CoaResponseSerializer
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
+from api.models import Coa
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum,TableEnum
 from api.utils.file import  get_import_template_path, load_file
