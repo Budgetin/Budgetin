@@ -70,6 +70,21 @@ class ImportBudget():
             errors.append("Row {} - is_budget must be filled".format(index))
         elif is_budget.strip().lower() != 'yes' and is_budget.strip().lower() != 'no':
             errors.append("Row {} - is_budget must be filled with yes/no only".format(index))
+        elif is_budget.strip().lower() == 'yes':
+            planning_q1 = data['planning_q1']
+            planning_q2 = data['planning_q2']
+            planning_q3 = data['planning_q3']
+            planning_q4 = data['planning_q4']
+            
+            if is_empty(planning_q1):
+                errors.append("Row {} - planning_q1 must be filled if is_budget is 'yes'")
+            if is_empty(planning_q2):
+                errors.append("Row {} - planning_q2 must be filled if is_budget is 'yes'")
+            if is_empty(planning_q3):
+                errors.append("Row {} - planning_q3 must be filled if is_budget is 'yes'")
+            if is_empty(planning_q4):
+                errors.append("Row {} - planning_q4 must be filled if is_budget is 'yes'")
+
         return errors       
     
     def validate_project(self, data, index, errors):
