@@ -651,7 +651,7 @@ export default {
             realization_dec: this.decNominal ? parseInt(this.form.realization_dec.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')) : 0,        
         };
         this.$emit("submitClicked", JSON.parse(JSON.stringify(payload)));
-        this.$refs.form.reset();
+        //this.$refs.form.reset();
       }
     },
     onCancel() {
