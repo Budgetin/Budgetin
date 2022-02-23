@@ -94,6 +94,10 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def create_or_update_project(self, request):
         planning = Planning.objects.get(pk=request.data['planning'])
         if 'project_id' not in request.data:
+            project_name = request.data['project_name']
+            if Project.name_exists(project_name):
+                raise ValidationException('Project {} already exists.'.format(project_name))
+            
             project = Project.objects.create(
                 project_name = request.data['project_name'],
                 project_description = request.data['project_description'],
@@ -108,7 +112,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
             )
             project.generate_itfamid(planning.year)
             AuditLog.Save(ProjectSerializer(project), request, ActionEnum.CREATE, TableEnum.PROJECT)
-        else:
+        else:            
             project = Project.objects.get(pk=request.data['project_id'])
             project.project_description = request.data['project_description']
             project.start_year = request.data['start_year']
