@@ -563,6 +563,8 @@ export default {
     },
     onAlertOk() {
       this.alert.show = false;
+      this.getListActiveBudget();
+      this.getListInactiveBudget();
     },
     uploadBudget(data){
       this.isLoading = true;
