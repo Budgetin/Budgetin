@@ -276,23 +276,20 @@ class BudgetViewSet(viewsets.ModelViewSet):
     def import_from_excel(self, request):
         file = read_file(request)
         df = read_excel(file, 'budget')
-        products = Product.objects.all()
-        coas = Coa.objects.all()
+        products = dict((product.product_code, product) for product in Product.objects.all())
+        coas = dict((coa.name, coa) for coa in Coa.objects.all())
+        biros = dict((biro.code, biro) for biro in Biro.objects.all())
         
         errors = []
-        
-        self.create_update_all_biro() # fetch from ithc
-        biros = Biro.objects.all()
-        
         for index, data in df.iterrows():
             print(index)
-            errors.extend(self.validate_product(data, index, errors, products))
-            errors.extend(self.validate_coa(data, index, errors, coas))
-            errors.extend(self.validate_biro(data, index, errors, biros))
-            errors.extend(self.validate_project(data, index, errors))
+            product, errors = self.get_product(data, index+2, errors, products)
+            coa, errors = self.get_coa(data, index+2, errors, coas)
+            biro, errors = self.get_biro(data, index+2, errors, biros)
+            errors = self.validate_project(data, index+2, errors)
             
             if not errors:
-                self.insert_to_db(request, data, products, coas, biros)
+                self.insert_to_db(request, data, product, coa, biro)
             
         if errors:
             raise ValidationException(errors)
@@ -300,52 +297,52 @@ class BudgetViewSet(viewsets.ModelViewSet):
 
         return Response(status=204)
     
-    def create_update_all_biro(self):
-        biros = get_all_biro('manager_employee,sub_group,sub_group.group,manager_employee,sub_group.manager_employee,sub_group.group.manager_employee')
-        for biro in biros:
-            self.create_update_biro(biro)
-
-    def create_update_biro(self, biro):
-        return Biro.objects.update_or_create(
-            ithc_biro=biro['id'],
-            defaults={
-                'code': biro['code'], 
-                'name': biro['name'],
-                'sub_group_code': biro['sub_group']['code'],
-                'group_code': biro['sub_group']['group']['code'],
-                'rcc': biro['sub_group']['rcc'],
-            }
-        )
-    
-    def validate_product(self, data, index, errors, products):
+    def get_product(self, data, index, errors, products):
         code = data['product_code']
-        if not is_empty(code):
+        if is_empty(code):
+            strategy, _ = Strategy.objects.get_or_create(name='None')
+            product, _ = Product.objects.get_or_create(
+                product_code = 'None',
+                product_name = 'None',
+                strategy = strategy
+            )
+            return product, errors
+        else:
             code = code.strip()
-            product = [product for product in products if product.product_code.lower() == code.lower()]
+            product = products[code]
 
             if not product:
                 errors.append("Row {} - Product code '{}' doesn't exists".format(index, code))
-        return errors
+                return _, errors
+            else:
+                return product, errors
     
-    def validate_coa(self, data, index, errors, coas):
+    def get_coa(self, data, index, errors, coas):
         name = data['coa_name']
-        if not is_empty(name):
+        if is_empty(name):
+            coa = Coa.objects.get_or_create(name='None')
+            return coa, errors
+        else:
             name = name.strip()
-            coa = [coa for coa in coas if coa.name.lower() == name.lower()]
+            coa = coas[name]
             
             if not coa:
                 errors.append("Row {} - Coa '{}' doesn't exists".format(index, name))
-        return errors
+                return _, errors
+            else:
+                return coa, errors
     
-    def validate_biro(self, data, index, errors, biros):
+    def get_biro(self, data, index, errors, biros):
         code = data['biro']
         if not is_empty(code):
             code = code.strip()
-            biro = [biro for biro in biros if biro.code.lower() == code.lower()]
+            biro = biros[code]
             
             if not biro:
                 errors.append("Row {} - Biro '{}' doesn't exists".format(index, code))
-        return errors
+            else:
+                return biro, errors
+        return _, errors
     
     def validate_project(self, data, index, errors):
         name = data['project_name']
@@ -358,39 +355,11 @@ class BudgetViewSet(viewsets.ModelViewSet):
             
         return errors
     
-    def insert_to_db(self, request, data, products, coas, biros):
-        product = self.get_product(data['product_code'], products)
-        coa = self.get_coa(data['coa_name'], coas)
-        biro = [biro for biro in biros if biro.code.lower() == data['biro'].strip().lower()][0]
+    def insert_to_db(self, request, data, product, coa, biro):
         planning = self.get_or_create_planning(request, data['year'])
         project = self.create_or_update_project_from_excel(request, data, biro, product)
         project_detail = self.get_or_create_project_detail(request, data, project, planning)
         self.create_or_update_budget(request, data, project_detail, coa)
-    
-    def get_product(self, product_code, products):
-        if is_empty(product_code):
-            strategy, _ = Strategy.objects.get_or_create(name='None')
-            product, _ = Product.objects.get_or_create(
-                product_code = 'None',
-                product_name = 'None',
-                strategy = strategy
-            )
-            return product
-        else:
-            product_code = product_code.strip()
-            return [product for product in products if product.product_code.lower() == product_code.lower()][0]
-        
-    def get_coa(self, name, coas):
-        if is_empty(name):
-            coa, _ = Coa.objects.get_or_create(
-                name = 'None',
-                hyperion_name = 'None',
-                definition = 'None',
-            )
-            return coa
-        else:
-            name = name.strip()
-            return [coa for coa in coas if coa.name.lower() == name.lower()][0]
     
     def get_or_create_planning(self, request, year):
         planning, created = Planning.objects.get_or_create(year=year, defaults={
