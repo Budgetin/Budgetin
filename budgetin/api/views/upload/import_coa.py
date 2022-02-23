@@ -13,9 +13,11 @@ class ImportCoa():
         df = read_excel(file, TableEnum.COA.value)
         errors = []
         
-        # Retrieve data from DB and convert it to Key, Value dictionary.
-        # This is done to reduce DB calls and optimize searching for specified key with O(1) complexity when searching 
-        # e.g{'hw': Coa (obj), 'm.hw': Coa (obj)}
+        '''
+            Retrieve data from DB and convert it to Key, Value dictionary.
+            This is done to reduce DB calls and optimize searching for specified key with O(1) complexity when searching 
+            e.g{'hw': Coa (obj), 'm.hw': Coa (obj)}
+        '''
         coas = dict((coa.name.lower(), coa) for coa in Coa.objects.all())
         
         for index, data in df.iterrows():

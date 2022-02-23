@@ -13,9 +13,11 @@ class ImportProduct():
         file = read_file(request)
         df = read_excel(file, TableEnum.PRODUCT.value)
         
-        # Retrieve data from DB and convert it to Key, Value dictionary.
-        # This is done to reduce DB calls and optimize searching for specified key with O(1) complexity when searching 
-        # e.g for product: {'ba001': product (obj), 'ba002': product(obj)}
+        '''
+            Retrieve data from DB and convert it to Key, Value dictionary.
+            This is done to reduce DB calls and optimize searching for specified key with O(1) complexity when searching 
+            e.g for product: {'ba001': product (obj), 'ba002': product(obj)}
+        '''
         strategies = dict((strategy.name.lower(), strategy) for strategy in Strategy.objects.all())
         products = dict((product.product_code.lower(), product) for product in Product.objects.all())
         user = User.objects.get(pk=request.custom_user['id'])
