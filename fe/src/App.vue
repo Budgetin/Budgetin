@@ -41,7 +41,8 @@ export default {
 #monitor-planning,
 #list-budget,
 #list-project,
-#login-form
+#login-form,
+#dashboard
 {
   font-family: "Nunito", sans-serif !important;
 }
