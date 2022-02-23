@@ -4,18 +4,21 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from api.models import Budget, Biro, Planning
-
-def merge_two_dict(x,y):
-    z = x.copy
-    z.update(y)
-    return z
+from django.db.models.base import ObjectDoesNotExist
+from api.exceptions import NotFoundException
 class GroupBudgetView(APIView):
     def get(self, request):
         current_year = datetime.now().year
-        planning = Planning.objects.get(year=current_year)
-        budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
+        try:
+            planning = Planning.objects.get(year=current_year)
+        except ObjectDoesNotExist:
+            raise NotFoundException("Planning with year {}".format(current_year))
+        try:
+            budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
                                                 'project_detail__project', 'project_detail__project__biro'
-                                                ).filter(project_detail__planning = planning).all()        
+                                                ).filter(project_detail__planning = planning).all()  
+        except ObjectDoesNotExist:
+            raise NotFoundException("Budget with planning year {}".format(current_year))      
         res = []
         added_group=[]
         for budget in budgets:
