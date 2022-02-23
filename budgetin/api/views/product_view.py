@@ -1,9 +1,7 @@
-from django.forms import model_to_dict
 import pandas as pd
 from io import BytesIO
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
-from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -11,13 +9,14 @@ from openpyxl import load_workbook
 from openpyxl.writer.excel import save_virtual_workbook
 
 from api.permissions import IsAuthenticated, IsAdminOrReadOnly
-from api.models import Product, Strategy, User
+from api.models import Product, Strategy
 from api.serializers import ProductSerializer, ProductResponseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
-from api.utils.file import read_file, get_import_template_path
-from api.utils.excel import read_excel, export_excel, write_sheet, export_errors_as_excel, is_empty
+from api.utils.file import get_import_template_path
+from api.utils.excel import export_excel, write_sheet
 from api.exceptions import ValidationException
+from api.views.upload.import_product import ImportProduct
 
 def is_product_duplicate(product_id, product_code, product_name):
     if Product.objects.filter(product_code=product_code).exclude(id=product_id):
@@ -30,7 +29,6 @@ def is_product_duplicate_create(product_code, product_name):
         raise ValidationException('Product with product code' + product_code + ' already exists')
     if Product.objects.filter(product_name=product_name):
         raise ValidationException('Product with product name' + product_name + ' already exists')
-
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.all_object.all()
@@ -83,92 +81,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     @action(methods=['post'], detail=False, url_path='import')
     def import_from_excel(self, request):
-        file = read_file(request)
-        df = read_excel(file, TableEnum.PRODUCT.value)
-        errors = []
-        
-        for index, data in df.iterrows():
-            errors = self.insert_to_db(request, data, (index+2), errors)
-        
-        if errors:
-            return export_errors_as_excel(errors)
-
-        return Response(status=204)    
-
-    def insert_to_db(self, request, data, index, errors):
-        validation_error = self.validate_data(data, index)
-        errors.extend(validation_error)
-
-        if not errors:
-            strategy = self.get_strategy(data)
-            self.create_or_update_product(request, data, strategy)
-        
-        return errors
-    
-    def validate_data(self, data, index):
-        errors = []
-        errors = self.validate_product(data, index, errors)
-        errors = self.validate_strategy(data, index, errors)
-        return errors
-    
-    def validate_product(self, data, index, errors):
-        code = data['product_code']
-        name = data['product_name']
-        
-        if is_empty(code):
-            errors.append("Row {} - Product code must be filled".format(index))
-            
-        if is_empty(name):
-            errors.append("Row {} - Product name must be filled".format(index))
-
-        return errors
-    
-    def validate_strategy(self, data, index, errors):
-        strategy_name = data['strategy_name']
-        if not is_empty(strategy_name) and not Strategy.name_exists(strategy_name):
-            errors.append("Row {} - Strategy '{}' does not exists".format(index, strategy_name))
-        return errors
-    
-    def get_strategy(self, data):
-        strategy_name = data['strategy_name']
-        if is_empty(strategy_name):
-            strategy, _ = Strategy.objects.get_or_create(name='None')
-        else:
-            strategy = Strategy.objects.filter(name__iexact=strategy_name).first()
-        return strategy
-    
-    def create_or_update_product(self, request, data, strategy):
-        update_dict = {
-            'product_name' : data['product_name'],
-            'strategy': strategy,
-            'updated_by': User.objects.get(pk=request.custom_user['id'])
-        }
-        
-        product = Product.objects.filter(product_code=data['product_code']).first()
-        new_product = Product(
-            product_code = data['product_code'],
-            **update_dict
-        )
-        
-        if not product:
-            self.create_new_product(request, new_product)
-        elif product and not product.equal(new_product):
-            self.update_product(request, product, update_dict)
-    
-    def create_new_product(self, request, new_product):
-        new_product.created_by = new_product.updated_by
-        new_product.save()
-        AuditLog.Save(ProductSerializer(new_product), request, ActionEnum.CREATE, TableEnum.PRODUCT)         
-    
-    def update_product(self, request, product, update_dict):
-        product = self.update_fields(product, update_dict)
-        product.save()
-        AuditLog.Save(ProductSerializer(product), request, ActionEnum.UPDATE, TableEnum.PRODUCT) 
-
-    def update_fields(self, model, update_dict):
-        for key, value in update_dict.items():
-            setattr(model, key, value)
-        return model
+        return ImportProduct().start(request)
     
     @action(methods=['get'], detail=False, url_path='import/template')
     def download_import_template(self, request):

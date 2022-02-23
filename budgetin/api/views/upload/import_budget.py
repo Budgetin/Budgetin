@@ -7,8 +7,7 @@ from api.serializers import BudgetSerializer, ProjectSerializer, ProjectDetailSe
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
 from api.utils.file import read_file
-from api.utils.excel import read_excel, is_empty
-from api.exceptions import ValidationException
+from api.utils.excel import read_excel, is_empty, export_errors_as_excel
 
 class ImportBudget():
     def start(self, request):
@@ -40,26 +39,20 @@ class ImportBudget():
             errors = self.validate_project(data, index+2, errors)
             
             if not errors:
-                planning, plannings = self.get_or_create_planning(request, plannings, data['year'])
-                project, projects = self.create_or_update_project(request, user, projects, biro, product, data)
-                project_detail, project_details = self.create_or_update_project_detail(request, user, project_details, project_types, project, planning, data)
-                self.create_or_update_budget(request, user, budgets, project_detail, coa, data)
+                planning, plannings = self.get_or_create_planning(request, data, plannings)
+                project, projects = self.create_or_update_project(request, data, user, projects, biro, product)
+                project_detail, project_details = self.create_or_update_project_detail(request, data, user, project_details, project_types, project, planning)
+                self.create_or_update_budget(request, data, user, budgets, project_detail, coa)
             
         if errors:
-            raise ValidationException(errors)
-            # return export_errors_as_excel(errors)
+            return export_errors_as_excel(errors)
 
         return Response(status=204)
     
     def get_product(self, data, index, errors, products):
         code = data['product_code']
         if is_empty(code):
-            strategy, _ = Strategy.objects.get_or_create(name='None')
-            product, _ = Product.objects.get_or_create(
-                product_code = 'None',
-                product_name = 'None',
-                strategy = strategy
-            )
+            product = products['none']
             return product, errors
         else:
             code = code.strip().lower()
@@ -77,7 +70,7 @@ class ImportBudget():
                 errors.append("Row {} - Coa must be filled if is_budget is 'yes'")
                 return _, errors
             else:
-                coa = Coa.objects.get_or_create(name='None')
+                coa = coas['none']
                 return coa, errors
         else:
             name = name.strip().lower()
@@ -110,7 +103,8 @@ class ImportBudget():
             
         return errors
     
-    def get_or_create_planning(self, request, plannings, year):
+    def get_or_create_planning(self, request, data, plannings):
+        year = data['year']
         if year in plannings:
             planning = plannings[year]
         else:
@@ -127,7 +121,7 @@ class ImportBudget():
 
         return planning, plannings
     
-    def create_or_update_project(self, request, user, projects, biro, product, data):     
+    def create_or_update_project(self, request, data, user, projects, biro, product):     
         update_dict = {
             'project_description': data['project_description'] if not is_empty(data['project_description']) else None,
             'start_year': data['start_year'] if not is_empty(data['start_year']) else None,
@@ -168,7 +162,7 @@ class ImportBudget():
         AuditLog.Save(ProjectSerializer(project), request, ActionEnum.UPDATE, TableEnum.PROJECT)
         return project
     
-    def create_or_update_project_detail(self, request, user, project_details, project_types, project, planning, data):
+    def create_or_update_project_detail(self, request, data, user, project_details, project_types, project, planning):
         project_name = project.project_name.lower()
         year = planning.year
         project_type = project_types[data['project_type'].strip().lower()]
@@ -206,7 +200,7 @@ class ImportBudget():
         AuditLog.Save(ProjectDetailSerializer(project_detail), request, ActionEnum.UPDATE, TableEnum.PROJECT_DETAIL)
         return project_detail
     
-    def create_or_update_budget(self, request, user, budgets, project_detail, coa, data):
+    def create_or_update_budget(self, request, data, user, budgets, project_detail, coa):
         is_budget = True if not is_empty(data['is_budget']) and data['is_budget'] == 'yes' else False
         project_name = project_detail.project.project_name
         year = project_detail.planning.year

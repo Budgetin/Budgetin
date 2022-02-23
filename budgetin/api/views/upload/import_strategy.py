@@ -12,9 +12,6 @@ class ImportStrategy():
         file = read_file(request)
         df = read_excel(file, TableEnum.STRATEGY.value)
 
-        # create empty strategy
-        Strategy.objects.get_or_create(name='None')
-        
         # Fetch all strategies and convert it to Key, Value dictionary
         strategies = dict((strategy.name.lower(), strategy) for strategy in Strategy.objects.all())
         
