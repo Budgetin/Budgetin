@@ -12,10 +12,6 @@ class Coa(SoftDeleteModel, TimestampModel, UserTrackModel):
     is_capex = models.BooleanField(default=False, blank=True)
     minimum_item_origin = models.BigIntegerField(blank=True, null=True)
     
-    @staticmethod
-    def name_exists(name):
-        return Coa.objects.filter(name__iexact=name).count() > 0
-    
     def equal(self, coa):
         return (
             self.definition_equal(coa.definition) and 
