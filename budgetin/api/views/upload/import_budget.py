@@ -34,12 +34,16 @@ class ImportBudget():
         errors = []
         for index, data in df.iterrows():
             print(index)
+            errors = self.validate_is_budget(data, index+2, errors)
+            errors = self.validate_is_tech(data, index+2, errors)
             product, errors = self.get_product(data, index+2, errors, products)
             coa, errors = self.get_coa(data, index+2, errors, coas)
             biro, errors = self.get_biro(data, index+2, errors, biros)
             errors = self.validate_project(data, index+2, errors)
             
             if not errors:
+                errors = self.validate_is_tech(data)
+                errors = self.validate_is_budget(data)
                 planning, plannings = self.get_or_create_planning(request, data, plannings)
                 project, projects = self.create_or_update_project(request, data, user, projects, biro, product)
                 project_detail, project_details = self.create_or_update_project_detail(request, data, user, project_details, project_types, project, planning)
@@ -49,6 +53,22 @@ class ImportBudget():
             return export_errors_as_excel(errors)
 
         return Response(status=204)
+    
+    def validate_is_tech(self, data, index, errors):
+        is_tech = data['is_tech']
+        if is_empty(is_tech):
+            errors.append("Row {} - is_tech must be filled".format(index))
+        elif is_tech.strip().lower() != 'yes' and is_tech.strip().lower() != 'no':
+            errors.append("Row {} - is_tech must be filled with yes/no only".format(index))
+        return errors
+    
+    def validate_is_budget(self, data, index, errors):
+        is_budget = data['is_budget']
+        if is_empty(is_budget):
+            errors.append("Row {} - is_budget must be filled".format(index))
+        elif is_budget.strip().lower() != 'yes' and is_budget.strip().lower() != 'no':
+            errors.append("Row {} - is_budget must be filled with yes/no only".format(index))
+        return errors       
     
     def get_product(self, data, index, errors, products):
         code = data['product_code']
