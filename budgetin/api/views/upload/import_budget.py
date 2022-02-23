@@ -15,9 +15,11 @@ class ImportBudget():
         file = read_file(request)
         df = read_excel(file, 'budget')
         
-        # Retrieve data from DB and convert it to Key, Value dictionary.
-        # This is done to reduce DB calls and optimize searching for specified key with O(1) complexity when searching 
-        # e.g for product: {'ba001': product (obj), 'ba002': product(obj)}
+        '''
+            Retrieve data from DB and convert it to Key, Value dictionary.
+            This is done to reduce DB calls and optimize searching for specified key with O(1) complexity when searching 
+            e.g for product: {'ba001': product (obj), 'ba002': product(obj)}
+        '''
         products = dict((product.product_code.lower(), product) for product in Product.objects.all())
         coas = dict((coa.name.lower(), coa) for coa in Coa.objects.all())
         biros = dict((biro.code.lower(), biro) for biro in Biro.objects.all())
@@ -26,8 +28,10 @@ class ImportBudget():
         project_types = dict((project_type.name.lower(), project_type) for project_type in ProjectType.objects.all())
         user = User.objects.get(pk=request.custom_user['id'])
         
-        # Key, Value pair for project_details and budgets are more complex.
-        # e.g for project_detail = {('Rumah Biru', 2021): project_detail (obj), ('Rumah Biru', 2022): project_detail (obj}
+        '''
+            Key, Value pair for project_details and budgets are more complex.
+            e.g for project_detail = {('Rumah Biru', 2021): project_detail (obj), ('Rumah Biru', 2022): project_detail (obj}
+        '''
         project_details = dict(((project_detail.project.project_name.lower(), project_detail.planning.year), project_detail) for project_detail in ProjectDetail.objects.select_related('project', 'planning').all())
         budgets = dict(((budget.project_detail.project.project_name.lower(), budget.project_detail.planning.year, budget.coa.name.lower()), budget) for budget in Budget.objects.select_related('project_detail__project', 'project_detail__planning', 'coa').all())
         
@@ -36,10 +40,10 @@ class ImportBudget():
             print(index)
             errors = self.validate_is_budget(data, index+2, errors)
             errors = self.validate_is_tech(data, index+2, errors)
+            errors = self.validate_project(data, index+2, errors)
             product, errors = self.get_product(data, index+2, errors, products)
             coa, errors = self.get_coa(data, index+2, errors, coas)
             biro, errors = self.get_biro(data, index+2, errors, biros)
-            errors = self.validate_project(data, index+2, errors)
             
             if not errors:
                 planning, plannings = self.get_or_create_planning(request, data, plannings)
@@ -67,6 +71,17 @@ class ImportBudget():
         elif is_budget.strip().lower() != 'yes' and is_budget.strip().lower() != 'no':
             errors.append("Row {} - is_budget must be filled with yes/no only".format(index))
         return errors       
+    
+    def validate_project(self, data, index, errors):
+        name = data['project_name']
+        project_type = data['project_type']
+        
+        if is_empty(name):
+            errors.append("Row {} - Project name must be filled".format(index))
+        if is_empty(project_type):
+            errors.append("Row {} - Project type must be filled".format(index))
+            
+        return errors
     
     def get_product(self, data, index, errors, products):
         code = data['product_code']
@@ -110,17 +125,6 @@ class ImportBudget():
             else:            
                 errors.append("Row {} - Biro '{}' doesn't exists".format(index, code))
         return _, errors
-    
-    def validate_project(self, data, index, errors):
-        name = data['project_name']
-        project_type = data['project_type']
-        
-        if is_empty(name):
-            errors.append("Row {} - Project name must be filled".format(index))
-        if is_empty(project_type):
-            errors.append("Row {} - Project type must be filled".format(index))
-            
-        return errors
     
     def get_or_create_planning(self, request, data, plannings):
         year = data['year']
