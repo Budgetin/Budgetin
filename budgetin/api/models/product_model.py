@@ -12,14 +12,6 @@ class Product(SoftDeleteModel, TimestampModel, UserTrackModel):
 
     all_object = models.Manager()
     
-    @staticmethod
-    def code_exists(code):
-        return Product.objects.filter(product_code__iexact=code).count() > 0
-    
-    @staticmethod
-    def name_exists(name):
-        return Product.objects.filter(product_name__iexact=name).count() > 0
-    
     def equal(self, product):
        return (
            self.product_name_equal(product.product_name) and

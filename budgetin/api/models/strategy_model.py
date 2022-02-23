@@ -7,7 +7,3 @@ class Strategy(SoftDeleteModel, TimestampModel, UserTrackModel):
     name = models.CharField(max_length=200)
     
     all_objects = models.Manager()
-    
-    @staticmethod
-    def name_exists(name):
-        return Strategy.objects.filter(name__iexact=name).count() > 0
