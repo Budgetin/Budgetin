@@ -35,6 +35,21 @@
           <template v-slot:[`item.is_active`]="{ item }">
               <binary-status-chip :boolean="item.is_active"></binary-status-chip>
           </template>
+          <template v-slot:[`item.planning_nominal`]="{ item }">
+            <span>{{ numberWithDots(item.planning_nominal) }}</span>
+          </template>
+          <template v-slot:[`item.planning_q1`]="{ item }">
+            <span>{{ numberWithDots(item.planning_q1) }}</span>
+          </template>
+          <template v-slot:[`item.planning_q2`]="{ item }">
+            <span>{{ numberWithDots(item.planning_q2) }}</span>
+          </template>
+          <template v-slot:[`item.planning_q3`]="{ item }">
+            <span>{{ numberWithDots(item.planning_q3) }}</span>
+          </template>
+          <template v-slot:[`item.planning_q4`]="{ item }">
+            <span>{{ numberWithDots(item.planning_q4) }}</span>
+          </template>
         </v-data-table>
       </v-col>
     </v-row>
@@ -75,10 +90,12 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 import BinaryStatusChip from "@/components/chips/BinaryStatusChip";
+import formatting from "@/mixins/formatting";
 export default {
   name: "TableBudgetPlanning",
   components: {BinaryStatusChip},
   props: ["budgetPlanning"],
+  mixins: [formatting],  
   data: () => ({
     isView: true,
     inputOption: false,
