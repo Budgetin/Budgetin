@@ -44,4 +44,6 @@ class RealizationViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False, url_path='import')
     def import_realisasi(self, request):
         return ImportRealisasi().start(request)
-        
+
+    # @action(methods=['get'], detail=False, url_path='import/template')
+    # def import_template(self, request):        
