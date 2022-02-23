@@ -52,8 +52,8 @@ class ImportBudget():
     def get_product(self, data, index, errors, products):
         code = data['product_code']
         if is_empty(code):
-            product = products['none']
-            return product, errors
+            errors.append("Row {} - Product code must be filled".format(index))
+            return _, errors
         else:
             code = code.strip().lower()
             if code in products:
@@ -65,15 +65,15 @@ class ImportBudget():
     def get_coa(self, data, index, errors, coas):
         name = data['coa_name']
         if is_empty(name):
-            is_budget = True if not is_empty(data['is_budget']) and data['is_budget'].lower() == 'yes' else False
-            if is_budget:
-                errors.append("Row {} - Coa must be filled if is_budget is 'yes'")
-                return _, errors
-            else:
-                coa = coas['none']
-                return coa, errors
+            errors.append("Row {} - Coa must be filled".format(index))
+            return _, errors
         else:
             name = name.strip().lower()
+            
+            is_budget = True if not is_empty(data['is_budget']) and data['is_budget'].lower() == 'yes' else False
+            if is_budget and name == 'none':
+                errors.append("Row {} - Coa cannot be none if is_budget is 'yes'")
+                return _, errors
             
             if name in coas:
                 return coas[name], errors
@@ -202,7 +202,7 @@ class ImportBudget():
     
     def create_or_update_budget(self, request, data, user, budgets, project_detail, coa):
         is_budget = True if not is_empty(data['is_budget']) and data['is_budget'] == 'yes' else False
-        project_name = project_detail.project.project_name
+        project_name = project_detail.project.project_name.lower()
         year = project_detail.planning.year
         coa_name = coa.name.lower()
         

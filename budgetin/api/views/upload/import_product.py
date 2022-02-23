@@ -49,7 +49,7 @@ class ImportProduct():
     def get_strategy(self, data, index, errors, strategies):
         strategy_name = data['strategy_name']
         if is_empty(strategy_name):
-            strategy = strategies['none']
+            errors.append("Row {} - Strategy must be filled".format(index))            
         else:
             strategy_name = strategy_name.strip()
             if strategy_name.lower() not in strategies:
