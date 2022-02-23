@@ -16,7 +16,7 @@ class ImportBudget():
         df = read_excel(file, 'budget')
         
         # Retrieve data from DB and convert it to Key, Value dictionary.
-        # This is done to reduce DB calls and optimize searching for specified key with O(1) 
+        # This is done to reduce DB calls and optimize searching for specified key with O(1) complexity when searching 
         # e.g for product: {'ba001': product (obj), 'ba002': product(obj)}
         products = dict((product.product_code.lower(), product) for product in Product.objects.all())
         coas = dict((coa.name.lower(), coa) for coa in Coa.objects.all())
