@@ -75,6 +75,7 @@ class ImportBudget():
             planning_q2 = data['Q2']
             planning_q3 = data['Q3']
             planning_q4 = data['Q4']
+            expense_type = data['capex_opex']
             
             if is_empty(planning_q1):
                 errors.append("Row {} - planning_q1 must be filled if is_budget is 'yes'")
@@ -84,6 +85,8 @@ class ImportBudget():
                 errors.append("Row {} - planning_q3 must be filled if is_budget is 'yes'")
             if is_empty(planning_q4):
                 errors.append("Row {} - planning_q4 must be filled if is_budget is 'yes'")
+            if is_empty(expense_type):
+                errors.append("Row {} - capex_opex must be filled if is_budget is 'yes'")
 
         return errors       
     
