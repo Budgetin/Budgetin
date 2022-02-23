@@ -1,8 +1,9 @@
+from datetime import datetime
 from django.forms import model_to_dict
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from api.models import Budget, Biro
+from api.models import Budget, Biro, Planning
 
 def merge_two_dict(x,y):
     z = x.copy
@@ -10,27 +11,21 @@ def merge_two_dict(x,y):
     return z
 class GroupBudgetView(APIView):
     def get(self, request):
+        current_year = datetime.now().year
+        planning = Planning.objects.get(year=current_year)
         budgets = Budget.objects.select_related('coa', 'project_detail', 'project_detail__planning', 
-                                                'project_detail__project', 'project_detail__project_type', 
-                                                'project_detail__project__biro', 'project_detail__project__product', 
-                                                'project_detail__project__product__strategy', 'updated_by', 'created_by'
-                                                ).filter(project_detail__planning_id = 1).all()
-        groups = Biro.objects.distinct('group_code').all()
-        print(groups)
+                                                'project_detail__project', 'project_detail__project__biro'
+                                                ).filter(project_detail__planning = planning).all()        
         res = []
-        tahun_added = []
+        added_group=[]
         for budget in budgets:
             total = budget.planning_q1 + budget.planning_q2 + budget.planning_q3 + budget.planning_q4
             group = budget.project_detail.project.biro.group_code
-            tahun = budget.project_detail.planning.year
-            if tahun not in tahun_added:
-                tahun_obj = {}
-                tahun_added.append(tahun)
-                for group in groups:
-                    if 'GTI' in group.group_code or 'SKES' in group.group_code:
-                        continue
-                    tahun_obj = tahun_obj | {group.group_code:0}
-                res.append({"Tahun" : tahun, "Group" : tahun_obj})
+
+            if group not in added_group:
+                added_group.append(group)
+                res.append({"Group": group, "Budget":total, "Realisasi":0})
             else:
-                res[tahun_added.index(tahun)]['Group'][group] += total
+                res[added_group.index(group)]["Budget"]+=total
+                #DEBT ADD REALISASI
         return Response(res)

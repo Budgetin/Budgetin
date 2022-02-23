@@ -4,9 +4,9 @@ from api.models.abstract_model import TimestampModel, UserTrackModel
 
 class Realization(SoftDeleteModel, TimestampModel, UserTrackModel):
     #DEBT add parent either ProjectDetail or Budget
-    project_detail = models.ForeignKey('ProjectDetail', on_delete=models.CASCADE)
+    project_detail = models.ForeignKey('ProjectDetail', on_delete=models.CASCADE, blank=True, null=True)
     coa = models.ForeignKey('Coa', on_delete=models.CASCADE)
-    budget = models.ForeignKey('Budget', on_delete=models.CASCADE)
+    budget = models.ForeignKey('Budget', on_delete=models.CASCADE, blank=True, null=True)
     realization_jan = models.BigIntegerField(default = 0, blank = True)
     realization_feb = models.BigIntegerField(default = 0, blank = True)
     realization_mar = models.BigIntegerField(default = 0, blank = True)
