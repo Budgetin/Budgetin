@@ -13,8 +13,10 @@ class TaskViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated, IsUser]
             
     def list(self, request):
+        user_ithc_biro = request.custom_user['ithc_biro']
+        
         queryset = Monitoring.objects.select_related('planning', 'biro').all()
-        queryset = queryset.filter(pic_initial=request.custom_user['initial'])
+        queryset = queryset.filter(biro__ithc_biro=user_ithc_biro)
         
         for monitoring in queryset:
             monitoring.format_timestamp("%d %B %Y")                
