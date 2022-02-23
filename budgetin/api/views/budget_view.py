@@ -571,7 +571,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
             temp.append(product.product_name)
             temp.append(strategy.name if strategy else '')
             result.append(temp)
-        return pd.DataFrame(products, columns=columns)
+        return pd.DataFrame(result, columns=columns)
     
     def write_coa_sheet(self, book, file_path):
         dataframe = self.get_coa_dataframe()
@@ -593,5 +593,5 @@ class BudgetViewSet(viewsets.ModelViewSet):
             temp.append(coa.definition)
             result.append(temp)
             
-        return pd.DataFrame(coas, columns=columns)
+        return pd.DataFrame(result, columns=columns)
     

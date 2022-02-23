@@ -8,7 +8,7 @@ from api.utils.hit_api import get_all_biro
 from api.views.planning_view import create_update_biro, create_monitoring
 
 from api.models import Monitoring
-from api.serializers import MonitoringSerializer
+from api.serializers import MonitoringSerializer, MonitoringBaseSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum, MonitoringStatusEnum
 from api.permissions import IsAuthenticated, IsAdmin
@@ -25,7 +25,7 @@ def create_non_existent_biro(biros, planning_id):
             
 class MonitoringViewSet(viewsets.ModelViewSet):
     queryset = Monitoring.objects.all()
-    serializer_class = MonitoringSerializer
+    serializer_class = MonitoringBaseSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def list(self, request, *args, **kwargs):
