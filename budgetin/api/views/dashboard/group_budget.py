@@ -24,7 +24,8 @@ class GroupBudgetView(APIView):
 
             if group not in added_group:
                 added_group.append(group)
-                res.append({"Group": group, "Budget":total})
+                res.append({"Group": group, "Budget":total, "Realisasi":0})
             else:
                 res[added_group.index(group)]["Budget"]+=total
+                #DEBT ADD REALISASI
         return Response(res)
