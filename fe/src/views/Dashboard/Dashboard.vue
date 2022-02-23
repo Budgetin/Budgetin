@@ -1,22 +1,64 @@
 <template>
-  <v-container style="height: 1000px">
-    <v-row no-gutters justify="space-between">
-      <!-- <iframe src='http://10.20.212.231/single/?appid=3e419129-d21b-41c2-b547-b9871eb73bc1&sheet=c3006dfe-4109-464f-bbbb-3b8d985c9c76&opt=currsel%2Cctxmenu' style='border:none;width:100%;height:100%;'></iframe> -->
-      <iframe src="https://sense-demo.qlik.com/single/?appid=b23be62b-79d1-4761-b576-00ebc19acfb3&sheet=GZGbMWW&opt=ctxmenu,currsel" style="border:none;width:100%;height:1000px;"></iframe>
-    </v-row>
+  <v-container>
+    <v-card class="pt-5">
+      <!-- <iframe src="https://sense-demo.qlik.com/single/?appid=b23be62b-79d1-4761-b576-00ebc19acfb3&sheet=GZGbMWW&opt=ctxmenu,currsel" style="border:none;width:100%;height:1000px;"></iframe> -->
+        <!-- <iframe src="http://kp2misdb03/Reports/powerbi/Dashboard/GSIT/ITHC/Test?rs:embed=true" style="border:none;width:100%;height:1000px;"></iframe> -->
+        <apexchart  type="area" height="350" :options="chartOptions" :series="series"></apexchart>
+      <!-- </div> -->
+    </v-card>
   </v-container>
 </template>
 
 <script>
 export default {
   name: "Dashboard",
-  components: {},
+  components: {
+
+  },
   
   created() {
+    this.setBreadcrumbs();
   },
   methods: {
+    setBreadcrumbs() {
+      this.$store.commit("breadcrumbs/SET_LINKS", [
+        {
+          text: "Dashboard",
+          disabled: true,
+        },
+      ]);
+    },
   },
-  data: () => ({
+  data: () => ({          
+    series: [{
+      name: 'series1',
+      data: [31, 40, 28, 51, 42, 109, 100]
+    }, {
+      name: 'series2',
+      data: [11, 32, 45, 32, 34, 52, 41]
+    }],
+    chartOptions: {
+      chart: {
+        width: '100%',
+        height: 350,
+        type: 'area'
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'smooth'
+      },
+      xaxis: {
+        type: 'datetime',
+        categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
+      },
+      tooltip: {
+        x: {
+          format: 'dd/MM/yy HH:mm'
+        },
+      },
+    },
   }),
 };
 </script>

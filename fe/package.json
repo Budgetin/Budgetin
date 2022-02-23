@@ -9,6 +9,7 @@
   "dependencies": {
     "@mdi/font": "^6.5.95",
     "ant-design-vue": "^1.7.8",
+    "apexcharts": "^3.33.1",
     "axios": "^0.25.0",
     "core-js": "^3.6.5",
     "jest": "^27.5.1",
@@ -16,6 +17,7 @@
     "material-design-icons": "^3.0.1",
     "powerbi-client": "^2.19.1",
     "vue": "^2.6.11",
+    "vue-apexcharts": "^1.6.2",
     "vue-router": "^3.2.0",
     "vuetify": "^2.4.0",
     "vuex": "^3.4.0"

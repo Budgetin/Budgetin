@@ -8,12 +8,15 @@ import "vuetify/dist/vuetify.min.css";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
 
-import interceptorsSetup from "@/plugins/interceptors";
+import VueApexCharts from 'vue-apexcharts'
 
 Vue.config.productionTip = false
-Vue.use(Antd);
 
-interceptorsSetup();
+Vue.use(Antd);
+Vue.use(VueApexCharts)
+
+Vue.component('apexchart', VueApexCharts)
+
 
 new Vue({
   router,
