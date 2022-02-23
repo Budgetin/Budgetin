@@ -87,20 +87,18 @@ class ImportBudget():
         code = data['product_code']
         if is_empty(code):
             errors.append("Row {} - Product code must be filled".format(index))
-            return _, errors
         else:
             code = code.strip().lower()
             if code in products:
                 return products[code], errors
             else:
                 errors.append("Row {} - Product code '{}' doesn't exists".format(index, code))
-                return _, errors
+        return _, errors
     
     def get_coa(self, data, index, errors, coas):
         name = data['coa_name']
         if is_empty(name):
             errors.append("Row {} - Coa must be filled".format(index))
-            return _, errors
         else:
             name = name.strip().lower()
             
@@ -113,11 +111,13 @@ class ImportBudget():
                 return coas[name], errors
             else:
                 errors.append("Row {} - Coa '{}' doesn't exists".format(index, name))
-                return _, errors
+        return _, errors
     
     def get_biro(self, data, index, errors, biros):
         code = data['biro']
-        if not is_empty(code):
+        if is_empty(code):
+            errors.append("Row {} - Biro must be filled".format(index))
+        else:
             code = code.strip().lower()
             
             if code in biros:
