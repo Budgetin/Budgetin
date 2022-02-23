@@ -2,7 +2,8 @@ from django.utils import timezone
 
 from rest_framework.response import Response
 
-from api.models import Budget, Project, ProjectDetail, Planning, Biro, Product, Coa, ProjectType, User, Strategy
+from django.utils.translation import ugettext_lazy as _
+from api.models import Budget, Project, ProjectDetail, Planning, Biro, Product, Coa, ProjectType, User
 from api.serializers import BudgetSerializer, ProjectSerializer, ProjectDetailSerializer, PlanningSerializer
 from api.utils.auditlog import AuditLog
 from api.utils.enum import ActionEnum, TableEnum
