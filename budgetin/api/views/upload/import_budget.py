@@ -92,7 +92,7 @@ class ImportBudget():
             if code in products:
                 return products[code], errors
             else:
-                errors.append("Row {} - Product code '{}' doesn't exists".format(index, code))
+                errors.append("Row {} - Product code '{}' doesn't exists".format(index, data['product_code']))
         return _, errors
     
     def get_coa(self, data, index, errors, coas):
@@ -110,7 +110,7 @@ class ImportBudget():
             if name in coas:
                 return coas[name], errors
             else:
-                errors.append("Row {} - Coa '{}' doesn't exists".format(index, name))
+                errors.append("Row {} - Coa '{}' doesn't exists".format(index, data['coa_name']))
         return _, errors
     
     def get_biro(self, data, index, errors, biros):
@@ -123,7 +123,7 @@ class ImportBudget():
             if code in biros:
                 return biros[code], errors
             else:            
-                errors.append("Row {} - Biro '{}' doesn't exists".format(index, code))
+                errors.append("Row {} - Biro '{}' doesn't exists".format(index, data['biro']))
         return _, errors
     
     def get_or_create_planning(self, request, data, plannings):
