@@ -42,8 +42,6 @@ class ImportBudget():
             errors = self.validate_project(data, index+2, errors)
             
             if not errors:
-                errors = self.validate_is_tech(data)
-                errors = self.validate_is_budget(data)
                 planning, plannings = self.get_or_create_planning(request, data, plannings)
                 project, projects = self.create_or_update_project(request, data, user, projects, biro, product)
                 project_detail, project_details = self.create_or_update_project_detail(request, data, user, project_details, project_types, project, planning)
