@@ -71,10 +71,10 @@ class ImportBudget():
         elif is_budget.strip().lower() != 'yes' and is_budget.strip().lower() != 'no':
             errors.append("Row {} - is_budget must be filled with yes/no only".format(index))
         elif is_budget.strip().lower() == 'yes':
-            planning_q1 = data['planning_q1']
-            planning_q2 = data['planning_q2']
-            planning_q3 = data['planning_q3']
-            planning_q4 = data['planning_q4']
+            planning_q1 = data['Q1']
+            planning_q2 = data['Q2']
+            planning_q3 = data['Q3']
+            planning_q4 = data['Q4']
             
             if is_empty(planning_q1):
                 errors.append("Row {} - planning_q1 must be filled if is_budget is 'yes'")
